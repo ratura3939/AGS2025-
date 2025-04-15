@@ -28,7 +28,6 @@
     <ClCompile Include="Src\Scene\GameClear.cpp" />
     <ClCompile Include="Src\Scene\Game.cpp" />
     <ClCompile Include="Src\Common\IntVector3.cpp" />
-    <ClCompile Include="Src\Object\Common\Transform.cpp" />
     <ClCompile Include="Src\Application.cpp" />
     <ClCompile Include="Src\Common\Fader.cpp" />
     <ClCompile Include="Src\Common\Quaternion.cpp" />
@@ -53,7 +52,6 @@
     <ClInclude Include="Src\Scene\GameClear.h" />
     <ClInclude Include="Src\Scene\Game.h" />
     <ClInclude Include="Src\Common\IntVector3.h" />
-    <ClInclude Include="Src\Object\Common\Transform.h" />
     <ClInclude Include="Src\Application.h" />
     <ClInclude Include="Src\Common\Fader.h" />
     <ClInclude Include="Src\Common\Quaternion.h" />
