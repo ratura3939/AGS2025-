@@ -2,6 +2,7 @@
 
 Game::Game(void)
 {
+	//確認用これはAGS2025夏用のプロジェクトです
 }
 
 Game::~Game(void)
