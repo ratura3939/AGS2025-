@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Player\PlayerChara.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\EnemyManager.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
     <ClCompile Include="Src\Object\Attack\AttackBase.cpp" />
     <ClCompile Include="Src\Scene\GameOver.cpp" />
@@ -31,16 +34,19 @@
     <ClCompile Include="Src\Common\Quaternion.cpp" />
     <ClCompile Include="Src\Common\Vector2.cpp" />
     <ClCompile Include="Src\main.cpp" />
-    <ClCompile Include="Src\Manager\Camera.cpp" />
-    <ClCompile Include="Src\Manager\InputManager.cpp" />
-    <ClCompile Include="Src\Manager\Resource.cpp" />
-    <ClCompile Include="Src\Manager\ResourceManager.cpp" />
-    <ClCompile Include="Src\Manager\SceneManager.cpp" />
+    <ClCompile Include="Src\Manager\Generic\Camera.cpp" />
+    <ClCompile Include="Src\Manager\Generic\InputManager.cpp" />
+    <ClCompile Include="Src\Manager\Generic\Resource.cpp" />
+    <ClCompile Include="Src\Manager\Generic\ResourceManager.cpp" />
+    <ClCompile Include="Src\Manager\Generic\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\Title.cpp" />
     <ClCompile Include="Src\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Player\PlayerChara.h" />
+    <ClInclude Include="Src\Manager\GameSystem\EnemyManager.h" />
+    <ClInclude Include="Src\Manager\GameSystem\PlayerManager.h" />
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
     <ClInclude Include="Src\Object\Attack\AttackBase.h" />
     <ClInclude Include="Src\Scene\GameOver.h" />
@@ -53,11 +59,11 @@
     <ClInclude Include="Src\Common\Quaternion.h" />
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\main.h" />
-    <ClInclude Include="Src\Manager\Camera.h" />
-    <ClInclude Include="Src\Manager\InputManager.h" />
-    <ClInclude Include="Src\Manager\Resource.h" />
-    <ClInclude Include="Src\Manager\ResourceManager.h" />
-    <ClInclude Include="Src\Manager\SceneManager.h" />
+    <ClInclude Include="Src\Manager\Generic\Camera.h" />
+    <ClInclude Include="Src\Manager\Generic\InputManager.h" />
+    <ClInclude Include="Src\Manager\Generic\Resource.h" />
+    <ClInclude Include="Src\Manager\Generic\ResourceManager.h" />
+    <ClInclude Include="Src\Manager\Generic\SceneManager.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\Title.h" />
     <ClInclude Include="Src\Utility\Utility.h" />

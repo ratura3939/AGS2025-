@@ -1,6 +1,6 @@
 #include <DxLib.h>
 #include<memory>
-#include "../Application.h"
+#include "../../Application.h"
 #include "Resource.h"
 #include "ResourceManager.h"
 

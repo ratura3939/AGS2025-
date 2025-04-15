@@ -1,5 +1,5 @@
-#include"../Application.h"
-#include"../Utility/Utility.h"
+#include"../../Application.h"
+#include"../../Utility/Utility.h"
 #include"SceneManager.h"
 #include"InputManager.h"
 #include "Camera.h"
