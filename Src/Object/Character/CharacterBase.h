@@ -30,6 +30,9 @@ public:
 
 	// ‘ÎÛ•ûŒü‚ğæ“¾
 	VECTOR GetDir(const VECTOR& _vec) const;
+
+	//ˆÊ’uæ“¾
+	const VECTOR GetPos(void)const;
 protected:
 
 	int modelId_;	//ƒ‚ƒfƒ‹ID

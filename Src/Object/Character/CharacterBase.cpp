@@ -26,6 +26,7 @@ void CharacterBase::SetPram(void)
 void CharacterBase::Draw(void)
 {
 	//ï`âÊèàóù
+	DrawSphere3D(pos_, 8, 10, 0xff0000, 0xff0000, true);
 }
 
 void CharacterBase::Release(void)
@@ -91,4 +92,9 @@ VECTOR CharacterBase::GetDown(void) const
 VECTOR CharacterBase::GetDir(const VECTOR& _vec) const
 {
 	return quaRot_.PosAxis(_vec);
+}
+
+const VECTOR CharacterBase::GetPos(void) const
+{
+	return pos_;
 }
