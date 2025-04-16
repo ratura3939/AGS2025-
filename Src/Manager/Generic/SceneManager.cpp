@@ -36,7 +36,8 @@ void SceneManager::Init(void)
 	fader_->Init();
 
 	// カメラ
-	Camera::CreateInstance();
+	camera_ = std::make_shared<Camera>();
+	camera_->Init();
 
 	scene_ = new Title();
 	scene_->Init();
@@ -102,7 +103,7 @@ void SceneManager::Update(void)
 	}
 
 	// カメラ更新
-	Camera::GetInstance().Update();
+	camera_->Update();
 
 }
 
@@ -116,6 +117,8 @@ void SceneManager::Draw(void)
 	// 画面を初期化
 	ClearDrawScreen();
 
+	//カメラ
+	camera_->SetBeforeDraw();
 
 	// 描画
 	scene_->Draw();
@@ -133,7 +136,7 @@ void SceneManager::Destroy(void)
 
 	delete fader_;
 
-	Camera::GetInstance().Relese();
+	camera_->Release();
 
 	delete instance_;
 
@@ -165,7 +168,7 @@ float SceneManager::GetDeltaTime(void) const
 
 Camera& SceneManager::GetCamera(void) const
 {
-	return Camera::GetInstance();
+	return *camera_;
 }
 
 const SceneManager::CNTL SceneManager::GetController(void) const

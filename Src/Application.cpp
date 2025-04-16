@@ -1,13 +1,14 @@
 #include <DxLib.h>
-#include "Manager/ResourceManager.h"
-#include "Manager/InputManager.h"
-#include "Manager/SceneManager.h"
+#include "Manager/Generic/ResourceManager.h"
+#include "Manager/Generic/InputManager.h"
+#include "Manager/Generic/SceneManager.h"
 #include "Application.h"
 
 Application* Application::instance_ = nullptr;
 
 const std::string Application::PATH_IMAGE = "Data/Image/";
 const std::string Application::PATH_MODEL = "Data/Model/";
+const std::string Application::PATH_CHARACTER = "Data/Model/Character/";
 const std::string Application::PATH_EFFECT = "Data/Effect/";
 
 void Application::CreateInstance(void)

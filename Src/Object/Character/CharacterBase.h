@@ -33,6 +33,7 @@ public:
 
 	//ˆÊ’uŽæ“¾
 	const VECTOR GetPos(void)const;
+	const Quaternion GetQua(void)const;
 protected:
 
 	int modelId_;	//ƒ‚ƒfƒ‹ID

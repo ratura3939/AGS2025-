@@ -1,5 +1,9 @@
 #pragma once
 #include "SceneBase.h"
+#include<memory>
+
+class PlayerManager;
+
 class Game :
     public SceneBase
 {
@@ -17,5 +21,6 @@ public:
 	void Release(void) override;
 
 private:
+	std::unique_ptr<PlayerManager>player_;
 };
 

@@ -2,10 +2,10 @@
 #include <DxLib.h>
 #include "../Application.h"
 #include "../Utility/Utility.h"
-#include "../Manager/ResourceManager.h"
-#include "../Manager/SceneManager.h"
-#include "../Manager/InputManager.h"
-#include "../Manager/Camera.h"
+#include "../Manager/Generic/ResourceManager.h"
+#include "../Manager/Generic/SceneManager.h"
+#include "../Manager/Generic/InputManager.h"
+#include "../Manager/Generic/Camera.h"
 #include "Title.h"
 
 Title::Title(void)

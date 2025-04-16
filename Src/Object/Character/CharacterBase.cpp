@@ -6,7 +6,7 @@ void CharacterBase::Init(void)
 	modelId_ = -1;
 
 	scl_ = Utility::VECTOR_ONE;
-	rot_ = Utility::VECTOR_ZERO;
+	rot_ = { 0.0f,0.0f,-1.0f };;
 	pos_ = Utility::VECTOR_ZERO;
 
 	matScl_ = MGetIdent();
@@ -16,6 +16,8 @@ void CharacterBase::Init(void)
 	quaRotLocal_ = Quaternion();
 
 	SetPram();
+	//モデル各種最終設定用に更新をかける
+	UpdateRotQuat();
 }
 
 void CharacterBase::SetPram(void)
@@ -26,7 +28,8 @@ void CharacterBase::SetPram(void)
 void CharacterBase::Draw(void)
 {
 	//描画処理
-	DrawSphere3D(pos_, 8, 10, 0xff0000, 0xff0000, true);
+	DrawSphere3D(pos_, 30, 10, 0xff0000, 0xff0000, false);
+	MV1DrawModel(modelId_);
 }
 
 void CharacterBase::Release(void)
@@ -97,4 +100,9 @@ VECTOR CharacterBase::GetDir(const VECTOR& _vec) const
 const VECTOR CharacterBase::GetPos(void) const
 {
 	return pos_;
+}
+
+const Quaternion CharacterBase::GetQua(void) const
+{
+	return quaRot_;
 }

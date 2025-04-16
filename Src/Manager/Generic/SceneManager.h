@@ -1,5 +1,6 @@
 #pragma once
 #include <chrono>
+#include<memory>
 class SceneBase;
 class Fader;
 class Camera;
@@ -66,6 +67,8 @@ private:
 	SCENE_ID sceneId_;
 	SCENE_ID waitSceneId_;
 	CNTL cntl_;
+
+	std::shared_ptr<Camera> camera_;
 
 	// フェード
 	Fader* fader_;

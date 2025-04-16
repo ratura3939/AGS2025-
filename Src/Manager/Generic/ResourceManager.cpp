@@ -38,10 +38,8 @@ void ResourceManager::InitGame(void)
 {
 	Resource res;
 
-	res = Resource(
-		Resource::TYPE::IMG,
-		Application::PATH_IMAGE + "player.png"
-	);
+	//ÉvÉåÉCÉÑÅ[
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Knight.mv1");
 	resourcesMap_.emplace(SRC::PLAYER, res);
 }
 
