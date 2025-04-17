@@ -51,12 +51,10 @@ void Camera::SetBeforeDraw(void)
 		break;
 	
 	case Camera::MODE::FOLLOW:
-		SetTargetPos(followObject_.pos);
 		SetBeforeDrawFollow();
 		break;
 
 	case Camera::MODE::FOLLOW_SPRING:
-		SetBeforeDrawFollowSpring();
 		break;
 
 	case Camera::MODE::SHAKE:
@@ -94,14 +92,17 @@ void Camera::SetBeforeDrawFree(void)
 
 void Camera::SetBeforeDrawFollow(void)
 {
+
+	ProcessMove();
+
 	//追従対象の位置
 	VECTOR followPos = followObject_.pos;
 
 	//追従対象の向き
 	Quaternion followRot = followObject_.quaRot;
 
-	//追従対象からカメラまでの相対座標
-	VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+	//追従対象からカメラまでの相対座標(カメラの回転情報をもとに相対座標を回転させる)
+	VECTOR relativeCPos = rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW);
 
 	//カメラ位置の更新
 	pos_ = VAdd(followPos, relativeCPos);
@@ -110,73 +111,10 @@ void Camera::SetBeforeDrawFollow(void)
 	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
 
 	//注視点の更新
-	targetPos_ = VAdd(pos_, relativeTPos);
+	//targetPos_ = VAdd(pos_, relativeTPos);
 
 	//カメラの上方向
 	cameraUp_ = followRot.PosAxis(rot_.GetUp());
-
-}
-
-void Camera::SetBeforeDrawFollowSpring(void)
-{
-	auto& ins = InputManager::GetInstance();
-
-	//Cキー押下でカメラを揺らす
-	if (ins.IsTrgDown(KEY_INPUT_C))
-	{
-		currentMode_ = mode_;
-		ChangeMode(MODE::SHAKE);
-	}
-
-	//ばね定数(ばねの強さ)
-	float POW_SPRING = 50.0f;
-
-	//ばね定数（ばねの抵抗）
-	float dampening = 2.0f * sqrt(POW_SPRING);
-
-	//デルタタイム
-	float delta = SceneManager::GetInstance().GetDeltaTime();
-
-	//3D酔いする人用
-	//delta = 1.0f / 60.0f;
-
-	//追従対象の位置
-	VECTOR followPos = followObject_.pos;
-
-	//追従対象の向き
-	Quaternion followRot = followObject_.quaRot;
-	VECTOR zero = { 0.0f,0.0f,0.0f };
-
-	//カメラの方向を固定する用
-	Quaternion forward = Quaternion::Euler(zero);
-
-	//追従対象からカメラまでの相対座標
-	VECTOR relativeCPos = forward.PosAxis(RELATIVE_F2C_POS_FOLLOW);
-
-	//理想位置
-	VECTOR idealPos = VAdd(followPos, relativeCPos);
-
-	//実際と理想の差
-	VECTOR diff = VSub(pos_, idealPos);
-
-	//力 = -バネの強さ × バネの伸び - 抵抗 × カメラの速度
-	VECTOR force = VScale(diff, -POW_SPRING);
-	force = VSub(force, VScale(velocity_, dampening));
-
-	//速度の更新
-	velocity_ = VAdd(velocity_, VScale(force, delta));
-
-	//カメラ位置の更新
-	pos_ = VAdd(pos_, VScale(velocity_, delta));
-
-	//カメラ位置から注視点までの相対座標
-	VECTOR relativeTPos = forward.PosAxis(RELATIVE_C2T_POS);
-
-	//注視点の更新
-	targetPos_ = VAdd(pos_, relativeTPos);
-
-	//カメラの上方向
-	cameraUp_ = forward.PosAxis(rot_.GetUp());
 
 }
 
@@ -282,6 +220,12 @@ void Camera::SetTargetPos(const VECTOR& _target)
 	targetPos_ = _target;
 }
 
+void Camera::DrawDebug(void)
+{
+	DrawFormatString(0, 0, 0xffffff, "cPOS={%.1f,%.1f,%.1f}\ncROT={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
+	DrawSphere3D(targetPos_, 8, 10, 0x00ff00, 0x00ff00, false);
+}
+
 void Camera::SetDefault(void)
 {
 
@@ -306,12 +250,12 @@ void Camera::ProcessMove(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	//移動
-	//moveDir = AsoUtility::VECTOR_ZERO;
-	if (ins.IsNew(KEY_INPUT_W)) { moveDir = Utility::DIR_F; Accele(MOVE_ACC); }
-	if (ins.IsNew(KEY_INPUT_S)) { moveDir = Utility::DIR_B; Accele(MOVE_ACC); }
-	if (ins.IsNew(KEY_INPUT_A)) { moveDir = Utility::DIR_L; Accele(MOVE_ACC); }
-	if (ins.IsNew(KEY_INPUT_D)) { moveDir = Utility::DIR_R; Accele(MOVE_ACC); }
+	////移動
+	////moveDir = AsoUtility::VECTOR_ZERO;
+	//if (ins.IsNew(KEY_INPUT_W)) { moveDir = Utility::DIR_F; Accele(MOVE_ACC); }
+	//if (ins.IsNew(KEY_INPUT_S)) { moveDir = Utility::DIR_B; Accele(MOVE_ACC); }
+	//if (ins.IsNew(KEY_INPUT_A)) { moveDir = Utility::DIR_L; Accele(MOVE_ACC); }
+	//if (ins.IsNew(KEY_INPUT_D)) { moveDir = Utility::DIR_R; Accele(MOVE_ACC); }
 
 	//回転軸と量を決める
 	const float ROT_POW = 1.0f;
@@ -344,7 +288,7 @@ void Camera::ProcessMove(void)
 		VECTOR rotLocalPos = rot_.PosAxis(RELATIVE_C2T_POS);
 
 		//注視点更新
-		targetPos_ = VAdd(pos_, rotLocalPos);
+		//targetPos_ = VAdd(pos_, rotLocalPos);
 
 		//カメラの上方向更新
 		cameraUp_ = rot_.GetUp();

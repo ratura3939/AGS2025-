@@ -106,3 +106,7 @@ const Quaternion CharacterBase::GetQua(void) const
 {
 	return quaRot_;
 }
+
+void CharacterBase::DrawDebug(void)
+{
+}

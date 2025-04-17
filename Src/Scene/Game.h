@@ -21,6 +21,9 @@ public:
 	void Release(void) override;
 
 private:
+
 	std::unique_ptr<PlayerManager>player_;
+
+	void DrawDebug(void);
 };
 

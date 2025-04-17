@@ -18,7 +18,9 @@ public:
 
 	const VECTOR GetPos(void);
 	const Quaternion GetQua(void);
+	const VECTOR GetFocusPoint(void);
 
+	void DrawDebug(void);
 private:
 	std::unique_ptr<PlayerChara> character_;
 };

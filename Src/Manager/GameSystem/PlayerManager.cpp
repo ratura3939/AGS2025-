@@ -40,3 +40,13 @@ const Quaternion PlayerManager::GetQua(void)
 {
 	return character_->GetQua();
 }
+
+const VECTOR PlayerManager::GetFocusPoint(void)
+{
+	return character_->GetFocusPoint();
+}
+
+void PlayerManager::DrawDebug(void)
+{
+	character_->DrawDebug();
+}

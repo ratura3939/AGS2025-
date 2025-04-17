@@ -10,12 +10,25 @@ void PlayerChara::SetPram(void)
 
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(180.0f),0.0f);
+
+	//íçéãì_ÇÃê›íË
+	focusPoint_ = FOCUS_NOMAL;
 }
 
 void PlayerChara::Update(void)
 {
 	Move();
 	UpdateRotQuat();
+}
+
+const VECTOR PlayerChara::GetFocusPoint(void) const
+{
+	return VAdd(pos_, focusPoint_);
+}
+
+void PlayerChara::DrawDebug(void)
+{
+	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
 }
 
 void PlayerChara::Move(void)
