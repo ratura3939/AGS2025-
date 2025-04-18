@@ -5,7 +5,6 @@ class CharacterBase
 {
 public:
 	void Init(void);
-	virtual void SetPram(void);
 	virtual void Update(void) = 0;
 	virtual void Draw(void);
 	virtual void Release(void);
@@ -37,6 +36,8 @@ public:
 
 	virtual void DrawDebug(void);
 protected:
+
+	virtual void SetPram(void);
 
 	int modelId_;	//ÉÇÉfÉãID
 	VECTOR pos_;	//ç¿ïW

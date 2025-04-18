@@ -93,7 +93,7 @@ void Camera::SetBeforeDrawFree(void)
 void Camera::SetBeforeDrawFollow(void)
 {
 
-	ProcessMove();
+	Rotation();
 
 	//追従対象の位置
 	VECTOR followPos = followObject_.pos;
@@ -250,49 +250,14 @@ void Camera::ProcessMove(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	////移動
-	////moveDir = AsoUtility::VECTOR_ZERO;
-	//if (ins.IsNew(KEY_INPUT_W)) { moveDir = Utility::DIR_F; Accele(MOVE_ACC); }
-	//if (ins.IsNew(KEY_INPUT_S)) { moveDir = Utility::DIR_B; Accele(MOVE_ACC); }
-	//if (ins.IsNew(KEY_INPUT_A)) { moveDir = Utility::DIR_L; Accele(MOVE_ACC); }
-	//if (ins.IsNew(KEY_INPUT_D)) { moveDir = Utility::DIR_R; Accele(MOVE_ACC); }
+	//移動
+	//moveDir = AsoUtility::VECTOR_ZERO;
+	if (ins.IsNew(KEY_INPUT_W)) { moveDir = Utility::DIR_F; Accele(MOVE_ACC); }
+	if (ins.IsNew(KEY_INPUT_S)) { moveDir = Utility::DIR_B; Accele(MOVE_ACC); }
+	if (ins.IsNew(KEY_INPUT_A)) { moveDir = Utility::DIR_L; Accele(MOVE_ACC); }
+	if (ins.IsNew(KEY_INPUT_D)) { moveDir = Utility::DIR_R; Accele(MOVE_ACC); }
 
-	//回転軸と量を決める
-	const float ROT_POW = 1.0f;
-	VECTOR axisDeg = Utility::VECTOR_ZERO;
-	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x = -1.0f; }
-	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x = 1.0f; }
-	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y = -1.0f; }
-	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y = 1.0f; }
-
-
-	//カメラ座標を中心として、注視点を回転させる
-	if (!Utility::EqualsVZero(axisDeg))
-	{
-		//今回の回転量を合成
-		Quaternion rotPow;
-		rotPow = rotPow.Mult(
-			Quaternion::AngleAxis(
-				Utility::Deg2RadF(axisDeg.z), Utility::AXIS_Z));
-		rotPow = rotPow.Mult(
-			Quaternion::AngleAxis(
-				Utility::Deg2RadF(axisDeg.x), Utility::AXIS_X));
-		rotPow = rotPow.Mult(
-			Quaternion::AngleAxis(
-				Utility::Deg2RadF(axisDeg.y), Utility::AXIS_Y));
-
-		//カメラの回転の今回の回転量を加える（合成）
-		rot_ = rot_.Mult(rotPow);
-
-		//注視点の相対座標を回転させる
-		VECTOR rotLocalPos = rot_.PosAxis(RELATIVE_C2T_POS);
-
-		//注視点更新
-		//targetPos_ = VAdd(pos_, rotLocalPos);
-
-		//カメラの上方向更新
-		cameraUp_ = rot_.GetUp();
-	}
+	Rotation();
 }
 
 void Camera::Move(void)
@@ -314,6 +279,48 @@ void Camera::Move(void)
 		pos_ = VAdd(pos_, movePow);
 
 		targetPos_ = VAdd(targetPos_, movePow);
+	}
+}
+
+void Camera::Rotation(void)
+{
+	auto& ins = InputManager::GetInstance();
+	//回転軸と量を決める
+	const float ROT_POW = 1.0f;
+	VECTOR axisDeg = Utility::VECTOR_ZERO;
+	/*if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x = -1.0f; }
+	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x = 1.0f; }*/
+	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y = -1.0f; }
+	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y = 1.0f; }
+
+
+	//カメラ座標を中心として、注視点を回転させる
+	if (!Utility::EqualsVZero(axisDeg))
+	{
+		//今回の回転量を合成
+		//今回はY軸のみの回転
+		Quaternion rotPow;
+		/*	rotPow = rotPow.Mult(
+				Quaternion::AngleAxis(
+					Utility::Deg2RadF(axisDeg.z), Utility::AXIS_Z));
+			rotPow = rotPow.Mult(
+				Quaternion::AngleAxis(
+					Utility::Deg2RadF(axisDeg.x), Utility::AXIS_X));*/
+		rotPow = rotPow.Mult(
+			Quaternion::AngleAxis(
+				Utility::Deg2RadF(axisDeg.y), Utility::AXIS_Y));
+
+		//カメラの回転の今回の回転量を加える（合成）
+		rot_ = rot_.Mult(rotPow);
+
+		//注視点の相対座標を回転させる
+		//VECTOR rotLocalPos = rot_.PosAxis(RELATIVE_C2T_POS);
+
+		//注視点更新
+		//targetPos_ = VAdd(pos_, rotLocalPos);
+
+		//カメラの上方向更新
+		cameraUp_ = rot_.GetUp();
 	}
 }
 

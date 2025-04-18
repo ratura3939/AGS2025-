@@ -117,6 +117,9 @@ private:
 	//カメラの位置
 	VECTOR pos_;
 
+	//ロックオン対象の位置
+	VECTOR rockPos_;
+
 	//カメラの注視点
 	VECTOR targetPos_;
 
@@ -156,6 +159,9 @@ private:
 
 	//移動
 	void Move(void);
+
+	//回転
+	void Rotation(void);
 
 	//加速
 	void Accele(float speed);

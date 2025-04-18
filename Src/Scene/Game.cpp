@@ -24,6 +24,7 @@ void Game::Init(void)
 	camera.ChangeMode(Camera::MODE::FOLLOW);
 	//カメラにプレイヤーの設定する
 	camera.SetFollow(player_->GetPos(), player_->GetQua());
+	camera.SetTargetPos(player_->GetFocusPoint());
 }
 
 void Game::Update(void)

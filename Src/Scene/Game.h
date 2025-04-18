@@ -3,6 +3,7 @@
 #include<memory>
 
 class PlayerManager;
+class EnemyManager;
 
 class Game :
     public SceneBase
@@ -23,6 +24,7 @@ public:
 private:
 
 	std::unique_ptr<PlayerManager>player_;
+	std::unique_ptr<EnemyManager>enemy_;
 
 	void DrawDebug(void);
 };

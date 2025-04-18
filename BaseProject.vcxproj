@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerChara.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\EnemyManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\PlayerManager.cpp" />
@@ -43,6 +44,7 @@
     <ClCompile Include="Src\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy\EnemyBase.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerChara.h" />
     <ClInclude Include="Src\Manager\GameSystem\EnemyManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\PlayerManager.h" />
