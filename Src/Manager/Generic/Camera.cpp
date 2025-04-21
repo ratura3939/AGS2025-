@@ -54,6 +54,10 @@ void Camera::SetBeforeDraw(void)
 		SetBeforeDrawFollow();
 		break;
 
+	case Camera::MODE::ROCKON:
+		SetBeforeDrawRockOn();
+		break;
+
 	case Camera::MODE::FOLLOW_SPRING:
 		break;
 
@@ -116,6 +120,20 @@ void Camera::SetBeforeDrawFollow(void)
 	//ƒJƒƒ‰‚Ìã•ûŒü
 	cameraUp_ = followRot.PosAxis(rot_.GetUp());
 
+}
+
+void Camera::SetBeforeDrawRockOn(void)
+{
+	Rotation();
+
+	//’Ç]‘ÎÛ‚ÌˆÊ’u
+	VECTOR followPos = followObject_.pos;
+
+	//’Ç]‘ÎÛ‚ÌŒü‚«
+	Quaternion followRot = followObject_.quaRot;
+
+	//ƒJƒƒ‰‚Ìã•ûŒü
+	cameraUp_ = followRot.PosAxis(rot_.GetUp());
 }
 
 void Camera::SetBeforeDrawShake(void)
@@ -218,6 +236,11 @@ void Camera::SetPos(const VECTOR& pos, const VECTOR& target)
 void Camera::SetTargetPos(const VECTOR& _target)
 {
 	targetPos_ = _target;
+}
+
+const Camera::MODE Camera::GetMode(void)
+{
+	return mode_;
 }
 
 void Camera::DrawDebug(void)

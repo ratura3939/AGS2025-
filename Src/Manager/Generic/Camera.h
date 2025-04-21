@@ -55,7 +55,8 @@ public:
 		FREE,			//フリーモード
 		FOLLOW,			//追従モード
 		FOLLOW_SPRING,	//ばね付き追従モード
-		SHAKE			//カメラ揺らし
+		SHAKE,			//カメラ揺らし
+		ROCKON,			//ロックオン
 	};
 
 	struct FOR_FOLLOW_INFO
@@ -82,6 +83,7 @@ public:
 	void SetBeforeDrawFixedPoint(void);		//定点カメラ
 	void SetBeforeDrawFree(void);			//フリーカメラ
 	void SetBeforeDrawFollow(void);			//追従カメラ
+	void SetBeforeDrawRockOn(void);			//追従カメラ
 	void SetBeforeDrawShake(void);			//カメラシェイク
 
 	//----------------------------------------
@@ -103,6 +105,8 @@ public:
 
 	void SetPos(const VECTOR& pos,const VECTOR& target);
 	void SetTargetPos(const VECTOR& _target);
+
+	const MODE GetMode(void);
 
 	void DrawDebug(void);
 private:

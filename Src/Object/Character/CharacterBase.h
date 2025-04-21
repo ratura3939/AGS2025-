@@ -9,22 +9,12 @@ public:
 	virtual void Draw(void);
 	virtual void Release(void);
 
-	// 前方方向を取得
+	// 各種方向を取得
 	VECTOR GetForward(void) const;
-
-	// 後方方向を取得
 	VECTOR GetBack(void) const;
-
-	// 右方向を取得
 	VECTOR GetRight(void) const;
-
-	// 左方向を取得
 	VECTOR GetLeft(void) const;
-
-	// 上方向を取得
 	VECTOR GetUp(void) const;
-
-	// 下方向を取得
 	VECTOR GetDown(void) const;
 
 	// 対象方向を取得
@@ -32,11 +22,12 @@ public:
 
 	//位置取得
 	const VECTOR GetPos(void)const;
+	//回転情報の取得
 	const Quaternion GetQua(void)const;
 
 	virtual void DrawDebug(void);
 protected:
-
+	//固有データ書き出し用
 	virtual void SetPram(void);
 
 	int modelId_;	//モデルID

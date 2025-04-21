@@ -3,6 +3,7 @@
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
 
+class Game;
 class PlayerChara;
 
 class PlayerManager
@@ -19,6 +20,15 @@ public:
 	const VECTOR GetPos(void);
 	const Quaternion GetQua(void);
 	const VECTOR GetFocusPoint(void);
+
+	//ロックオンのトリガ
+	//デバッグではただプレイヤーが持っている感を出しているだけ
+	const bool IsRockOnTrg(void)const;
+	const bool IsRockOffTrg(void)const;
+
+	//ロックオン・オフ時に必要な処理
+	void RockOn(void);
+	void RockOff(void);
 
 	void DrawDebug(void);
 private:

@@ -11,6 +11,8 @@ void PlayerChara::SetPram(void)
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(180.0f),0.0f);
 
+	rState_ = ROCK_STATE::ROCKON;
+
 	//íçéãì_ÇÃê›íË
 	focusPoint_ = FOCUS_NOMAL;
 }
@@ -24,6 +26,12 @@ void PlayerChara::Update(void)
 const VECTOR PlayerChara::GetFocusPoint(void) const
 {
 	return VAdd(pos_, focusPoint_);
+}
+
+void PlayerChara::ChangeRockState(const bool _state)
+{
+	if (_state)rState_ = ROCK_STATE::ROCKON;
+	else rState_ = ROCK_STATE::NOMAL;
 }
 
 void PlayerChara::DrawDebug(void)

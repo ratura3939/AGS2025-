@@ -1,4 +1,6 @@
 #include"../../Object/Character/Enemy/EnemyBase.h"
+#include"../../Utility/Utility.h"
+#include"../../Application.h"
 #include "EnemyManager.h"
 
 EnemyManager::EnemyManager(void)
@@ -11,35 +13,75 @@ EnemyManager::~EnemyManager(void)
 
 void EnemyManager::Init(void)
 {
-	character_ = std::make_unique<EnemyBase>();
-	character_->Init();
+	for (int i = 0; i < ENEMY_NUM; i++) {
+		std::unique_ptr enemy = std::make_unique<EnemyBase>();
+		enemy->Init();
+		characters_.push_back(std::move(enemy));
+	}
+
+	//デバッグ用
+	characters_[0]->SetColor(0x00ff00);
+	characters_[1]->SetColor(0x00ffff);
+	characters_[1]->SetPos({ 500.0f,0.0f,1000.0f });
 }
 
 void EnemyManager::Update(void)
 {
-	character_->Update();
+	for (int i = 0; i < ENEMY_NUM; i++) characters_[i]->Update();
 }
 
 void EnemyManager::Draw(void)
 {
-	character_->Draw();
+	for (int i = 0; i < ENEMY_NUM; i++) characters_[i]->Draw();
 }
 
 void EnemyManager::Release(void)
 {
-	character_->Release();
+	for (int i = 0; i < ENEMY_NUM; i++) characters_[i]->Release();
 }
 
-const VECTOR EnemyManager::GetPos(void)
+const VECTOR EnemyManager::GetPos(const int _num)
 {
-	return character_->GetPos();;
+	return characters_[_num]->GetPos();;
 }
 
-const Quaternion EnemyManager::GetQua(void)
+const Quaternion EnemyManager::GetQua(const int _num)
 {
-	return character_->GetQua();;
+	return characters_[_num]->GetQua();;
+}
+
+int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
+{
+	int nearNum = -1;
+	VECTOR distance = Utility::VECTOR_ZERO;
+	double min = 100000.0;
+
+	for (int i = 1; i < ENEMY_NUM; i++) {
+		if (!InsideScreen(characters_[i]->GetPos()))continue;
+
+		distance = VSub(characters_[i]->GetPos(), _pPos);
+		if (min > Utility::MagnitudeF(distance)) {
+			nearNum = i;
+			min = Utility::MagnitudeF(distance);
+		}
+	}
+
+	return nearNum;
+}
+
+bool EnemyManager::InsideScreen(const VECTOR _pos)
+{
+	VECTOR screenPos = ConvWorldPosToScreenPos(_pos);
+	if (screenPos.x > 0.0f && screenPos.x < Application::SCREEN_SIZE_X &&
+		screenPos.y>0.0f && screenPos.y < Application::SCREEN_SIZE_Y) 
+	{
+		return true;
+	}
+	return false;
 }
 
 void EnemyManager::DrawDebug(void)
 {
+	VECTOR pos = ConvWorldPosToScreenPos(characters_[0]->GetPos());
+	DrawFormatString(0, 80, 0xffffff, "SCPOS={%.1f,%.1f}", pos.x, pos.y);
 }

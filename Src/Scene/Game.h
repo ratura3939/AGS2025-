@@ -10,10 +10,7 @@ class Game :
 {
 public:
 
-	// コンストラクタ
 	Game(void);
-
-	// デストラクタ
 	~Game(void);
 
 	void Init(void) override;
@@ -21,10 +18,12 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
+	void DecideRockEnemy(void);
 private:
 
 	std::unique_ptr<PlayerManager>player_;
 	std::unique_ptr<EnemyManager>enemy_;
+	int nearEnemyNum_;
 
 	void DrawDebug(void);
 };
