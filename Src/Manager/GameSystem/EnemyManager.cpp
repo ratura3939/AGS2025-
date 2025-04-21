@@ -57,8 +57,10 @@ int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
 	double min = 100000.0;
 
 	for (int i = 1; i < ENEMY_NUM; i++) {
+		//画面内にいないときはつぎへ
 		if (!InsideScreen(characters_[i]->GetPos()))continue;
 
+		//距離比較
 		distance = VSub(characters_[i]->GetPos(), _pPos);
 		if (min > Utility::MagnitudeF(distance)) {
 			nearNum = i;
@@ -71,7 +73,9 @@ int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
 
 bool EnemyManager::InsideScreen(const VECTOR _pos)
 {
+	//ワールド座標をスクリーン座標に変換
 	VECTOR screenPos = ConvWorldPosToScreenPos(_pos);
+	//画面内にいるか
 	if (screenPos.x > 0.0f && screenPos.x < Application::SCREEN_SIZE_X &&
 		screenPos.y>0.0f && screenPos.y < Application::SCREEN_SIZE_Y) 
 	{
