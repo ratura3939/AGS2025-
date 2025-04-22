@@ -9,9 +9,20 @@
 Camera::Camera(void)
 {
 	mode_ = MODE::NONE;
+	currentMode_ = MODE::NONE;
 	pos_ = { 0.0f, 0.0f, 0.0f };
-	targetPos_ = { 0.0f, 0.0f, 0.0f };
+	focusPos_ = { 0.0f, 0.0f, 0.0f };
 	rot_ = Quaternion::Identity();
+
+	stepReset_ = 0.0f;
+	isReset_ = true;
+
+	followObject_.pos = { 0.0f, 0.0f, 0.0f };
+	followObject_.quaRot = Quaternion::Identity();
+	start_.pos = { 0.0f, 0.0f, 0.0f };
+	start_.quaRot = Quaternion::Identity();
+	goal_.pos = { 0.0f, 0.0f, 0.0f };
+	goal_.quaRot = Quaternion::Identity();
 }
 
 Camera::~Camera(void)
@@ -39,37 +50,41 @@ void Camera::SetBeforeDraw(void)
 
 	switch (mode_)
 	{
-	case Camera::MODE::NONE:
+	case MODE::NONE:
 		SetBeforeDrawFollow();
 		break;
 
-	case Camera::MODE::FIXED_POINT:
+	case MODE::FIXED_POINT:
 		SetBeforeDrawFixedPoint();
 		break;
-	case Camera::MODE::FREE:
+	case MODE::FREE:
 		SetBeforeDrawFree();
 		break;
 	
-	case Camera::MODE::FOLLOW:
+	case MODE::FOLLOW:
 		SetBeforeDrawFollow();
 		break;
 
-	case Camera::MODE::ROCKON:
+	case MODE::ROCKON:
 		SetBeforeDrawRockOn();
 		break;
 
-	case Camera::MODE::FOLLOW_SPRING:
+	case MODE::FOLLOW_SPRING:
 		break;
 
-	case Camera::MODE::SHAKE:
+	case MODE::SHAKE:
 		SetBeforeDrawShake();
+		break;
+
+	case MODE::RESET:
+		SetBeforeDrawReset();
 		break;
 	}
 
 	//カメラの設定(位置と注視点による制御)
 	SetCameraPositionAndTargetAndUpVec(
 		pos_, 
-		targetPos_, 
+		focusPos_,
 		cameraUp_
 	);
 
@@ -105,6 +120,11 @@ void Camera::SetBeforeDrawFollow(void)
 	//追従対象の向き
 	Quaternion followRot = followObject_.quaRot;
 
+
+	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_N)) {
+		ChangeMode(MODE::RESET);
+	}
+
 	//追従対象からカメラまでの相対座標(カメラの回転情報をもとに相対座標を回転させる)
 	VECTOR relativeCPos = rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW);
 
@@ -124,6 +144,7 @@ void Camera::SetBeforeDrawFollow(void)
 
 void Camera::SetBeforeDrawRockOn(void)
 {
+
 	Rotation();
 
 	//追従対象の位置
@@ -179,6 +200,20 @@ void Camera::SetBeforeDrawShake(void)
 
 }
 
+void Camera::SetBeforeDrawReset(void)
+{
+	stepReset_ += RESET_STEP;
+	//終了条件
+	if (stepReset_ >= RESET_TIME) {
+		ChangeMode(currentMode_);
+		isReset_ = true;
+		return;
+	}
+
+	rot_ = Quaternion::Slerp(start_.quaRot, goal_.quaRot, stepReset_);
+	pos_ = Utility::Lerp(start_.pos, goal_.pos, stepReset_);
+}
+
 void Camera::Draw(void)
 {
 }
@@ -199,24 +234,35 @@ void Camera::ChangeMode(MODE mode)
 	//カメラを揺らす前の位置で揺れるようにしたいため外している
 	//SetDefault();
 	
+	if (mode == MODE::RESET)currentMode_ = mode_;
+
 	//カメラモードの変更
   	mode_ = mode;
+
+	isReset_ = false;
 
 	//変更時の初期化処理
 	switch (mode_)
 	{
-	case Camera::MODE::FIXED_POINT:
+	case MODE::FIXED_POINT:
 		break;
-	case Camera::MODE::FREE:
+	case MODE::FREE:
 		break;
-	case Camera::MODE::FOLLOW:
+	case MODE::FOLLOW:
 		break;
-	case Camera::MODE::FOLLOW_SPRING:
+	case MODE::FOLLOW_SPRING:
 		break;
-	case Camera::MODE::SHAKE:
+	case MODE::SHAKE:
 		stepShake_ = TIME_SHAKE;
 		shakeDir_ = VNorm({ 0.7f, 0.7f ,0.0f });
 		defaultPos_ = pos_;
+	case MODE::RESET:
+		stepReset_ = 0.0f;
+		start_.pos = pos_;
+		start_.quaRot = rot_;
+		goal_.pos = VAdd(followObject_.pos, RELATIVE_F2C_POS_FOLLOW);
+		goal_.quaRot = followObject_.quaRot;
+		break;
 	}
 
 }
@@ -230,12 +276,12 @@ void Camera::SetFollow(const VECTOR _pos, const Quaternion _qua)
 void Camera::SetPos(const VECTOR& pos, const VECTOR& target)
 {
 	pos_ = pos;
-	targetPos_ = target;
+	focusPos_ = target;
 }
 
-void Camera::SetTargetPos(const VECTOR& _target)
+void Camera::SetFocusPos(const VECTOR& _focus)
 {
-	targetPos_ = _target;
+	focusPos_ = _focus;
 }
 
 const Camera::MODE Camera::GetMode(void)
@@ -246,7 +292,7 @@ const Camera::MODE Camera::GetMode(void)
 void Camera::DrawDebug(void)
 {
 	DrawFormatString(0, 0, 0xffffff, "cPOS={%.1f,%.1f,%.1f}\ncROT={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
-	DrawSphere3D(targetPos_, 8, 10, 0x00ff00, 0x00ff00, false);
+	DrawSphere3D(focusPos_, 8, 10, 0x00ff00, 0x00ff00, false);
 }
 
 void Camera::SetDefault(void)
@@ -256,7 +302,7 @@ void Camera::SetDefault(void)
 	pos_ = DEFAULT_CAMERA_POS;
 
 	//注視点
-	targetPos_ = VAdd(pos_, RELATIVE_C2T_POS);
+	focusPos_ = VAdd(pos_, RELATIVE_C2T_POS);
 
 	//カメラの上方向
 	cameraUp_ = { 0.0f, 1.0f, 0.0f };
@@ -301,7 +347,7 @@ void Camera::Move(void)
 		//移動処理
 		pos_ = VAdd(pos_, movePow);
 
-		targetPos_ = VAdd(targetPos_, movePow);
+		focusPos_ = VAdd(focusPos_, movePow);
 	}
 }
 

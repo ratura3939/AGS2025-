@@ -56,7 +56,7 @@ int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
 	VECTOR distance = Utility::VECTOR_ZERO;
 	double min = 100000.0;
 
-	for (int i = 1; i < ENEMY_NUM; i++) {
+	for (int i = 0; i < ENEMY_NUM; i++) {
 		//‰æ–Ê“à‚É‚¢‚È‚¢‚Æ‚«‚Í‚Â‚¬‚Ö
 		if (!InsideScreen(characters_[i]->GetPos()))continue;
 

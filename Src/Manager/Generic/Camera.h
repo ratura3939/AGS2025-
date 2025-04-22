@@ -47,6 +47,10 @@ public:
 
 	static constexpr float SPEED_SHAKE = 40.0f;		//スピード
 
+	//リセット関係
+	static constexpr float RESET_TIME = 1.0f;
+	static constexpr float RESET_STEP = 0.02f;
+
 	//カメラモード
 	enum class MODE
 	{
@@ -57,6 +61,7 @@ public:
 		FOLLOW_SPRING,	//ばね付き追従モード
 		SHAKE,			//カメラ揺らし
 		ROCKON,			//ロックオン
+		RESET,			//リセット用
 	};
 
 	struct FOR_FOLLOW_INFO
@@ -83,8 +88,9 @@ public:
 	void SetBeforeDrawFixedPoint(void);		//定点カメラ
 	void SetBeforeDrawFree(void);			//フリーカメラ
 	void SetBeforeDrawFollow(void);			//追従カメラ
-	void SetBeforeDrawRockOn(void);			//追従カメラ
+	void SetBeforeDrawRockOn(void);			//ロックオンカメラ
 	void SetBeforeDrawShake(void);			//カメラシェイク
+	void SetBeforeDrawReset(void);			//カメラリセット
 
 	//----------------------------------------
 
@@ -103,8 +109,8 @@ public:
 	//追従対象の設定
 	void SetFollow(const VECTOR _pos,const Quaternion _qua);
 
-	void SetPos(const VECTOR& pos,const VECTOR& target);
-	void SetTargetPos(const VECTOR& _target);
+	void SetPos(const VECTOR& pos,const VECTOR& focus);
+	void SetFocusPos(const VECTOR& _focus);
 
 	const MODE GetMode(void);
 
@@ -113,10 +119,15 @@ private:
 
 	//追従対象
 	FOR_FOLLOW_INFO followObject_;
+	//開始・目標位置(リセット時などに使用)
+	FOR_FOLLOW_INFO start_;
+	FOR_FOLLOW_INFO goal_;
+	float stepReset_;
+	bool isReset_;
 
 	//カメラモード
 	MODE mode_;			
-	MODE currentMode_;	//Shakeモードに遷移する際に現在のモード保存するための変数
+	MODE currentMode_;	//Shake・Resetに遷移する際に現在の物を保存する
 
 	//カメラの位置
 	VECTOR pos_;
@@ -125,7 +136,7 @@ private:
 	VECTOR rockPos_;
 
 	//カメラの注視点
-	VECTOR targetPos_;
+	VECTOR focusPos_;
 
 	//カメラの上方向
 	VECTOR cameraUp_;

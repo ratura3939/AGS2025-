@@ -26,7 +26,7 @@ void Game::Init(void)
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
 	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
-	camera.SetTargetPos(player_->GetFocusPoint());				//注視点
+	camera.SetFocusPos(player_->GetFocusPoint());				//注視点
 }
 
 void Game::Update(void)
@@ -53,7 +53,7 @@ void Game::Update(void)
 	//ロックオン時は注視点は処理で勝手に更新する
 	//そのため敵の位置情報だけを受け渡す
 	Camera::MODE mode = camera.GetMode();
-	if (mode == Camera::MODE::FOLLOW)camera.SetTargetPos(player_->GetFocusPoint());//注視点の更新
+	if (mode == Camera::MODE::FOLLOW)camera.SetFocusPos(player_->GetFocusPoint());//注視点の更新
 	else if (mode == Camera::MODE::ROCKON)enemy_->GetPos(nearEnemyNum_);
 	
 }
