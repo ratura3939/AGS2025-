@@ -12,6 +12,7 @@ Camera::Camera(void)
 	currentMode_ = MODE::NONE;
 	pos_ = { 0.0f, 0.0f, 0.0f };
 	focusPos_ = { 0.0f, 0.0f, 0.0f };
+	rockPos_ = { 0.0f, 0.0f, 0.0f };
 	rot_ = Quaternion::Identity();
 
 	stepReset_ = 0.0f;
@@ -34,7 +35,6 @@ void Camera::Init(void)
 	//カメラの初期設定
 	SetDefault();
 
-	moveSpeed_ = 0.0f;
 
 }
 
@@ -99,13 +99,7 @@ void Camera::SetBeforeDrawFixedPoint(void)
 
 void Camera::SetBeforeDrawFree(void)
 {
-	auto& ins = InputManager::GetInstance();
-
-	ProcessMove();
-
-	Decelerate(MOVE_DEC);
-
-	Move();
+	Rotation();
 
 }
 
@@ -145,6 +139,9 @@ void Camera::SetBeforeDrawFollow(void)
 void Camera::SetBeforeDrawRockOn(void)
 {
 
+	//TODO
+	//違和感が残っているので後で見直す
+
 	Rotation();
 
 	//追従対象の位置
@@ -152,9 +149,38 @@ void Camera::SetBeforeDrawRockOn(void)
 
 	//追従対象の向き
 	Quaternion followRot = followObject_.quaRot;
+	//離れている距離
+	VECTOR distance = VSub(rockPos_,followPos);
+
+
+	//追従対象からカメラまでの相対座標(カメラの回転情報をもとに相対座標を回転させる)
+	float disMag = Utility::MagnitudeF(distance);
+
+	VECTOR relative = { 0.0f,disMag*0.25f,-disMag};
+
+	VECTOR relativeCPos = rot_.PosAxis(relative);
+
+	//カメラ位置の更新
+	pos_ = VAdd(focusPos_, relativeCPos);
+
+	if (pos_.y < UNDERLIMIT_Y)pos_.y = UNDERLIMIT_Y;
+
+
+	//注視点の更新
+	//ロックオン中の注視点は追従対象とロックオン対象の中間地点にある。
+	focusPos_ = followRot.PosAxis(VAdd(followPos,VScale(distance, 0.5f)));
 
 	//カメラの上方向
 	cameraUp_ = followRot.PosAxis(rot_.GetUp());
+	//cameraUp_ = followRot.PosAxis(Quaternion::Identity().GetUp());
+
+	//初動時のみに発動する
+	//カメラの初期ゴールを計算結果で算出した場所にする
+	if (!isReset_) {
+		ChangeMode(MODE::RESET);
+		goal_.pos = pos_;
+		goal_.quaRot = followObject_.quaRot;
+	}
 }
 
 void Camera::SetBeforeDrawShake(void)
@@ -284,6 +310,11 @@ void Camera::SetFocusPos(const VECTOR& _focus)
 	focusPos_ = _focus;
 }
 
+void Camera::SetRockPos(const VECTOR& _rock)
+{
+	rockPos_ = _rock;
+}
+
 const Camera::MODE Camera::GetMode(void)
 {
 	return mode_;
@@ -292,6 +323,7 @@ const Camera::MODE Camera::GetMode(void)
 void Camera::DrawDebug(void)
 {
 	DrawFormatString(0, 0, 0xffffff, "cPOS={%.1f,%.1f,%.1f}\ncROT={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
+	DrawFormatString(0, 100, 0xffffff, "FCPOS={%.1f,%.1f,%.1f}", focusPos_.x, focusPos_.y, focusPos_.z);
 	DrawSphere3D(focusPos_, 8, 10, 0x00ff00, 0x00ff00, false);
 }
 
@@ -311,44 +343,6 @@ void Camera::SetDefault(void)
 	//この傾いた状態を角度ゼロ、傾き無しとする
 	rot_ = Quaternion::Identity();
 
-	velocity_ = Utility::VECTOR_ZERO;
-
-}
-
-void Camera::ProcessMove(void)
-{
-	auto& ins = InputManager::GetInstance();
-
-	//移動
-	//moveDir = AsoUtility::VECTOR_ZERO;
-	if (ins.IsNew(KEY_INPUT_W)) { moveDir = Utility::DIR_F; Accele(MOVE_ACC); }
-	if (ins.IsNew(KEY_INPUT_S)) { moveDir = Utility::DIR_B; Accele(MOVE_ACC); }
-	if (ins.IsNew(KEY_INPUT_A)) { moveDir = Utility::DIR_L; Accele(MOVE_ACC); }
-	if (ins.IsNew(KEY_INPUT_D)) { moveDir = Utility::DIR_R; Accele(MOVE_ACC); }
-
-	Rotation();
-}
-
-void Camera::Move(void)
-{
-	//移動処理
-	if (!Utility::EqualsVZero(moveDir))
-	{
-		//移動 = 座標 + 移動量
-		//移動量 = 方向 * スピード 
-
-		//入力された方向をカメラの回転情報を使って、
-		//カメラの進行方向に変換する
-		VECTOR direction = rot_.PosAxis(moveDir);
-
-		//移動量
-		VECTOR movePow = VScale(direction, moveSpeed_);
-
-		//移動処理
-		pos_ = VAdd(pos_, movePow);
-
-		focusPos_ = VAdd(focusPos_, movePow);
-	}
 }
 
 void Camera::Rotation(void)
@@ -357,10 +351,10 @@ void Camera::Rotation(void)
 	//回転軸と量を決める
 	const float ROT_POW = 1.0f;
 	VECTOR axisDeg = Utility::VECTOR_ZERO;
-	/*if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x = -1.0f; }
-	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x = 1.0f; }*/
-	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y = -1.0f; }
-	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y = 1.0f; }
+	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x = -1.0f; }
+	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x = 1.0f; }
+	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y = 1.0f; }
+	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y = -1.0f; }
 
 
 	//カメラ座標を中心として、注視点を回転させる
@@ -369,10 +363,10 @@ void Camera::Rotation(void)
 		//今回の回転量を合成
 		//今回はY軸のみの回転
 		Quaternion rotPow;
-		/*	rotPow = rotPow.Mult(
+			/*rotPow = rotPow.Mult(
 				Quaternion::AngleAxis(
-					Utility::Deg2RadF(axisDeg.z), Utility::AXIS_Z));
-			rotPow = rotPow.Mult(
+					Utility::Deg2RadF(axisDeg.z), Utility::AXIS_Z));*/
+			/*rotPow = rotPow.Mult(
 				Quaternion::AngleAxis(
 					Utility::Deg2RadF(axisDeg.x), Utility::AXIS_X));*/
 		rotPow = rotPow.Mult(
@@ -382,53 +376,8 @@ void Camera::Rotation(void)
 		//カメラの回転の今回の回転量を加える（合成）
 		rot_ = rot_.Mult(rotPow);
 
-		//注視点の相対座標を回転させる
-		//VECTOR rotLocalPos = rot_.PosAxis(RELATIVE_C2T_POS);
-
-		//注視点更新
-		//targetPos_ = VAdd(pos_, rotLocalPos);
-
 		//カメラの上方向更新
 		cameraUp_ = rot_.GetUp();
 	}
 }
 
-void Camera::Accele(float speed)
-{
-	moveSpeed_ += speed;
-
-	//速度制限(右方向)
-	if (moveSpeed_ > MAX_MOVE_SPEED)
-	{
-		moveSpeed_ = MAX_MOVE_SPEED;
-	}
-
-	//速度制限(左方向)
-	if (moveSpeed_ < -MAX_MOVE_SPEED)
-	{
-		moveSpeed_ = -MAX_MOVE_SPEED;
-	}
-}
-
-void Camera::Decelerate(float speed)
-{
-	//右方向の移動を減速させる
-	if (moveSpeed_ > 0.0f)
-	{
-		moveSpeed_ -= speed;
-		if (moveSpeed_ < 0.0f)
-		{
-			moveSpeed_ = 0.0f;
-		}
-	}
-
-	//左方向の移動を減速させる
-	if (moveSpeed_ < 0.0f)
-	{
-		moveSpeed_ += speed;
-		if (moveSpeed_ > 0.0f)
-		{
-			moveSpeed_ = 0.0f;
-		}
-	}
-}

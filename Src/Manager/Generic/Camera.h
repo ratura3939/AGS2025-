@@ -35,10 +35,6 @@ public:
 	
 	static constexpr float MAX_MOVE_SPEED = 5.0f;	//移動速度の最大値
 
-	static constexpr float MOVE_ACC = 0.5f;			//加速
-
-	static constexpr float MOVE_DEC = 0.2f;			//減速
-
 	//カメラ揺らし関連の定数--------------------------------------------------------------------
 
 	static constexpr float TIME_SHAKE = 0.5f;		//時間
@@ -50,6 +46,8 @@ public:
 	//リセット関係
 	static constexpr float RESET_TIME = 1.0f;
 	static constexpr float RESET_STEP = 0.02f;
+
+	static constexpr float UNDERLIMIT_Y = 280.0f;
 
 	//カメラモード
 	enum class MODE
@@ -93,7 +91,6 @@ public:
 	void SetBeforeDrawReset(void);			//カメラリセット
 
 	//----------------------------------------
-
 	// 描画処理
 	void Draw(void);
 
@@ -111,6 +108,7 @@ public:
 
 	void SetPos(const VECTOR& pos,const VECTOR& focus);
 	void SetFocusPos(const VECTOR& _focus);
+	void SetRockPos(const VECTOR& _rock);
 
 	const MODE GetMode(void);
 
@@ -144,15 +142,6 @@ private:
 	//カメラの回転
 	Quaternion rot_;
 
-	//カメラの速度(移動量)
-	VECTOR velocity_;
-
-	//移動量
-	float moveSpeed_;
-
-	//向き
-	VECTOR moveDir;
-
 	//画面揺らし用
 	float stepShake_;
 
@@ -169,20 +158,8 @@ private:
 	//カメラシェイクさせるための準備
 	void SetShake(float intensity, float duration);
 
-	//移動操作
-	void ProcessMove(void);
-
-	//移動
-	void Move(void);
-
 	//回転
 	void Rotation(void);
-
-	//加速
-	void Accele(float speed);
-
-	//減速（スピードを減少させる）
-	void Decelerate(float speed);
 
 };
 
