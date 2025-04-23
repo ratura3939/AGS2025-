@@ -4,6 +4,9 @@
 class CharacterBase
 {
 public:
+
+	static constexpr float TIME_ROT = 5.0f;
+
 	void Init(void);
 	virtual void Update(void) = 0;
 	virtual void Draw(void);
@@ -35,6 +38,10 @@ protected:
 	VECTOR scl_;	//モデル大きさ
 	VECTOR rot_;	//回転情報(XYZ)
 
+	Quaternion startQua_;	//開始時の回転量
+	Quaternion goalQua_;	//目標の回転量
+	float stepRotation_;	//回転のカウンター
+
 	//各情報の行列か
 	MATRIX matScl_;
 	MATRIX matRot_;
@@ -50,5 +57,10 @@ protected:
 	//************************************************
 	void UpdateRotQuat(void);
 	//**********************************************
+
+	//回転目標角度
+	void SetGoalRot(const float _rad);
+	//回転
+	void Rotation(void);
 };
 

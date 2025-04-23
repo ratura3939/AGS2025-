@@ -1,6 +1,7 @@
 #include"../../../Manager/Generic/InputManager.h"
 #include"../../../Manager/Generic/ResourceManager.h"
 #include"../../../Manager/Generic/Camera.h"
+#include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Utility/Utility.h"
 #include "PlayerChara.h"
 
@@ -20,6 +21,7 @@ void PlayerChara::SetPram(void)
 void PlayerChara::Update(void)
 {
 	Move();
+	Rotation();
 	UpdateRotQuat();
 }
 
@@ -42,24 +44,31 @@ void PlayerChara::DrawDebug(void)
 void PlayerChara::Move(void)
 {
 	InputManager& ins = InputManager::GetInstance();
+	Quaternion cameraRot = SceneManager::GetInstance().GetCamera().GetRot();
 	VECTOR dir = Utility::VECTOR_ZERO;
 
-	//基本的にキャラクターの移動は前方方向のみであり左右に移動が入れられたときは回転を行い移動を始める形である
+	float afterDeg = 0.0f;
 
 	//キーボード入力
 	if (ins.IsNew(KEY_INPUT_W)) {
-		dir = GetForward();
+		dir = cameraRot.GetForward();
+		afterDeg = Utility::Deg2RadF(0.0f);
 	}
 	if (ins.IsNew(KEY_INPUT_A)) {
-		dir = GetLeft();
+		dir = cameraRot.GetLeft();
+		afterDeg = Utility::Deg2RadF(270.0f);
 	}
 	if (ins.IsNew(KEY_INPUT_S)) {
-		dir = GetBack();
+		dir = cameraRot.GetBack();
+		afterDeg = Utility::Deg2RadF(180.0f);
 	}
 	if (ins.IsNew(KEY_INPUT_D)) {
-		dir = GetRight();
+		dir = cameraRot.GetRight();
+		afterDeg = Utility::Deg2RadF(90.0f);
 	}
 
 	//実際の移動処理
 	pos_ = VAdd(pos_, VScale(dir, MOVE_POW));
+
+	SetGoalRot(afterDeg);
 }

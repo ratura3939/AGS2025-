@@ -253,6 +253,11 @@ VECTOR Camera::GetPos(void) const
 	return pos_;
 }
 
+const Quaternion Camera::GetRot(void) const
+{
+	return rot_;
+}
+
 void Camera::ChangeMode(MODE mode)
 {
 

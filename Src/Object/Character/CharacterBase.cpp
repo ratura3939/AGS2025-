@@ -1,4 +1,6 @@
 #include"../../Utility/Utility.h"
+#include"../../Manager/Generic/SceneManager.h"
+#include"../../Manager/Generic/Camera.h"
 #include "CharacterBase.h"
 
 void CharacterBase::Init(void)
@@ -14,6 +16,9 @@ void CharacterBase::Init(void)
 	matPos_ = MGetIdent();
 	quaRot_ = Quaternion();
 	quaRotLocal_ = Quaternion();
+	startQua_ = Quaternion();
+	goalQua_ = Quaternion();
+	stepRotation_ = 0.0f;
 
 	SetPram();
 	//モデル各種最終設定用に更新をかける
@@ -60,6 +65,32 @@ void CharacterBase::UpdateRotQuat(void)
 	{
 		MV1SetMatrix(modelId_, mat);
 	}
+}
+
+void CharacterBase::SetGoalRot(const float _rad)
+{
+	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();
+
+	Quaternion axis =
+		Quaternion::AngleAxis(
+			(double)cameraRot.y + _rad, Utility::AXIS_Y);
+	// 現在設定されている回転との角度差を取る
+	double angleDiff = Quaternion::Angle(axis, goalQua_);
+	// しきい値
+	if (angleDiff > 0.1)
+	{
+		stepRotation_ = TIME_ROT;
+	}
+	startQua_ = quaRot_;
+	goalQua_ = axis;
+}
+
+void CharacterBase::Rotation(void)
+{
+	stepRotation_ += SceneManager::GetInstance().GetDeltaTime();
+	// 回転の球面補間
+	quaRot_ = Quaternion::Slerp(
+		startQua_, goalQua_, stepRotation_);
 }
 
 VECTOR CharacterBase::GetForward(void) const

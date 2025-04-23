@@ -99,6 +99,8 @@ public:
 
 	//座標取得
 	VECTOR GetPos(void) const;
+	//回転取得
+	const Quaternion GetRot(void)const;
 
 	//カメラモードの変更
 	void ChangeMode(MODE mode);
