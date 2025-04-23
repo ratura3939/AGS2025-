@@ -21,7 +21,7 @@ void PlayerChara::SetPram(void)
 void PlayerChara::Update(void)
 {
 	Move();
-	Rotation();
+//	Rotation();
 	UpdateRotQuat();
 }
 
@@ -70,5 +70,5 @@ void PlayerChara::Move(void)
 	//ÀÛ‚ÌˆÚ“®ˆ—
 	pos_ = VAdd(pos_, VScale(dir, MOVE_POW));
 
-	SetGoalRot(afterDeg);
+	//SetGoalRot(afterDeg);
 }
