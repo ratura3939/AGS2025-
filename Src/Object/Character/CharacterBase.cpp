@@ -138,7 +138,9 @@ const VECTOR CharacterBase::GetPos(void) const
 
 const Quaternion CharacterBase::GetQua(void) const
 {
-	return quaRot_;
+	Quaternion retRot = Quaternion();
+	retRot = retRot.Mult(characterRotY_);
+	return retRot;
 }
 
 void CharacterBase::DrawDebug(void)
