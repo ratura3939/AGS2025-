@@ -5,7 +5,17 @@ class CharacterBase
 {
 public:
 
+	//回転作業
 	static constexpr float TIME_ROT = 5.0f;
+	static constexpr float PER_ROT = 0.05f;			//フレームごとの回転(球面補間における時間の増加量を表す)
+	static constexpr float THRESHOLD_ROT = 0.1f;	//回転のしきい値を表す
+
+	//回転量
+	static constexpr float DEG_FORWARD = 0.0f;
+	static constexpr float DEG_BACK = 180.0f;
+	static constexpr float DEG_LEFT = 270.0f;
+	static constexpr float DEG_RIGHT = 90.0f;
+
 
 	void Init(void);
 	virtual void Update(void) = 0;
@@ -37,8 +47,8 @@ protected:
 	VECTOR pos_;	//座標
 	VECTOR scl_;	//モデル大きさ
 	VECTOR rot_;	//回転情報(XYZ)
+	Quaternion characterRotY_;	//Y軸回転用
 
-	Quaternion startQua_;	//開始時の回転量
 	Quaternion goalQua_;	//目標の回転量
 	float stepRotation_;	//回転のカウンター
 
@@ -49,6 +59,7 @@ protected:
 
 	// 回転
 	Quaternion quaRot_;
+	Quaternion quaRotOrigin_;
 
 	// ローカル回転
 	Quaternion quaRotLocal_;

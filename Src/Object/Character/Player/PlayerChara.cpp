@@ -21,7 +21,7 @@ void PlayerChara::SetPram(void)
 void PlayerChara::Update(void)
 {
 	Move();
-//	Rotation();
+	Rotation();
 	UpdateRotQuat();
 }
 
@@ -39,6 +39,7 @@ void PlayerChara::ChangeRockState(const bool _state)
 void PlayerChara::DrawDebug(void)
 {
 	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
+	DrawFormatString(0, 120, 0xffffff, "GoalRot={%.1f,%.1f,%.1f}", goalQua_.x, goalQua_.y, goalQua_.z);
 }
 
 void PlayerChara::Move(void)
@@ -52,23 +53,26 @@ void PlayerChara::Move(void)
 	//キーボード入力
 	if (ins.IsNew(KEY_INPUT_W)) {
 		dir = cameraRot.GetForward();
-		afterDeg = Utility::Deg2RadF(0.0f);
+		afterDeg = Utility::Deg2RadF(DEG_FORWARD);
 	}
 	if (ins.IsNew(KEY_INPUT_A)) {
 		dir = cameraRot.GetLeft();
-		afterDeg = Utility::Deg2RadF(270.0f);
+		afterDeg = Utility::Deg2RadF(DEG_LEFT);
 	}
 	if (ins.IsNew(KEY_INPUT_S)) {
 		dir = cameraRot.GetBack();
-		afterDeg = Utility::Deg2RadF(180.0f);
+		afterDeg = Utility::Deg2RadF(DEG_BACK);
 	}
 	if (ins.IsNew(KEY_INPUT_D)) {
 		dir = cameraRot.GetRight();
-		afterDeg = Utility::Deg2RadF(90.0f);
+		afterDeg = Utility::Deg2RadF(DEG_RIGHT);
 	}
 
-	//実際の移動処理
-	pos_ = VAdd(pos_, VScale(dir, MOVE_POW));
-
-	//SetGoalRot(afterDeg);
+	//移動が行われていたら
+	if (!Utility::EqualsVZero(dir)) {
+		pos_ = VAdd(pos_, VScale(dir, MOVE_POW));
+		//回転量の設定
+		SetGoalRot(afterDeg);
+	}
+	
 }

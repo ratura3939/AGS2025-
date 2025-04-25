@@ -15,8 +15,8 @@ void CharacterBase::Init(void)
 	matRot_ = MGetIdent();
 	matPos_ = MGetIdent();
 	quaRot_ = Quaternion();
+	quaRotOrigin_ = Quaternion();
 	quaRotLocal_ = Quaternion();
-	startQua_ = Quaternion();
 	goalQua_ = Quaternion();
 	stepRotation_ = 0.0f;
 
@@ -75,22 +75,25 @@ void CharacterBase::SetGoalRot(const float _rad)
 		Quaternion::AngleAxis(
 			(double)cameraRot.y + _rad, Utility::AXIS_Y);
 	// Œ»ÝÝ’è‚³‚ê‚Ä‚¢‚é‰ñ“]‚Æ‚ÌŠp“x·‚ðŽæ‚é
-	double angleDiff = Quaternion::Angle(axis, goalQua_);
-	// ‚µ‚«‚¢’l
-	if (angleDiff > 0.1)
+	double angleDiff = Quaternion::Angle(axis, characterRotY_);
+	// ‚µ‚«‚¢’l‚æ‚è‘å‚«‚©‚Á‚½‚ç
+	if (angleDiff > THRESHOLD_ROT)
 	{
-		stepRotation_ = TIME_ROT;
+		stepRotation_ = 0.0f;
+		
 	}
-	startQua_ = quaRot_;
 	goalQua_ = axis;
 }
 
 void CharacterBase::Rotation(void)
 {
-	stepRotation_ += SceneManager::GetInstance().GetDeltaTime();
+	stepRotation_ +=PER_ROT;
 	// ‰ñ“]‚Ì‹…–Ê•âŠÔ
-	quaRot_ = Quaternion::Slerp(
-		startQua_, goalQua_, stepRotation_);
+	characterRotY_ = Quaternion::Slerp(
+		characterRotY_, goalQua_, stepRotation_);
+
+	quaRot_ = Quaternion();
+	quaRot_ = quaRot_.Mult(characterRotY_);
 }
 
 VECTOR CharacterBase::GetForward(void) const
