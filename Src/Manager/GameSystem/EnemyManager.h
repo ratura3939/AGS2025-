@@ -10,7 +10,7 @@ class EnemyManager
 {
 public:
 
-	static constexpr int ENEMY_NUM = 2;
+	static constexpr int ENEMY_NUM = 1;
 
 	EnemyManager(void);
 	~EnemyManager(void);

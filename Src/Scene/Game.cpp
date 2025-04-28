@@ -54,7 +54,7 @@ void Game::Update(void)
 	//‚»‚Ì‚½‚ß“G‚ÌˆÊ’uî•ñ‚¾‚¯‚ðŽó‚¯“n‚·
 	Camera::MODE mode = camera.GetMode();
 	if (mode == Camera::MODE::FOLLOW)camera.SetFocusPos(player_->GetFocusPoint());//’Ž‹“_‚ÌXV
-	else if (mode == Camera::MODE::ROCKON) {
+	else /*if (mode == Camera::MODE::ROCKON)*/ {
 		camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));
 	}
 	

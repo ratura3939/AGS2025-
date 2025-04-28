@@ -21,8 +21,8 @@ void EnemyManager::Init(void)
 
 	//デバッグ用
 	characters_[0]->SetColor(0x00ff00);
-	characters_[1]->SetColor(0x00ffff);
-	characters_[1]->SetPos({ 500.0f,0.0f,1000.0f });
+	/*characters_[1]->SetColor(0x00ffff);
+	characters_[1]->SetPos({ 500.0f,0.0f,1000.0f });*/
 }
 
 void EnemyManager::Update(void)

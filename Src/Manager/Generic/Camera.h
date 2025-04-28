@@ -98,7 +98,9 @@ public:
 	void Release(void);
 
 	//À•Wæ“¾
-	VECTOR GetPos(void) const;
+	const VECTOR GetPos(void) const;
+	const VECTOR GetRockPos(void)const;
+
 	//‰ñ“]æ“¾
 	const Quaternion GetRot(void)const;
 
@@ -108,9 +110,12 @@ public:
 	//’Ç]‘ÎÛ‚Ìİ’è
 	void SetFollow(const VECTOR _pos,const Quaternion _qua);
 
+
+	//À•Wİ’è
 	void SetPos(const VECTOR& pos,const VECTOR& focus);
 	void SetFocusPos(const VECTOR& _focus);
 	void SetRockPos(const VECTOR& _rock);
+	
 
 	const MODE GetMode(void);
 

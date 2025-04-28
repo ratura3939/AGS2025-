@@ -168,7 +168,7 @@ void Camera::SetBeforeDrawRockOn(void)
 
 	//注視点の更新
 	//ロックオン中の注視点は追従対象とロックオン対象の中間地点にある。
-	focusPos_ = followRot.PosAxis(VAdd(followPos,VScale(distance, 0.5f)));
+	focusPos_ = VAdd(followPos,VScale(distance, 0.5f));
 
 	//カメラの上方向
 	cameraUp_ = followRot.PosAxis(rot_.GetUp());
@@ -248,7 +248,7 @@ void Camera::Release(void)
 {
 }
 
-VECTOR Camera::GetPos(void) const
+const VECTOR Camera::GetPos(void) const
 {
 	return pos_;
 }
@@ -318,6 +318,11 @@ void Camera::SetFocusPos(const VECTOR& _focus)
 void Camera::SetRockPos(const VECTOR& _rock)
 {
 	rockPos_ = _rock;
+}
+
+const VECTOR Camera::GetRockPos(void) const
+{
+	return rockPos_;
 }
 
 const Camera::MODE Camera::GetMode(void)

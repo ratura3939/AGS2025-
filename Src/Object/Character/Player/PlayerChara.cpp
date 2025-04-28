@@ -12,7 +12,7 @@ void PlayerChara::SetPram(void)
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(180.0f),0.0f);
 
-	rState_ = ROCK_STATE::ROCKON;
+	rState_ = ROCK_STATE::NOMAL;
 
 	//注視点の設定
 	focusPoint_ = FOCUS_NOMAL;
@@ -40,6 +40,10 @@ void PlayerChara::DrawDebug(void)
 {
 	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
 	DrawFormatString(0, 120, 0xffffff, "GoalRot={%.1f,%.1f,%.1f}", goalQua_.x, goalQua_.y, goalQua_.z);
+	VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();
+	float deg = Utility::AngleDeg(pos_, VSub(rockPos, pos_));
+	if (pos_.x > rockPos.x)deg = 180.0f + (180.0f - deg);
+	DrawFormatString(0, 140, 0xffffff, "RockDeg={%.1f}", deg);
 }
 
 void PlayerChara::Move(void)
@@ -72,6 +76,18 @@ void PlayerChara::Move(void)
 	if (!Utility::EqualsVZero(dir)) {
 		pos_ = VAdd(pos_, VScale(dir, MOVE_POW));
 		//回転量の設定
+		if (rState_ == ROCK_STATE::ROCKON) {
+			//ロックオン特有の角度設定
+			VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();
+			VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();
+
+			//AngleDegは下から上方向にかけて左右どちらも0~180で角度をとる。
+			//キャラクターの角度調整は右回りなので上記の関数で得た角度も右回り基準の0~360に変換しなければならない。
+			//そのため基準であるプレイヤーが対象の右に来た時だけ調整を行うような処理を行っている
+			float deg = Utility::AngleDeg(pos_, VSub(rockPos, pos_));
+			if (pos_.x > rockPos.x)deg = Utility::CIRCLE_HALF_DEG + (Utility::CIRCLE_HALF_DEG - deg);
+			afterDeg = Utility::Deg2RadF(deg)- cameraRot.y;
+		}
 		SetGoalRot(afterDeg);
 	}
 	
