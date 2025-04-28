@@ -64,6 +64,10 @@ protected:
 	// ローカル回転
 	Quaternion quaRotLocal_;
 
+	//ステータスなど
+	int hp_;
+
+
 	//必ず更新処理に入れること
 	//************************************************
 	void UpdateRotQuat(void);
