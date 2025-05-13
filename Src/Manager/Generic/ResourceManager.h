@@ -12,7 +12,8 @@ public:
 	enum class SRC
 	{
 		START_LOGO,
-		PLAYER,
+		PLAYER_MDL,
+		ENEMY_MDL,
 	};
 
 	// 明示的にインステンスを生成する

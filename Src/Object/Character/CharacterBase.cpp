@@ -3,14 +3,20 @@
 #include"../../Manager/Generic/Camera.h"
 #include "CharacterBase.h"
 
-void CharacterBase::Init(void)
+void CharacterBase::Draw(void)
 {
-	modelId_ = -1;
+	//描画処理
+	DrawSphere3D(pos_, 30, 10, 0xff0000, 0xff0000, false);
+	MV1DrawModel(modelId_);
+}
 
-	scl_ = Utility::VECTOR_ONE;
-	rot_ = { 0.0f,0.0f,-1.0f };;
-	pos_ = Utility::VECTOR_ZERO;
+const bool CharacterBase::Release(void)
+{
+	return true;
+}
 
+void CharacterBase::Init3DPram(void)
+{
 	matScl_ = MGetIdent();
 	matRot_ = MGetIdent();
 	matPos_ = MGetIdent();
@@ -19,26 +25,8 @@ void CharacterBase::Init(void)
 	quaRotLocal_ = Quaternion();
 	goalQua_ = Quaternion();
 	stepRotation_ = 0.0f;
-
-	SetPram();
 	//モデル各種最終設定用に更新をかける
 	UpdateRotQuat();
-}
-
-void CharacterBase::SetPram(void)
-{
-	//キャラ固有の初期位置
-}
-
-void CharacterBase::Draw(void)
-{
-	//描画処理
-	DrawSphere3D(pos_, 30, 10, 0xff0000, 0xff0000, false);
-	MV1DrawModel(modelId_);
-}
-
-void CharacterBase::Release(void)
-{
 }
 
 void CharacterBase::UpdateRotQuat(void)

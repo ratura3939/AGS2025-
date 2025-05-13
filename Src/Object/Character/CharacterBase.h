@@ -4,6 +4,8 @@
 class CharacterBase
 {
 public:
+	//初期化用
+	static constexpr float INIT_MODEL_ROT = 180.0f;	//Unity形式のモデルの形を合わせる用
 
 	//回転作業
 	static constexpr float TIME_ROT = 5.0f;
@@ -17,11 +19,27 @@ public:
 	static constexpr float DEG_RIGHT = 90.0f;
 
 
-	void Init(void);
+	virtual const bool Init(void) = 0;
 	virtual void Update(void) = 0;
 	virtual void Draw(void);
-	virtual void Release(void);
+	virtual const bool Release(void);
 
+protected:
+	//必ず初期化処理に入れること
+	//************************************************
+	void Init3DPram(void);
+	//**********************************************
+
+	//必ず更新処理に入れること
+	//************************************************
+	void UpdateRotQuat(void);
+	//**********************************************
+	//回転目標角度
+	void SetGoalRot(const float _rad);
+	//回転
+	void Rotation(void);
+
+public:
 	// 各種方向を取得
 	VECTOR GetForward(void) const;
 	VECTOR GetBack(void) const;
@@ -39,10 +57,8 @@ public:
 	const Quaternion GetQua(void)const;
 
 	virtual void DrawDebug(void);
-protected:
-	//固有データ書き出し用
-	virtual void SetPram(void);
 
+protected:
 	int modelId_;	//モデルID
 	VECTOR pos_;	//座標
 	VECTOR scl_;	//モデル大きさ
@@ -66,16 +82,5 @@ protected:
 
 	//ステータスなど
 	int hp_;
-
-
-	//必ず更新処理に入れること
-	//************************************************
-	void UpdateRotQuat(void);
-	//**********************************************
-
-	//回転目標角度
-	void SetGoalRot(const float _rad);
-	//回転
-	void Rotation(void);
 };
 

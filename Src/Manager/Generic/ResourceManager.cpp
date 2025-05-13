@@ -40,7 +40,11 @@ void ResourceManager::InitGame(void)
 
 	//ÉvÉåÉCÉÑÅ[
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Knight.mv1");
-	resourcesMap_.emplace(SRC::PLAYER, res);
+	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
+
+	//ìG
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Boss_Golem.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_MDL, res);
 }
 
 void ResourceManager::InitClear(void)

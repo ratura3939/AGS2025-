@@ -5,17 +5,22 @@
 #include"../../../Utility/Utility.h"
 #include "PlayerChara.h"
 
-void PlayerChara::SetPram(void)
+const bool PlayerChara::Init(void)
 {
-	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER).handleId_;
+	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;
+	if (modelId_ == -1)return false;
 
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
-	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(180.0f),0.0f);
+	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT),0.0f);
 
 	rState_ = ROCK_STATE::NOMAL;
 
 	//íçéãì_ÇÃê›íË
 	focusPoint_ = FOCUS_NOMAL;
+
+	Init3DPram();
+
+	return true;
 }
 
 void PlayerChara::Update(void)
