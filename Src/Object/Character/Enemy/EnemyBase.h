@@ -13,8 +13,16 @@ public:
         BATTLE
     };
 
+    struct Vision {
+        VECTOR center;
+        VECTOR left;
+        VECTOR right;
+        bool isFind;
+    };
+
     static constexpr float FIELD_VISION_DEG_HALF = 20.0f;	//Ž‹ŠE‚ÌŠp“x(—¼•ûŒü‚É“WŠJ‚·‚é‚Ì‚Å‘S‘Ì‚Ì”¼•ª‚ÌŠp“x‚ð–¾‹L)
-    static constexpr float FIELD_VISION_DISTANCE = 150.0f;	//Ž‹ŠE‚Ì‹——£
+    static constexpr float FIELD_VISION_DISTANCE = 150.0f;	        //Ž‹ŠE‚Ì‹——£
+    static constexpr VECTOR FIELD_VISION_DISTANCE_VECTOR = { 0.0f,0.0f,150.0f };	//Ž‹ŠE‚Ì‹——£(VECTOR)
     static constexpr float MOVE_POW = 3.0f;     //ˆÚ“®—Ê
     static constexpr float CHARA_SCALE = 0.7f;  //ƒTƒCƒY
 

@@ -46,6 +46,11 @@ void EnemyBase::DrawDebug(void)
 
 	VECTOR fowardPos = VAdd(pos_, characterRotY_.PosAxis(forwardDif));
 	DrawSphere3D(fowardPos, 8, 8, 0xff5500, 0xff0000, false);
+
+
+	VECTOR leftPos = VAdd(pos_, FIELD_VISION_DISTANCE_VECTOR);
+	VECTOR rightPos = FIELD_VISION_DISTANCE_VECTOR;
+	DrawTriangle3D(pos_, leftPos, rightPos, 0x888888, true);
 }
 
 void EnemyBase::Update(void)
