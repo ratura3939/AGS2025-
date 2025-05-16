@@ -43,7 +43,7 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
 
 	//“G
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Boss_Golem.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Enemy_Axeman.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_MDL, res);
 }
 

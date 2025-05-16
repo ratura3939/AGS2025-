@@ -3,6 +3,30 @@
 #include"../../Manager/Generic/Camera.h"
 #include "CharacterBase.h"
 
+CharacterBase::CharacterBase(void)
+{
+	modelId_ = -1;
+	pos_ = Utility::VECTOR_ZERO;
+	scl_ = Utility::VECTOR_ZERO;
+	rot_ = Utility::VECTOR_ZERO;
+	hp_ = -1.0f;
+
+	characterRotY_ = Quaternion();
+
+	matScl_ = MGetIdent();
+	matRot_ = MGetIdent();
+	matPos_ = MGetIdent();
+	quaRot_ = Quaternion();
+	quaRotOrigin_ = Quaternion();
+	quaRotLocal_ = Quaternion();
+	goalQua_ = Quaternion();
+	stepRotation_ = 0.0f;
+}
+
+CharacterBase::~CharacterBase(void)
+{
+}
+
 void CharacterBase::Draw(void)
 {
 	//描画処理
@@ -13,20 +37,6 @@ void CharacterBase::Draw(void)
 const bool CharacterBase::Release(void)
 {
 	return true;
-}
-
-void CharacterBase::Init3DPram(void)
-{
-	matScl_ = MGetIdent();
-	matRot_ = MGetIdent();
-	matPos_ = MGetIdent();
-	quaRot_ = Quaternion();
-	quaRotOrigin_ = Quaternion();
-	quaRotLocal_ = Quaternion();
-	goalQua_ = Quaternion();
-	stepRotation_ = 0.0f;
-	//モデル各種最終設定用に更新をかける
-	UpdateRotQuat();
 }
 
 void CharacterBase::UpdateRotQuat(void)
@@ -49,8 +59,7 @@ void CharacterBase::UpdateRotQuat(void)
 	mat = MMult(mat, matPos_);
 
 	// 行列をモデルに判定
-	if (modelId_ != -1)
-	{
+	if (modelId_ != -1){
 		MV1SetMatrix(modelId_, mat);
 	}
 }
@@ -65,21 +74,22 @@ void CharacterBase::SetGoalRot(const float _rad)
 	// 現在設定されている回転との角度差を取る
 	double angleDiff = Quaternion::Angle(axis, characterRotY_);
 	// しきい値より大きかったら
-	if (angleDiff > THRESHOLD_ROT)
-	{
+	if (angleDiff > THRESHOLD_ROT){
+		//回転し始めに設定
 		stepRotation_ = 0.0f;
-		
 	}
 	goalQua_ = axis;
 }
 
 void CharacterBase::Rotation(void)
 {
+	//回転時間増加
 	stepRotation_ +=PER_ROT;
 	// 回転の球面補間
 	characterRotY_ = Quaternion::Slerp(
 		characterRotY_, goalQua_, stepRotation_);
 
+	//初期化を行い新たな回転量を設定する
 	quaRot_ = Quaternion();
 	quaRot_ = quaRot_.Mult(characterRotY_);
 }
@@ -127,6 +137,7 @@ const VECTOR CharacterBase::GetPos(void) const
 const Quaternion CharacterBase::GetQua(void) const
 {
 	Quaternion retRot = Quaternion();
+	//VECTORなのでQuaternionに変化
 	retRot = retRot.Mult(characterRotY_);
 	return retRot;
 }

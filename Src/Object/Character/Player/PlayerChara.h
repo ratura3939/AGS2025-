@@ -1,6 +1,9 @@
 #pragma once
 #include <DxLib.h>
 #include "../CharacterBase.h"
+
+class Game;
+
 class PlayerChara :
     public CharacterBase
 {
@@ -16,6 +19,9 @@ public:
         ROCKON, //ÉçÉbÉNÉIÉì
         MAX
     };
+
+    PlayerChara(void);
+    ~PlayerChara(void);
 
     const bool Init(void)override;
     void Update(void)override;

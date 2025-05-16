@@ -5,6 +5,16 @@
 #include"../../../Utility/Utility.h"
 #include "PlayerChara.h"
 
+PlayerChara::PlayerChara(void)
+{
+	focusPoint_ = Utility::VECTOR_ZERO;
+	rState_ = ROCK_STATE::MAX;
+}
+
+PlayerChara::~PlayerChara(void)
+{
+}
+
 const bool PlayerChara::Init(void)
 {
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;
@@ -18,7 +28,7 @@ const bool PlayerChara::Init(void)
 	//注視点の設定
 	focusPoint_ = FOCUS_NOMAL;
 
-	Init3DPram();
+	UpdateRotQuat();
 
 	return true;
 }
@@ -79,20 +89,26 @@ void PlayerChara::Move(void)
 
 	//移動が行われていたら
 	if (!Utility::EqualsVZero(dir)) {
+		//移動処理
 		pos_ = VAdd(pos_, VScale(dir, MOVE_POW));
-		//回転量の設定
+
+		//ロックオンのとき
 		if (rState_ == ROCK_STATE::ROCKON) {
 			//ロックオン特有の角度設定
-			VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();
-			VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();
+			VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();			//ロックオン対象位置	
+			VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
 
-			//AngleDegは下から上方向にかけて左右どちらも0~180で角度をとる。
-			//キャラクターの角度調整は右回りなので上記の関数で得た角度も右回り基準の0~360に変換しなければならない。
-			//そのため基準であるプレイヤーが対象の右に来た時だけ調整を行うような処理を行っている
+			//敵との角度をとる
 			float deg = Utility::AngleDeg(pos_, VSub(rockPos, pos_));
-			if (pos_.x > rockPos.x)deg = Utility::CIRCLE_HALF_DEG + (Utility::CIRCLE_HALF_DEG - deg);
+			//敵より右側にいたら
+			if (pos_.x > rockPos.x) {
+				//AngleDegでは0~180なので調整する
+				deg = Utility::CIRCLE_HALF_DEG + (Utility::CIRCLE_HALF_DEG - deg);
+			}
+			//角度の再設定
 			afterDeg = Utility::Deg2RadF(deg)- cameraRot.y;
 		}
+		//目標角度設定
 		SetGoalRot(afterDeg);
 	}
 	

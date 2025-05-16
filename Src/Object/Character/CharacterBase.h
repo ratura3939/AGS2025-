@@ -1,6 +1,9 @@
 #pragma once
 #include<DxLib.h>
 #include "../../Common/Quaternion.h"
+
+class Game;
+
 class CharacterBase
 {
 public:
@@ -18,6 +21,8 @@ public:
 	static constexpr float DEG_LEFT = 270.0f;
 	static constexpr float DEG_RIGHT = 90.0f;
 
+	CharacterBase(void);
+	~CharacterBase(void);
 
 	virtual const bool Init(void) = 0;
 	virtual void Update(void) = 0;
@@ -25,12 +30,7 @@ public:
 	virtual const bool Release(void);
 
 protected:
-	//必ず初期化処理に入れること
-	//************************************************
-	void Init3DPram(void);
-	//**********************************************
-
-	//必ず更新処理に入れること
+	//必ず更新・初期化処理に入れること
 	//************************************************
 	void UpdateRotQuat(void);
 	//**********************************************
@@ -81,6 +81,6 @@ protected:
 	Quaternion quaRotLocal_;
 
 	//ステータスなど
-	int hp_;
+	float hp_;
 };
 

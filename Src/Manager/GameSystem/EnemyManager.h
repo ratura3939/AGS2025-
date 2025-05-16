@@ -5,17 +5,17 @@
 #include"../../Common/Quaternion.h"
 
 class EnemyBase;
+class Game;
 
 class EnemyManager
 {
 public:
-
-	static constexpr int ENEMY_NUM = 1;
+	static constexpr int ENEMY_NUM = 1;			//ìGëçêî
 
 	EnemyManager(void);
 	~EnemyManager(void);
 
-	void Init(void);
+	void Init(const VECTOR& _playerPos);
 	void Update(void);
 	void Draw(void);
 	void Release(void);

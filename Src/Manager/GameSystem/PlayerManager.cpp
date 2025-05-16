@@ -5,7 +5,7 @@
 #include"../../Scene/Game.h"
 #include "PlayerManager.h"
 
-PlayerManager::PlayerManager(void)
+PlayerManager::PlayerManager(Game& _gameScene):scene_(_gameScene)
 {
 }
 

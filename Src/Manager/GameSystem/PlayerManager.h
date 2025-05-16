@@ -9,7 +9,7 @@ class PlayerChara;
 class PlayerManager
 {
 public:
-	PlayerManager(void);
+	PlayerManager(Game& _gameScene);
 	~PlayerManager(void);
 
 	void Init(void);
@@ -32,6 +32,7 @@ public:
 
 	void DrawDebug(void);
 private:
+	Game& scene_;	//ゲームクラス参照
 	std::unique_ptr<PlayerChara> character_;
 };
 

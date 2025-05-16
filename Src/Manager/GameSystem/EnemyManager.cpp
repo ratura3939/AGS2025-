@@ -11,10 +11,10 @@ EnemyManager::~EnemyManager(void)
 {
 }
 
-void EnemyManager::Init(void)
+void EnemyManager::Init(const VECTOR& _playerPos)
 {
 	for (int i = 0; i < ENEMY_NUM; i++) {
-		std::unique_ptr enemy = std::make_unique<EnemyBase>();
+		std::unique_ptr enemy = std::make_unique<EnemyBase>(_playerPos);
 		enemy->Init();
 		characters_.push_back(std::move(enemy));
 	}
@@ -91,4 +91,5 @@ void EnemyManager::DrawDebug(void)
 {
 	VECTOR pos = ConvWorldPosToScreenPos(characters_[0]->GetPos());
 	DrawFormatString(0, 80, 0xffffff, "SCPOS={%.1f,%.1f}", pos.x, pos.y);
+	characters_[0]->DrawDebug();
 }
