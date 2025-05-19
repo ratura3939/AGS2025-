@@ -27,6 +27,14 @@ CharacterBase::~CharacterBase(void)
 {
 }
 
+void CharacterBase::Update(void)
+{
+}
+
+void CharacterBase::Update(const VECTOR _pPos)
+{
+}
+
 void CharacterBase::Draw(void)
 {
 	//•`‰æˆ—

@@ -15,8 +15,8 @@ public:
 	EnemyManager(void);
 	~EnemyManager(void);
 
-	void Init(const VECTOR& _playerPos);
-	void Update(void);
+	void Init(void);
+	void Update(const VECTOR& _playerPos);
 	void Draw(void);
 	void Release(void);
 

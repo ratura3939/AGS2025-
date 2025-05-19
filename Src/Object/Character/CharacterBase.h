@@ -25,7 +25,8 @@ public:
 	~CharacterBase(void);
 
 	virtual const bool Init(void) = 0;
-	virtual void Update(void) = 0;
+	virtual void Update(void);
+	virtual void Update(const VECTOR _pPos);
 	virtual void Draw(void);
 	virtual const bool Release(void);
 

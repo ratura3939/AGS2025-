@@ -20,7 +20,7 @@ void Game::Init(void)
 	player_->Init();
 
 	enemy_ = std::make_unique<EnemyManager>();
-	enemy_->Init(player_->GetPos());
+	enemy_->Init();
 	nearEnemyNum_ = -1;
 
 	//カメラの初期設定
@@ -35,7 +35,7 @@ void Game::Update(void)
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 
 	player_->Update();
-	enemy_->Update();
+	enemy_->Update(player_->GetPos());
 
 	//ロックオン
 	if (player_->IsRockOnTrg()) {
@@ -91,7 +91,7 @@ void Game::DecideRockEnemy(void)
 
 void Game::DrawDebug(void)
 {
-	SceneManager::GetInstance().GetCamera().DrawDebug();
-	player_->DrawDebug();
+	//SceneManager::GetInstance().GetCamera().DrawDebug();
+	//player_->DrawDebug();
 	enemy_->DrawDebug();
 }

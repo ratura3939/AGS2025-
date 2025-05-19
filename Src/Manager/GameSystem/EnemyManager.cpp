@@ -11,10 +11,10 @@ EnemyManager::~EnemyManager(void)
 {
 }
 
-void EnemyManager::Init(const VECTOR& _playerPos)
+void EnemyManager::Init(void)
 {
 	for (int i = 0; i < ENEMY_NUM; i++) {
-		std::unique_ptr enemy = std::make_unique<EnemyBase>(_playerPos);
+		std::unique_ptr enemy = std::make_unique<EnemyBase>();
 		enemy->Init();
 		characters_.push_back(std::move(enemy));
 	}
@@ -25,9 +25,9 @@ void EnemyManager::Init(const VECTOR& _playerPos)
 	characters_[1]->SetPos({ 500.0f,0.0f,1000.0f });*/
 }
 
-void EnemyManager::Update(void)
+void EnemyManager::Update(const VECTOR& _playerPos)
 {
-	for (int i = 0; i < ENEMY_NUM; i++) characters_[i]->Update();
+	for (int i = 0; i < ENEMY_NUM; i++) characters_[i]->Update(_playerPos);
 }
 
 void EnemyManager::Draw(void)

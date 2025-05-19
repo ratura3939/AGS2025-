@@ -99,7 +99,7 @@ void SceneManager::Update(void)
 	}
 	else
 	{
-		scene_->Update();
+  		scene_->Update();
 	}
 
 	// ƒJƒƒ‰XV
