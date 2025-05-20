@@ -98,15 +98,10 @@ void PlayerChara::Move(void)
 			VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();			//ロックオン対象位置	
 			VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
 
-			//敵との角度をとる
-			float deg = Utility::AngleDeg(pos_, VSub(rockPos, pos_));
-			//敵より右側にいたら
-			if (pos_.x > rockPos.x) {
-				//AngleDegでは0~180なので調整する
-				deg = Utility::CIRCLE_HALF_DEG + (Utility::CIRCLE_HALF_DEG - deg);
-			}
-			//角度の再設定
-			afterDeg = Utility::Deg2RadF(deg)- cameraRot.y;
+			//自分から対象へのベクトル
+			auto diff = VSub(rockPos, pos_);
+			//角度求める
+			afterDeg = atan2(diff.x, diff.z) - cameraRot.y;
 		}
 		//目標角度設定
 		SetGoalRot(afterDeg);

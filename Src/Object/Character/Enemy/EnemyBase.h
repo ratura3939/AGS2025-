@@ -25,6 +25,11 @@ public:
     static constexpr float FIELD_VISION_DISTANCE = 500.0f;	//視界の距離
     static constexpr float ALERT_DISTANCE = 700.0f;     	//警戒の距離
 
+    //乱数移動量
+    static constexpr float MOVE_RANDOM_MIN = 200.0f;                            //最低値
+    static constexpr float MOVE_RANDOM_MAX = 600.0f - MOVE_RANDOM_MIN;;         //最高値(実際の計算で採算を合わせるためこのようになる。実際の最大値から最小値を引く)
+    
+
     //その他パラメータ類
     static constexpr float MOVE_POW = 3.0f;     //移動量
     static constexpr float CHARA_SCALE = 0.7f;  //サイズ
@@ -60,6 +65,8 @@ private:
     using Move_f = void(EnemyBase::*)(const VECTOR& _pPos);
     Update_f update_;   //更新関数
     Move_f move_;       //移動関数
+
+    VECTOR goalPos_;    //通常時の移動量(移動量は範囲付きランダム)
 
     //デバッグ用
     int color_;

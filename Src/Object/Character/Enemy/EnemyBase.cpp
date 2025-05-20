@@ -25,6 +25,8 @@ EnemyBase::EnemyBase(void)
 	update_ = &EnemyBase::UpdateNomal;
 	move_ = &EnemyBase::MoveNomal;
 
+	goalPos_ = Utility::VECTOR_INIT;
+
 	debugRot_ = -1.0;
 }
 
@@ -80,8 +82,6 @@ void EnemyBase::DrawDebug(void)
 		pos_.x, pos_.y, pos_.z,
 		static_cast<float>(debugRot_),
 		fowardDir.x, fowardDir.y, fowardDir.z);
-
-
 }
 
 void EnemyBase::Update(const VECTOR _pPos)
@@ -151,6 +151,22 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos)
 void EnemyBase::MoveNomal(const VECTOR& _pPos)
 {
 
+	//現在地から目標値へのベクトル
+	VECTOR diff = VSub(goalPos_, pos_);
+
+	//目標値より行き過ぎていたら
+	if (Utility::MagnitudeF(diff) <= 0.0f) {
+		//行先の再設定
+		//行先の角度設定(characterRotYに変更すべし)
+		Quaternion quaRand;
+		//移動量乱数
+		float moveRand = static_cast<float>(GetRand(MOVE_RANDOM_MAX)) + MOVE_RANDOM_MIN;
+		//前方方向に移動するベクトルに変換
+		VECTOR moveDir = Utility::VECTOR_ZERO;
+		moveDir.z = moveRand;
+		//行先設定
+		goalPos_ = VAdd(pos_, quaRand.PosAxis(moveDir));
+	}
 }
 
 void EnemyBase::MoveSearch(const VECTOR& _pPos)
@@ -164,13 +180,15 @@ void EnemyBase::MoveBattle(const VECTOR& _pPos)
 
 	//回転
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
+	//自分から対象へのベクトル
 	auto diff = VSub(_pPos, pos_);
-	auto deg = atan2(diff.x, diff.z);
+	//角度求める
+	auto rad = atan2(diff.x, diff.z);
 
 	//方向の設定
-	SetGoalRot(static_cast<float>(deg) - cameraRot.y);
+	SetGoalRot(static_cast<float>(rad) - cameraRot.y);
 
-	debugRot_ = deg;
+	debugRot_ = Utility::Deg2RadF(rad);
 }
 
 void EnemyBase::ChangeState(const ENEMY_STATE _state)
