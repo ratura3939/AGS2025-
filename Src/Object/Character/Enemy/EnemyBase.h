@@ -44,6 +44,11 @@ private:    //各種更新処理
     void UpdateSearch(const VECTOR& _pPos); //索敵
     void UpdateBattle(const VECTOR& _pPos); //戦闘
 
+    //各種移動処理
+    void MoveNomal(const VECTOR& _pPos);
+    void MoveSearch(const VECTOR& _pPos);
+    void MoveBattle(const VECTOR& _pPos);
+
     void ChangeState(const ENEMY_STATE _state); //状態の遷移
 
 public: //デバッグ用
@@ -52,11 +57,14 @@ public: //デバッグ用
 
 private:
     using Update_f = void(EnemyBase::*)(const VECTOR& _pPos);
-    Update_f update_;   //更新関数ポインタ
+    using Move_f = void(EnemyBase::*)(const VECTOR& _pPos);
+    Update_f update_;   //更新関数
+    Move_f move_;       //移動関数
 
     //デバッグ用
     int color_;
     int serchCol_;
     int alertCol_;
+    double debugRot_;
 };
 

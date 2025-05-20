@@ -5,6 +5,10 @@
 #include "EnemyBase.h"
 
 namespace {
+
+	constexpr VECTOR forward={0.0f,0.0f,100.0f};
+
+	//デバッグ用
 	constexpr int serchDebugCol = 0x6495ef;
 	constexpr int alertDebugCol = 0xff0000;
 
@@ -19,6 +23,9 @@ EnemyBase::EnemyBase(void)
 	color_ = 0xffffff;
 
 	update_ = &EnemyBase::UpdateNomal;
+	move_ = &EnemyBase::MoveNomal;
+
+	debugRot_ = -1.0;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -33,13 +40,15 @@ const bool EnemyBase::Init(void)
 	if (modelId_ == -1) {
 		return false;
 	}
+	//パラメータ関係
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
-
 	pos_ = { 0.0f,0.0f,1000.0f };
 	rot_ = { 0.0f,0.0f,-1.0f };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
-
+	//初期化用に一回実行
 	UpdateRotQuat();
+	//状態を通常に
+	ChangeState(ENEMY_STATE::NOMAL);
 	return true;
 }
 
@@ -65,6 +74,14 @@ void EnemyBase::DrawDebug(void)
 	DrawCone3D(conePos, pos_, ALERT_DISTANCE, 30, alertCol_, 0x000000, true);
 
 	DrawCone3D(conePos, pos_, FIELD_VISION_DISTANCE, 30, serchCol_, 0x000000, true);
+
+	VECTOR fowardDir = VAdd(pos_, characterRotY_.PosAxis(forward));
+	DrawFormatString(0, 0, 0xffffff, "EPOS={%.1f,%.1f,%.1f}\nDEG={%.1f}\nForward={%.1f,%.1f,%.1f}",
+		pos_.x, pos_.y, pos_.z,
+		static_cast<float>(debugRot_),
+		fowardDir.x, fowardDir.y, fowardDir.z);
+
+
 }
 
 void EnemyBase::Update(const VECTOR _pPos)
@@ -83,18 +100,23 @@ void EnemyBase::SetPram(void)
 
 void EnemyBase::UpdateNomal(const VECTOR& _pPos)
 {
+	//移動処理
+	(this->*move_)(_pPos);
+
+	//判定
 	//索敵可能範囲内に入ったら
 	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ALERT_DISTANCE) {
 		//索敵状態に
 		ChangeState(ENEMY_STATE::SEARCH);
 	}
-
-	//通常の移動処理
-
 }
 
 void EnemyBase::UpdateSearch(const VECTOR& _pPos)
 {
+	//移動処理
+	(this->*move_)(_pPos);
+
+	//判定
 	auto deg = Utility::AngleDeg(GetForward(), VSub(_pPos, pos_));
 	auto distance = Utility::MagnitudeF(VSub(_pPos, pos_));
 
@@ -109,25 +131,46 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos)
 		//通常に戻る
 		ChangeState(ENEMY_STATE::NOMAL);
 	}
+
+	debugRot_ = deg;
 }
 
 void EnemyBase::UpdateBattle(const VECTOR& _pPos)
 {
-	auto deg = Utility::AngleDeg(pos_, VSub(_pPos, pos_));
-	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
-	//敵より右側にいたら
-	if (pos_.x > _pPos.x) {
-		//AngleDegでは0~180なので調整する
-		deg = Utility::CIRCLE_HALF_DEG + (Utility::CIRCLE_HALF_DEG - deg);
-	}
-	//方向の設定
-	SetGoalRot(Utility::Deg2RadF(static_cast<float>(deg)) - cameraRot.y);
+	//移動処理
+	(this->*move_)(_pPos);
 
+	//判定
 	//プレイヤーが索敵範囲外にでたら
 	if (Utility::MagnitudeF(VSub(_pPos, pos_)) > ALERT_DISTANCE) {
 		//通常に戻る
 		ChangeState(ENEMY_STATE::NOMAL);
 	}
+}
+
+void EnemyBase::MoveNomal(const VECTOR& _pPos)
+{
+
+}
+
+void EnemyBase::MoveSearch(const VECTOR& _pPos)
+{
+}
+
+void EnemyBase::MoveBattle(const VECTOR& _pPos)
+{
+	//移動(前方方向)
+	pos_=VAdd(pos_, VScale(GetForward(), MOVE_POW));
+
+	//回転
+	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
+	auto diff = VSub(_pPos, pos_);
+	auto deg = atan2(diff.x, diff.z);
+
+	//方向の設定
+	SetGoalRot(static_cast<float>(deg) - cameraRot.y);
+
+	debugRot_ = deg;
 }
 
 void EnemyBase::ChangeState(const ENEMY_STATE _state)
@@ -136,6 +179,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 	{
 	case ENEMY_STATE::NOMAL:
 		update_ = &EnemyBase::UpdateNomal;
+		move_ = &EnemyBase::MoveNomal;
 
 		serchCol_ = serchDebugCol;
 		alertCol_ = serchDebugCol2;
@@ -143,6 +187,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 
 	case ENEMY_STATE::SEARCH:
 		update_ = &EnemyBase::UpdateSearch;
+		move_ = &EnemyBase::MoveSearch;
 
 		serchCol_ = serchDebugCol;
 		alertCol_ = alertDebugCol2;
@@ -150,6 +195,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 
 	case ENEMY_STATE::BATTLE:
 		update_ = &EnemyBase::UpdateBattle;
+		move_ = &EnemyBase::MoveBattle;
 
 		serchCol_ = alertDebugCol;
 		break;
