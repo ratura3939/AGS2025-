@@ -28,6 +28,11 @@ EnemyBase::EnemyBase(void)
 	goalPos_ = Utility::VECTOR_INIT;
 
 	debugRot_ = -1.0;
+	prePos_ = Utility::VECTOR_INIT;
+
+	//行先設定のため初期はステイ状態にする
+	isStay_ = true;
+	stayCnt_ = STAY_TIME;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -45,6 +50,7 @@ const bool EnemyBase::Init(void)
 	//パラメータ関係
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	pos_ = { 0.0f,0.0f,1000.0f };
+	prePos_ = pos_;
 	rot_ = { 0.0f,0.0f,-1.0f };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
 	//初期化用に一回実行
@@ -78,14 +84,17 @@ void EnemyBase::DrawDebug(void)
 	DrawCone3D(conePos, pos_, FIELD_VISION_DISTANCE, 30, serchCol_, 0x000000, true);
 
 	VECTOR fowardDir = VAdd(pos_, characterRotY_.PosAxis(forward));
-	DrawFormatString(0, 0, 0xffffff, "EPOS={%.1f,%.1f,%.1f}\nDEG={%.1f}\nForward={%.1f,%.1f,%.1f}",
+	DrawFormatString(0, 0, 0xffffff, "EPOS={%.1f,%.1f,%.1f}\nDEG={%.1f}\nForward={%.1f,%.1f,%.1f}\nGoalPos={%.1f,%.1f,%.1f}",
 		pos_.x, pos_.y, pos_.z,
 		static_cast<float>(debugRot_),
-		fowardDir.x, fowardDir.y, fowardDir.z);
+		fowardDir.x, fowardDir.y, fowardDir.z,
+		goalPos_.x, goalPos_.y, goalPos_.z);
 }
 
 void EnemyBase::Update(const VECTOR _pPos)
 {
+	//位置情報保存
+	prePos_ = pos_;
 	(this->*update_)(_pPos);
 	//共通更新
 	Rotation();
@@ -150,22 +159,61 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos)
 
 void EnemyBase::MoveNomal(const VECTOR& _pPos)
 {
+	//ステイ状態のとき一定の時間が過ぎていたら
+	if (isStay_) {
+		if (stayCnt_ >= STAY_TIME) {
+			//行先の再設定
+			//行先の角度設定(characterRotYに変更すべし)
+			VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
+			float degRand = static_cast<float>(GetRand(static_cast<int>(Utility::CIRCLE_DEG)));
+			float radRand = Utility::Deg2RadF(degRand) - cameraRot.y;
+			//クォータニオンに変換
+			Quaternion quaGoal= Quaternion::AngleAxis((double)cameraRot.y + radRand, Utility::AXIS_Y);
+			//キャラクター回転も設定
+			SetGoalRot(radRand);
+			characterRotY_ = quaGoal;
 
-	//現在地から目標値へのベクトル
-	VECTOR diff = VSub(goalPos_, pos_);
+			//移動量乱数
+			float moveRand = static_cast<float>(GetRand(MOVE_RANDOM_MAX)) + MOVE_RANDOM_MIN;
+			//前方方向に移動するベクトルに変換
+			VECTOR moveDir = Utility::VECTOR_ZERO;
+			moveDir.z = moveRand;
+			//行先設定
+			goalPos_ = VAdd(pos_, characterRotY_.PosAxis(moveDir));
 
-	//目標値より行き過ぎていたら
-	if (Utility::MagnitudeF(diff) <= 0.0f) {
-		//行先の再設定
-		//行先の角度設定(characterRotYに変更すべし)
-		Quaternion quaRand;
-		//移動量乱数
-		float moveRand = static_cast<float>(GetRand(MOVE_RANDOM_MAX)) + MOVE_RANDOM_MIN;
-		//前方方向に移動するベクトルに変換
-		VECTOR moveDir = Utility::VECTOR_ZERO;
-		moveDir.z = moveRand;
-		//行先設定
-		goalPos_ = VAdd(pos_, quaRand.PosAxis(moveDir));
+			//ステイ状態の解除
+			isStay_ = false;
+		}
+		else {
+			//引き続きステイ
+			stayCnt_++;
+			return;
+		}
+	}
+	//stayCnt_++;
+	//if (stayCnt_ > STAY_TIMEDE) {
+	//	//移動(前方方向)
+	//	pos_ = VAdd(pos_, VScale(GetForward(), MOVE_POW));
+	//}
+	
+	//移動(前方方向)
+	pos_ = VAdd(pos_, VScale(GetForward(), MOVE_POW));
+
+	//判定
+	//移動前から目標値へのベクトルの大きさ
+	float diffGoal = Utility::MagnitudeF(VSub(goalPos_, prePos_));
+	//移動前から移動後へのベクトルの大きさ
+	float diffNow = Utility::MagnitudeF(VSub(pos_, prePos_));
+
+	//大きさが小さい＝近いということなので
+	//移動前からゴールと移動後を比べ、ゴール側のベクトルが小さいときは移動前のほうがゴールに近かったということになる。
+	//移動前のほうが近かったら
+	if (diffGoal <= diffNow) {
+		//移動前に戻す
+		pos_ = prePos_;
+		//ステイ状態に
+		isStay_ = true;
+		stayCnt_ = 0;
 	}
 }
 
