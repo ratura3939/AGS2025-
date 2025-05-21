@@ -219,6 +219,9 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 
 void EnemyBase::MoveSearch(const VECTOR& _pPos)
 {
+	//実装予定
+	//＜敵のひきつけ＞
+	//ほかのオブジェクトの使用による効果なので初期では作らない
 }
 
 void EnemyBase::MoveBattle(const VECTOR& _pPos)
