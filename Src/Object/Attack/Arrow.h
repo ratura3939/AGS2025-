@@ -1,6 +1,9 @@
 #pragma once
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
+#include"AttackBase.h"
+
+class Quaternion;
 
 class Arrow
 {
@@ -10,6 +13,7 @@ public:
 	static constexpr VECTOR ARROW_LOCAL_POS = { 15.0f,30.0f,50.0f };	//打ち始めに違和感がないように調整
 	static constexpr float GRAVITY = 0.5f;			//重力
 	static constexpr float START_UP_ANGLE = 10.0f;	//最初の上アングル
+	static constexpr float MOVE_SPEED = 5.0f;
 
 	enum class STATE
 	{
@@ -19,17 +23,17 @@ public:
 		END,
 	};
 
-	//モデルID、発生位置、行き先,方向,対象位置,攻撃力
-	Arrow(void);	
-	~Arrow(void) = default;
-
 	/// <summary>
-	/// 初期化
+	/// 弓矢の生成
 	/// </summary>
-	/// <param name="_mdlId">矢のモデルID</param>
-	/// <param name="_trans">アーチャーの位置情報等</param>
-	/// <param name="_speed">速度</param>
-	void Init(const int _mdlId, const float _speed);
+	/// <param name="_master">攻撃者陣営</param>
+	/// <param name="_mdlId">モデル</param>
+	/// <param name="_pow">攻撃力</param>
+	/// <param name="_qua">回転</param>
+	Arrow(const AttackBase::ATTACK_MASTER& _master,const int _mdlId,const VECTOR _pos,const float _pow,const Quaternion& _qua);
+	~Arrow(void);
+
+	void Init(void);
 	void Update(void);
 	void Draw(void);
 	void Release();
@@ -77,13 +81,12 @@ private:
 	// ローカル回転
 	Quaternion quaRotLocal_;
 
-
+	//発生者
+	AttackBase::ATTACK_MASTER master_;
 	//状態
 	STATE state_;
 	//攻撃力
 	float atkPow_;
-	//速度
-	float speed_;
 	//生存判定
 	bool isAlive_;
 

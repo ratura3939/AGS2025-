@@ -1,26 +1,44 @@
 #include"../../Utility/Utility.h"
 #include "Arrow.h"
 
-Arrow::Arrow(void)
+Arrow::Arrow(const AttackBase::ATTACK_MASTER& _master, const int _mdlId, const VECTOR _pos, const float _pow, const Quaternion& _qua)
+{
+	master_ = _master;
+	modelId_ = _mdlId;
+	atkPow_ = _pow;
+
+	pos_ = _pos;
+	scl_ = Utility::VECTOR_ZERO;
+	rot_ = Utility::VECTOR_ZERO;
+
+	matScl_ = MGetIdent();
+	matRot_ = MGetIdent();
+	matPos_ = MGetIdent();
+
+	quaRot_ = _qua;
+	quaRotOrigin_ = Quaternion();
+	quaRotLocal_ = Quaternion();
+
+	isAlive_ = true;
+	state_ = STATE::NONE;
+}
+
+Arrow::~Arrow(void)
 {
 }
 
-void Arrow::Init(const int _mdlId,const float _speed)
+void Arrow::Init(void)
 {
-	//引数の引継ぎ
-	modelId_ = _mdlId;
-	speed_ = _speed;
-
 	//諸々モデルの初期化
 	VECTOR localPos = quaRot_.PosAxis(ARROW_LOCAL_POS);
 	pos_ = VAdd(pos_, localPos);
 
-	scl_ = { 1.0f,1.0f,1.0f };
+	scl_ = Utility::VECTOR_ONE;
 
 	quaRotLocal_ =
 		Quaternion::Euler(Utility::Deg2RadF(90.0f), 0.0f, 0.0f);
 
-	ChangeState(STATE::NONE);
+	ChangeState(STATE::SHOT);
 	SetIsAlive(true);
 
 	UpdateRotQuat();
@@ -98,8 +116,8 @@ void Arrow::Move(void)
 	//下方向の取得
 	VECTOR downward = GetDown();
 
-	//横ベクトル
-	VECTOR widthMovePow = VScale(forward, speed_);
+	//移動量ベクトル
+	VECTOR widthMovePow = VScale(forward, MOVE_SPEED);
 
 	// 移動
 	//前方
