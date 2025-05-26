@@ -4,6 +4,7 @@
 
 class PlayerManager;
 class EnemyManager;
+class AttackManager;
 
 class Game :
     public SceneBase
@@ -23,6 +24,7 @@ private:
 
 	std::unique_ptr<PlayerManager>player_;
 	std::unique_ptr<EnemyManager>enemy_;
+	std::unique_ptr<AttackManager>atkMng_;
 	int nearEnemyNum_;
 
 	void DrawDebug(void);

@@ -1,7 +1,7 @@
 #pragma once
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
-#include"AttackBase.h"
+#include"../../Manager/GameSystem/AttackManager.h"
 
 class Quaternion;
 
@@ -30,7 +30,7 @@ public:
 	/// <param name="_mdlId">ƒ‚ƒfƒ‹</param>
 	/// <param name="_pow">UŒ‚—Í</param>
 	/// <param name="_qua">‰ñ“]</param>
-	Arrow(const AttackBase::ATTACK_MASTER& _master,const int _mdlId,const VECTOR _pos,const float _pow,const Quaternion& _qua);
+	Arrow(const AttackManager::ATTACK_MASTER& _master,const int _mdlId,const VECTOR _pos,const float _pow,const Quaternion& _qua);
 	~Arrow(void);
 
 	void Init(void);
@@ -82,7 +82,7 @@ private:
 	Quaternion quaRotLocal_;
 
 	//”­¶Ò
-	AttackBase::ATTACK_MASTER master_;
+	AttackManager::ATTACK_MASTER master_;
 	//ó‘Ô
 	STATE state_;
 	//UŒ‚—Í

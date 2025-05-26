@@ -1,5 +1,6 @@
 #include"../Manager/GameSystem/PlayerManager.h"
 #include"../Manager/GameSystem/EnemyManager.h"
+#include"../Manager/GameSystem/AttackManager.h"
 #include"../Manager/Generic/Camera.h"
 #include"../Manager/Generic/SceneManager.h"
 #include "Game.h"
@@ -23,6 +24,10 @@ void Game::Init(void)
 	enemy_->Init();
 	nearEnemyNum_ = -1;
 
+	atkMng_ = std::make_unique<AttackManager>();
+	atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, false, 50);
+
+
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
@@ -34,8 +39,9 @@ void Game::Update(void)
 {
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 
-	player_->Update();
+	player_->Update(*atkMng_);
 	enemy_->Update(player_->GetPos());
+	atkMng_->Update();
 
 	//ロックオン
 	if (player_->IsRockOnTrg()) {
@@ -94,4 +100,5 @@ void Game::DrawDebug(void)
 	//SceneManager::GetInstance().GetCamera().DrawDebug();
 	//player_->DrawDebug();
 	enemy_->DrawDebug();
+	atkMng_->DrawDebug();
 }

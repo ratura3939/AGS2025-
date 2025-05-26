@@ -1,19 +1,23 @@
 #pragma once
+#include<string>
 #include<memory>
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
 
 class Game;
 class PlayerChara;
+class AttackManager;
 
 class PlayerManager
 {
 public:
+	static const std::string ATTACK_NOMAL;
+
 	PlayerManager(Game& _gameScene);
 	~PlayerManager(void);
 
 	void Init(void);
-	void Update(void);
+	void Update(AttackManager& _atk);
 	void Draw(void);
 	void Release(void);
 

@@ -1,7 +1,7 @@
 #include"../../Utility/Utility.h"
 #include "Arrow.h"
 
-Arrow::Arrow(const AttackBase::ATTACK_MASTER& _master, const int _mdlId, const VECTOR _pos, const float _pow, const Quaternion& _qua)
+Arrow::Arrow(const AttackManager::ATTACK_MASTER& _master, const int _mdlId, const VECTOR _pos, const float _pow, const Quaternion& _qua)
 {
 	master_ = _master;
 	modelId_ = _mdlId;

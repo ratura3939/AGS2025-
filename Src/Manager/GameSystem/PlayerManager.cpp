@@ -2,8 +2,11 @@
 #include"../Generic/InputManager.h"
 #include"../Generic/SceneManager.h"
 #include"../Generic/Camera.h"
+#include"../GameSystem/AttackManager.h"
 #include"../../Scene/Game.h"
 #include "PlayerManager.h"
+
+const std::string PlayerManager::ATTACK_NOMAL = "PlayerAttack";
 
 PlayerManager::PlayerManager(Game& _gameScene):scene_(_gameScene)
 {
@@ -20,7 +23,7 @@ void PlayerManager::Init(void)
 	character_->Init();
 }
 
-void PlayerManager::Update(void)
+void PlayerManager::Update(AttackManager& _atk)
 {
 	//TODO
 	// カメラのロックオンの処理の最適化
@@ -36,6 +39,12 @@ void PlayerManager::Update(void)
 	//	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
 	//	character_->ChangeRockState(false);
 	//}
+
+	InputManager& ins = InputManager::GetInstance();
+	if (ins.IsTrgDown(KEY_INPUT_E)) {
+		_atk.Attack(ATTACK_NOMAL, 1.0f, character_->GetPos(), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, 1.0f);
+	}
+
 	character_->Update();
 }
 
