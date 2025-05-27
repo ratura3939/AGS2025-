@@ -1,6 +1,7 @@
 #include"../Manager/GameSystem/PlayerManager.h"
 #include"../Manager/GameSystem/EnemyManager.h"
 #include"../Manager/GameSystem/AttackManager.h"
+#include"../Manager/GameSystem/CollisionManager.h"
 #include"../Manager/Generic/Camera.h"
 #include"../Manager/Generic/SceneManager.h"
 #include "Game.h"
@@ -17,15 +18,22 @@ Game::~Game(void)
 void Game::Init(void)
 {
 	//¶¬
+	//ƒvƒŒƒCƒ„[
 	player_ = std::make_unique<PlayerManager>(*this);
 	player_->Init();
 
+	//“G
 	enemy_ = std::make_unique<EnemyManager>();
 	enemy_->Init();
 	nearEnemyNum_ = -1;
 
+	//UŒ‚
 	atkMng_ = std::make_unique<AttackManager>();
+	//UŒ‚‚Ì“o˜^
 	atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, false, 50);
+
+	//”»’è
+	collision_ = std::make_unique<CollisionManager>();
 
 
 	//ƒJƒƒ‰‚Ì‰Šúİ’è
@@ -42,6 +50,9 @@ void Game::Update(void)
 	player_->Update(*atkMng_);
 	enemy_->Update(player_->GetPos());
 	atkMng_->Update();
+
+	//”»’è
+	collision_->Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks());
 
 	//ƒƒbƒNƒIƒ“
 	if (player_->IsRockOnTrg()) {

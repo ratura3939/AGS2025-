@@ -38,6 +38,15 @@ public:
 		float endAttack;	//攻撃判定消滅時間
 		float conter;		//カウンター
 		bool isFriendFire;	//FFアリかどうか
+		bool isHit;			//すでに判定されたかどうか
+	};
+
+	/// <summary>
+	/// 当たり判定に使用する情報をまとめたもの
+	/// </summary>
+	struct AttackCollision {
+		AttackInfo info;
+		AttackBase& attack;
 	};
 
 	/// <summary>
@@ -66,6 +75,13 @@ public:
 	void Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _maseter, const float _scale, const int _arrowModel = -1);
 
 	bool Update(void);
+
+	/// <summary>
+	/// アクティブな攻撃をすべて渡す
+	/// </summary>
+	/// <param name=""></param>
+	/// <returns></returns>
+	std::vector<AttackCollision&> GetActiveAttacks(void);
 
 	void DrawDebug(void);
 

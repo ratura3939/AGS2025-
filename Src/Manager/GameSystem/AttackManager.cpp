@@ -19,6 +19,7 @@ void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type,
 	info.startAttack = _start;
 	info.endAttack = _end;
 	info.conter = 0.0f;
+	info.isHit = false;
 
 	//UŒ‚î•ñ‚ğ’Ç‰Á
 	attackInfoes_.emplace(_name, info);
@@ -26,6 +27,12 @@ void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type,
 
 void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _maseter, const float _scale, const int _arrowModel)
 {
+	//—v‘f‚ª‚ ‚é‚Æ‚«
+	if (activeAttacks_.contains(_name)) {
+		//‚»‚à‚»‚à‚ ‚é‚Ì‚Åˆ—‚µ‚È‚¢
+		return;
+	}
+
 	//Œ•‚Ìê‡
 	if (attackInfoes_[_name].type == ATTACK_TYPE::SWORD) {
 		activeAttacks_.emplace(_name, std::make_unique<AttackBase>(_pos,_pow));
@@ -57,6 +64,7 @@ bool AttackManager::Update(void)
 		if (info.conter >= info.totalMotion) {
 			//I—¹
 			info.conter = 0;
+			info.isHit = false;
 			//íœ€–Ú‚É’Ç‰Á
 			deleteIndex.push_back(atk.first);
 			continue;
@@ -79,6 +87,17 @@ bool AttackManager::Update(void)
 	//}
 
 	return true;
+}
+
+std::vector<AttackManager::AttackCollision&> AttackManager::GetActiveAttacks(void)
+{
+	std::vector<AttackCollision&>retVector;
+	for (auto& atk : activeAttacks_) {
+		AttackCollision ret = { attackInfoes_[atk.first],*atk.second };
+		retVector.push_back(ret);
+	}
+
+	return retVector;
 }
 
 void AttackManager::DrawDebug(void)

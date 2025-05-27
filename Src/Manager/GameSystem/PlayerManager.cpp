@@ -68,6 +68,11 @@ const Quaternion PlayerManager::GetQua(void)
 	return character_->GetQua();
 }
 
+PlayerChara& PlayerManager::GetPlayer(void)
+{
+	// TODO: return ステートメントをここに挿入します
+}
+
 const VECTOR PlayerManager::GetFocusPoint(void)
 {
 	return character_->GetFocusPoint();

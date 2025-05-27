@@ -21,9 +21,13 @@ public:
 	void Draw(void);
 	void Release(void);
 
-	const VECTOR GetPos(void);
-	const Quaternion GetQua(void);
-	const VECTOR GetFocusPoint(void);
+	//キャラクター取得
+	PlayerChara& GetPlayer(void) { return *character_; }
+
+	//位置・回転取得
+	const VECTOR GetPos(void);			//座標
+	const Quaternion GetQua(void);		//回転
+	const VECTOR GetFocusPoint(void);	//注視点
 
 	//ロックオンのトリガ
 	//デバッグではただプレイヤーが持っている感を出しているだけ

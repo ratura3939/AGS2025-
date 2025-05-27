@@ -20,8 +20,12 @@ public:
 	void Draw(void);
 	void Release(void);
 
-	const VECTOR GetPos(const int _num);
-	const Quaternion GetQua(const int _num);
+	//“G‚½‚¿‚Ìæ“¾
+	std::vector<EnemyBase&> GetEnemys(void);
+
+	//ˆÊ’uE‰ñ“]æ“¾
+	const VECTOR GetPos(const int _num) { return characters_[_num]->GetPos(); }	//À•W
+	const Quaternion GetQua(const int _num) { return characters_[_num]->GetQua(); }//‰ñ“]
 
 	//ˆê”Ô‹ß‚¢“G‚Ì”z—ñ”Ô†‚ğ•Ô‚·
 	int GetNearEnemyNum(const VECTOR _pPos);

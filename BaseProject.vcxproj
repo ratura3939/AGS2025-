@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\GameSystem\CollisionManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\AttackManager.cpp" />
     <ClCompile Include="Src\Object\Attack\Arrow.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\EnemyBase.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="Src\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\GameSystem\CollisionManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\AttackManager.h" />
     <ClInclude Include="Src\Object\Attack\Arrow.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyBase.h" />

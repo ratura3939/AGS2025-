@@ -40,15 +40,16 @@ void EnemyManager::Release(void)
 	for (int i = 0; i < ENEMY_NUM; i++) characters_[i]->Release();
 }
 
-const VECTOR EnemyManager::GetPos(const int _num)
+std::vector<EnemyBase&> EnemyManager::GetEnemys(void)
 {
-	return characters_[_num]->GetPos();;
+	std::vector<EnemyBase&>retVector;
+
+	for (auto& chara : characters_) {
+		retVector.push_back(*chara);
+	}
+	return retVector;
 }
 
-const Quaternion EnemyManager::GetQua(const int _num)
-{
-	return characters_[_num]->GetQua();;
-}
 
 int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
 {
