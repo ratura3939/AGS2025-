@@ -11,7 +11,11 @@ class AttackManager;
 class PlayerManager
 {
 public:
+	//攻撃登録名(ゆくゆくは外部データ)
 	static const std::string ATTACK_NOMAL;
+
+	//デバッグ用
+	static constexpr int ATTACK_TIME = 50;
 
 	PlayerManager(Game& _gameScene);
 	~PlayerManager(void);
@@ -22,7 +26,7 @@ public:
 	void Release(void);
 
 	//キャラクター取得
-	PlayerChara& GetPlayer(void) { return *character_; }
+	std::weak_ptr<PlayerChara> GetPlayer(void);
 
 	//位置・回転取得
 	const VECTOR GetPos(void);			//座標
@@ -41,6 +45,6 @@ public:
 	void DrawDebug(void);
 private:
 	Game& scene_;	//ゲームクラス参照
-	std::unique_ptr<PlayerChara> character_;
+	std::shared_ptr<PlayerChara> character_;
 };
 

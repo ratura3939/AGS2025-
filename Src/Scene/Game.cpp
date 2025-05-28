@@ -30,7 +30,7 @@ void Game::Init(void)
 	//çUåÇ
 	atkMng_ = std::make_unique<AttackManager>();
 	//çUåÇÇÃìoò^
-	atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, false, 50);
+	AttackDataInit();
 
 	//îªíË
 	collision_ = std::make_unique<CollisionManager>();
@@ -93,6 +93,12 @@ void Game::Release(void)
 {
 	player_->Release();
 	enemy_->Release();
+}
+
+void Game::AttackDataInit(void)
+{
+	atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, false, PlayerManager::ATTACK_TIME);
+	atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, false, EnemyManager::ATTACK_TIME);
 }
 
 void Game::DecideRockEnemy(void)

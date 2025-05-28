@@ -15,13 +15,13 @@ CollisionManager::~CollisionManager(void)
 {
 }
 
-void CollisionManager::Collision(PlayerChara& _player, std::vector<EnemyBase&> _enemy, std::vector<AttackManager::AttackCollision&> _atks)
+void CollisionManager::Collision(std::weak_ptr<PlayerChara> _player, std::vector<std::weak_ptr<EnemyBase>> _enemy, std::vector<AttackManager::AttackCollision> _atks)
 {
-	//CollisionPlayer(_player, _atks);
+	CollisionPlayer(_player, _atks);
 	CollisionEnemy(_enemy, _atks);
 }
 
-void CollisionManager::CollisionPlayer(PlayerChara& _player, std::vector<AttackManager::AttackCollision&> _atks)
+void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::vector<AttackManager::AttackCollision> _atks)
 {
 	//UŒ‚‚Ì”‚¾‚¯‰ñ‚·
 	for (auto& atkCol : _atks) {
@@ -30,10 +30,24 @@ void CollisionManager::CollisionPlayer(PlayerChara& _player, std::vector<AttackM
 			//Ÿ‚Ö
 			continue;
 		}
+
+		//‚±‚êˆÈ~‚ÍUŒ‚‚Ì”»’è‚ª‰Â”\‚Èó‘Ô
+		//UŒ‚ˆÊ’u
+		const VECTOR atkPos = atkCol.attack.lock()->GetPos();
+		const float atkRadius = atkCol.info.scale;
+
+		const VECTOR pPos = _player.lock()->GetPos();
+		const VECTOR pHeadPos = _player.lock()->GetHeight();
+
+		//UŒ‚(‹…)‚ÆƒLƒƒƒ‰ƒNƒ^[(ƒJƒvƒZƒ‹)‚Ì“–‚½‚è”»’è
+		if (Utility::IsHitSphereCapsule(atkPos, atkRadius, pPos, pHeadPos, CharacterBase::CHARACTER_RADIUS)) {
+			//“–‚½‚Á‚Ä‚¢‚½‚ç
+			_player.lock()->Deth();
+		}
 	}
 }
 
-void CollisionManager::CollisionEnemy(std::vector<EnemyBase&>& _enemy, std::vector<AttackManager::AttackCollision&> _atks)
+void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _enemy, std::vector<AttackManager::AttackCollision> _atks)
 {
 	//UŒ‚‚Ì”‚¾‚¯‰ñ‚·
 	for (auto& atkCol : _atks) {
@@ -45,18 +59,18 @@ void CollisionManager::CollisionEnemy(std::vector<EnemyBase&>& _enemy, std::vect
 
 		//‚±‚êˆÈ~‚ÍUŒ‚‚Ì”»’è‚ª‰Â”\‚Èó‘Ô
 		//UŒ‚ˆÊ’u
-		const VECTOR atkPos = atkCol.attack.GetPos();
+		const VECTOR atkPos = atkCol.attack.lock()->GetPos();
 		const float atkRadius = atkCol.info.scale;
 
 		//“G‚Ì”‚¾‚¯‰ñ‚·
 		for (auto& enemy : _enemy) {
-			const VECTOR ePos = enemy.GetPos();
-			const VECTOR eHeadPos = enemy.GetHeight();
+			const VECTOR ePos = enemy.lock()->GetPos();
+			const VECTOR eHeadPos = enemy.lock()->GetHeight();
 
 			//UŒ‚(‹…)‚ÆƒLƒƒƒ‰ƒNƒ^[(ƒJƒvƒZƒ‹)‚Ì“–‚½‚è”»’è
 			if (Utility::IsHitSphereCapsule(atkPos, atkRadius, ePos, eHeadPos, CharacterBase::CHARACTER_RADIUS)) {
 				//“–‚½‚Á‚Ä‚¢‚½‚ç
-				enemy.Deth();
+				enemy.lock()->Deth();
 			}
 		}
 	}

@@ -35,7 +35,7 @@ void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _p
 
 	//åïÇÃèÍçá
 	if (attackInfoes_[_name].type == ATTACK_TYPE::SWORD) {
-		activeAttacks_.emplace(_name, std::make_unique<AttackBase>(_pos,_pow));
+		activeAttacks_.emplace(_name, std::make_shared<AttackBase>(_pos,_pow));
 	}
 	//ã|ÇÃèÍçá
 	else if (attackInfoes_[_name].type == ATTACK_TYPE::BOW) {
@@ -89,11 +89,11 @@ bool AttackManager::Update(void)
 	return true;
 }
 
-std::vector<AttackManager::AttackCollision&> AttackManager::GetActiveAttacks(void)
+std::vector<AttackManager::AttackCollision> AttackManager::GetActiveAttacks(void)
 {
-	std::vector<AttackCollision&>retVector;
+	std::vector<AttackCollision>retVector;
 	for (auto& atk : activeAttacks_) {
-		AttackCollision ret = { attackInfoes_[atk.first],*atk.second };
+		AttackCollision ret = { attackInfoes_[atk.first],atk.second };
 		retVector.push_back(ret);
 	}
 

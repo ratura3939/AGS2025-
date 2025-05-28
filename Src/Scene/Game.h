@@ -20,6 +20,12 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
+private:
+	/// <summary>
+	/// 攻撃の基礎情報登録(ゆくゆくは外部データにしたい)
+	/// </summary>
+	void AttackDataInit(void);
+
 	/// <summary>
 	/// ロックオンの対象決め
 	/// </summary>

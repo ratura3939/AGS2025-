@@ -46,7 +46,7 @@ public:
 	/// </summary>
 	struct AttackCollision {
 		AttackInfo info;
-		AttackBase& attack;
+		std::weak_ptr<AttackBase> attack;
 	};
 
 	/// <summary>
@@ -81,13 +81,13 @@ public:
 	/// </summary>
 	/// <param name=""></param>
 	/// <returns></returns>
-	std::vector<AttackCollision&> GetActiveAttacks(void);
+	std::vector<AttackCollision> GetActiveAttacks(void);
 
 	void DrawDebug(void);
 
 private:
 	std::unordered_map<std::string, AttackInfo>attackInfoes_;
-	std::unordered_map<std::string, std::unique_ptr<AttackBase>>activeAttacks_;
+	std::unordered_map<std::string, std::shared_ptr<AttackBase>>activeAttacks_;
 
 	//std::vector<std::unique_ptr<Arrow>>arrows_;
 };

@@ -33,6 +33,8 @@ EnemyBase::EnemyBase(void)
 	//行先設定のため初期はステイ状態にする
 	isStay_ = true;
 	stayCnt_ = STAY_TIME;
+
+	hp_ = 5;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -60,38 +62,6 @@ const bool EnemyBase::Init(void)
 	return true;
 }
 
-void EnemyBase::SetColor(int _color)
-{
-	color_ = _color;
-}
-
-void EnemyBase::SetPos(VECTOR _pos)
-{
-	pos_ = _pos;
-}
-
-void EnemyBase::DrawDebug(void)
-{
-	VECTOR forwardDif = { 0,0,100 };
-	//前方向明示
-	VECTOR fowardPos = VAdd(pos_, characterRotY_.PosAxis(forwardDif));
-	DrawSphere3D(fowardPos, 8, 8, 0xff5500, 0xff0000, false);
-	//視野角
-	auto conePos = VAdd(pos_, VECTOR{ 0.0f,-1.0f,0.0f });
-
-	DrawCone3D(conePos, pos_, ALERT_DISTANCE, 30, alertCol_, 0x000000, true);
-
-	DrawCone3D(conePos, pos_, FIELD_VISION_DISTANCE, 30, serchCol_, 0x000000, true);
-
-	VECTOR fowardDir = VAdd(pos_, characterRotY_.PosAxis(forward));
-	DrawFormatString(0, 0, 0xffffff, "EPOS={%.1f,%.1f,%.1f}\nDEG={%.1f}\nForward={%.1f,%.1f,%.1f}\nGoalPos={%.1f,%.1f,%.1f}",
-		pos_.x, pos_.y, pos_.z,
-		static_cast<float>(debugRot_),
-		fowardDir.x, fowardDir.y, fowardDir.z,
-		goalPos_.x, goalPos_.y, goalPos_.z);
-
-	DrawCupcel();
-}
 
 void EnemyBase::Update(const VECTOR _pPos)
 {
@@ -108,6 +78,9 @@ void EnemyBase::SetPram(void)
 	//各敵たち
 	//後々Jsonやったら楽になるかも？
 }
+
+
+
 
 void EnemyBase::UpdateNomal(const VECTOR& _pPos)
 {
@@ -275,3 +248,35 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 	}
 }
 
+void EnemyBase::SetColor(int _color)
+{
+	color_ = _color;
+}
+
+void EnemyBase::SetPos(VECTOR _pos)
+{
+	pos_ = _pos;
+}
+
+void EnemyBase::DrawDebug(void)
+{
+	VECTOR forwardDif = { 0,0,100 };
+	//前方向明示
+	VECTOR fowardPos = VAdd(pos_, characterRotY_.PosAxis(forwardDif));
+	DrawSphere3D(fowardPos, 8, 8, 0xff5500, 0xff0000, false);
+	//視野角
+	auto conePos = VAdd(pos_, VECTOR{ 0.0f,-1.0f,0.0f });
+
+	DrawCone3D(conePos, pos_, ALERT_DISTANCE, 30, alertCol_, 0x000000, true);
+
+	DrawCone3D(conePos, pos_, FIELD_VISION_DISTANCE, 30, serchCol_, 0x000000, true);
+
+	VECTOR fowardDir = VAdd(pos_, characterRotY_.PosAxis(forward));
+	DrawFormatString(0, 0, 0xffffff, "EPOS={%.1f,%.1f,%.1f}\nDEG={%.1f}\nForward={%.1f,%.1f,%.1f}\nGoalPos={%.1f,%.1f,%.1f}",
+		pos_.x, pos_.y, pos_.z,
+		static_cast<float>(debugRot_),
+		fowardDir.x, fowardDir.y, fowardDir.z,
+		goalPos_.x, goalPos_.y, goalPos_.z);
+
+	DrawCupcel();
+}

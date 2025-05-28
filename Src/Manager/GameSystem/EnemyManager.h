@@ -12,6 +12,12 @@ class EnemyManager
 public:
 	static constexpr int ENEMY_NUM = 1;			//敵総数
 
+	//攻撃登録名(ゆくゆくは外部データ)
+	static const std::string ATTACK_NOMAL;
+
+	//デバッグ用
+	static constexpr int ATTACK_TIME = 50;
+
 	EnemyManager(void);
 	~EnemyManager(void);
 
@@ -21,7 +27,7 @@ public:
 	void Release(void);
 
 	//敵たちの取得
-	std::vector<EnemyBase&> GetEnemys(void);
+	std::vector<std::weak_ptr<EnemyBase>> GetEnemys(void);
 
 	//位置・回転取得
 	const VECTOR GetPos(const int _num);//座標
@@ -34,6 +40,6 @@ public:
 
 	void DrawDebug(void);
 private:
-	std::vector<std::unique_ptr<EnemyBase>> characters_;
+	std::vector<std::shared_ptr<EnemyBase>> characters_;
 };
 

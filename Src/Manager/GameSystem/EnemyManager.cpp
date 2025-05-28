@@ -3,6 +3,8 @@
 #include"../../Application.h"
 #include "EnemyManager.h"
 
+const std::string EnemyManager::ATTACK_NOMAL = "EnemyAttack";
+
 EnemyManager::EnemyManager(void)
 {
 }
@@ -14,7 +16,7 @@ EnemyManager::~EnemyManager(void)
 void EnemyManager::Init(void)
 {
 	for (int i = 0; i < ENEMY_NUM; i++) {
-		std::unique_ptr enemy = std::make_unique<EnemyBase>();
+		std::shared_ptr enemy = std::make_shared<EnemyBase>();
 		enemy->Init();
 		characters_.push_back(std::move(enemy));
 	}
@@ -27,6 +29,10 @@ void EnemyManager::Init(void)
 
 void EnemyManager::Update(const VECTOR& _playerPos)
 {
+
+
+	if (characters_.empty())return;
+
 	//死亡したキャラクターの配列番号保存とそのカウンター
 	std::vector<int>dethEnemy = {};
 	int counter = 0;
@@ -47,26 +53,35 @@ void EnemyManager::Update(const VECTOR& _playerPos)
 	//死亡リスト分回す
 	for (auto& idx : dethEnemy) {
 		//該当の敵を消去
-		characters_[idx].release();
+		characters_.erase(characters_.begin()+idx);
 	}
 }
 
 void EnemyManager::Draw(void)
 {
-	for (auto& chara : characters_)  chara->Draw();
+
+	if (characters_.empty())return;
+
+	for (auto& chara : characters_) {
+		chara->Draw();
+	}
 }
 
 void EnemyManager::Release(void)
 {
-	for (auto& chara : characters_) chara->Release();
+
+	if (characters_.empty())return;
+	for (auto& chara : characters_) {
+		chara->Release();
+	}
 }
 
-std::vector<EnemyBase&> EnemyManager::GetEnemys(void)
+std::vector<std::weak_ptr<EnemyBase>> EnemyManager::GetEnemys(void)
 {
-	std::vector<EnemyBase&>retVector;
+	std::vector<std::weak_ptr<EnemyBase>>retVector;
 
 	for (auto& chara : characters_) {
-		retVector.push_back(*chara);
+		retVector.push_back(chara);
 	}
 	return retVector;
 }
@@ -121,6 +136,8 @@ bool EnemyManager::InsideScreen(const VECTOR _pos)
 
 void EnemyManager::DrawDebug(void)
 {
+	if (characters_.empty())return;
+
 	VECTOR pos = ConvWorldPosToScreenPos(characters_[0]->GetPos());
 	DrawFormatString(0, 80, 0xffffff, "SCPOS={%.1f,%.1f}", pos.x, pos.y);
 	characters_[0]->DrawDebug();

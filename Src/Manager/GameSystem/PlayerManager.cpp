@@ -19,7 +19,7 @@ PlayerManager::~PlayerManager(void)
 void PlayerManager::Init(void)
 {
 	//キャラクター生成
-	character_ = std::make_unique<PlayerChara>();
+	character_ = std::make_shared<PlayerChara>();
 	character_->Init();
 }
 
@@ -68,9 +68,9 @@ const Quaternion PlayerManager::GetQua(void)
 	return character_->GetQua();
 }
 
-PlayerChara& PlayerManager::GetPlayer(void)
+std::weak_ptr<PlayerChara> PlayerManager::GetPlayer(void)
 {
-	return *character_;
+	return character_;
 }
 
 const VECTOR PlayerManager::GetFocusPoint(void)
