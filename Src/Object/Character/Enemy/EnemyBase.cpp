@@ -89,6 +89,8 @@ void EnemyBase::DrawDebug(void)
 		static_cast<float>(debugRot_),
 		fowardDir.x, fowardDir.y, fowardDir.z,
 		goalPos_.x, goalPos_.y, goalPos_.z);
+
+	DrawCupcel();
 }
 
 void EnemyBase::Update(const VECTOR _pPos)

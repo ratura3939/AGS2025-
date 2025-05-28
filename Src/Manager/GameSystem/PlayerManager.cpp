@@ -42,7 +42,7 @@ void PlayerManager::Update(AttackManager& _atk)
 
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_E)) {
-		_atk.Attack(ATTACK_NOMAL, 1.0f, character_->GetPos(), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, 1.0f);
+		_atk.Attack(ATTACK_NOMAL, 1.0f, VAdd(character_->GetPos(),{0.0f,50.0f,0.0f}), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, 1.0f);
 	}
 
 	character_->Update();
@@ -70,7 +70,7 @@ const Quaternion PlayerManager::GetQua(void)
 
 PlayerChara& PlayerManager::GetPlayer(void)
 {
-	// TODO: return ステートメントをここに挿入します
+	return *character_;
 }
 
 const VECTOR PlayerManager::GetFocusPoint(void)

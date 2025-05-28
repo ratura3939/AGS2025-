@@ -27,17 +27,38 @@ void EnemyManager::Init(void)
 
 void EnemyManager::Update(const VECTOR& _playerPos)
 {
-	for (int i = 0; i < ENEMY_NUM; i++) characters_[i]->Update(_playerPos);
+	//死亡したキャラクターの配列番号保存とそのカウンター
+	std::vector<int>dethEnemy = {};
+	int counter = 0;
+	//敵の個体分回す
+	for (auto& chara : characters_) {
+		//更新をかける
+		chara->Update(_playerPos);
+
+		//死亡していたら
+		if (!chara->IsAlive()) {
+			//死亡リストに追加
+			dethEnemy.push_back(counter);
+		}
+		//個体カウンター増加
+		counter++;
+	}
+
+	//死亡リスト分回す
+	for (auto& idx : dethEnemy) {
+		//該当の敵を消去
+		characters_[idx].release();
+	}
 }
 
 void EnemyManager::Draw(void)
 {
-	for (int i = 0; i < ENEMY_NUM; i++) characters_[i]->Draw();
+	for (auto& chara : characters_)  chara->Draw();
 }
 
 void EnemyManager::Release(void)
 {
-	for (int i = 0; i < ENEMY_NUM; i++) characters_[i]->Release();
+	for (auto& chara : characters_) chara->Release();
 }
 
 std::vector<EnemyBase&> EnemyManager::GetEnemys(void)
@@ -48,6 +69,16 @@ std::vector<EnemyBase&> EnemyManager::GetEnemys(void)
 		retVector.push_back(*chara);
 	}
 	return retVector;
+}
+
+const VECTOR EnemyManager::GetPos(const int _num)
+{
+	return characters_[_num]->GetPos();
+}
+
+const Quaternion EnemyManager::GetQua(const int _num)
+{
+	return characters_[_num]->GetQua();
 }
 
 

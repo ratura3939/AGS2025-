@@ -21,6 +21,12 @@ public:
 	static constexpr float DEG_LEFT = 270.0f;
 	static constexpr float DEG_RIGHT = 90.0f;
 
+	static constexpr VECTOR CHARACTER_HEIGHT = { 0.0f,150.0f,0.0f };
+	static constexpr float CHARACTER_RADIUS = 80.0f;
+
+	//デバッグ用
+	static constexpr int COLOR = 0xffffff;
+
 	CharacterBase(void);
 	~CharacterBase(void);
 
@@ -53,11 +59,23 @@ public:
 	VECTOR GetDir(const VECTOR& _vec) const;
 
 	//位置取得
-	const VECTOR GetPos(void)const;
+	const VECTOR GetPos(void)const;//座標(足元)
+	const VECTOR GetHeight(void)const;//座標(頭辺り)
+
 	//回転情報の取得
 	const Quaternion GetQua(void)const;
 
+	//判定
+	const bool IsAlive(void)const;
+
+	//ダメージを与える
+	void Damage(const float _pow);
+
+	//死亡させる
+	void Deth(void);
+
 	virtual void DrawDebug(void);
+	void DrawCupcel(void);
 
 protected:
 	int modelId_;	//モデルID

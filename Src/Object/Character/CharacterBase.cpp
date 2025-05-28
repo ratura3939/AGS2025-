@@ -142,6 +142,11 @@ const VECTOR CharacterBase::GetPos(void) const
 	return pos_;
 }
 
+const VECTOR CharacterBase::GetHeight(void) const
+{
+	return VAdd(pos_, CHARACTER_HEIGHT);
+}
+
 const Quaternion CharacterBase::GetQua(void) const
 {
 	Quaternion retRot = Quaternion();
@@ -150,6 +155,64 @@ const Quaternion CharacterBase::GetQua(void) const
 	return retRot;
 }
 
+const bool CharacterBase::IsAlive(void) const
+{
+	return hp_ > 0;
+}
+
+void CharacterBase::Damage(const float _pow)
+{
+	//攻撃力分減らす
+	hp_ -= static_cast<int>(_pow);
+}
+
+void CharacterBase::Deth(void)
+{
+	hp_ = 0;
+}
+
 void CharacterBase::DrawDebug(void)
 {
+}
+
+void CharacterBase::DrawCupcel(void)
+{
+	// 上の球体
+	VECTOR pos1 = GetHeight();
+	DrawSphere3D(pos1, CHARACTER_RADIUS, 5, COLOR, COLOR, false);
+
+	// 下の球体
+	VECTOR pos2 = GetPos();
+	DrawSphere3D(pos2, CHARACTER_RADIUS, 5, COLOR, COLOR, false);
+
+	VECTOR dir;
+	VECTOR s;
+	VECTOR e;
+
+	// 球体を繋ぐ線(X+)
+	dir = GetRight();
+	s = VAdd(pos1, VScale(dir, CHARACTER_RADIUS));
+	e = VAdd(pos2, VScale(dir, CHARACTER_RADIUS));
+	DrawLine3D(s, e, COLOR);
+
+	// 球体を繋ぐ線(X-)
+	dir = GetLeft();
+	s = VAdd(pos1, VScale(dir, CHARACTER_RADIUS));
+	e = VAdd(pos2, VScale(dir, CHARACTER_RADIUS));
+	DrawLine3D(s, e, COLOR);
+
+	// 球体を繋ぐ線(Z+)
+	dir = GetForward();
+	s = VAdd(pos1, VScale(dir, CHARACTER_RADIUS));
+	e = VAdd(pos2, VScale(dir, CHARACTER_RADIUS));
+	DrawLine3D(s, e, COLOR);
+
+	// 球体を繋ぐ線(Z-)
+	dir = GetBack();
+	s = VAdd(pos1, VScale(dir, CHARACTER_RADIUS));
+	e = VAdd(pos2, VScale(dir, CHARACTER_RADIUS));
+	DrawLine3D(s, e, COLOR);
+
+	// カプセルの中心
+	DrawSphere3D(VAdd(GetPos(),VScale(CHARACTER_HEIGHT,2.0f)), 5.0f, 10, COLOR, COLOR, true);
 }

@@ -59,6 +59,8 @@ void PlayerChara::DrawDebug(void)
 	float deg = Utility::AngleDeg(pos_, VSub(rockPos, pos_));
 	if (pos_.x > rockPos.x)deg = 180.0f + (180.0f - deg);
 	DrawFormatString(0, 140, 0xffffff, "RockDeg={%.1f}", deg);
+
+	DrawCupcel();
 }
 
 void PlayerChara::Move(void)

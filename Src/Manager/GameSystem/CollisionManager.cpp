@@ -1,6 +1,7 @@
 #include"../../Object/Character/Enemy/EnemyBase.h"
 #include"../../Object/Character/Player/PlayerChara.h"
-
+#include"../../Object/Character/CharacterBase.h"
+#include"../../Utility/Utility.h"
 
 #include "CollisionManager.h"
 
@@ -16,7 +17,7 @@ CollisionManager::~CollisionManager(void)
 
 void CollisionManager::Collision(PlayerChara& _player, std::vector<EnemyBase&> _enemy, std::vector<AttackManager::AttackCollision&> _atks)
 {
-	CollisionPlayer(_player, _atks);
+	//CollisionPlayer(_player, _atks);
 	CollisionEnemy(_enemy, _atks);
 }
 
@@ -42,10 +43,21 @@ void CollisionManager::CollisionEnemy(std::vector<EnemyBase&>& _enemy, std::vect
 			continue;
 		}
 
-		//攻撃の判定が可能な状態
+		//これ以降は攻撃の判定が可能な状態
+		//攻撃位置
+		const VECTOR atkPos = atkCol.attack.GetPos();
+		const float atkRadius = atkCol.info.scale;
+
 		//敵の数だけ回す
 		for (auto& enemy : _enemy) {
-			
+			const VECTOR ePos = enemy.GetPos();
+			const VECTOR eHeadPos = enemy.GetHeight();
+
+			//攻撃(球)とキャラクター(カプセル)の当たり判定
+			if (Utility::IsHitSphereCapsule(atkPos, atkRadius, ePos, eHeadPos, CharacterBase::CHARACTER_RADIUS)) {
+				//当たっていたら
+				enemy.Deth();
+			}
 		}
 	}
 }
