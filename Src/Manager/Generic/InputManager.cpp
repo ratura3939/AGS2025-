@@ -462,4 +462,19 @@ const VECTOR InputManager::IsStickTrg(const STICK _side, const JOYPAD_NO no)
 	return ret;
 }
 
+bool InputManager::IsTrigerred(const std::string& _eventCode) const
+{
+	//先に要素がない場合の予防線をはる
+	// 反応しないだけという状態を作りたいから
+	//containd()=引数がキーとなる要素がないとき
+	if (!currentInput_.contains(_eventCode)) {
+		//参照できないので
+		return false;
+	}
+
+	//[]の形で中身を見ようとすると勝手に中身が空のキーの場所が生成されてしまう
+	//なのでmap型のat()関数はキー検索であり読み取り専用を使用することで中身を変えずに参照が可能になるｂ
+	return currentInput_.at(_eventCode) && !lastInput_.at(_eventCode);
+}
+
 

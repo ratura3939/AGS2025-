@@ -1,5 +1,8 @@
 #pragma once
-#include <map>
+#include<unordered_map>	//対応表のため
+#include<vector>		//デバイスを追加するため
+#include<string>		//対応キーのため
+#include<map>
 #include <Dxlib.h>
 #include "../../Common/Vector2.h"
 
@@ -10,6 +13,16 @@ public:
 
 	//スティックトリガー切り替え規定値
 	static constexpr int STICK_BORDER = 500;
+
+	/// <summary>
+	/// 周辺機器種別
+	/// </summary>
+	enum class PeripheralType {
+		KEYBOARD,
+		GAMEPAD,
+		MOUSE,
+	};
+
 
 	// ゲームコントローラーの認識番号
 	// DxLib定数、DX_INPUT_PAD1等に対応
@@ -134,7 +147,35 @@ public:
 	/// <returns>-１＝負方向に動作(X軸:左方向,Y軸:上方向)</returns>
 	/// <returns>0＝動作なし</returns>
 	const VECTOR IsStickTrg(const STICK _side, const JOYPAD_NO no);
+
+	/// <summary>
+	/// キーのダウントリガ
+	/// </summary>
+	/// <param name="_eventCode">登録名</param>
+	/// <returns></returns>
+	bool IsTrigerred(const std::string& _eventCode)const;
 private:
+
+	struct InputToAction
+	{
+		PeripheralType type;//周辺機器
+		uint32_t code;	//入力コード(汎用)
+	};
+
+	struct InputState
+	{
+		char key[256];
+	};
+
+	using InputTable_t = std::unordered_map<std::string, std::vector<InputToAction>>;
+	InputTable_t inputTable_;	//イベントと入力の対応表
+
+	std::vector<std::string>inputListForDisplay_;
+
+	using InputData_t = std::unordered_map<std::string, bool>;
+	InputData_t currentInput_;	//イベントに対応するボタンが押されているか
+	InputData_t lastInput_;		//イベントに対応するボタンが押されているか(１フレーム前)
+
 
 	// キー情報
 	struct Info
