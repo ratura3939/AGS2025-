@@ -42,7 +42,7 @@ void PlayerManager::Update(AttackManager& _atk)
 
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_E)) {
-		_atk.Attack(ATTACK_NOMAL, 1.0f, VAdd(character_->GetPos(),{0.0f,50.0f,0.0f}), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, 1.0f);
+		_atk.Attack(ATTACK_NOMAL, 1.0f, VAdd(character_->GetPos(),character_->GetQua().PosAxis({ 0.0f, 75.0f, 100.0f }) ), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, 70.0f);
 	}
 
 	character_->Update();
@@ -101,4 +101,9 @@ void PlayerManager::RockOff(void)
 void PlayerManager::DrawDebug(void)
 {
 	character_->DrawDebug();
+}
+
+const bool PlayerManager::IsAlive(void) const
+{
+	return character_->IsAlive();
 }

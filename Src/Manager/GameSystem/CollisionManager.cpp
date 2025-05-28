@@ -23,6 +23,9 @@ void CollisionManager::Collision(std::weak_ptr<PlayerChara> _player, std::vector
 
 void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::vector<AttackManager::AttackCollision> _atks)
 {
+	//“G‚ÌUŒ‚‚É‚Í‘OŒ„EŒãŒ„‚ª‚ ‚é‚Ì‚Å‚»‚ê‚ç‚Ì”»’è‚à‚İ‚Ås‚¤
+
+
 	//UŒ‚‚Ì”‚¾‚¯‰ñ‚·
 	for (auto& atkCol : _atks) {
 		//UŒ‚‚ª‚»‚à‚»‚à”»’èÏ‚İE“¯‘®‚ÌUŒ‚‚¾‚Á‚½ê‡
@@ -71,6 +74,7 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 			if (Utility::IsHitSphereCapsule(atkPos, atkRadius, ePos, eHeadPos, CharacterBase::CHARACTER_RADIUS)) {
 				//“–‚½‚Á‚Ä‚¢‚½‚ç
 				enemy.lock()->Deth();
+				atkCol.info.isHit = true;
 			}
 		}
 	}

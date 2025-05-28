@@ -47,8 +47,12 @@ void Game::Update(void)
 {
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 
+	if (!player_->IsAlive()) {
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+	}
+
 	player_->Update(*atkMng_);
-	enemy_->Update(player_->GetPos());
+	enemy_->Update(player_->GetPos(), *atkMng_);
 	atkMng_->Update();
 
 	//”»’è

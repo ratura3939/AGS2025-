@@ -29,6 +29,7 @@ const bool PlayerChara::Init(void)
 	focusPoint_ = FOCUS_NOMAL;
 
 	UpdateRotQuat();
+	hp_ = 5;
 
 	return true;
 }

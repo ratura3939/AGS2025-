@@ -1,6 +1,8 @@
 #include"../../../Manager/Generic/ResourceManager.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
+#include"../../../Manager/GameSystem/AttackManager.h"
+#include"../../../Manager/GameSystem/EnemyManager.h"
 #include"../../../Utility/Utility.h"
 #include "EnemyBase.h"
 
@@ -63,11 +65,11 @@ const bool EnemyBase::Init(void)
 }
 
 
-void EnemyBase::Update(const VECTOR _pPos)
+void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
 {
 	//位置情報保存
 	prePos_ = pos_;
-	(this->*update_)(_pPos);
+	(this->*update_)(_pPos,_atk);
 	//共通更新
 	Rotation();
 	UpdateRotQuat();
@@ -82,7 +84,7 @@ void EnemyBase::SetPram(void)
 
 
 
-void EnemyBase::UpdateNomal(const VECTOR& _pPos)
+void EnemyBase::UpdateNomal(const VECTOR& _pPos, AttackManager& _atk)
 {
 	//移動処理
 	(this->*move_)(_pPos);
@@ -95,7 +97,7 @@ void EnemyBase::UpdateNomal(const VECTOR& _pPos)
 	}
 }
 
-void EnemyBase::UpdateSearch(const VECTOR& _pPos)
+void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 {
 	//移動処理
 	(this->*move_)(_pPos);
@@ -119,7 +121,7 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos)
 	debugRot_ = deg;
 }
 
-void EnemyBase::UpdateBattle(const VECTOR& _pPos)
+void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 {
 	//移動処理
 	(this->*move_)(_pPos);
@@ -129,6 +131,12 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos)
 	if (Utility::MagnitudeF(VSub(_pPos, pos_)) > ALERT_DISTANCE) {
 		//通常に戻る
 		ChangeState(ENEMY_STATE::NOMAL);
+	}
+
+	//プレイヤーが攻撃範囲内なら
+	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ATTACK_DISTANCE) {
+		//攻撃する
+		_atk.Attack(EnemyManager::ATTACK_NOMAL, 1.0f, VAdd(pos_, characterRotY_.PosAxis({ 0.0f, 75.0f, 100.0f })), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, 70.0f);
 	}
 }
 

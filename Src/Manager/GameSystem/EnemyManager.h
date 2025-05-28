@@ -22,7 +22,7 @@ public:
 	~EnemyManager(void);
 
 	void Init(void);
-	void Update(const VECTOR& _playerPos);
+	void Update(const VECTOR& _playerPos, AttackManager& _atkMng);
 	void Draw(void);
 	void Release(void);
 

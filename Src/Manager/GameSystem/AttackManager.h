@@ -72,7 +72,7 @@ public:
 	/// <param name="_maseter">w‰c</param>
 	/// <param name="_scale">‘å‚«‚³</param>
 	/// <param name="_arrowModel">–î‚Ìƒ‚ƒfƒ‹(‹|UŒ‚‚Ì‚İ)</param>
-	void Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _maseter, const float _scale, const int _arrowModel = -1);
+	void Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _master, const float _scale, const int _arrowModel = -1);
 
 	bool Update(void);
 

@@ -27,10 +27,10 @@ void EnemyManager::Init(void)
 	characters_[1]->SetPos({ 500.0f,0.0f,1000.0f });*/
 }
 
-void EnemyManager::Update(const VECTOR& _playerPos)
+void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 {
 
-
+	//いなかったら処理しない
 	if (characters_.empty())return;
 
 	//死亡したキャラクターの配列番号保存とそのカウンター
@@ -39,7 +39,7 @@ void EnemyManager::Update(const VECTOR& _playerPos)
 	//敵の個体分回す
 	for (auto& chara : characters_) {
 		//更新をかける
-		chara->Update(_playerPos);
+		chara->Update(_playerPos, _atkMng);
 
 		//死亡していたら
 		if (!chara->IsAlive()) {
@@ -59,7 +59,7 @@ void EnemyManager::Update(const VECTOR& _playerPos)
 
 void EnemyManager::Draw(void)
 {
-
+	//いなかったら処理しない
 	if (characters_.empty())return;
 
 	for (auto& chara : characters_) {
@@ -69,7 +69,7 @@ void EnemyManager::Draw(void)
 
 void EnemyManager::Release(void)
 {
-
+	//いなかったら処理しない
 	if (characters_.empty())return;
 	for (auto& chara : characters_) {
 		chara->Release();
@@ -136,6 +136,7 @@ bool EnemyManager::InsideScreen(const VECTOR _pos)
 
 void EnemyManager::DrawDebug(void)
 {
+	//いなかったら処理しない
 	if (characters_.empty())return;
 
 	VECTOR pos = ConvWorldPosToScreenPos(characters_[0]->GetPos());

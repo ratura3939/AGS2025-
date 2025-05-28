@@ -25,7 +25,7 @@ void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type,
 	attackInfoes_.emplace(_name, info);
 }
 
-void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _maseter, const float _scale, const int _arrowModel)
+void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _master, const float _scale, const int _arrowModel)
 {
 	//要素があるとき
 	if (activeAttacks_.contains(_name)) {
@@ -33,6 +33,11 @@ void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _p
 		return;
 	}
 
+	//情報の追加
+	attackInfoes_[_name].scale = _scale;
+	attackInfoes_[_name].master = _master;
+
+	//攻撃判定の生成
 	//剣の場合
 	if (attackInfoes_[_name].type == ATTACK_TYPE::SWORD) {
 		activeAttacks_.emplace(_name, std::make_shared<AttackBase>(_pos,_pow));
@@ -50,10 +55,6 @@ void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _p
 
 bool AttackManager::Update(void)
 {
-	//プレイヤーにはいらないが、
-	//敵には判定を出す前の前隙と後隙が必要となるため更新を分ける必要がある←これは判定のときのみ必要なので判定の関数に回す
-
-
 	//削除項目記憶用
 	std::vector<std::string>deleteIndex;
 
@@ -116,7 +117,7 @@ void AttackManager::DrawDebug(void)
 			else color = 0xff00ff;
 		}
 		//デバッグ用の球体を描画
-		DrawSphere3D(atk.second->GetPos(), 12, 8, color, color, false);
+		DrawSphere3D(atk.second->GetPos(), static_cast<int>(info.scale), 8, color, color, false);
 	}
 	
 }

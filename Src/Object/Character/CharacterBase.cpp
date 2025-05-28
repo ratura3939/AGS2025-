@@ -31,7 +31,7 @@ void CharacterBase::Update(void)
 {
 }
 
-void CharacterBase::Update(const VECTOR _pPos)
+void CharacterBase::Update(const VECTOR _pPos, AttackManager& _atk)
 {
 }
 

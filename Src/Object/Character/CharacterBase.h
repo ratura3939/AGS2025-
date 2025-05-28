@@ -2,6 +2,7 @@
 #include<DxLib.h>
 #include "../../Common/Quaternion.h"
 
+class AttackManager;
 class Game;
 
 class CharacterBase
@@ -32,7 +33,7 @@ public:
 
 	virtual const bool Init(void) = 0;
 	virtual void Update(void);
-	virtual void Update(const VECTOR _pPos);
+	virtual void Update(const VECTOR _pPos, AttackManager& _atk);	//敵用(敵はキャラクター自身が行動を決めるのでそれ用に分けている)
 	virtual void Draw(void);
 	virtual const bool Release(void);
 
