@@ -47,7 +47,9 @@ void Game::Update(void)
 {
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 
+	//プレイヤーが死んでいたら
 	if (!player_->IsAlive()) {
+		//シーン遷移
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
 
@@ -58,14 +60,24 @@ void Game::Update(void)
 	//判定
 	collision_->Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks());
 
-	//ロックオン
+	//ロックオン関係
 	if (player_->IsRockOnTrg()) {
-		//各種状態変化と対象の検索
-		player_->RockOn();
-		camera.ChangeMode(Camera::MODE::ROCKON);
-		DecideRockEnemy();
+		//敵がいるとき
+		if (enemy_->GetEnemys().size() > 0) {
+			//各種状態変化と対象の検索
+			player_->RockOn();
+			camera.ChangeMode(Camera::MODE::ROCKON);
+			DecideRockEnemy();
+		}
 	}
 	else if (player_->IsRockOffTrg()) {
+		//各種状態の変化
+		player_->RockOff();
+		camera.ChangeMode(Camera::MODE::FOLLOW);
+	}
+
+	//カメラがロックオン状態のとき敵がいなかったら
+	if (camera.GetMode() == Camera::MODE::ROCKON && enemy_->GetEnemys().size() <= 0) {
 		//各種状態の変化
 		player_->RockOff();
 		camera.ChangeMode(Camera::MODE::FOLLOW);

@@ -142,8 +142,9 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 
 void EnemyBase::MoveNomal(const VECTOR& _pPos)
 {
-	//ステイ状態のとき一定の時間が過ぎていたら
+	//ステイ状態のとき
 	if (isStay_) {
+		//一定の時間が過ぎていたら
 		if (stayCnt_ >= STAY_TIME) {
 			//行先の再設定
 			//行先の角度設定(characterRotYに変更すべし)

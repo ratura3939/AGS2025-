@@ -17,7 +17,7 @@ CollisionManager::~CollisionManager(void)
 
 void CollisionManager::Collision(std::weak_ptr<PlayerChara> _player, std::vector<std::weak_ptr<EnemyBase>> _enemy, std::vector<AttackManager::AttackCollision> _atks)
 {
-	CollisionPlayer(_player, _atks);
+	//CollisionPlayer(_player, _atks);
 	CollisionEnemy(_enemy, _atks);
 }
 
