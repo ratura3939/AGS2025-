@@ -17,7 +17,8 @@ void GameOver::Init(void)
 
 void GameOver::Update(void)
 {
-	if (InputManager::GetInstance().IsTrigerred("action")) {
+	InputManager& ins = InputManager::GetInstance();
+	if (ins.IsTrigerred("action")){
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 }

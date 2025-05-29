@@ -175,4 +175,8 @@ bool InputManager::IsPressed(const std::string& _eventCode) const
 	return currentInput_.at(_eventCode);
 }
 
+InputManager::~InputManager(void)
+{
+}
+
 
