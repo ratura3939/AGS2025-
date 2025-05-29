@@ -125,6 +125,6 @@ private:
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする
 	InputManager(void);
-	InputManager(const InputManager& manager)=delete;
+	InputManager(const InputManager& manager);
 	~InputManager(void);
 };
