@@ -29,7 +29,13 @@ void InputManager::Init(void)
 
 void InputManager::Update(void)
 {
+	//PAD関係は１Pの事しか見ていない
+	//複数人を想定するのなら要改良
+	//キーボード関係とPad関係で分けるのがよさそう？
+
 	lastInput_ = currentInput_;
+	lastInptuPeri_ = currentInptuPeri_;
+	
 	//キーボード
 	char keystate[KEY_ALL] = {};
 	GetHitKeyStateAll(keystate);
@@ -46,6 +52,7 @@ void InputManager::Update(void)
 	//項目分回す
 	for (const auto& keyvalue : inputTable_) {
 		bool pressed = false;	//押されているかどうかのフラグ
+		std::vector<PeripheralType> inputTypes = {};
 		//中身の動的配列をfor文で回す(キーボード→PADの順で見ている)
 		for (auto input : keyvalue.second) {
 			//キーボードのとき
@@ -54,25 +61,27 @@ void InputManager::Update(void)
 				//pressed = keystate[input.code];
 				if (keystate[input.code] != 0) {
 					pressed = keystate[input.code];
+					//入力が行われていたらこの危機から入力があったと記録する
+					if (pressed)inputTypes.push_back(PeripheralType::KEYBOARD);
 				}
 			}
 			else if (input.type == PeripheralType::GAMEPAD) {
 				//パッドに何かしらの入力がありそれがコードだったとき
 				pressed = padstate & input.code;
+				if (pressed)inputTypes.push_back(PeripheralType::GAMEPAD);
 			}
 			else if (input.type == PeripheralType::MOUSE) {
 				//パッドに何かしらの入力がありそれがコードだったとき
 				pressed = mousestate & input.code;
+				if (pressed)inputTypes.push_back(PeripheralType::MOUSE);
 			}
 			else if (input.type == PeripheralType::X_ANALOG) {
 				pressed = analpgInputTable_[static_cast<AnalogInputType>(input.code)](xinputState);
-			}
-			//入力があったならそれ以上見る必要はない
-			if (pressed) {
-				break;
+				if (pressed)inputTypes.push_back(PeripheralType::X_ANALOG);
 			}
 		}
 		currentInput_[keyvalue.first] = pressed;
+		currentInptuPeri_[keyvalue.first] = inputTypes;
 	}
 }
 
@@ -97,7 +106,7 @@ void InputManager::ResetInput(void)
 	inputTable_["leftSub"] = { { PeripheralType::KEYBOARD,KEY_INPUT_LEFT },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RS_LEFT) } };
 	inputTable_["rightSub"] = { { PeripheralType::KEYBOARD,KEY_INPUT_RIGHT },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RS_RIGHT) } };
 
-	//各コマンド<PADは複数個所で兼用の場合あり>
+	//各コマンド<PADは複数個所で兼用あり>
 	inputTable_["action"] = { { PeripheralType::MOUSE,MOUSE_INPUT_LEFT },{ PeripheralType::GAMEPAD,PAD_INPUT_B } };		//Bボタン(Aボタン：任天堂)
 	inputTable_["dash"] = { { PeripheralType::KEYBOARD,KEY_INPUT_LSHIFT },{ PeripheralType::GAMEPAD,PAD_INPUT_A } };	//Aボタン(Bボタン：任天堂)
 	inputTable_["cancel"] = { { PeripheralType::KEYBOARD,KEY_INPUT_Q },{ PeripheralType::GAMEPAD,PAD_INPUT_A } };		//Aボタン(Bボタン：任天堂)

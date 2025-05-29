@@ -62,15 +62,17 @@ void Game::Update(void)
 
 	//ƒƒbƒNƒIƒ“ŠÖŒW
 	if (player_->IsRockOnTrg()) {
-		//“G‚ª‚¢‚é‚Æ‚«
-		if (enemy_->GetEnemys().size() > 0) {
-			//ŠeŽíó‘Ô•Ï‰»‚Æ‘ÎÛ‚ÌŒŸõ
-			player_->RockOn();
-			camera.ChangeMode(Camera::MODE::ROCKON);
-			DecideRockEnemy();
+		if (camera.GetMode() != Camera::MODE::ROCKON) {
+			//“G‚ª‚¢‚é‚Æ‚«
+			if (enemy_->GetEnemys().size() > 0) {
+				//ŠeŽíó‘Ô•Ï‰»‚Æ‘ÎÛ‚ÌŒŸõ
+				player_->RockOn();
+				camera.ChangeMode(Camera::MODE::ROCKON);
+				DecideRockEnemy();
+			}
 		}
 	}
-	else if (player_->IsRockOffTrg()) {
+	else {
 		//ŠeŽíó‘Ô‚Ì•Ï‰»
 		player_->RockOff();
 		camera.ChangeMode(Camera::MODE::FOLLOW);

@@ -25,6 +25,7 @@ public:
 		//PAD操作
 		GAMEPAD,
 		X_ANALOG,
+		MAX
 	};
 
 	/// <summary>
@@ -83,6 +84,7 @@ public:
 	/// <param name="_eventCode">登録名</param>
 	/// <returns></returns>
 	bool IsTrigerred(const std::string& _eventCode)const;
+
 	bool IsPressed(const std::string& _eventCode)const;
 
 private:
@@ -112,6 +114,12 @@ private:
 	using InputData_t = std::unordered_map<std::string, bool>;
 	InputData_t currentInput_;	//イベントに対応するボタンが押されているか
 	InputData_t lastInput_;		//イベントに対応するボタンが押されているか(１フレーム前)
+
+	//押されたとき何で押されたかを覚えておく
+	using InputPeriTypeData_t = std::unordered_map<std::string, std::vector<PeripheralType>>;
+	InputPeriTypeData_t currentInptuPeri_;
+	InputPeriTypeData_t lastInptuPeri_;
+
 
 
 	// デフォルトコンストラクタをprivateにして、

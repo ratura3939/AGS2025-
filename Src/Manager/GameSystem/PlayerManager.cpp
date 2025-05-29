@@ -41,7 +41,7 @@ void PlayerManager::Update(AttackManager& _atk)
 	//}
 
 	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsTrgDown(KEY_INPUT_E)) {
+	if (ins.IsTrigerred("action")) {
 		_atk.Attack(ATTACK_NOMAL, 1.0f, VAdd(character_->GetPos(),character_->GetQua().PosAxis({ 0.0f, 75.0f, 100.0f }) ), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, 70.0f);
 	}
 
@@ -80,12 +80,7 @@ const VECTOR PlayerManager::GetFocusPoint(void)
 
 const bool PlayerManager::IsRockOnTrg(void) const
 {
-	return InputManager::GetInstance().IsTrgDown(KEY_INPUT_R);
-}
-
-const bool PlayerManager::IsRockOffTrg(void) const
-{
-	return InputManager::GetInstance().IsTrgUp(KEY_INPUT_R);
+	return InputManager::GetInstance().IsPressed("rock");
 }
 
 void PlayerManager::RockOn(void)
