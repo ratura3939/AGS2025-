@@ -73,19 +73,19 @@ void PlayerChara::Move(void)
 	float afterDeg = 0.0f;
 
 	//キーボード入力
-	if (ins.IsNew(KEY_INPUT_W)) {
+	if (ins.IsPressed("up")) {
 		dir = cameraRot.GetForward();
 		afterDeg = Utility::Deg2RadF(DEG_FORWARD);
 	}
-	if (ins.IsNew(KEY_INPUT_A)) {
+	if (ins.IsPressed("left")) {
 		dir = cameraRot.GetLeft();
 		afterDeg = Utility::Deg2RadF(DEG_LEFT);
 	}
-	if (ins.IsNew(KEY_INPUT_S)) {
+	if (ins.IsPressed("back")) {
 		dir = cameraRot.GetBack();
 		afterDeg = Utility::Deg2RadF(DEG_BACK);
 	}
-	if (ins.IsNew(KEY_INPUT_D)) {
+	if (ins.IsPressed("right")) {
 		dir = cameraRot.GetRight();
 		afterDeg = Utility::Deg2RadF(DEG_RIGHT);
 	}

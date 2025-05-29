@@ -3,6 +3,7 @@
 #include<vector>		//デバイスを追加するため
 #include<string>		//対応キーのため
 #include<map>
+#include<functional>
 #include <Dxlib.h>
 #include "../../Common/Vector2.h"
 
@@ -10,17 +11,37 @@ class InputManager
 {
 
 public:
-
-	//スティックトリガー切り替え規定値
-	static constexpr int STICK_BORDER = 500;
+	static constexpr int ANALOG_STHICK_THRESHOLD = 10000;	//スティック閾値
+	static constexpr int ANALOG_TRIGGER_THRESHOLD = 128;	//トリガー閾値
+	static constexpr int KEY_ALL = 256;	//キー種総数
 
 	/// <summary>
 	/// 周辺機器種別
 	/// </summary>
 	enum class PeripheralType {
+		//キーマウ操作
 		KEYBOARD,
-		GAMEPAD,
 		MOUSE,
+		//PAD操作
+		GAMEPAD,
+		X_ANALOG,
+	};
+
+	/// <summary>
+	/// アナログ入力種別
+	/// </summary>
+	enum class AnalogInputType {
+		LS_UP,		//左スティックの上
+		LS_DOWN,	//左スティックの下
+		LS_RIGHT,	//左スティックの右
+		LS_LEFT,	//左スティックの左
+		LT,			//左トリガー
+		RS_UP,		//右スティックの上
+		RS_DOWN,	//右スティックの下
+		RS_RIGHT,	//右スティックの右
+		RS_LEFT,	//右スティックの左
+		RT,			//右トリガー
+		end
 	};
 
 
@@ -37,54 +58,6 @@ public:
 		MAX
 	};
 
-	// ゲームコントローラータイプ
-	// DxLib定数、DX_OTHER等に対応
-	enum class JOYPAD_TYPE
-	{
-		OTHER = 0,
-		XBOX_360,
-		XBOX_ONE,
-		DUAL_SHOCK_4,
-		DUAL_SENSE,
-		SWITCH_JOY_CON_L,
-		SWITCH_JOY_CON_R,
-		SWITCH_PRO_CTRL,
-		MAX
-	};
-
-	// ゲームコントローラーボタン
-	enum class JOYPAD_BTN
-	{
-		LEFT = 0,
-		RIGHT,
-		TOP,
-		DOWN,
-		R_TRIGGER,
-		L_TRIGGER,
-		POSE,
-		MAX
-	};
-
-	enum class STICK {
-		L_STICK,
-		R_STICK,
-	};
-
-	// ゲームコントローラーの入力情報
-	struct JOYPAD_IN_STATE
-	{
-		unsigned char ButtonsOld[static_cast<int>(JOYPAD_BTN::MAX)];
-		unsigned char ButtonsNew[static_cast<int>(JOYPAD_BTN::MAX)];
-		bool IsOld[static_cast<int>(JOYPAD_BTN::MAX)];
-		bool IsNew[static_cast<int>(JOYPAD_BTN::MAX)];
-		bool IsTrgDown[static_cast<int>(JOYPAD_BTN::MAX)];
-		bool IsTrgUp[static_cast<int>(JOYPAD_BTN::MAX)];
-		int AKeyLX;
-		int AKeyLY;
-		int AKeyRX;
-		int AKeyRY;
-	};
-
 	// インスタンスを明示的に生成
 	static void CreateInstance(void);
 
@@ -97,142 +70,48 @@ public:
 	// リソースの破棄
 	void Destroy(void);
 
-	// 判定を行うキーを追加
-	void Add(int key);
+private:
+	//キー対応初期化
+	void ResetInput(void);
+	//アナログキーの入力判別の関数定義
+	void AnalogInputFuncInit(void);
 
-	// 判定を行うキーをクリア
-	void Clear(void);
-
-	// キーの押下判定
-	bool IsNew(int key) const;
-
-	// キーの押下判定(押しっぱなしはNG)
-	bool IsTrgDown(int key) const;
-
-	// キーを離した時の判定
-	bool IsTrgUp(int key) const;
-
-	// マウス座標の取得
-	Vector2 GetMousePos(void) const;
-
-	// マウスのクリック状態を取得(MOUSE_INPUT_LEFT、RIGHT)
-	int GetMouse(void) const;
-
-	// マウスが左クリックされたか
-	bool IsClickMouseLeft(void) const;
-
-	// マウスが右クリックされたか
-	bool IsClickMouseRight(void) const;
-
-	// マウスが左クリックされたか(押しっぱなしはNG)
-	bool IsTrgMouseLeft(void) const;
-
-	// マウスが右クリックされたか(押しっぱなしはNG)
-	bool IsTrgMouseRight(void) const;
-
-	// コントローラの入力情報を取得する
-	JOYPAD_IN_STATE GetJPadInputState(JOYPAD_NO no);
-
-	// ボタンが押された
-	bool IsPadBtnNew(JOYPAD_NO no, JOYPAD_BTN btn) const;
-	bool IsPadBtnTrgDown(JOYPAD_NO no, JOYPAD_BTN btn) const;
-	bool IsPadBtnTrgUp(JOYPAD_NO no, JOYPAD_BTN btn) const;
-
-	/// <summary>
-	/// スティック移動のトリガー
-	/// ※必ず使用するときはループで一回のみ(用見直し)
-	/// </summary>
-	/// <param name="_side">LスティックかRスティックかの指定</param>
-	/// <returns>１＝正方向に動作(X軸:右方向,Y軸:下方向)</returns>
-	/// <returns>-１＝負方向に動作(X軸:左方向,Y軸:上方向)</returns>
-	/// <returns>0＝動作なし</returns>
-	const VECTOR IsStickTrg(const STICK _side, const JOYPAD_NO no);
-
+public:
 	/// <summary>
 	/// キーのダウントリガ
 	/// </summary>
 	/// <param name="_eventCode">登録名</param>
 	/// <returns></returns>
 	bool IsTrigerred(const std::string& _eventCode)const;
-private:
+	bool IsPressed(const std::string& _eventCode)const;
 
-	struct InputToAction
+private:
+	static InputManager* instance_;
+
+
+	/// <summary>
+	/// 入力紐づけ(機器・対応コード)
+	/// </summary>
+	struct InputCode
 	{
 		PeripheralType type;//周辺機器
-		uint32_t code;	//入力コード(汎用)
+		uint32_t code;		//入力コード(汎用)
 	};
 
-	struct InputState
-	{
-		char key[256];
-	};
-
-	using InputTable_t = std::unordered_map<std::string, std::vector<InputToAction>>;
+	//<登録名、対応キー>(キーボード・PADに対応)
+	using InputTable_t = std::unordered_map<std::string, std::vector<InputCode>>;
 	InputTable_t inputTable_;	//イベントと入力の対応表
 
-	std::vector<std::string>inputListForDisplay_;
+	std::vector<std::string>inputListForDisplay_;	//キーコンフィグ用(前期実装未定)
 
+	//スティック関係は少し別種なのでこちらで扱う(基本的にRスティックやトリガー用)
+	using AnalogInputTable_t = std::unordered_map<AnalogInputType, std::function<bool(const XINPUT_STATE&)>>;
+	AnalogInputTable_t analpgInputTable_;
+
+	//<登録名,押下状態>
 	using InputData_t = std::unordered_map<std::string, bool>;
 	InputData_t currentInput_;	//イベントに対応するボタンが押されているか
 	InputData_t lastInput_;		//イベントに対応するボタンが押されているか(１フレーム前)
-
-
-	// キー情報
-	struct Info
-	{
-		int key;			// キーID
-		bool keyOld;		// 1フレーム前の押下状態
-		bool keyNew;		// 現フレームの押下状態
-		bool keyTrgDown;	// 現フレームでボタンが押されたか
-		bool keyTrgUp;		// 現フレームでボタンが離されたか
-	};
-
-	// マウス
-	struct MouseInfo
-	{
-		int key;			// キーID
-		bool keyOld;		// 1フレーム前の押下状態
-		bool keyNew;		// 現フレームの押下状態
-		bool keyTrgDown;	// 現フレームでボタンが押されたか
-		bool keyTrgUp;		// 現フレームでボタンが離されたか
-	};
-
-	struct StickNeutral
-	{
-		bool LX;
-		bool LY;
-		bool RX;
-		bool RY;
-	};
-
-	// コントローラ情報
-	DINPUT_JOYSTATE joyDInState_;
-
-	// コントローラ情報(XBOX)
-	XINPUT_STATE joyXInState_;
-
-	// シングルトン用インスタンス
-	static InputManager* instance_;
-
-	// キー情報
-	std::map<int, InputManager::Info> keyInfos_;
-	InputManager::Info infoEmpty_;
-
-	// マウス情報
-	std::map<int, InputManager::MouseInfo> mouseInfos_;
-	InputManager::MouseInfo mouseInfoEmpty_;
-
-	// マウスカーソルの位置
-	Vector2 mousePos_;
-	
-	// マウスボタンの入力状態
-	int mouseInput_;
-
-	// パッド情報
-	JOYPAD_IN_STATE padInfos_[5];
-
-	//パッドスティック関係
-	StickNeutral neutral_[static_cast<int>(JOYPAD_NO::MAX)];
 
 
 	// デフォルトコンストラクタをprivateにして、
@@ -240,23 +119,4 @@ private:
 	InputManager(void);
 	InputManager(const InputManager& manager);
 	~InputManager(void) = default;
-
-	// 配列の中からキー情報を取得する
-	const InputManager::Info& Find(int key) const;
-
-	// 配列の中からマウス情報を取得する
-	const InputManager::MouseInfo& FindMouse(int key) const;
-
-	// 接続されたコントローラの種別を取得する
-	JOYPAD_TYPE GetJPadType(JOYPAD_NO no);
-
-	// コントローラの入力情報を取得する
-	DINPUT_JOYSTATE GetJPadDInputState(JOYPAD_NO no);
-
-	// コントローラ(XBOX)の入力情報を取得する
-	XINPUT_STATE GetJPadXInputState(JOYPAD_NO no);
-
-	// コントローラの入力情報を更新する
-	void SetJPadInState(JOYPAD_NO jpNo);
-
 };

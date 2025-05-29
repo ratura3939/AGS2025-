@@ -24,443 +24,127 @@ InputManager& InputManager::GetInstance(void)
 void InputManager::Init(void)
 {
 
-	// ゲームで使用したいキーを、
-	// 事前にここで登録しておいてください
-	InputManager::GetInstance().Add(KEY_INPUT_SPACE);
-	InputManager::GetInstance().Add(KEY_INPUT_RETURN);
-	InputManager::GetInstance().Add(KEY_INPUT_TAB);
-	InputManager::GetInstance().Add(KEY_INPUT_N);
-	InputManager::GetInstance().Add(KEY_INPUT_Z);
-	InputManager::GetInstance().Add(KEY_INPUT_J);
-	InputManager::GetInstance().Add(KEY_INPUT_W);
-	InputManager::GetInstance().Add(KEY_INPUT_A);
-	InputManager::GetInstance().Add(KEY_INPUT_S);
-	InputManager::GetInstance().Add(KEY_INPUT_D);
-	InputManager::GetInstance().Add(KEY_INPUT_E);
-	InputManager::GetInstance().Add(KEY_INPUT_Q);
-	InputManager::GetInstance().Add(KEY_INPUT_F);
-	InputManager::GetInstance().Add(KEY_INPUT_R);
-
-	InputManager::GetInstance().Add(KEY_INPUT_UP);
-	InputManager::GetInstance().Add(KEY_INPUT_DOWN);
-	InputManager::GetInstance().Add(KEY_INPUT_LEFT);
-	InputManager::GetInstance().Add(KEY_INPUT_RIGHT);
-
-
-
-	InputManager::MouseInfo info;
-
-	// 左クリック
-	info = InputManager::MouseInfo();
-	info.key = MOUSE_INPUT_LEFT;
-	info.keyOld = false;
-	info.keyNew = false;
-	info.keyTrgDown = false;
-	info.keyTrgUp = false;
-	mouseInfos_.emplace(info.key, info);
-
-	// 右クリック
-	info = InputManager::MouseInfo();
-	info.key = MOUSE_INPUT_RIGHT;
-	info.keyOld = false;
-	info.keyNew = false;
-	info.keyTrgDown = false;
-	info.keyTrgUp = false;
-	mouseInfos_.emplace(info.key, info);
-
-	for (int i = 0; i < static_cast<int>(JOYPAD_NO::MAX); i++) {
-		neutral_[i].LX = true;
-		neutral_[i].LY = true;
-		neutral_[i].RX = true;
-		neutral_[i].RY = true;
-	}
+	
 }
 
 void InputManager::Update(void)
 {
+	lastInput_ = currentInput_;
+	//キーボード
+	char keystate[KEY_ALL] = {};
+	GetHitKeyStateAll(keystate);
+	//マウス
+	int mousestate = GetMouseInput();
 
-	// キーボード検知
-	for (auto& p : keyInfos_)
-	{
-		p.second.keyOld = p.second.keyNew;
-		p.second.keyNew = CheckHitKey(p.second.key);
-		p.second.keyTrgDown = p.second.keyNew && !p.second.keyOld;
-		p.second.keyTrgUp = !p.second.keyNew && p.second.keyOld;
-	}
+	//パッド
+	int padstate = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 
-	// マウス検知
-	mouseInput_ = GetMouseInput();
-	GetMousePoint(&mousePos_.x, &mousePos_.y);
+	//アナログ
+	XINPUT_STATE xinputState = {};
+	GetJoypadXInputState(DX_INPUT_PAD1, &xinputState);
 
-	for (auto& p : mouseInfos_)
-	{
-		p.second.keyOld = p.second.keyNew;
-		p.second.keyNew = mouseInput_ == p.second.key;
-		p.second.keyTrgDown = p.second.keyNew && !p.second.keyOld;
-		p.second.keyTrgUp = !p.second.keyNew && p.second.keyOld;
-	}
-
-	// パッド情報
-	SetJPadInState(JOYPAD_NO::KEY_PAD1);
-	SetJPadInState(JOYPAD_NO::PAD1);
-	SetJPadInState(JOYPAD_NO::PAD2);
-	SetJPadInState(JOYPAD_NO::PAD3);
-	SetJPadInState(JOYPAD_NO::PAD4);
-
-	for (int i = 0; i < static_cast<int>(JOYPAD_NO::MAX); i++) {
-		if (GetJPadInputState(static_cast<JOYPAD_NO>(i)).AKeyLX == 0.0f)neutral_[i].LX = true;
-		if (GetJPadInputState(static_cast<JOYPAD_NO>(i)).AKeyLY == 0.0f)neutral_[i].LY = true;
-		if (GetJPadInputState(static_cast<JOYPAD_NO>(i)).AKeyRX == 0.0f)neutral_[i].RX = true;
-		if (GetJPadInputState(static_cast<JOYPAD_NO>(i)).AKeyRY == 0.0f)neutral_[i].RY = true;
+	//項目分回す
+	for (const auto& keyvalue : inputTable_) {
+		bool pressed = false;	//押されているかどうかのフラグ
+		//中身の動的配列をfor文で回す(キーボード→PADの順で見ている)
+		for (auto input : keyvalue.second) {
+			//キーボードのとき
+			if (input.type == PeripheralType::KEYBOARD) {
+				//GetHitKeyで入力状態をえたkeystateからコードの場所に検索をかける
+				//pressed = keystate[input.code];
+				if (keystate[input.code] != 0) {
+					pressed = keystate[input.code];
+				}
+			}
+			else if (input.type == PeripheralType::GAMEPAD) {
+				//パッドに何かしらの入力がありそれがコードだったとき
+				pressed = padstate & input.code;
+			}
+			else if (input.type == PeripheralType::MOUSE) {
+				//パッドに何かしらの入力がありそれがコードだったとき
+				pressed = mousestate & input.code;
+			}
+			else if (input.type == PeripheralType::X_ANALOG) {
+				pressed = analpgInputTable_[static_cast<AnalogInputType>(input.code)](xinputState);
+			}
+			//入力があったならそれ以上見る必要はない
+			if (pressed) {
+				break;
+			}
+		}
+		currentInput_[keyvalue.first] = pressed;
 	}
 }
 
 void InputManager::Destroy(void)
 {
-	keyInfos_.clear();
-	mouseInfos_.clear();
 	delete instance_;
 }
 
-void InputManager::Add(int key)
+void InputManager::ResetInput(void)
 {
-	InputManager::Info info = InputManager::Info();
-	info.key = key;
-	info.keyOld = false;
-	info.keyNew = false;
-	info.keyTrgDown = false;
-	info.keyTrgUp = false;
-	keyInfos_.emplace(key, info);
+	// ゲームで使用したいキーとその名前を、
+	// 事前にここで登録しておいてください
+
+	//移動関係<WASD・左スティック>
+	inputTable_["up"] = { { PeripheralType::KEYBOARD,KEY_INPUT_W },{ PeripheralType::GAMEPAD,PAD_INPUT_UP } };
+	inputTable_["down"] = { { PeripheralType::KEYBOARD,KEY_INPUT_S },{ PeripheralType::GAMEPAD,PAD_INPUT_DOWN } };
+	inputTable_["left"] = { { PeripheralType::KEYBOARD,KEY_INPUT_A },{ PeripheralType::GAMEPAD,PAD_INPUT_LEFT } };
+	inputTable_["right"] = { { PeripheralType::KEYBOARD,KEY_INPUT_D },{ PeripheralType::GAMEPAD,PAD_INPUT_RIGHT } };
+	//移動入力(サブ)<Rスティック・方向キー>
+	inputTable_["upSub"] = { { PeripheralType::KEYBOARD,KEY_INPUT_UP },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RS_UP) } };
+	inputTable_["downSub"] = { { PeripheralType::KEYBOARD,KEY_INPUT_DOWN },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RS_DOWN) } };
+	inputTable_["leftSub"] = { { PeripheralType::KEYBOARD,KEY_INPUT_LEFT },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RS_LEFT) } };
+	inputTable_["rightSub"] = { { PeripheralType::KEYBOARD,KEY_INPUT_RIGHT },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RS_RIGHT) } };
+
+	//各コマンド<PADは複数個所で兼用の場合あり>
+	inputTable_["action"] = { { PeripheralType::MOUSE,MOUSE_INPUT_LEFT },{ PeripheralType::GAMEPAD,PAD_INPUT_B } };		//Bボタン(Aボタン：任天堂)
+	inputTable_["dash"] = { { PeripheralType::KEYBOARD,KEY_INPUT_LSHIFT },{ PeripheralType::GAMEPAD,PAD_INPUT_A } };	//Aボタン(Bボタン：任天堂)
+	inputTable_["cancel"] = { { PeripheralType::KEYBOARD,KEY_INPUT_Q },{ PeripheralType::GAMEPAD,PAD_INPUT_A } };		//Aボタン(Bボタン：任天堂)
+	inputTable_["attack"] = { { PeripheralType::KEYBOARD,KEY_INPUT_W },{ PeripheralType::GAMEPAD,PAD_INPUT_C } };		//Xボタン(Yボタン：任天堂)
+	inputTable_["jump"] = { { PeripheralType::KEYBOARD,KEY_INPUT_SPACE },{ PeripheralType::GAMEPAD,PAD_INPUT_X } };		//Yボタン(Xボタン：任天堂)
+	inputTable_["crouch"] = { { PeripheralType::KEYBOARD,KEY_INPUT_LCONTROL },{ PeripheralType::GAMEPAD,PAD_INPUT_START } };//LS
+	inputTable_["rock"] = { { PeripheralType::KEYBOARD,KEY_INPUT_R },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::LT) } };//LT
+	inputTable_["arrow"] = { { PeripheralType::MOUSE,MOUSE_INPUT_RIGHT },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RT) } };//RT
+
+	//ポーズ
+	inputTable_["pause"] = { { PeripheralType::KEYBOARD,KEY_INPUT_TAB },{ PeripheralType::GAMEPAD,PAD_INPUT_R } };
 }
 
-void InputManager::Clear(void)
+void InputManager::AnalogInputFuncInit(void)
 {
-	keyInfos_.clear();
+	analpgInputTable_[AnalogInputType::LS_UP] = [](const XINPUT_STATE& _state) {
+		return _state.ThumbLY > ANALOG_STHICK_THRESHOLD;
+	};
+	analpgInputTable_[AnalogInputType::LS_DOWN] = [](const XINPUT_STATE& _state) {
+		return _state.ThumbLY < -ANALOG_STHICK_THRESHOLD;
+	};
+	analpgInputTable_[AnalogInputType::LS_RIGHT] = [](const XINPUT_STATE& _state) {
+		return _state.ThumbLX > ANALOG_STHICK_THRESHOLD;
+	};
+	analpgInputTable_[AnalogInputType::LS_LEFT] = [](const XINPUT_STATE& _state) {
+		return _state.ThumbLX < -ANALOG_STHICK_THRESHOLD;
+	};
+	analpgInputTable_[AnalogInputType::RS_UP] = [](const XINPUT_STATE& _state) {
+		return _state.ThumbRY > ANALOG_STHICK_THRESHOLD;
+	};
+	analpgInputTable_[AnalogInputType::RS_DOWN] = [](const XINPUT_STATE& _state) {
+		return _state.ThumbRY < -ANALOG_STHICK_THRESHOLD;
+	};
+	analpgInputTable_[AnalogInputType::RS_RIGHT] = [](const XINPUT_STATE& _state) {
+		return _state.ThumbRX > ANALOG_STHICK_THRESHOLD;
+	};
+	analpgInputTable_[AnalogInputType::RS_LEFT] = [](const XINPUT_STATE& _state) {
+		return _state.ThumbRX < -ANALOG_STHICK_THRESHOLD;
+	};
+	analpgInputTable_[AnalogInputType::LT] = [](const XINPUT_STATE& _state) {
+		return _state.LeftTrigger > ANALOG_TRIGGER_THRESHOLD;
+	};
+	analpgInputTable_[AnalogInputType::RT] = [](const XINPUT_STATE& _state) {
+		return _state.RightTrigger > ANALOG_TRIGGER_THRESHOLD;
+	};
 }
 
-bool InputManager::IsNew(int key) const
-{
-	return Find(key).keyNew;
-}
-
-bool InputManager::IsTrgDown(int key) const
-{
-	return Find(key).keyTrgDown;
-}
-
-bool InputManager::IsTrgUp(int key) const
-{
-	return Find(key).keyTrgUp;
-}
-
-Vector2 InputManager::GetMousePos(void) const
-{
-	return mousePos_;
-}
-
-int InputManager::GetMouse(void) const
-{
-	return mouseInput_;
-}
-
-bool InputManager::IsClickMouseLeft(void) const
-{
-	return mouseInput_ == MOUSE_INPUT_LEFT;
-}
-
-bool InputManager::IsClickMouseRight(void) const
-{
-	return mouseInput_ == MOUSE_INPUT_RIGHT;
-}
-
-bool InputManager::IsTrgMouseLeft(void) const
-{
-	return FindMouse(MOUSE_INPUT_LEFT).keyTrgDown;
-}
-
-bool InputManager::IsTrgMouseRight(void) const
-{
-	return FindMouse(MOUSE_INPUT_RIGHT).keyTrgDown;
-}
-
-InputManager::InputManager(void)
-{
-	mouseInput_ = -1;
-}
-
-InputManager::InputManager(const InputManager& manager)
-{
-}
-
-const InputManager::Info& InputManager::Find(int key) const
-{
-
-	auto it = keyInfos_.find(key);
-	if (it != keyInfos_.end())
-	{
-		return it->second;
-	}
-
-	return infoEmpty_;
-
-}
-
-const InputManager::MouseInfo& InputManager::FindMouse(int key) const
-{
-	auto it = mouseInfos_.find(key);
-	if (it != mouseInfos_.end())
-	{
-		return it->second;
-	}
-
-	return mouseInfoEmpty_;
-}
-
-InputManager::JOYPAD_TYPE InputManager::GetJPadType(JOYPAD_NO no)
-{
-	return static_cast<InputManager::JOYPAD_TYPE>(GetJoypadType(static_cast<int>(no)));
-}
-
-DINPUT_JOYSTATE InputManager::GetJPadDInputState(JOYPAD_NO no)
-{
-	// コントローラ情報
-	GetJoypadDirectInputState(static_cast<int>(no), &joyDInState_);
-	return joyDInState_;
-}
-
-XINPUT_STATE InputManager::GetJPadXInputState(JOYPAD_NO no)
-{
-	// コントローラ情報
-	GetJoypadXInputState(static_cast<int>(no), &joyXInState_);
-	return joyXInState_;
-}
-
-void InputManager::SetJPadInState(JOYPAD_NO jpNo)
-{
-
-	int no = static_cast<int>(jpNo);
-	auto stateNew = GetJPadInputState(jpNo);
-	auto& stateNow = padInfos_[no];
-
-	int max = static_cast<int>(JOYPAD_BTN::MAX);
-	for (int i = 0; i < max; i++)
-	{
-
-		stateNow.ButtonsOld[i] = stateNow.ButtonsNew[i];
-		stateNow.ButtonsNew[i] = stateNew.ButtonsNew[i];
-
-		stateNow.IsOld[i] = stateNow.IsNew[i];
-		//stateNow.IsNew[i] = stateNow.ButtonsNew[i] == 128 || stateNow.ButtonsNew[i] == 255;
-		stateNow.IsNew[i] = stateNow.ButtonsNew[i] > 0;
-
-		stateNow.IsTrgDown[i] = stateNow.IsNew[i] && !stateNow.IsOld[i];
-		stateNow.IsTrgUp[i] = !stateNow.IsNew[i] && stateNow.IsOld[i];
-
-
-		stateNow.AKeyLX = stateNew.AKeyLX;
-		stateNow.AKeyLY = stateNew.AKeyLY;
-		stateNow.AKeyRX = stateNew.AKeyRX;
-		stateNow.AKeyRY = stateNew.AKeyRY;
-
-	}
-
-}
-
-InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
-{
-
-	JOYPAD_IN_STATE ret = JOYPAD_IN_STATE();
-
-	auto type = GetJPadType(no);
-	
-	switch (type)
-	{
-	case InputManager::JOYPAD_TYPE::OTHER:
-		break;
-	case InputManager::JOYPAD_TYPE::XBOX_360:
-	{
-	}
-		break;
-	case InputManager::JOYPAD_TYPE::XBOX_ONE:
-	{
-
-		auto d = GetJPadDInputState(no);
-		auto x = GetJPadXInputState(no);
-
-		int idx;
-
-		//   Y
-		// X   B
-		//   A
-
-		idx = static_cast<int>(JOYPAD_BTN::TOP);
-		ret.ButtonsNew[idx] = d.Buttons[3];// Y
-
-		idx = static_cast<int>(JOYPAD_BTN::LEFT);
-		ret.ButtonsNew[idx] = d.Buttons[2];// X
-
-		idx = static_cast<int>(JOYPAD_BTN::RIGHT);
-		ret.ButtonsNew[idx] = d.Buttons[1];// B
-
-		idx = static_cast<int>(JOYPAD_BTN::DOWN);
-		ret.ButtonsNew[idx] = d.Buttons[0];// A
-
-		idx = static_cast<int>(JOYPAD_BTN::R_TRIGGER);
-		ret.ButtonsNew[idx] = x.RightTrigger;// R_TRIGGER
-
-		idx = static_cast<int>(JOYPAD_BTN::L_TRIGGER);
-		ret.ButtonsNew[idx] = x.LeftTrigger; // L_TRIGGER
-
-		idx = static_cast<int>(JOYPAD_BTN::POSE);
-		ret.ButtonsNew[idx] = d.Buttons[7];// A
-
-		// 左スティック
-		ret.AKeyLX = d.X;
-		ret.AKeyLY = d.Y;
-		
-		// 右スティック
-		ret.AKeyRX = d.Rx;
-		ret.AKeyRY = d.Ry;
-
-	}
-		break;
-	case InputManager::JOYPAD_TYPE::DUAL_SHOCK_4:
-		break;
-	case InputManager::JOYPAD_TYPE::DUAL_SENSE:
-	{
-		
-		auto d = GetJPadDInputState(no);
-		int idx;
-
-		//   △
-		// □  〇
-		//   ×
-
-		idx = static_cast<int>(JOYPAD_BTN::TOP);
-		ret.ButtonsNew[idx] = d.Buttons[3];// △
-
-		idx = static_cast<int>(JOYPAD_BTN::LEFT);
-		ret.ButtonsNew[idx] = d.Buttons[0];// □
-
-		idx = static_cast<int>(JOYPAD_BTN::RIGHT);
-		ret.ButtonsNew[idx] = d.Buttons[2];// 〇
-
-		idx = static_cast<int>(JOYPAD_BTN::DOWN);
-		ret.ButtonsNew[idx] = d.Buttons[1];// ×
-
-		// 左スティック
-		ret.AKeyLX = d.X;
-		ret.AKeyLY = d.Y;
-		
-		// 右スティック
-		ret.AKeyRX = d.Z;
-		ret.AKeyRY = d.Rz;
-
-	}
-		break;
-	case InputManager::JOYPAD_TYPE::SWITCH_JOY_CON_L:
-		break;
-	case InputManager::JOYPAD_TYPE::SWITCH_JOY_CON_R:
-		break;
-	case InputManager::JOYPAD_TYPE::SWITCH_PRO_CTRL:
-		break;
-	case InputManager::JOYPAD_TYPE::MAX:
-		break;
-	}
-
-	return ret;
-
-}
-
-bool InputManager::IsPadBtnNew(JOYPAD_NO no, JOYPAD_BTN btn) const
-{
-	return padInfos_[static_cast<int>(no)].IsNew[static_cast<int>(btn)];
-}
-
-bool InputManager::IsPadBtnTrgDown(JOYPAD_NO no, JOYPAD_BTN btn) const
-{
-	return padInfos_[static_cast<int>(no)].IsTrgDown[static_cast<int>(btn)];
-}
-
-bool InputManager::IsPadBtnTrgUp(JOYPAD_NO no, JOYPAD_BTN btn) const
-{
-	return padInfos_[static_cast<int>(no)].IsTrgUp[static_cast<int>(btn)];
-}
-
-const VECTOR InputManager::IsStickTrg(const STICK _side, const JOYPAD_NO no)
-{
-	VECTOR pos = { 0.0f,0.0f,0.0f };
-	VECTOR ret = { 0.0f,0.0f,0.0f };
-	if (_side == STICK::L_STICK) {
-		//左スティック
-		//現在の位置情報を取得
-		pos.x = GetJPadInputState(no).AKeyLX;
-		pos.y = GetJPadInputState(no).AKeyLY;
-
-		//X軸判定
-		//LスティックのXがトリガ移動受付状態であるか
-		if (neutral_[static_cast<int>(no)].LX) {
-			//受付状態であるため規定値を超えていたら動いた判定
-			if (pos.x > STICK_BORDER) {
-				ret.x = 1.0f;
-			}
-			else if (pos.x < -STICK_BORDER) {
-				ret.x = -1.0f;
-			}
-
-			//動いた判定が行われていたら受付状態を解除
-			if (ret.x != 0.0f)neutral_[static_cast<int>(no)].LX = false;
-		}
-		
-
-		//Y軸判定
-		//LスティックのYがトリガ移動受付状態であるか
-		if (neutral_[static_cast<int>(no)].LY) {
-			//受付状態であるため規定値を超えていたら動いた判定
-			if (pos.y > STICK_BORDER) {
-				ret.y = 1.0f;
-			}
-			else if (pos.y < -STICK_BORDER) {
-				ret.y = -1.0f;
-			}
-
-			//動いた判定が行われていたら受付状態を解除
-			if (ret.y != 0.0f)neutral_[static_cast<int>(no)].LY = false;
-		}
-	}
-	else {
-		//右スティック
-		//現在の位置情報を取得
-		pos.x = GetJPadInputState(no).AKeyRX;
-		pos.y = GetJPadInputState(no).AKeyRY;
-
-		//X軸判定
-		//LスティックのXがトリガ移動受付状態であるか
-		if (neutral_[static_cast<int>(no)].RX) {
-			//受付状態であるため規定値を超えていたら動いた判定
-			if (pos.x > STICK_BORDER)ret.x = 1.0f;
-			else if (pos.x < -STICK_BORDER)ret.x = -1.0f;
-
-			//動いた判定が行われていたら受付状態を解除
-			if (ret.x != 0.0f)neutral_[static_cast<int>(no)].RX = false;
-		}
-
-
-		//Y軸判定
-		//LスティックのYがトリガ移動受付状態であるか
-		if (neutral_[static_cast<int>(no)].RY) {
-			//受付状態であるため規定値を超えていたら動いた判定
-			if (pos.y > STICK_BORDER)ret.y = 1.0f;
-			else if (pos.y < -STICK_BORDER)ret.y = -1.0f;
-
-			//動いた判定が行われていたら受付状態を解除
-			if (ret.y != 0.0f)neutral_[static_cast<int>(no)].RY = false;
-		}
-	}
-
-
-	return ret;
-}
 
 bool InputManager::IsTrigerred(const std::string& _eventCode) const
 {
@@ -475,6 +159,11 @@ bool InputManager::IsTrigerred(const std::string& _eventCode) const
 	//[]の形で中身を見ようとすると勝手に中身が空のキーの場所が生成されてしまう
 	//なのでmap型のat()関数はキー検索であり読み取り専用を使用することで中身を変えずに参照が可能になるｂ
 	return currentInput_.at(_eventCode) && !lastInput_.at(_eventCode);
+}
+
+bool InputManager::IsPressed(const std::string& _eventCode) const
+{
+	return currentInput_.at(_eventCode);
 }
 
 
