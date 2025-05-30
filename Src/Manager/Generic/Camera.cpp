@@ -152,12 +152,17 @@ void Camera::SetBeforeDrawRockOn(void)
 	//離れている距離
 	VECTOR distance = VSub(rockPos_,followPos);
 
-
-	//追従対象からカメラまでの相対座標(カメラの回転情報をもとに相対座標を回転させる)
+	//離れる距離を数値化
 	float disMag = Utility::MagnitudeF(distance);
+	//最低限の値を下回っていたら
+	if (disMag <= ROCK_DISTANCE_MIN) {
+		//最低限の値を入れる
+		disMag = ROCK_DISTANCE_MIN;
+	}
 
-	VECTOR relative = { 0.0f,disMag*0.25f,-disMag};
-
+	//カメラ位置調整(カメラは後方位置に。Y方向は距離に応じて高さを変える。)
+	VECTOR relative = { 0.0f,disMag* ROCK_MAGNIFICATION_Y,-disMag};
+	//カメラの回転情報をもとに相対座標を回転させる
 	VECTOR relativeCPos = rot_.PosAxis(relative);
 
 	//カメラ位置の更新
