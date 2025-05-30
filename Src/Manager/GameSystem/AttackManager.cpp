@@ -101,6 +101,15 @@ std::vector<AttackManager::AttackCollision> AttackManager::GetActiveAttacks(void
 	return retVector;
 }
 
+const float AttackManager::GetTotalTime(const std::string _name) const
+{
+	//—v‘f‚ª‚È‚¢‚Æ‚«
+	if (!attackInfoes_.contains(_name)) {
+		return -1.0f;
+	}
+	return attackInfoes_.at(_name).totalMotion;
+}
+
 void AttackManager::DrawDebug(void)
 {
 	int color = 0xff00ff;

@@ -72,7 +72,7 @@ void PlayerChara::Move(void)
 
 	float afterDeg = 0.0f;
 
-	//キーボード入力
+	//入力
 	if (ins.IsPressed("up")) {
 		dir = cameraRot.GetForward();
 		afterDeg = Utility::Deg2RadF(DEG_FORWARD);

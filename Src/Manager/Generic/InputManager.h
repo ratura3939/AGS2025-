@@ -6,6 +6,7 @@
 #include<functional>
 #include <Dxlib.h>
 #include "../../Common/Vector2.h"
+#include"SceneManager.h"
 
 class InputManager
 {
@@ -18,7 +19,7 @@ public:
 	/// <summary>
 	/// 周辺機器種別
 	/// </summary>
-	enum class PeripheralType {
+	enum class PERIPHERAL_TYPE {
 		//キーマウ操作
 		KEYBOARD,
 		MOUSE,
@@ -31,7 +32,7 @@ public:
 	/// <summary>
 	/// アナログ入力種別
 	/// </summary>
-	enum class AnalogInputType {
+	enum class ANALOG_INPUT_TYPE {
 		LS_UP,		//左スティックの上
 		LS_DOWN,	//左スティックの下
 		LS_RIGHT,	//左スティックの右
@@ -43,6 +44,11 @@ public:
 		RS_LEFT,	//右スティックの左
 		RT,			//右トリガー
 		end
+	};
+
+	enum class INPUT_RECORD {
+		CURRENT,
+		LAST
 	};
 
 
@@ -77,15 +83,17 @@ private:
 	//アナログキーの入力判別の関数定義
 	void AnalogInputFuncInit(void);
 
+	const bool IsInputRecord(const std::string& _eventCode,const INPUT_RECORD& _record);
+
 public:
 	/// <summary>
 	/// キーのダウントリガ
 	/// </summary>
 	/// <param name="_eventCode">登録名</param>
 	/// <returns></returns>
-	bool IsTrigerred(const std::string& _eventCode)const;
+	bool IsTrigerred(const std::string& _eventCode);
 
-	bool IsPressed(const std::string& _eventCode)const;
+	bool IsPressed(const std::string& _eventCode);
 
 private:
 	static InputManager* instance_;
@@ -96,7 +104,7 @@ private:
 	/// </summary>
 	struct InputCode
 	{
-		PeripheralType type;//周辺機器
+		PERIPHERAL_TYPE type;//周辺機器
 		uint32_t code;		//入力コード(汎用)
 	};
 
@@ -107,16 +115,16 @@ private:
 	std::vector<std::string>inputListForDisplay_;	//キーコンフィグ用(前期実装未定)
 
 	//スティック関係は少し別種なのでこちらで扱う(基本的にRスティックやトリガー用)
-	using AnalogInputTable_t = std::unordered_map<AnalogInputType, std::function<bool(const XINPUT_STATE&)>>;
+	using AnalogInputTable_t = std::unordered_map<ANALOG_INPUT_TYPE, std::function<bool(const XINPUT_STATE&)>>;
 	AnalogInputTable_t analpgInputTable_;
 
 	//<登録名,押下状態>
 	using InputData_t = std::unordered_map<std::string, bool>;
-	InputData_t currentInput_;	//イベントに対応するボタンが押されているか
-	InputData_t lastInput_;		//イベントに対応するボタンが押されているか(１フレーム前)
+	//InputData_t currentInput_;	//イベントに対応するボタンが押されているか
+	//InputData_t lastInput_;		//イベントに対応するボタンが押されているか(１フレーム前)
 
 	//押されたとき何で押されたかを覚えておく
-	using InputPeriTypeData_t = std::unordered_map<std::string, std::vector<PeripheralType>>;
+	using InputPeriTypeData_t = std::unordered_map<std::string, std::vector<PERIPHERAL_TYPE>>;
 	InputPeriTypeData_t currentInptuPeri_;
 	InputPeriTypeData_t lastInptuPeri_;
 

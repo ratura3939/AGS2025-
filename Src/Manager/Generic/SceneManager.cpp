@@ -53,6 +53,9 @@ void SceneManager::Init(void)
 	// 初期シーンの設定
 	DoChangeScene(SCENE_ID::TITLE);
 
+	//コントローラー設定(仮置き)
+	SetController(CNTL::KEY);
+
 }
 
 void SceneManager::Init3D(void)

@@ -83,6 +83,13 @@ public:
 	/// <returns></returns>
 	std::vector<AttackCollision> GetActiveAttacks(void);
 
+	/// <summary>
+	/// ‘ƒ‚[ƒVƒ‡ƒ“ŠÔæ“¾
+	/// </summary>
+	/// <param name="_name">“o˜^–¼</param>
+	/// <returns>ŠÔ</returns>
+	const float GetTotalTime(const std::string _name)const;
+
 	void DrawDebug(void);
 
 private:

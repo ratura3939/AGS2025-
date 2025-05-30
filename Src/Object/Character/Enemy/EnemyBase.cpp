@@ -35,6 +35,7 @@ EnemyBase::EnemyBase(void)
 	//行先設定のため初期はステイ状態にする
 	isStay_ = true;
 	stayCnt_ = STAY_TIME;
+	stopTime_ = -1.0f;
 
 	hp_ = 5;
 }
@@ -121,6 +122,9 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 
 void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 {
+	//この内容は初期キャラ用。攻撃時には止まって攻撃する
+	//強いキャラクターは移動攻撃も想定するのでここの処理とは少し違っていくる
+	
 	//移動処理
 	(this->*move_)(_pPos);
 
@@ -134,7 +138,8 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	//プレイヤーが攻撃範囲内なら
 	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ATTACK_DISTANCE) {
 		//攻撃する
-		_atk.Attack(EnemyManager::ATTACK_NOMAL, 1.0f, VAdd(pos_, characterRotY_.PosAxis({ 0.0f, 75.0f, 100.0f })), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, 70.0f);
+		_atk.Attack(EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(RELATIVE_ATTACK_POS)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, SCALE_ATTACK_NOMAL);
+		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 	}
 }
 
@@ -193,6 +198,12 @@ void EnemyBase::MoveSearch(const VECTOR& _pPos)
 
 void EnemyBase::MoveBattle(const VECTOR& _pPos)
 {
+	//停止時間がまだある場合
+	if (stopTime_ > 0) {
+
+		stopTime_--;
+		return;
+	}
 	//移動(前方方向)
 	pos_=VAdd(pos_, VScale(GetForward(), MOVE_POW));
 

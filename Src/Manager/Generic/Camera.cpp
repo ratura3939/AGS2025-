@@ -366,10 +366,10 @@ void Camera::Rotation(void)
 	//回転軸と量を決める
 	const float ROT_POW = 1.0f;
 	VECTOR axisDeg = Utility::VECTOR_ZERO;
-	if (ins.IsPressed("upSub")) { axisDeg.x = -1.0f; }
-	if (ins.IsPressed("downSub")) { axisDeg.x = 1.0f; }
-	if (ins.IsPressed("leftSub")) { axisDeg.y = 1.0f; }
-	if (ins.IsPressed("rightSub")) { axisDeg.y = -1.0f; }
+	if (ins.IsPressed("subUp")) { axisDeg.x = -1.0f; }
+	if (ins.IsPressed("subDown")) { axisDeg.x = 1.0f; }
+	if (ins.IsPressed("subLeft")) { axisDeg.y = 1.0f; }
+	if (ins.IsPressed("subRight")) { axisDeg.y = -1.0f; }
 
 
 	//カメラ座標を中心として、注視点を回転させる

@@ -33,7 +33,7 @@ void InputManager::Update(void)
 	//複数人を想定するのなら要改良
 	//キーボード関係とPad関係で分けるのがよさそう？
 
-	lastInput_ = currentInput_;
+	//lastInput_ = currentInput_;
 	lastInptuPeri_ = currentInptuPeri_;
 	
 	//キーボード
@@ -52,37 +52,38 @@ void InputManager::Update(void)
 	//項目分回す
 	for (const auto& keyvalue : inputTable_) {
 		bool pressed = false;	//押されているかどうかのフラグ
-		std::vector<PeripheralType> inputTypes = {};
+		std::vector<PERIPHERAL_TYPE> inputTypes = {};
 		//中身の動的配列をfor文で回す(キーボード→PADの順で見ている)
 		for (auto input : keyvalue.second) {
 			//キーボードのとき
-			if (input.type == PeripheralType::KEYBOARD) {
-				//GetHitKeyで入力状態をえたkeystateからコードの場所に検索をかける
-				//pressed = keystate[input.code];
+			if (input.type == PERIPHERAL_TYPE::KEYBOARD) {
 				if (keystate[input.code] != 0) {
 					pressed = keystate[input.code];
 					//入力が行われていたらこの危機から入力があったと記録する
-					if (pressed)inputTypes.push_back(PeripheralType::KEYBOARD);
+					if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::KEYBOARD);
 				}
 			}
-			else if (input.type == PeripheralType::GAMEPAD) {
+			else if (input.type == PERIPHERAL_TYPE::GAMEPAD) {
 				//パッドに何かしらの入力がありそれがコードだったとき
 				pressed = padstate & input.code;
-				if (pressed)inputTypes.push_back(PeripheralType::GAMEPAD);
+				if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::GAMEPAD);
 			}
-			else if (input.type == PeripheralType::MOUSE) {
+			else if (input.type == PERIPHERAL_TYPE::MOUSE) {
 				//パッドに何かしらの入力がありそれがコードだったとき
 				pressed = mousestate & input.code;
-				if (pressed)inputTypes.push_back(PeripheralType::MOUSE);
+				if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::MOUSE);
 			}
-			else if (input.type == PeripheralType::X_ANALOG) {
-				pressed = analpgInputTable_[static_cast<AnalogInputType>(input.code)](xinputState);
-				if (pressed)inputTypes.push_back(PeripheralType::X_ANALOG);
+			else if (input.type == PERIPHERAL_TYPE::X_ANALOG) {
+				pressed = analpgInputTable_[static_cast<ANALOG_INPUT_TYPE>(input.code)](xinputState);
+				if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::X_ANALOG);
 			}
 		}
 		currentInptuPeri_[keyvalue.first] = inputTypes;
-		if (!currentInptuPeri_[keyvalue.first].empty())pressed = true;
-		currentInput_[keyvalue.first] = pressed;
+		/*if (!currentInptuPeri_[keyvalue.first].empty())
+		{
+			pressed = true;
+		}
+		currentInput_[keyvalue.first] = pressed;*/
 		
 	}
 }
@@ -98,85 +99,126 @@ void InputManager::ResetInput(void)
 	// 事前にここで登録しておいてください
 
 	//移動関係<WASD・左スティック>
-	inputTable_["up"] = { { PeripheralType::KEYBOARD,KEY_INPUT_W },{ PeripheralType::GAMEPAD,PAD_INPUT_UP } };
-	inputTable_["down"] = { { PeripheralType::KEYBOARD,KEY_INPUT_S },{ PeripheralType::GAMEPAD,PAD_INPUT_DOWN } };
-	inputTable_["left"] = { { PeripheralType::KEYBOARD,KEY_INPUT_A },{ PeripheralType::GAMEPAD,PAD_INPUT_LEFT } };
-	inputTable_["right"] = { { PeripheralType::KEYBOARD,KEY_INPUT_D },{ PeripheralType::GAMEPAD,PAD_INPUT_RIGHT } };
+	inputTable_["up"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_W },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_UP } };
+	inputTable_["down"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_S },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_DOWN } };
+	inputTable_["left"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_A },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_LEFT } };
+	inputTable_["right"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_D },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_RIGHT } };
 	//移動入力(サブ)<Rスティック・方向キー>
-	inputTable_["upSub"] = { { PeripheralType::KEYBOARD,KEY_INPUT_UP },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RS_UP) } };
-	inputTable_["downSub"] = { { PeripheralType::KEYBOARD,KEY_INPUT_DOWN },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RS_DOWN) } };
-	inputTable_["leftSub"] = { { PeripheralType::KEYBOARD,KEY_INPUT_LEFT },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RS_LEFT) } };
-	inputTable_["rightSub"] = { { PeripheralType::KEYBOARD,KEY_INPUT_RIGHT },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RS_RIGHT) } };
+	inputTable_["subUp"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_UP },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_UP) } };
+	inputTable_["subDown"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_DOWN },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_DOWN) } };
+	inputTable_["subLeft"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LEFT },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_LEFT) } };
+	inputTable_["subRight"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_RIGHT },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_RIGHT) } };
 
 	//各コマンド<PADは複数個所で兼用あり>
-	inputTable_["action"] = { { PeripheralType::KEYBOARD,KEY_INPUT_RETURN } ,{ PeripheralType::MOUSE,MOUSE_INPUT_LEFT },{ PeripheralType::GAMEPAD,PAD_INPUT_B } };		//Bボタン(Aボタン：任天堂)
-	inputTable_["dash"] = { { PeripheralType::KEYBOARD,KEY_INPUT_LSHIFT },{ PeripheralType::GAMEPAD,PAD_INPUT_A } };	//Aボタン(Bボタン：任天堂)
-	inputTable_["cancel"] = { { PeripheralType::KEYBOARD,KEY_INPUT_Q },{ PeripheralType::GAMEPAD,PAD_INPUT_A } };		//Aボタン(Bボタン：任天堂)
-	inputTable_["attack"] = { { PeripheralType::KEYBOARD,KEY_INPUT_W },{ PeripheralType::GAMEPAD,PAD_INPUT_C } };		//Xボタン(Yボタン：任天堂)
-	inputTable_["jump"] = { { PeripheralType::KEYBOARD,KEY_INPUT_SPACE },{ PeripheralType::GAMEPAD,PAD_INPUT_X } };		//Yボタン(Xボタン：任天堂)
-	inputTable_["crouch"] = { { PeripheralType::KEYBOARD,KEY_INPUT_LCONTROL },{ PeripheralType::GAMEPAD,PAD_INPUT_START } };//LS
-	inputTable_["rock"] = { { PeripheralType::KEYBOARD,KEY_INPUT_R },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::LT) } };//LT
-	inputTable_["arrow"] = { { PeripheralType::MOUSE,MOUSE_INPUT_RIGHT },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RT) } };//RT
+	inputTable_["action"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_RETURN } ,{ PERIPHERAL_TYPE::MOUSE,MOUSE_INPUT_LEFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_B } };		//Bボタン(Aボタン：任天堂)
+	inputTable_["dash"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LSHIFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };	//Aボタン(Bボタン：任天堂)
+	inputTable_["cancel"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_Q },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };		//Aボタン(Bボタン：任天堂)
+	inputTable_["attack"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_W },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_C } };		//Xボタン(Yボタン：任天堂)
+	inputTable_["jump"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_SPACE },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_X } };		//Yボタン(Xボタン：任天堂)
+	inputTable_["crouch"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LCONTROL },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_START } };//LS
+	inputTable_["rock"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_R },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LT) } };//LT
+	inputTable_["arrow"] = { { PERIPHERAL_TYPE::MOUSE,MOUSE_INPUT_RIGHT },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RT) } };//RT
 
 
 
 	//ポーズ
-	inputTable_["pause"] = { { PeripheralType::KEYBOARD,KEY_INPUT_TAB },{ PeripheralType::GAMEPAD,PAD_INPUT_R } };
+	inputTable_["pause"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_TAB },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_R } };
 }
 
 void InputManager::AnalogInputFuncInit(void)
 {
-	analpgInputTable_[AnalogInputType::LS_UP] = [](const XINPUT_STATE& _state) {
+	analpgInputTable_[ANALOG_INPUT_TYPE::LS_UP] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbLY > ANALOG_STHICK_THRESHOLD;
 	};
-	analpgInputTable_[AnalogInputType::LS_DOWN] = [](const XINPUT_STATE& _state) {
+	analpgInputTable_[ANALOG_INPUT_TYPE::LS_DOWN] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbLY < -ANALOG_STHICK_THRESHOLD;
 	};
-	analpgInputTable_[AnalogInputType::LS_RIGHT] = [](const XINPUT_STATE& _state) {
+	analpgInputTable_[ANALOG_INPUT_TYPE::LS_RIGHT] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbLX > ANALOG_STHICK_THRESHOLD;
 	};
-	analpgInputTable_[AnalogInputType::LS_LEFT] = [](const XINPUT_STATE& _state) {
+	analpgInputTable_[ANALOG_INPUT_TYPE::LS_LEFT] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbLX < -ANALOG_STHICK_THRESHOLD;
 	};
-	analpgInputTable_[AnalogInputType::RS_UP] = [](const XINPUT_STATE& _state) {
+	analpgInputTable_[ANALOG_INPUT_TYPE::RS_UP] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbRY > ANALOG_STHICK_THRESHOLD;
 	};
-	analpgInputTable_[AnalogInputType::RS_DOWN] = [](const XINPUT_STATE& _state) {
+	analpgInputTable_[ANALOG_INPUT_TYPE::RS_DOWN] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbRY < -ANALOG_STHICK_THRESHOLD;
 	};
-	analpgInputTable_[AnalogInputType::RS_RIGHT] = [](const XINPUT_STATE& _state) {
+	analpgInputTable_[ANALOG_INPUT_TYPE::RS_RIGHT] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbRX > ANALOG_STHICK_THRESHOLD;
 	};
-	analpgInputTable_[AnalogInputType::RS_LEFT] = [](const XINPUT_STATE& _state) {
+	analpgInputTable_[ANALOG_INPUT_TYPE::RS_LEFT] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbRX < -ANALOG_STHICK_THRESHOLD;
 	};
-	analpgInputTable_[AnalogInputType::LT] = [](const XINPUT_STATE& _state) {
+	analpgInputTable_[ANALOG_INPUT_TYPE::LT] = [](const XINPUT_STATE& _state) {
 		return _state.LeftTrigger > ANALOG_TRIGGER_THRESHOLD;
 	};
-	analpgInputTable_[AnalogInputType::RT] = [](const XINPUT_STATE& _state) {
+	analpgInputTable_[ANALOG_INPUT_TYPE::RT] = [](const XINPUT_STATE& _state) {
 		return _state.RightTrigger > ANALOG_TRIGGER_THRESHOLD;
 	};
 }
 
+const bool InputManager::IsInputRecord(const std::string& _eventCode, const INPUT_RECORD& _record)
+{
+	//シーンマネージャが管理するコントローラ設定で
+	//対応する入力方法のみ受け付ける
+	//KEY＝キーボード・マウス
+	//PAD＝PAD・アナログ
 
-bool InputManager::IsTrigerred(const std::string& _eventCode) const
+	
+	//引数に応じて現在か１フレ前かを渡す
+	std::vector<PERIPHERAL_TYPE> inputRecord = {};
+	if (_record == INPUT_RECORD::CURRENT) {
+		inputRecord = currentInptuPeri_[_eventCode];
+	}
+	else {
+		inputRecord = lastInptuPeri_[_eventCode];
+	}
+
+	auto cntl = SceneManager::GetInstance().GetController();
+	bool currentFlag = false;	//何かしら入力があったか
+
+	//指定のコードで入力があった機種の経歴分回す
+	for (auto& periType : inputRecord) {
+		//キーボード操作の時
+		if (cntl == SceneManager::CNTL::KEY) {
+			//キーボードとマウスを受け付ける
+			if (periType == PERIPHERAL_TYPE::KEYBOARD || periType == PERIPHERAL_TYPE::MOUSE)currentFlag = true;
+		}
+		//パッドの時
+		else if (cntl == SceneManager::CNTL::PAD) {
+			//PADとアナログを受け付ける
+			if (periType == PERIPHERAL_TYPE::GAMEPAD || periType == PERIPHERAL_TYPE::X_ANALOG) currentFlag = true;
+		}
+		//NONEのとき
+		else {
+			//このルーぷに入っている時点で入力があったということ
+			currentFlag = true;
+		}
+	}
+	return currentFlag;
+}
+
+
+bool InputManager::IsTrigerred(const std::string& _eventCode)
 {
 	//先に要素がない場合の予防線をはる
-	// 反応しないだけという状態を作りたいから
-	//containd()=引数がキーとなる要素がないとき
-	if (!currentInput_.contains(_eventCode)) {
+// 反応しないだけという状態を作りたいから
+//containd()=引数がキーとなる要素がないとき
+	if (!currentInptuPeri_.contains(_eventCode)) {
 		//参照できないので
 		return false;
 	}
 
 	//[]の形で中身を見ようとすると勝手に中身が空のキーの場所が生成されてしまう
 	//なのでmap型のat()関数はキー検索であり読み取り専用を使用することで中身を変えずに参照が可能になるｂ
-	return currentInput_.at(_eventCode) && !lastInput_.at(_eventCode);
+	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT) && !IsInputRecord(_eventCode, INPUT_RECORD::LAST);
 }
 
-bool InputManager::IsPressed(const std::string& _eventCode) const
+bool InputManager::IsPressed(const std::string& _eventCode)
 {
-	return currentInput_.at(_eventCode);
+	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT);
 }
 
 InputManager::InputManager(void)

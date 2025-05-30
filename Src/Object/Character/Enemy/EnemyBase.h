@@ -36,6 +36,11 @@ public:
 
     static constexpr int STAY_TIME = 200;   //ステイの時間
 
+    //攻撃関連(外部ファイル化させる)
+    static constexpr VECTOR RELATIVE_ATTACK_POS = { 0.0f, 75.0f, 100.0f };
+    static constexpr float SCALE_ATTACK_NOMAL = 70.0f;
+    static constexpr float POW_ATTACK_NOMAL = 1.0f;
+
     EnemyBase(void);
     ~EnemyBase(void);
 
@@ -72,6 +77,7 @@ private:
     float moveOneTime_; //一回の移動量
     bool isStay_;       //ステイかどうか
     int stayCnt_;       //ステイ状態のカウンタ
+    int stopTime_;      //攻撃時の停止時間
 
     //デバッグ用
     int color_;
