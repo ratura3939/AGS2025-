@@ -23,8 +23,8 @@ InputManager& InputManager::GetInstance(void)
 
 void InputManager::Init(void)
 {
-
-	
+	ResetInput();
+	AnalogInputFuncInit();
 }
 
 void InputManager::Update(void)
@@ -80,8 +80,10 @@ void InputManager::Update(void)
 				if (pressed)inputTypes.push_back(PeripheralType::X_ANALOG);
 			}
 		}
-		currentInput_[keyvalue.first] = pressed;
 		currentInptuPeri_[keyvalue.first] = inputTypes;
+		if (!currentInptuPeri_[keyvalue.first].empty())pressed = true;
+		currentInput_[keyvalue.first] = pressed;
+		
 	}
 }
 
@@ -107,7 +109,7 @@ void InputManager::ResetInput(void)
 	inputTable_["rightSub"] = { { PeripheralType::KEYBOARD,KEY_INPUT_RIGHT },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RS_RIGHT) } };
 
 	//各コマンド<PADは複数個所で兼用あり>
-	inputTable_["action"] = { { PeripheralType::MOUSE,MOUSE_INPUT_LEFT },{ PeripheralType::GAMEPAD,PAD_INPUT_B } };		//Bボタン(Aボタン：任天堂)
+	inputTable_["action"] = { { PeripheralType::KEYBOARD,KEY_INPUT_RETURN } ,{ PeripheralType::MOUSE,MOUSE_INPUT_LEFT },{ PeripheralType::GAMEPAD,PAD_INPUT_B } };		//Bボタン(Aボタン：任天堂)
 	inputTable_["dash"] = { { PeripheralType::KEYBOARD,KEY_INPUT_LSHIFT },{ PeripheralType::GAMEPAD,PAD_INPUT_A } };	//Aボタン(Bボタン：任天堂)
 	inputTable_["cancel"] = { { PeripheralType::KEYBOARD,KEY_INPUT_Q },{ PeripheralType::GAMEPAD,PAD_INPUT_A } };		//Aボタン(Bボタン：任天堂)
 	inputTable_["attack"] = { { PeripheralType::KEYBOARD,KEY_INPUT_W },{ PeripheralType::GAMEPAD,PAD_INPUT_C } };		//Xボタン(Yボタン：任天堂)
@@ -115,6 +117,8 @@ void InputManager::ResetInput(void)
 	inputTable_["crouch"] = { { PeripheralType::KEYBOARD,KEY_INPUT_LCONTROL },{ PeripheralType::GAMEPAD,PAD_INPUT_START } };//LS
 	inputTable_["rock"] = { { PeripheralType::KEYBOARD,KEY_INPUT_R },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::LT) } };//LT
 	inputTable_["arrow"] = { { PeripheralType::MOUSE,MOUSE_INPUT_RIGHT },{ PeripheralType::X_ANALOG,static_cast<int>(AnalogInputType::RT) } };//RT
+
+
 
 	//ポーズ
 	inputTable_["pause"] = { { PeripheralType::KEYBOARD,KEY_INPUT_TAB },{ PeripheralType::GAMEPAD,PAD_INPUT_R } };
@@ -173,6 +177,10 @@ bool InputManager::IsTrigerred(const std::string& _eventCode) const
 bool InputManager::IsPressed(const std::string& _eventCode) const
 {
 	return currentInput_.at(_eventCode);
+}
+
+InputManager::InputManager(void)
+{
 }
 
 InputManager::~InputManager(void)

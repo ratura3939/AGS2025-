@@ -81,7 +81,7 @@ void PlayerChara::Move(void)
 		dir = cameraRot.GetLeft();
 		afterDeg = Utility::Deg2RadF(DEG_LEFT);
 	}
-	if (ins.IsPressed("back")) {
+	if (ins.IsPressed("down")) {
 		dir = cameraRot.GetBack();
 		afterDeg = Utility::Deg2RadF(DEG_BACK);
 	}

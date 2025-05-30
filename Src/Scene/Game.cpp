@@ -93,7 +93,7 @@ void Game::Update(void)
 	if (mode == Camera::MODE::FOLLOW) {
 		camera.SetFocusPos(player_->GetFocusPoint());//注視点の更新
 	}
-	else /*if (mode == Camera::MODE::ROCKON)*/ {
+	else if (mode == Camera::MODE::ROCKON){
 		camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));	//ロックオン対象の設定
 	}
 	
