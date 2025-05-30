@@ -101,6 +101,7 @@ int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
 {
 	int nearNum = -1;
 	VECTOR distance = Utility::VECTOR_ZERO;
+	//テキトーなでかい値
 	double min = 100000.0;
 
 	for (int i = 0; i < ENEMY_NUM; i++) {

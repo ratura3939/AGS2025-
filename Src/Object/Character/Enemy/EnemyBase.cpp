@@ -27,10 +27,10 @@ EnemyBase::EnemyBase(void)
 	update_ = &EnemyBase::UpdateNomal;
 	move_ = &EnemyBase::MoveNomal;
 
-	goalPos_ = Utility::VECTOR_INIT;
+	moveOneTime_ = -1.0f;
 
 	debugRot_ = -1.0;
-	prePos_ = Utility::VECTOR_INIT;
+	preStayPos_ = Utility::VECTOR_INIT;
 
 	//行先設定のため初期はステイ状態にする
 	isStay_ = true;
@@ -54,7 +54,7 @@ const bool EnemyBase::Init(void)
 	//パラメータ関係
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	pos_ = { 0.0f,0.0f,1000.0f };
-	prePos_ = pos_;
+	preStayPos_ = pos_;
 	rot_ = { 0.0f,0.0f,-1.0f };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
 	//初期化用に一回実行
@@ -67,8 +67,6 @@ const bool EnemyBase::Init(void)
 
 void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
 {
-	//位置情報保存
-	prePos_ = pos_;
 	(this->*update_)(_pPos,_atk);
 	//共通更新
 	Rotation();
@@ -157,16 +155,12 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 			SetGoalRot(radRand);
 			characterRotY_ = quaGoal;
 
-			//移動量乱数
-			float moveRand = static_cast<float>(GetRand(MOVE_RANDOM_MAX)) + MOVE_RANDOM_MIN;
-			//前方方向に移動するベクトルに変換
-			VECTOR moveDir = Utility::VECTOR_ZERO;
-			moveDir.z = moveRand;
-			//行先設定
-			goalPos_ = VAdd(pos_, characterRotY_.PosAxis(moveDir));
-
+			//移動量を範囲付きのランダムで生成
+			moveOneTime_ = static_cast<float>(GetRand(MOVE_RANDOM_MAX)) + MOVE_RANDOM_MIN;
 			//ステイ状態の解除
 			isStay_ = false;
+			//前回停止位置の更新
+			preStayPos_ = pos_;
 		}
 		else {
 			//引き続きステイ
@@ -174,27 +168,16 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 			return;
 		}
 	}
-	//stayCnt_++;
-	//if (stayCnt_ > STAY_TIMEDE) {
-	//	//移動(前方方向)
-	//	pos_ = VAdd(pos_, VScale(GetForward(), MOVE_POW));
-	//}
 	
 	//移動(前方方向)
 	pos_ = VAdd(pos_, VScale(GetForward(), MOVE_POW));
 
 	//判定
-	//移動前から目標値へのベクトルの大きさ
-	float diffGoal = Utility::MagnitudeF(VSub(goalPos_, prePos_));
-	//移動前から移動後へのベクトルの大きさ
-	float diffNow = Utility::MagnitudeF(VSub(pos_, prePos_));
+	//停止した位置からどれだけ離れているか
+	float diffNow2Pre = Utility::MagnitudeF(VSub(pos_, preStayPos_));
 
-	//大きさが小さい＝近いということなので
-	//移動前からゴールと移動後を比べ、ゴール側のベクトルが小さいときは移動前のほうがゴールに近かったということになる。
-	//移動前のほうが近かったら
-	if (diffGoal <= diffNow) {
-		//移動前に戻す
-		pos_ = prePos_;
+	//既定の移動量以上の値の時
+	if (diffNow2Pre >=moveOneTime_) {
 		//ステイ状態に
 		isStay_ = true;
 		stayCnt_ = 0;
@@ -281,11 +264,10 @@ void EnemyBase::DrawDebug(void)
 	DrawCone3D(conePos, pos_, FIELD_VISION_DISTANCE, 30, serchCol_, 0x000000, true);
 
 	VECTOR fowardDir = VAdd(pos_, characterRotY_.PosAxis(forward));
-	DrawFormatString(0, 0, 0xffffff, "EPOS={%.1f,%.1f,%.1f}\nDEG={%.1f}\nForward={%.1f,%.1f,%.1f}\nGoalPos={%.1f,%.1f,%.1f}",
+	DrawFormatString(0, 0, 0xffffff, "EPOS={%.1f,%.1f,%.1f}\nDEG={%.1f}\nForward={%.1f,%.1f,%.1f}",
 		pos_.x, pos_.y, pos_.z,
 		static_cast<float>(debugRot_),
-		fowardDir.x, fowardDir.y, fowardDir.z,
-		goalPos_.x, goalPos_.y, goalPos_.z);
+		fowardDir.x, fowardDir.y, fowardDir.z);
 
 	DrawCupcel();
 }

@@ -68,8 +68,8 @@ private:
     Update_f update_;   //更新関数
     Move_f move_;       //移動関数
 
-    VECTOR goalPos_;    //通常時の移動量(移動量は範囲付きランダム)
-    VECTOR prePos_;     //１フレーム前の位置
+    VECTOR preStayPos_;   //前回停止位置
+    float moveOneTime_; //一回の移動量
     bool isStay_;       //ステイかどうか
     int stayCnt_;       //ステイ状態のカウンタ
 
