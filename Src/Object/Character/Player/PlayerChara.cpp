@@ -94,6 +94,9 @@ void PlayerChara::Move(void)
 	if (!Utility::EqualsVZero(dir)) {
 		//移動処理
 		pos_ = VAdd(pos_, VScale(dir, MOVE_POW));
+		//上下の移動が起きない様に
+		//ゆくゆくは重力とステージの当たり判定で処理する
+		pos_.y = 0.0f;
 
 		//ロックオンのとき
 		if (rState_ == ROCK_STATE::ROCKON) {

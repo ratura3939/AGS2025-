@@ -38,7 +38,7 @@ public:
 	//カメラ移動関連の定数---------------------------------------------------------------------
 	
 	static constexpr float MAX_MOVE_SPEED = 5.0f;	//移動速度の最大値
-	static constexpr float MAX_ROT_SPEED = 0.3f;	//移動速度の最大値
+	static constexpr float MAX_ROT_SPEED = 0.5f;	//移動速度の最大値
 
 	//カメラ揺らし関連の定数--------------------------------------------------------------------
 
@@ -56,8 +56,8 @@ public:
 	static constexpr float UNDERLIMIT_Y = 280.0f;
 
 	// カメラのX回転上限度角
-	static constexpr float LIMIT_X_UP_RAD = 40.0f * (DX_PI_F / 180.0f);
-	static constexpr float LIMIT_X_DW_RAD = 15.0f * (DX_PI_F / 180.0f);
+	static constexpr float LIMIT_X_UP_RAD = 45.0f * (DX_PI_F / 180.0f);
+	static constexpr float LIMIT_X_DW_RAD = -90.0f * (DX_PI_F / 180.0f);
 
 	//カメラモード
 	enum class MODE
@@ -113,6 +113,7 @@ public:
 
 	//回転取得
 	const Quaternion GetRot(void)const;
+	const VECTOR GetAngle(void)const;
 
 	//カメラモードの変更
 	void ChangeMode(MODE mode);
@@ -158,6 +159,11 @@ private:
 
 	//カメラの回転
 	Quaternion rot_;
+
+	// カメラ角度(rad)
+	VECTOR angles_;
+	// X軸回転が無い角度
+	Quaternion rotOutX_;
 
 	//画面揺らし用
 	float stepShake_;

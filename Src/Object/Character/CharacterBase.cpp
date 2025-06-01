@@ -74,7 +74,7 @@ void CharacterBase::UpdateRotQuat(void)
 
 void CharacterBase::SetGoalRot(const float _rad)
 {
-	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();
+	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetAngle();
 
 	Quaternion axis =
 		Quaternion::AngleAxis(

@@ -24,6 +24,11 @@ Camera::Camera(void)
 	start_.quaRot = Quaternion::Identity();
 	goal_.pos = { 0.0f, 0.0f, 0.0f };
 	goal_.quaRot = Quaternion::Identity();
+
+	angles_.x = Utility::Deg2RadF(0.0f);
+	angles_.y = 0.0f;
+	angles_.z = 0.0f;
+
 }
 
 Camera::~Camera(void)
@@ -126,13 +131,13 @@ void Camera::SetBeforeDrawFollow(void)
 	pos_ = VAdd(followPos, relativeCPos);
 
 	//カメラ位置から注視点までの相対座標
-	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
+	VECTOR relativeTPos = rot_.PosAxis(RELATIVE_C2T_POS);
 
 	//注視点の更新
-	//focusPos_ = VAdd(pos_, relativeTPos);
+	focusPos_ = VAdd(followPos, relativeTPos);
 
 	//カメラの上方向
-	cameraUp_ = followRot.PosAxis(rot_.GetUp());
+	cameraUp_ = rot_.GetUp();
 
 }
 
@@ -264,6 +269,11 @@ const Quaternion Camera::GetRot(void) const
 	return rot_;
 }
 
+const VECTOR Camera::GetAngle(void) const
+{
+	return angles_;
+}
+
 void Camera::ChangeMode(MODE mode)
 {
 
@@ -363,56 +373,41 @@ void Camera::SetDefault(void)
 
 void Camera::Rotation(void)
 {
-	auto& ins = InputManager::GetInstance();
-	//回転軸と量を決める
-	const float ROT_POW = 1.0f;
-	VECTOR axisDeg = Utility::VECTOR_ZERO;
-	//上下(制限付き)
-	if (ins.IsPressed("subUp")) {
-		axisDeg.x -= MAX_ROT_SPEED;
-		if (rot_.x+axisDeg.x <= LIMIT_X_UP_RAD)
-			axisDeg.x = LIMIT_X_UP_RAD;
-	}
-	if (ins.IsPressed("subDown")) {
-		axisDeg.x += MAX_ROT_SPEED;
-		if (rot_.x+axisDeg.x >= LIMIT_X_DW_RAD)
-			axisDeg.x = LIMIT_X_DW_RAD;
-	}
-	//左右
-	if (ins.IsPressed("subLeft")) { axisDeg.y = MAX_ROT_SPEED; }
-	if (ins.IsPressed("subRight")) { axisDeg.y = -MAX_ROT_SPEED; }
 
+	InputManager& ins = InputManager::GetInstance();
+
+	if (ins.IsPressed("subUp"))
+	{
+		angles_.x +=Utility::Deg2RadF(MAX_ROT_SPEED);
+		if (angles_.x >= LIMIT_X_UP_RAD)
+			angles_.x = LIMIT_X_UP_RAD;
+	}
+	if (ins.IsPressed("subDown"))
+	{
+		angles_.x -= Utility::Deg2RadF(MAX_ROT_SPEED);
+		if (angles_.x <= LIMIT_X_DW_RAD)
+			angles_.x = LIMIT_X_DW_RAD;
+	}
+	if (ins.IsPressed("subLeft"))
+	{
+		angles_.y -= Utility::Deg2RadF(MAX_ROT_SPEED);
+	}
+	if (ins.IsPressed("subRight"))
+	{
+		angles_.y += Utility::Deg2RadF(MAX_ROT_SPEED);
+	}
 
 	//カメラ座標を中心として、注視点を回転させる
-	if (!Utility::EqualsVZero(axisDeg))
+	if (!Utility::EqualsVZero(angles_))
 	{
-		//今回の回転量を合成
-		//今回はY軸のみの回転
-		Quaternion rotPow;
-		Quaternion rotPow2;
-			/*rotPow = rotPow.Mult(
-				Quaternion::AngleAxis(
-					Utility::Deg2RadF(axisDeg.z), Utility::AXIS_Z));*/
-		rotPow.x = rotPow.Mult(
-			Quaternion::AngleAxis(
-				Utility::Deg2RadF(axisDeg.x), Utility::AXIS_X)).x;
 
-		rotPow.y = rotPow.Mult(
-			Quaternion::AngleAxis(
-				Utility::Deg2RadF(axisDeg.y), Utility::AXIS_Y)).y;
+		// 正面から設定されたY軸分、回転させる
+		rotOutX_ = Quaternion::AngleAxis(angles_.y, Utility::AXIS_Y);
 
-		//カメラの回転の今回の回転量を加える（合成）
-		rot_ = rot_.Mult(rotPow);
-
-		//// 正面から設定されたY軸分、回転させる
-		//auto rotOutX_ = Quaternion::AngleAxis(rot_.y+axisDeg.y, Utility::AXIS_Y);
-
-		//// 正面から設定されたX軸分、回転させる
-		//rot_ = rotOutX_.Mult(Quaternion::AngleAxis(rot_.x+axisDeg.x, Utility::AXIS_X));
-
-		//カメラの上方向更新
-		//cameraUp_ = rot_.GetUp();
-		cameraUp_ = Utility::DIR_U;
+		// 正面から設定されたX軸分、回転させる
+		rot_ = rotOutX_.Mult(Quaternion::AngleAxis(angles_.x, Utility::AXIS_X));
+		// カメラの上方向
+		cameraUp_ = rot_.GetUp();
 	}
 }
 
