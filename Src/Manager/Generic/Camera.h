@@ -22,7 +22,7 @@ public:
 
 	//カメラ座標関連の定数---------------------------------------------------------------------
 	
-	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };			//カメラの初期座標
+	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -700.0f };			//カメラの初期座標
 
 	static constexpr VECTOR RELATIVE_C2T_POS = { 0.0f, -400.0f, 500.0f };			//カメラ位置から注視点までの相対座標
 
@@ -38,6 +38,7 @@ public:
 	//カメラ移動関連の定数---------------------------------------------------------------------
 	
 	static constexpr float MAX_MOVE_SPEED = 5.0f;	//移動速度の最大値
+	static constexpr float MAX_ROT_SPEED = 0.3f;	//移動速度の最大値
 
 	//カメラ揺らし関連の定数--------------------------------------------------------------------
 
@@ -51,7 +52,12 @@ public:
 	static constexpr float RESET_TIME = 1.0f;
 	static constexpr float RESET_STEP = 0.02f;
 
+	//距離最低制限
 	static constexpr float UNDERLIMIT_Y = 280.0f;
+
+	// カメラのX回転上限度角
+	static constexpr float LIMIT_X_UP_RAD = 40.0f * (DX_PI_F / 180.0f);
+	static constexpr float LIMIT_X_DW_RAD = 15.0f * (DX_PI_F / 180.0f);
 
 	//カメラモード
 	enum class MODE
@@ -159,6 +165,7 @@ private:
 	VECTOR defaultPos_;
 
 	VECTOR shakeDir_;
+
 	
 	//カメラを初期位置に戻す
 	void SetDefault(void);

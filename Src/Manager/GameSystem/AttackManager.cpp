@@ -18,7 +18,7 @@ void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type,
 	info.totalMotion = _total;
 	info.startAttack = _start;
 	info.endAttack = _end;
-	info.conter = 0.0f;
+	info.counter = 0.0f;
 	info.isHit = false;
 
 	//攻撃情報を追加
@@ -62,16 +62,16 @@ bool AttackManager::Update(void)
 	for (auto& atk : activeAttacks_) {
 		AttackInfo& info = attackInfoes_[atk.first];
 		//カウンターが上限より上だったら
-		if (info.conter >= info.totalMotion) {
+		if (info.counter >= info.totalMotion) {
 			//終了
-			info.conter = 0;
+			info.counter = 0;
 			info.isHit = false;
 			//削除項目に追加
 			deleteIndex.push_back(atk.first);
 			continue;
 		}
 		//カウンターの更新
-		info.conter++;
+		info.counter++;
 	}
 
 	//削除
@@ -117,10 +117,10 @@ void AttackManager::DrawDebug(void)
 
 		auto& info = attackInfoes_[atk.first];
 		if (info.master == ATTACK_MASTER::ENEMY) {
-			if (info.conter < info.startAttack) {
+			if (info.counter < info.startAttack) {
 				color = 0x00ff00;
 			}
-			else if (info.conter >= info.endAttack) {
+			else if (info.counter >= info.endAttack) {
 				color = 0x0000ff;
 			}
 			else color = 0xff00ff;

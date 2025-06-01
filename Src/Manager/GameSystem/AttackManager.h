@@ -14,6 +14,8 @@ class Arrow;
 class AttackManager
 {
 public:
+	//ジャストガード猶予
+	static constexpr float GRACE_JUST_GUARD = 20.0f;
 
 	//攻撃発生者の陣営
 	enum class ATTACK_MASTER {
@@ -36,9 +38,21 @@ public:
 		float totalMotion;	//モーション総時間
 		float startAttack;	//攻撃判定発生時間
 		float endAttack;	//攻撃判定消滅時間
-		float conter;		//カウンター
+		float counter;		//カウンター
 		bool isFriendFire;	//FFアリかどうか
 		bool isHit;			//すでに判定されたかどうか
+		/// <summary>
+		/// 前隙かどうか
+		/// </summary>
+		/// <returns>true=Yes/false=No</returns>
+		bool IsPreGap(void) { return (counter > 0.0f) && (counter < startAttack); }
+		/// <summary>
+		/// ジャストガードのタイミングであるか
+		/// </summary>
+		/// <param name=""></param>
+		/// <returns></returns>
+		bool IsJustGuardTiming(void) { return (counter >= startAttack) && (counter <= startAttack + GRACE_JUST_GUARD); }
+		
 	};
 
 	/// <summary>

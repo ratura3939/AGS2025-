@@ -35,7 +35,8 @@ EnemyBase::EnemyBase(void)
 	//行先設定のため初期はステイ状態にする
 	isStay_ = true;
 	stayCnt_ = STAY_TIME;
-	stopTime_ = -1.0f;
+	stopTime_ = -1.0f; 
+	intervalCnt_ = INTERVAL_ATTACK_NOMAL;
 
 	hp_ = 5;
 }
@@ -128,6 +129,8 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	//移動処理
 	(this->*move_)(_pPos);
 
+	intervalCnt_++;
+
 	//判定
 	//プレイヤーが索敵範囲外にでたら
 	if (Utility::MagnitudeF(VSub(_pPos, pos_)) > ALERT_DISTANCE) {
@@ -135,11 +138,12 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 		ChangeState(ENEMY_STATE::NOMAL);
 	}
 
-	//プレイヤーが攻撃範囲内なら
-	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ATTACK_DISTANCE) {
+	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
+	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
 		//攻撃する
 		_atk.Attack(EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(RELATIVE_ATTACK_POS)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, SCALE_ATTACK_NOMAL);
 		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
+		intervalCnt_ = 0.0f;
 	}
 }
 

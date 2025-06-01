@@ -40,6 +40,7 @@ public:
     static constexpr VECTOR RELATIVE_ATTACK_POS = { 0.0f, 75.0f, 100.0f };
     static constexpr float SCALE_ATTACK_NOMAL = 70.0f;
     static constexpr float POW_ATTACK_NOMAL = 1.0f;
+    static constexpr float INTERVAL_ATTACK_NOMAL = 500.0f;
 
     EnemyBase(void);
     ~EnemyBase(void);
@@ -78,6 +79,7 @@ private:
     bool isStay_;       //ステイかどうか
     int stayCnt_;       //ステイ状態のカウンタ
     int stopTime_;      //攻撃時の停止時間
+    int intervalCnt_;   //攻撃間隔のカウンタ
 
     //デバッグ用
     int color_;

@@ -60,6 +60,8 @@ void Game::Update(void)
 	//判定
 	collision_->Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks());
 
+	//TODO
+	// カメラのロックオンの処理の最適化
 	//ロックオン関係
 	if (player_->IsRockOnTrg()) {
 		if (camera.GetMode() != Camera::MODE::ROCKON) {
@@ -93,6 +95,7 @@ void Game::Update(void)
 	if (mode == Camera::MODE::FOLLOW) {
 		camera.SetFocusPos(player_->GetFocusPoint());//注視点の更新
 	}
+	//ロックオン時
 	else if (mode == Camera::MODE::ROCKON){
 		camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));	//ロックオン対象の設定
 	}
