@@ -110,7 +110,7 @@ void Camera::SetBeforeDrawFree(void)
 
 void Camera::SetBeforeDrawFollow(void)
 {
-
+	//回転
 	Rotation();
 
 	//追従対象の位置
@@ -124,13 +124,13 @@ void Camera::SetBeforeDrawFollow(void)
 		ChangeMode(MODE::RESET);
 	}
 
-	//追従対象からカメラまでの相対座標(カメラの回転情報をもとに相対座標を回転させる)
+	//追従対象までの距離ベクトルを回転させ相対座標を生成
 	VECTOR relativeCPos = rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW);
 
-	//カメラ位置の更新
+	//カメラ位置の更新(追従対象位置から相対座標を足す)
 	pos_ = VAdd(followPos, relativeCPos);
 
-	//カメラ位置から注視点までの相対座標
+	//注視点までの距離ベクトルを回転させ相対座標を生成
 	VECTOR relativeTPos = rot_.PosAxis(RELATIVE_C2T_POS);
 
 	//注視点の更新
@@ -151,10 +151,10 @@ void Camera::SetBeforeDrawRockOn(void)
 
 	//追従対象の位置
 	VECTOR followPos = followObject_.pos;
-
 	//追従対象の向き
 	Quaternion followRot = followObject_.quaRot;
-	//離れている距離
+
+	//ロックオン対象と追従対象の離れている距離
 	VECTOR distance = VSub(rockPos_,followPos);
 
 	//離れる距離を数値化
@@ -182,8 +182,7 @@ void Camera::SetBeforeDrawRockOn(void)
 	focusPos_ = VAdd(followPos,VScale(distance, 0.5f));
 
 	//カメラの上方向
-	cameraUp_ = followRot.PosAxis(rot_.GetUp());
-	//cameraUp_ = followRot.PosAxis(Quaternion::Identity().GetUp());
+	cameraUp_ = rot_.GetUp();
 
 	//初動時のみに発動する
 	//カメラの初期ゴールを計算結果で算出した場所にする
@@ -348,8 +347,8 @@ const Camera::MODE Camera::GetMode(void)
 
 void Camera::DrawDebug(void)
 {
-	DrawFormatString(0, 0, 0xffffff, "cPOS={%.1f,%.1f,%.1f}\ncROT={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
-	DrawFormatString(0, 100, 0xffffff, "FCPOS={%.1f,%.1f,%.1f}", focusPos_.x, focusPos_.y, focusPos_.z);
+	//DrawFormatString(0, 0, 0xffffff, "cPOS={%.1f,%.1f,%.1f}\ncROT={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
+	//DrawFormatString(0, 100, 0xffffff, "FCPOS={%.1f,%.1f,%.1f}", focusPos_.x, focusPos_.y, focusPos_.z);
 	DrawSphere3D(focusPos_, 8, 10, 0x00ff00, 0x00ff00, false);
 }
 

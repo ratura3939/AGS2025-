@@ -135,7 +135,7 @@ void Game::DecideRockEnemy(void)
 
 void Game::DrawDebug(void)
 {
-	//SceneManager::GetInstance().GetCamera().DrawDebug();
+	SceneManager::GetInstance().GetCamera().DrawDebug();
 	//player_->DrawDebug();
 	enemy_->DrawDebug();
 	atkMng_->DrawDebug();
