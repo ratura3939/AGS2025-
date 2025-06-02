@@ -49,7 +49,7 @@ const bool EnemyBase::Init(void)
 {
 
 	SetPram();
-	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::ENEMY_MDL).handleId_;
+	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
 	if (modelId_ == -1) {
 		return false;
 	}

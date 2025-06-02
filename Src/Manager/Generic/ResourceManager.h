@@ -14,6 +14,8 @@ public:
 		START_LOGO,
 		PLAYER_MDL,
 		ENEMY_MDL,
+		GAMEOVER_LOGO,
+		GAMECLAR_LOGO,
 	};
 
 	// 明示的にインステンスを生成する

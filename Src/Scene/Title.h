@@ -6,6 +6,9 @@ class Title : public SceneBase
 
 public:
 
+	static constexpr int SIZE_FONT = 32;	//フォントの大きさ
+	static constexpr int THICK_FONT = 4;	//フォントの太さ
+
 	// コンストラクタ
 	Title(void);
 
@@ -19,8 +22,8 @@ public:
 
 private:
 
-	// タイトルロゴ
-	int imgTitleLogo_;
+	int logoImg_;	//ロゴ
+	int font_;	//フォント
 
 	// ロゴ描画
 	void DrawLogo(void);

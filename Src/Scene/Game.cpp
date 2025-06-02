@@ -9,6 +9,8 @@
 Game::Game(void)
 {
 	nearEnemyNum_ = -1;
+	isSlowEffect_ = false;
+	slowCnt_ = -1;
 }
 
 Game::~Game(void)
@@ -47,18 +49,43 @@ void Game::Update(void)
 {
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 
+#pragma region シーン遷移
 	//プレイヤーが死んでいたら
 	if (!player_->IsAlive()) {
 		//シーン遷移
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
+	//敵がいなくなったら
+	if (enemy_->GetEnemys().size() <= 0) {
+		//シーン遷移
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+	}
+#pragma endregion
 
+
+#pragma region 基礎アプデ
 	player_->Update(*atkMng_);
-	enemy_->Update(player_->GetPos(), *atkMng_);
+	//敵はスローの効果を受ける
+	if (isSlowEffect_) {
+		//スロー時の更新
+		slowCnt_++;
+		if (slowCnt_ >= LIMIT_SLOW)isSlowEffect_ = false;
+		//ある程度の感覚だけ更新する
+		if(slowCnt_%UPDATE_INTERVAL_SLOW<= UPDATE_INTERVAL_SLOW)enemy_->Update(player_->GetPos(), *atkMng_);
+	}
+	else {
+		//通常更新
+		enemy_->Update(player_->GetPos(), *atkMng_);
+	}
 	atkMng_->Update();
 
-	//判定
-	collision_->Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks());
+	//判定処理/その中でスロー演出が入るかどうか
+	if (collision_->Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks())) {
+		//スロー演出準備
+		slowCnt_ = 0;
+		isSlowEffect_ = true;
+	}
+#pragma endregion
 
 	//TODO
 	// カメラのロックオンの処理の最適化
@@ -119,7 +146,7 @@ void Game::Release(void)
 void Game::AttackDataInit(void)
 {
 	atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, false, PlayerManager::ATTACK_TIME);
-	atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, false, EnemyManager::ATTACK_TIME);
+	atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, false, EnemyManager::ATTACK_TIME, EnemyManager::ATTACK_TIME_START, EnemyManager::ATTACK_TIME_END);
 }
 
 void Game::DecideRockEnemy(void)
@@ -136,6 +163,10 @@ void Game::DecideRockEnemy(void)
 void Game::DrawDebug(void)
 {
 	SceneManager::GetInstance().GetCamera().DrawDebug();
+	if (isSlowEffect_) {
+		DrawString(0, 140, "NOW_SLOW", 0xffffff);
+	}
+
 	//player_->DrawDebug();
 	enemy_->DrawDebug();
 	atkMng_->DrawDebug();

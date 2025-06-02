@@ -12,6 +12,9 @@ class Game :
 {
 public:
 
+	static constexpr int LIMIT_SLOW = 1000;
+	static constexpr int UPDATE_INTERVAL_SLOW = 20;
+
 	Game(void);
 	~Game(void);
 
@@ -38,6 +41,8 @@ private:
 	std::unique_ptr<AttackManager>atkMng_;			//攻撃関連
 	std::unique_ptr<CollisionManager>collision_;	//判定関連
 	int nearEnemyNum_;
+	bool isSlowEffect_;	//スロー演出フラグ
+	int slowCnt_;		//スロー演出カウンタ
 
 	void DrawDebug(void);
 };

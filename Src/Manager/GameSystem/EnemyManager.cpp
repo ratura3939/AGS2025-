@@ -22,9 +22,10 @@ void EnemyManager::Init(void)
 	}
 
 	//デバッグ用
-	characters_[0]->SetColor(0x00ff00);
-	/*characters_[1]->SetColor(0x00ffff);
-	characters_[1]->SetPos({ 500.0f,0.0f,1000.0f });*/
+	characters_[0]->SetPos(INIT_1);
+	characters_[1]->SetPos(INIT_2);
+	characters_[2]->SetPos(INIT_3);
+	characters_[3]->SetPos(INIT_4);
 }
 
 void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
@@ -104,7 +105,7 @@ int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
 	//テキトーなでかい値
 	double min = 100000.0;
 
-	for (int i = 0; i < ENEMY_NUM; i++) {
+	for (int i = 0; i < characters_.size(); i++) {
 		//画面内にいないときはつぎへ
 		if (!InsideScreen(characters_[i]->GetPos()))continue;
 
@@ -142,5 +143,7 @@ void EnemyManager::DrawDebug(void)
 
 	VECTOR pos = ConvWorldPosToScreenPos(characters_[0]->GetPos());
 	DrawFormatString(0, 80, 0xffffff, "SCPOS={%.1f,%.1f}", pos.x, pos.y);
-	characters_[0]->DrawDebug();
+	for (auto& chara : characters_) {
+		chara->DrawDebug();
+	}
 }

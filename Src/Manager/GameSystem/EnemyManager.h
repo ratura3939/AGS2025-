@@ -10,13 +10,20 @@ class Game;
 class EnemyManager
 {
 public:
-	static constexpr int ENEMY_NUM = 1;			//敵総数
+	static constexpr int ENEMY_NUM = 4;			//敵総数
 
 	//攻撃登録名(ゆくゆくは外部データ)
 	static const std::string ATTACK_NOMAL;
 
 	//デバッグ用
-	static constexpr int ATTACK_TIME = 50;
+	static constexpr int ATTACK_TIME = 100;
+	static constexpr int ATTACK_TIME_START = 40;
+	static constexpr int ATTACK_TIME_END = 90;
+
+	static constexpr VECTOR INIT_1 = { 0.0f,0.0f,1000.0f };
+	static constexpr VECTOR INIT_2 = { 500.0f,0.0f,1000.0f };
+	static constexpr VECTOR INIT_3 = { 0.0f,0.0f,-1000.0f };
+	static constexpr VECTOR INIT_4 = { -500.0f,0.0f,-1000.0f };
 
 	EnemyManager(void);
 	~EnemyManager(void);

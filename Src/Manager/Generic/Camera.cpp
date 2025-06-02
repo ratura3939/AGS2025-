@@ -389,11 +389,11 @@ void Camera::Rotation(void)
 	}
 	if (ins.IsPressed("subLeft"))
 	{
-		angles_.y -= Utility::Deg2RadF(MAX_ROT_SPEED);
+		angles_.y += Utility::Deg2RadF(MAX_ROT_SPEED);
 	}
 	if (ins.IsPressed("subRight"))
 	{
-		angles_.y += Utility::Deg2RadF(MAX_ROT_SPEED);
+		angles_.y -= Utility::Deg2RadF(MAX_ROT_SPEED);
 	}
 
 	//カメラ座標を中心として、注視点を回転させる

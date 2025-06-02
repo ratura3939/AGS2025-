@@ -9,6 +9,7 @@ PlayerChara::PlayerChara(void)
 {
 	focusPoint_ = Utility::VECTOR_ZERO;
 	rState_ = ROCK_STATE::MAX;
+	state_ = STATE::NOMAL;
 }
 
 PlayerChara::~PlayerChara(void)
@@ -29,14 +30,17 @@ const bool PlayerChara::Init(void)
 	focusPoint_ = FOCUS_NOMAL;
 
 	UpdateRotQuat();
-	hp_ = 5;
+	hp_ = PALYER_HP;
 
 	return true;
 }
 
 void PlayerChara::Update(void)
 {
-	Move();
+	//移動は何ほかにアクション行動していないときのみ
+	if (state_ == STATE::NOMAL) {
+		Move();
+	}
 	Rotation();
 	UpdateRotQuat();
 }
@@ -52,6 +56,21 @@ void PlayerChara::ChangeRockState(const bool _state)
 	else rState_ = ROCK_STATE::NOMAL;
 }
 
+const PlayerChara::STATE PlayerChara::GetState(void) const
+{
+	return state_;
+}
+
+void PlayerChara::SetState(const STATE& _state)
+{
+	state_ = _state;
+}
+
+const bool PlayerChara::IsRock(void)
+{
+	return rState_==ROCK_STATE::ROCKON;
+}
+
 void PlayerChara::DrawDebug(void)
 {
 	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
@@ -60,6 +79,24 @@ void PlayerChara::DrawDebug(void)
 	float deg = Utility::AngleDeg(pos_, VSub(rockPos, pos_));
 	if (pos_.x > rockPos.x)deg = 180.0f + (180.0f - deg);
 	DrawFormatString(0, 140, 0xffffff, "RockDeg={%.1f}", deg);
+
+	switch (state_)
+	{
+	case PlayerChara::STATE::NOMAL:
+		DrawString(0, 160,  "NOMAL", 0xffffff);
+		break;
+	case PlayerChara::STATE::GUARD:
+		DrawString(0, 160, "GUARD", 0xffffff);
+		break;
+	case PlayerChara::STATE::AVOID:
+		DrawString(0, 160, "AVOID", 0xffffff);
+		break;
+	case PlayerChara::STATE::ATTACK:
+		DrawString(0, 160, "ATTACK", 0xffffff);
+		break;
+	default:
+		break;
+	}
 
 	DrawCupcel();
 }

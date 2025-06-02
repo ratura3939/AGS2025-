@@ -10,7 +10,7 @@
 
 Title::Title(void)
 {
-	imgTitleLogo_ = -1;
+	logoImg_ = -1;
 }
 
 Title::~Title(void)
@@ -24,8 +24,9 @@ void Title::Init(void)
 	//SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
 
 	// タイトルロゴ
-	imgTitleLogo_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::START_LOGO).handleId_;
+	logoImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::START_LOGO).handleId_;
 
+	font_ = CreateFontToHandle(NULL, SIZE_FONT, THICK_FONT, DX_FONTTYPE_EDGE);
 }
 
 void Title::Update(void)
@@ -61,15 +62,12 @@ void Title::DrawLogo(void)
 	// タイトルロゴ
 	DrawRotaGraph(
 		cx, cy - 200,
-		1.0f, 0.0f, imgTitleLogo_, true);
+		1.0f, 0.0f, logoImg_, true);
 
-	// Pushメッセージ
-	std::string msg = "Push Space";
-	SetFontSize(28);
+	std::string msg = "Push Space or 「B」ボタン";
 	int len = (int)strlen(msg.c_str());
-	int width = GetDrawStringWidth(msg.c_str(), len);
-	DrawFormatString(cx - (width / 2), 200, 0x87cefa, msg.c_str());
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	SetFontSize(16);
+	int width = GetDrawStringWidthToHandle(msg.c_str(), len, font_);
+
+	DrawStringToHandle(cx - (width / 2), 500, "Push Space or 「B」ボタン", 0x000000, font_);
 
 }

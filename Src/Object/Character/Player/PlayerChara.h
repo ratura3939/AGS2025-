@@ -8,6 +8,7 @@ class PlayerChara :
     public CharacterBase
 {
 public:
+    static constexpr int PALYER_HP = 5;
     static constexpr float MOVE_POW = 3.0f;     //移動量
     static constexpr float CHARA_SCALE = 0.7f;  //サイズ
     static constexpr VECTOR FOCUS_NOMAL = { 0.0f,0.0f,50.0f };     //注視点
@@ -20,6 +21,17 @@ public:
         MAX
     };
 
+    /// <summary>
+    /// プレイヤー行動状態
+    /// </summary>
+    enum class STATE {
+        NOMAL,
+        GUARD,
+        AVOID,
+        JUST_AVOID,
+        ATTACK,
+    };
+
     PlayerChara(void);
     ~PlayerChara(void);
 
@@ -27,7 +39,7 @@ public:
     void Update(void)override;
 
 private:
-    void Move(void);
+    void Move(void);    //移動処理
 
 public:
     //注視点の取得
@@ -38,10 +50,17 @@ public:
     /// <param name="_state">ture=ロックオン,false=ロックオフ</param>
     void ChangeRockState(const bool _state);
 
+    //状態関係
+    const STATE GetState(void)const;    //取得
+    void SetState(const STATE& _state); //設定(PlayerManagerからの受付)
+    const bool IsRock(void);
+
+
     void DrawDebug(void)override;
 
 private:
     ROCK_STATE rState_; //ロックオン状態
+    STATE state_;       //状態
 
     VECTOR focusPoint_; //注視点
 };

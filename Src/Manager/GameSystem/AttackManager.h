@@ -41,18 +41,22 @@ public:
 		float counter;		//カウンター
 		bool isFriendFire;	//FFアリかどうか
 		bool isHit;			//すでに判定されたかどうか
+
+		//以下の関数は敵用
+
 		/// <summary>
 		/// 前隙かどうか
 		/// </summary>
 		/// <returns>true=Yes/false=No</returns>
-		bool IsPreGap(void) { return (counter > 0.0f) && (counter < startAttack); }
+		const bool IsPreGap(void)const { return (counter > 0.0f) && (counter < startAttack); }
 		/// <summary>
 		/// ジャストガードのタイミングであるか
 		/// </summary>
 		/// <param name=""></param>
 		/// <returns></returns>
-		bool IsJustGuardTiming(void) { return (counter >= startAttack) && (counter <= startAttack + GRACE_JUST_GUARD); }
-		
+		const bool IsJustGuardTiming(void)const { return (counter >= 0.0f) && (counter <= startAttack + GRACE_JUST_GUARD); }
+
+		const bool IsOuccerAttack(void)const { return (counter >= startAttack) && (counter <= endAttack); }
 	};
 
 	/// <summary>

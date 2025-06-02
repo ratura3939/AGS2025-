@@ -13,9 +13,11 @@ class PlayerManager
 public:
 	//攻撃登録名(ゆくゆくは外部データ)
 	static const std::string ATTACK_NOMAL;
-
 	//デバッグ用
 	static constexpr int ATTACK_TIME = 50;
+
+	//状態上限時間
+	static constexpr int LIMIT_AVOID_STATE = 30;	//回避
 
 	PlayerManager(Game& _gameScene);
 	~PlayerManager(void);
@@ -44,9 +46,25 @@ public:
 	void RockOn(void);
 	void RockOff(void);
 
+private:
+	/// <summary>
+	/// プレイヤーからの入力受付関係
+	/// </summary>
+	void UserInput(AttackManager& _atk);
+
+	/// <summary>
+	/// 回避可能方向に移動入力があるか
+	/// </summary>
+	const bool IsAvoidMove(void)const;
+
+	void RedyStateCount(const int _limit);
+
+public:
 	void DrawDebug(void);
 private:
 	Game& scene_;	//ゲームクラス参照
-	std::shared_ptr<PlayerChara> character_;
+	std::shared_ptr<PlayerChara> character_;	//キャラクター
+	int stateCnt_;	//キャラクター状態管理用カウンター
+	int stateLimit_;	//状態をの時間上限
 };
 

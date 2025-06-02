@@ -17,5 +17,6 @@ public:
 	void Release(void) override;
 
 private:
+	int logoImg_;	//ƒƒS
 };
 

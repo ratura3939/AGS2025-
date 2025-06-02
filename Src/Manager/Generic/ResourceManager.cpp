@@ -30,7 +30,7 @@ void ResourceManager::InitTitle(void)
 	Resource res;
 
 	// スタートロゴ
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "StartLogo.png");
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
 	resourcesMap_.emplace(SRC::START_LOGO, res);
 }
 
@@ -50,11 +50,18 @@ void ResourceManager::InitGame(void)
 void ResourceManager::InitClear(void)
 {
 	Resource res;
+
+	// スタートロゴ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameClear.png");
+	resourcesMap_.emplace(SRC::GAMECLAR_LOGO, res);
 }
 
 void ResourceManager::InitGameOver(void)
 {
 	Resource res;
+	// スタートロゴ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameOver.png");
+	resourcesMap_.emplace(SRC::GAMEOVER_LOGO, res);
 }
 
 void ResourceManager::Release(void)
