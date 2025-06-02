@@ -109,7 +109,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	//ƒvƒŒƒCƒ„[‚©‚ç‚Ì“ü—Í‘‚Ü‚Æ‚ß
 	InputManager& ins = InputManager::GetInstance();
 	//UŒ‚‚Ì¶¬
-	if (ins.IsTrigerred("action")) {
+	if (ins.IsTrigerred("attack")) {
 		_atk.Attack(ATTACK_NOMAL, 1.0f, VAdd(character_->GetPos(), character_->GetQua().PosAxis({ 0.0f, 75.0f, 100.0f })), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, 70.0f);
 		character_->SetState(PlayerChara::STATE::ATTACK);
 		//ŠÔ‚Ìİ’è
