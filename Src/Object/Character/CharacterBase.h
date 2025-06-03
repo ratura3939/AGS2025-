@@ -1,7 +1,9 @@
 #pragma once
 #include<DxLib.h>
 #include "../../Common/Quaternion.h"
+#include"../../Manager/GameSystem/AnimationController.h"
 
+//class AnimationController;
 class AttackManager;
 class Game;
 
@@ -40,6 +42,7 @@ public:
 protected:
 	//必ず更新・初期化処理に入れること
 	//************************************************
+	virtual void AnimInit(void) = 0;
 	void UpdateRotQuat(void);
 	//**********************************************
 	//回転目標角度
@@ -99,6 +102,9 @@ protected:
 
 	// ローカル回転
 	Quaternion quaRotLocal_;
+
+	//アニメーション
+	std::unique_ptr<AnimationController> animController_;
 
 	//ステータスなど
 	float hp_;

@@ -10,7 +10,8 @@ public:
 	static constexpr int SCREEN_SIZE_X = 1920;
 	static constexpr int SCREEN_SIZE_Y = 1080;
 
-	static constexpr float FRAME_RATE = 1000 / 60;
+	static constexpr float FRAME_RATE = 1000.0f / 60.0f;
+	static constexpr float DEFAULT_FPS = 60.0f;
 
 	// データパス関連
 	//-------------------------------------------

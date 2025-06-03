@@ -51,6 +51,7 @@ public:
 
 protected:
     virtual void SetPram(void);     //各敵の固有情報(いずれか外部データ化したい)
+    void AnimInit(void)override;
 
 private:    //各種更新処理
     void UpdateNomal(const VECTOR& _pPos, AttackManager& _atk);  //通常

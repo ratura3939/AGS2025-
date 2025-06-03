@@ -2,6 +2,7 @@
 #include"../../../Manager/Generic/ResourceManager.h"
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/Generic/SceneManager.h"
+#include"../../../Manager/GameSystem/AnimationController.h"
 #include"../../../Utility/Utility.h"
 #include "PlayerChara.h"
 
@@ -32,6 +33,10 @@ const bool PlayerChara::Init(void)
 	UpdateRotQuat();
 	hp_ = PALYER_HP;
 
+	animController_ = std::make_unique<AnimationController>(modelId_);
+	animController_->Add("idle", 36, AnimationController::PLAY_TYPE::LOOP);
+	animController_->Play("idle", 1.0f);
+
 	return true;
 }
 
@@ -43,6 +48,8 @@ void PlayerChara::Update(void)
 	}
 	Rotation();
 	UpdateRotQuat();
+
+	animController_->Update();
 }
 
 const VECTOR PlayerChara::GetFocusPoint(void) const
@@ -99,6 +106,10 @@ void PlayerChara::DrawDebug(void)
 	}
 
 	DrawCupcel();
+}
+
+void PlayerChara::AnimInit(void)
+{
 }
 
 void PlayerChara::Move(void)

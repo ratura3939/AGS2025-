@@ -64,10 +64,10 @@ void Title::DrawLogo(void)
 		cx, cy - 200,
 		1.0f, 0.0f, logoImg_, true);
 
-	std::string msg = "Push Space or 「B」ボタン";
+	std::string msg = "Click Left or 「B」ボタン";
 	int len = (int)strlen(msg.c_str());
 	int width = GetDrawStringWidthToHandle(msg.c_str(), len, font_);
 
-	DrawStringToHandle(cx - (width / 2), 500, "Push Space or 「B」ボタン", 0x000000, font_);
+	DrawStringToHandle(cx - (width / 2), 500, "Click Left or 「B」ボタン", 0x000000, font_);
 
 }

@@ -81,6 +81,10 @@ void EnemyBase::SetPram(void)
 	//å„ÅXJsonÇ‚Ç¡ÇΩÇÁäyÇ…Ç»ÇÈÇ©Ç‡ÅH
 }
 
+void EnemyBase::AnimInit(void)
+{
+}
+
 
 
 
@@ -278,11 +282,11 @@ void EnemyBase::DrawDebug(void)
 
 	DrawCone3D(conePos, pos_, FIELD_VISION_DISTANCE, 30, serchCol_, 0x000000, true);
 
-	VECTOR fowardDir = VAdd(pos_, characterRotY_.PosAxis(forward));
+	/*VECTOR fowardDir = VAdd(pos_, characterRotY_.PosAxis(forward));
 	DrawFormatString(0, 0, 0xffffff, "EPOS={%.1f,%.1f,%.1f}\nDEG={%.1f}\nForward={%.1f,%.1f,%.1f}",
 		pos_.x, pos_.y, pos_.z,
 		static_cast<float>(debugRot_),
-		fowardDir.x, fowardDir.y, fowardDir.z);
+		fowardDir.x, fowardDir.y, fowardDir.z);*/
 
 	DrawCupcel();
 }

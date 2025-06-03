@@ -39,6 +39,7 @@ public:
     void Update(void)override;
 
 private:
+    void AnimInit(void)override;
     void Move(void);    //ˆÚ“®ˆ—
 
 public:
