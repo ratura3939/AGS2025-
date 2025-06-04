@@ -4,6 +4,7 @@
 #include"../Manager/GameSystem/CollisionManager.h"
 #include"../Manager/Generic/Camera.h"
 #include"../Manager/Generic/SceneManager.h"
+#include"../Manager/Generic/InputManager.h"
 #include "Game.h"
 
 Game::Game(void)
@@ -90,28 +91,28 @@ void Game::Update(void)
 	//TODO
 	// カメラのロックオンの処理の最適化
 	//ロックオン関係
-	if (player_->IsRockOnTrg()) {
-		if (camera.GetMode() != Camera::MODE::ROCKON) {
-			//敵がいるとき
-			if (enemy_->GetEnemys().size() > 0) {
-				//各種状態変化と対象の検索
-				player_->RockOn();
-				camera.ChangeMode(Camera::MODE::ROCKON);
-				DecideRockEnemy();
+	//押下時
+	if (InputManager::GetInstance().IsTrigerrDown("rock")) {
+		//敵がいるとき
+		if (enemy_->GetEnemys().size() > 0) {
+			//対象の検索
+			nearEnemyNum_ = DecideRockEnemy();
+			//近くに敵がいるとき
+			if (nearEnemyNum_ >= 0) {
+				RockOn();
 			}
 		}
 	}
-	else {
+	//押下終了時
+	else if (InputManager::GetInstance().IsTrigerrUp("rock")) {
 		//各種状態の変化
-		player_->RockOff();
-		camera.ChangeMode(Camera::MODE::FOLLOW);
+		RockOff();
 	}
 
 	//カメラがロックオン状態のとき敵がいなかったら
-	if (camera.GetMode() == Camera::MODE::ROCKON && enemy_->GetEnemys().size() <= 0) {
+	if (camera.GetMode() == Camera::MODE::ROCKON && DecideRockEnemy() < 0) {
 		//各種状態の変化
-		player_->RockOff();
-		camera.ChangeMode(Camera::MODE::FOLLOW);
+		RockOff();
 	}
 
 	//カメラの設定
@@ -149,14 +150,23 @@ void Game::AttackDataInit(void)
 	atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, false, EnemyManager::ATTACK_TIME, EnemyManager::ATTACK_TIME_START, EnemyManager::ATTACK_TIME_END);
 }
 
-void Game::DecideRockEnemy(void)
+const int Game::DecideRockEnemy(void)
 {
-	nearEnemyNum_ = enemy_->GetNearEnemyNum(player_->GetPos());
-	//近くにてきがいないときは
-	if (nearEnemyNum_ == -1) {
-		SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
-		player_->RockOff();
-	}
+	return enemy_->GetNearEnemyNum(player_->GetPos());
+}
+
+void Game::RockOn(void)
+{
+	Camera& camera = SceneManager::GetInstance().GetCamera();
+	player_->RockOn();
+	camera.ChangeMode(Camera::MODE::ROCKON);
+}
+
+void Game::RockOff(void)
+{
+	Camera& camera = SceneManager::GetInstance().GetCamera();
+	player_->RockOff();
+	camera.ChangeMode(Camera::MODE::FOLLOW);
 }
 
 

@@ -33,7 +33,10 @@ private:
 	/// ロックオンの対象決め
 	/// </summary>
 	/// <param name=""></param>
-	void DecideRockEnemy(void);
+	const int DecideRockEnemy(void);
+
+	void RockOn(void);
+	void RockOff(void);
 private:
 
 	std::unique_ptr<PlayerManager>player_;			//プレイヤー

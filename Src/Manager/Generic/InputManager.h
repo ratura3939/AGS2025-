@@ -91,7 +91,14 @@ public:
 	/// </summary>
 	/// <param name="_eventCode">“o˜^–¼</param>
 	/// <returns></returns>
-	bool IsTrigerred(const std::string& _eventCode);
+	bool IsTrigerrDown(const std::string& _eventCode);
+
+	/// <summary>
+	/// ƒL[‚ÌƒAƒbƒvƒgƒŠƒK
+	/// </summary>
+	/// <param name="_eventCode">“o˜^–¼</param>
+	/// <returns></returns>
+	bool IsTrigerrUp(const std::string& _eventCode);
 
 	bool IsPressed(const std::string& _eventCode);
 

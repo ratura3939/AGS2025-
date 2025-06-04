@@ -120,7 +120,7 @@ void Camera::SetBeforeDrawFollow(void)
 	Quaternion followRot = followObject_.quaRot;
 
 	auto& ins = InputManager::GetInstance();
-	if (ins.IsTrigerred("rock")) {
+	if (ins.IsTrigerrDown("rock")) {
 		ChangeMode(MODE::RESET);
 	}
 

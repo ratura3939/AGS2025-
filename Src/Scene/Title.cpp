@@ -34,7 +34,7 @@ void Title::Update(void)
 
 	// ƒV[ƒ“‘JˆÚ
 	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsTrigerred("action"))
+	if (ins.IsTrigerrDown("action"))
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}

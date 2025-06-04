@@ -201,7 +201,7 @@ const bool InputManager::IsInputRecord(const std::string& _eventCode, const INPU
 }
 
 
-bool InputManager::IsTrigerred(const std::string& _eventCode)
+bool InputManager::IsTrigerrDown(const std::string& _eventCode)
 {
 	//先に要素がない場合の予防線をはる
 // 反応しないだけという状態を作りたいから
@@ -214,6 +214,20 @@ bool InputManager::IsTrigerred(const std::string& _eventCode)
 	//[]の形で中身を見ようとすると勝手に中身が空のキーの場所が生成されてしまう
 	//なのでmap型のat()関数はキー検索であり読み取り専用を使用することで中身を変えずに参照が可能になるｂ
 	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT) && !IsInputRecord(_eventCode, INPUT_RECORD::LAST);
+}
+bool InputManager::IsTrigerrUp(const std::string& _eventCode)
+{
+	//先に要素がない場合の予防線をはる
+// 反応しないだけという状態を作りたいから
+//containd()=引数がキーとなる要素がないとき
+	if (!currentInptuPeri_.contains(_eventCode)) {
+		//参照できないので
+		return false;
+	}
+
+	//[]の形で中身を見ようとすると勝手に中身が空のキーの場所が生成されてしまう
+	//なのでmap型のat()関数はキー検索であり読み取り専用を使用することで中身を変えずに参照が可能になるｂ
+	return !IsInputRecord(_eventCode, INPUT_RECORD::CURRENT) && IsInputRecord(_eventCode, INPUT_RECORD::LAST);
 }
 
 bool InputManager::IsPressed(const std::string& _eventCode)

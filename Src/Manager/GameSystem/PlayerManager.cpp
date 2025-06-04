@@ -89,10 +89,6 @@ const VECTOR PlayerManager::GetFocusPoint(void)
 	return character_->GetFocusPoint();
 }
 
-const bool PlayerManager::IsRockOnTrg(void) const
-{
-	return InputManager::GetInstance().IsPressed("rock");
-}
 
 void PlayerManager::RockOn(void)
 {
@@ -109,7 +105,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	//プレイヤーからの入力総まとめ
 	InputManager& ins = InputManager::GetInstance();
 	//攻撃の生成
-	if (ins.IsTrigerred("attack")) {
+	if (ins.IsTrigerrDown("attack")) {
 		_atk.Attack(ATTACK_NOMAL, 1.0f, VAdd(character_->GetPos(), character_->GetQua().PosAxis({ 0.0f, 75.0f, 100.0f })), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, 70.0f);
 		character_->SetState(PlayerChara::STATE::ATTACK);
 		//時間の設定
@@ -117,7 +113,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	}
 
 	//回避入力があったとき(ロックオン状態でしか作動しない)
-	if (IsAvoidMove() && ins.IsTrigerred("jump") && character_->IsRock()) {
+	if (IsAvoidMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
 		//回避状態に
 		character_->SetState(PlayerChara::STATE::AVOID);
 		//時間の設定

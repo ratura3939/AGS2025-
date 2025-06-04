@@ -9,7 +9,7 @@ class PlayerChara :
 {
 public:
     static constexpr int PALYER_HP = 5;
-    static constexpr float MOVE_POW = 3.0f;     //移動量
+    static constexpr float MOVE_POW = 5.0f;     //移動量
     static constexpr float CHARA_SCALE = 0.7f;  //サイズ
     static constexpr VECTOR FOCUS_NOMAL = { 0.0f,0.0f,50.0f };     //注視点
     //static constexpr VECTOR FOCUS_BOW = { 0.0f,20.0f,150.0f };

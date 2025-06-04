@@ -35,11 +35,6 @@ public:
 	const Quaternion GetQua(void);		//回転
 	const VECTOR GetFocusPoint(void);	//注視点
 
-	//ロックオンのトリガ
-	//デバッグではただプレイヤーが持っている感を出しているだけ
-	const bool IsRockOnTrg(void)const;
-	const bool IsRockOffTrg(void)const;
-
 	const bool IsAlive(void)const;
 
 	//ロックオン・オフ時に必要な処理
