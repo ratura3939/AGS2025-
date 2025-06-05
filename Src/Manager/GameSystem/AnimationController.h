@@ -3,6 +3,10 @@
 #include<vector>
 #include<unordered_map>
 
+//このWilidiaでは"idle"という名前のアニメーションを必ず入れること！
+//NOMALのアニメーションは終了時idleを再生するようにするため
+
+
 class AnimationController
 {
 public:
@@ -42,6 +46,10 @@ public:
 	void Play(const std::string& _name,const float _speed);
 	void Update(void);
 private:
+	//アニメーション更新処理
+	void UpdateNomalAnim(void);
+	void UpdateReturnAnim(void);
+
 	//アニメーション終了時処理
 	void FinishAnimNomal(void);
 	void FinishAnimLoop(void);
@@ -56,6 +64,8 @@ private:
 	float counter;	//更新カウンター
 
 	using FinishAnimation = void(AnimationController::*)(void);
+	using UpdateAnimation = void(AnimationController::*)(void);
 	FinishAnimation finishAnim_;
+	UpdateAnimation updateAnim_;
 };
 

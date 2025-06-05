@@ -15,6 +15,7 @@ AnimationController::AnimationController(int& _model):modelId_(_model)
 	counter = -1.0f;
 
 	finishAnim_ = &AnimationController::FinishAnimNomal;
+	updateAnim_ = &AnimationController::UpdateNomalAnim;
 }
 
 AnimationController::~AnimationController(void)
@@ -68,12 +69,15 @@ void AnimationController::Play(const std::string& _name, const float _speed)
 	{
 	case PLAY_TYPE::NOMAL:
 		finishAnim_ = &AnimationController::FinishAnimNomal;
+		updateAnim_ = &AnimationController::UpdateNomalAnim;
 		break;
 	case PLAY_TYPE::LOOP:
 		finishAnim_ = &AnimationController::FinishAnimLoop;
+		updateAnim_ = &AnimationController::UpdateNomalAnim;
 		break;
 	case PLAY_TYPE::RETURN:
 		finishAnim_ = &AnimationController::FinishAnimReturn;
+		updateAnim_ = &AnimationController::UpdateReturnAnim;
 		break;
 	default:
 		assert("アニメーション登録のところでエラーが起きています");
@@ -84,6 +88,9 @@ void AnimationController::Play(const std::string& _name, const float _speed)
 	speedAnim = _speed;
 	//カウンターの初期化
 	counter = 0.0f;
+	if (activeAnim_.type == PLAY_TYPE::RETURN) {
+		counter = activeAnim_.total;
+	}
 
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(modelId_, attachAnim_, counter);
@@ -94,11 +101,16 @@ void AnimationController::Update(void)
 	//初期値のとき
 	if (attachAnim_ == -1)return;
 
+	//カウンタ更新
+	(this->*updateAnim_)();
+
+	// 再生するアニメーション時間の設定
+	MV1SetAttachAnimTime(modelId_, attachAnim_, counter);
+}
+
+void AnimationController::UpdateNomalAnim(void)
+{
 	// アニメーション再生
-	// 経過時間の取得
-	float deltaTime = 1.0f / Application::DEFAULT_FPS;
-	// アニメーション時間の進行
-	//counter += (counter * deltaTime);
 	counter += speedAnim;
 	//再生上限にいった場合
 	if (counter > activeAnim_.total)
@@ -106,14 +118,24 @@ void AnimationController::Update(void)
 		//アニメーション終了時処理
 		(this->*finishAnim_)();
 	}
-	// 再生するアニメーション時間の設定
-	MV1SetAttachAnimTime(modelId_, attachAnim_, counter);
+}
+
+void AnimationController::UpdateReturnAnim(void)
+{
+	// アニメーション再生
+	counter -= speedAnim;
+	//再生上限にいった場合
+	if (counter <= 0.0f)
+	{
+		//アニメーション終了時処理
+		(this->*finishAnim_)();
+	}
 }
 
 void AnimationController::FinishAnimNomal(void)
 {
-	//現在のものをデタッチ
-	MV1DetachAnim(modelId_, attachAnim_);
+	//待機に戻る
+	Play("idle", 1.0f);
 }
 
 void AnimationController::FinishAnimLoop(void)

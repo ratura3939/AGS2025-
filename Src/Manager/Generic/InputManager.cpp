@@ -232,6 +232,10 @@ bool InputManager::IsTrigerrUp(const std::string& _eventCode)
 
 bool InputManager::IsPressed(const std::string& _eventCode)
 {
+	if (!currentInptuPeri_.contains(_eventCode)) {
+		//QÆ‚Å‚«‚È‚¢‚Ì‚Å
+		return false;
+	}
 	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT);
 }
 

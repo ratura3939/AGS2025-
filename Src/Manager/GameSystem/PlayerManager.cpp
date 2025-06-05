@@ -108,6 +108,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	if (ins.IsTrigerrDown("attack")) {
 		_atk.Attack(ATTACK_NOMAL, 1.0f, VAdd(character_->GetPos(), character_->GetQua().PosAxis({ 0.0f, 75.0f, 100.0f })), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, 70.0f);
 		character_->SetState(PlayerChara::STATE::ATTACK);
+		character_->PlayAnim("atkFirst");
 		//ŠÔ‚Ìİ’è
 		RedyStateCount(_atk.GetTotalTime(ATTACK_NOMAL));
 	}
@@ -115,7 +116,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	//‰ñ”ğ“ü—Í‚ª‚ ‚Á‚½‚Æ‚«(ƒƒbƒNƒIƒ“ó‘Ô‚Å‚µ‚©ì“®‚µ‚È‚¢)
 	if (IsAvoidMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
 		//‰ñ”ğó‘Ô‚É
-		character_->SetState(PlayerChara::STATE::AVOID);
+		character_->SetState(PlayerChara::STATE::DODGE);
 		//ŠÔ‚Ìİ’è
 		RedyStateCount(LIMIT_AVOID_STATE);
 	}

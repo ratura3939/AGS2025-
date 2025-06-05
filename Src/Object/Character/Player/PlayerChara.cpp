@@ -6,11 +6,13 @@
 #include"../../../Utility/Utility.h"
 #include "PlayerChara.h"
 
+
 PlayerChara::PlayerChara(void)
 {
 	focusPoint_ = Utility::VECTOR_ZERO;
 	rState_ = ROCK_STATE::MAX;
 	state_ = STATE::NOMAL;
+	isDush_ = false;
 }
 
 PlayerChara::~PlayerChara(void)
@@ -34,20 +36,23 @@ const bool PlayerChara::Init(void)
 	hp_ = PALYER_HP;
 
 	animController_ = std::make_unique<AnimationController>(modelId_);
-	animController_->Add("idle", 36, AnimationController::PLAY_TYPE::LOOP);
-	animController_->Play("idle", 1.0f);
+
+	AnimInit();
+	//初期アニメ
+	animController_->Play("idle", SPEED_ANIM);
 
 	return true;
 }
 
 void PlayerChara::Update(void)
 {
-	//移動は何ほかにアクション行動していないときのみ
-	if (state_ == STATE::NOMAL) {
+	//ほかにアクション行動していないときのみ
+	if (state_ == STATE::NOMAL || rState_ == ROCK_STATE::ROCKON) {
 		Move();
+		Rotation();
+		UpdateRotQuat();
 	}
-	Rotation();
-	UpdateRotQuat();
+	
 
 	animController_->Update();
 }
@@ -73,6 +78,12 @@ void PlayerChara::SetState(const STATE& _state)
 	state_ = _state;
 }
 
+void PlayerChara::PlayAnim(const std::string _anim)
+{
+	//アニメーション
+	animController_->Play(_anim, SPEED_ANIM);
+}
+
 const bool PlayerChara::IsRock(void)
 {
 	return rState_==ROCK_STATE::ROCKON;
@@ -95,8 +106,8 @@ void PlayerChara::DrawDebug(void)
 	case PlayerChara::STATE::GUARD:
 		DrawString(0, 160, "GUARD", 0xffffff);
 		break;
-	case PlayerChara::STATE::AVOID:
-		DrawString(0, 160, "AVOID", 0xffffff);
+	case PlayerChara::STATE::DODGE:
+		DrawString(0, 160, "DODGE", 0xffffff);
 		break;
 	case PlayerChara::STATE::ATTACK:
 		DrawString(0, 160, "ATTACK", 0xffffff);
@@ -110,6 +121,31 @@ void PlayerChara::DrawDebug(void)
 
 void PlayerChara::AnimInit(void)
 {
+	animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);
+	//攻撃
+	animController_->Add("atkFirst", ANIM_ATTACK_FIRST, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("atkSecond", ANIM_ATTACK_SECOND, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("atkSpin", ANIM_ATTACK_SPIN, AnimationController::PLAY_TYPE::NOMAL);
+	//防御
+	animController_->Add("degStart", ANIM_GUARD_START, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("defAtk", ANIM_GUARD_ATTACK, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("defHit", ANIM_GUARD_HIT, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("defSus", ANIM_GUARD_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
+	//その他アクション
+	animController_->Add("walk", ANIM_WALK, AnimationController::PLAY_TYPE::LOOP);
+	animController_->Add("walkB", ANIM_WALK, AnimationController::PLAY_TYPE::RETURN);
+	animController_->Add("dushF", ANIM_DUSH_FORWARD, AnimationController::PLAY_TYPE::LOOP);
+	animController_->Add("dushL", ANIM_DUSH_LEFT, AnimationController::PLAY_TYPE::LOOP);
+	animController_->Add("dushR", ANIM_DUSH_RIGHT, AnimationController::PLAY_TYPE::LOOP);
+	animController_->Add("jump", ANIM_JUMP, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("dodL", ANIM_DODGE_LEFT, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("dodR", ANIM_DODGE_RIGHT, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("dodB", ANIM_DODGE_BACK, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("pick", ANIM_PICK_UP, AnimationController::PLAY_TYPE::NOMAL);
+	//演出
+	animController_->Add("damage", ANIM_DAMAGE, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("dethStart", ANIM_DETH_START, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("dethSus", ANIM_DETH_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
 }
 
 void PlayerChara::Move(void)
@@ -119,29 +155,43 @@ void PlayerChara::Move(void)
 	VECTOR dir = Utility::VECTOR_ZERO;
 
 	float afterDeg = 0.0f;
+	MOVE_DIR moveDir = MOVE_DIR::NONE;
 
 	//入力
 	if (ins.IsPressed("up")) {
 		dir = cameraRot.GetForward();
 		afterDeg = Utility::Deg2RadF(DEG_FORWARD);
+		moveDir = MOVE_DIR::FORWARD;
 	}
 	if (ins.IsPressed("left")) {
 		dir = cameraRot.GetLeft();
 		afterDeg = Utility::Deg2RadF(DEG_LEFT);
+		moveDir = MOVE_DIR::LEFT;
 	}
 	if (ins.IsPressed("down")) {
 		dir = cameraRot.GetBack();
 		afterDeg = Utility::Deg2RadF(DEG_BACK);
+		moveDir = MOVE_DIR::BACK;
 	}
 	if (ins.IsPressed("right")) {
 		dir = cameraRot.GetRight();
 		afterDeg = Utility::Deg2RadF(DEG_RIGHT);
+		moveDir = MOVE_DIR::RIGHT;
+	}
+	if (ins.IsPressed("dash")) {
+		isDush_ = true;
+	}
+	else {
+		isDush_ = false;
 	}
 
 	//移動が行われていたら
 	if (!Utility::EqualsVZero(dir)) {
+		//速度設定
+		float speed = MOVE_POW;
+		if (isDush_)speed = DUSH_POW;
 		//移動処理
-		pos_ = VAdd(pos_, VScale(dir, MOVE_POW));
+		pos_ = VAdd(pos_, VScale(dir, speed));
 		//上下の移動が起きない様に
 		//ゆくゆくは重力とステージの当たり判定で処理する
 		pos_.y = 0.0f;
@@ -159,6 +209,38 @@ void PlayerChara::Move(void)
 		}
 		//目標角度設定
 		SetGoalRot(afterDeg);
+
+		//アニメーション
+		animController_->Play(DecideAnim(moveDir), SPEED_ANIM);
+	}
+	else {
+		//動いていないとき
+		//通常なら
+		if (state_ == STATE::NOMAL) {
+			//待機アニメーション
+			animController_->Play("idle", SPEED_ANIM);
+		}
 	}
 	
+}
+
+const std::string PlayerChara::DecideAnim(const MOVE_DIR _dir) const
+{
+	std::string retAnim = "walk";
+	if(isDush_)retAnim = "dushF";
+
+	//ロックオンのとき
+	if (rState_ == ROCK_STATE::ROCKON) {
+		if (_dir == MOVE_DIR::LEFT) {
+			retAnim = "dushL";
+		}
+		else if (_dir == MOVE_DIR::RIGHT) {
+			retAnim = "dushR";
+		}
+		else if (_dir == MOVE_DIR::BACK) {
+			retAnim = "walkB";
+		}
+	}
+	
+	return retAnim;
 }

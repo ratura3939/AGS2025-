@@ -50,7 +50,7 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 		if (Utility::IsHitSphereCapsule(atkPos, atkRadius, pPos, pHeadPos, CharacterBase::CHARACTER_RADIUS)) {
 			
 			//ÉWÉÉÉXÉgâÒî
-			if (atkCol.info.IsPreGap()&&_player.lock()->GetState()==PlayerChara::STATE::AVOID) {
+			if (atkCol.info.IsPreGap()&&_player.lock()->GetState()==PlayerChara::STATE::DODGE) {
    				isSlow_ = true;
 				//îªíËçœÇ›Ç…
 				atkCol.info.isHit = true;
