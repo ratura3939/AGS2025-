@@ -2,6 +2,7 @@
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/GameSystem/AttackManager.h"
+#include"../../../Manager/GameSystem/AnimationController.h"
 #include"../../../Manager/GameSystem/EnemyManager.h"
 #include"../../../Utility/Utility.h"
 #include "EnemyBase.h"
@@ -39,6 +40,9 @@ EnemyBase::EnemyBase(void)
 	intervalCnt_ = INTERVAL_ATTACK_NOMAL;
 
 	hp_ = 5;
+	moveSped_ = MOVE_POW;
+
+	isDelete_ = false;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -63,6 +67,10 @@ const bool EnemyBase::Init(void)
 	UpdateRotQuat();
 	//状態を通常に
 	ChangeState(ENEMY_STATE::NOMAL);
+	//アニメーション初期化
+	AnimInit();
+	animController_->Play("idle", SPEED_ANIM);
+
 	return true;
 }
 
@@ -73,6 +81,8 @@ void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
 	//共通更新
 	Rotation();
 	UpdateRotQuat();
+
+	animController_->Update();
 }
 
 void EnemyBase::SetPram(void)
@@ -83,6 +93,12 @@ void EnemyBase::SetPram(void)
 
 void EnemyBase::AnimInit(void)
 {
+	animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);
+	animController_->Add("attack", ANIM_ATTACK_NOMAL, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("walk", ANIM_WALK, AnimationController::PLAY_TYPE::LOOP);
+	animController_->Add("dush", ANIM_DUSH_FORWARD, AnimationController::PLAY_TYPE::LOOP);
+	animController_->Add("dethStart", ANIM_DETH_START, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("dethSus", ANIM_DETH_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
 }
 
 
@@ -146,6 +162,7 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
 		//攻撃する
 		_atk.Attack(EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(RELATIVE_ATTACK_POS)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, SCALE_ATTACK_NOMAL);
+		animController_->Play("attack", SPEED_ANIM);
 		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 		intervalCnt_ = 0.0f;
 	}
@@ -155,6 +172,9 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 {
 	//ステイ状態のとき
 	if (isStay_) {
+		//待機アニメーション
+		animController_->Play("idle", SPEED_ANIM);
+
 		//一定の時間が過ぎていたら
 		if (stayCnt_ >= STAY_TIME) {
 			//行先の再設定
@@ -183,7 +203,8 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 	}
 	
 	//移動(前方方向)
-	pos_ = VAdd(pos_, VScale(GetForward(), MOVE_POW));
+	pos_ = VAdd(pos_, VScale(GetForward(), moveSped_));
+	animController_->Play("walk", SPEED_ANIM);
 
 	//判定
 	//停止した位置からどれだけ離れているか
@@ -195,6 +216,8 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 		isStay_ = true;
 		stayCnt_ = 0;
 	}
+
+	
 }
 
 void EnemyBase::MoveSearch(const VECTOR& _pPos)
@@ -213,7 +236,8 @@ void EnemyBase::MoveBattle(const VECTOR& _pPos)
 		return;
 	}
 	//移動(前方方向)
-	pos_=VAdd(pos_, VScale(GetForward(), MOVE_POW));
+	pos_=VAdd(pos_, VScale(GetForward(), moveSped_));
+	animController_->Play("dush", SPEED_ANIM);
 
 	//回転
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
@@ -235,6 +259,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 	case ENEMY_STATE::NOMAL:
 		update_ = &EnemyBase::UpdateNomal;
 		move_ = &EnemyBase::MoveNomal;
+		moveSped_ = MOVE_POW;
 
 		serchCol_ = serchDebugCol;
 		alertCol_ = serchDebugCol2;
@@ -243,6 +268,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 	case ENEMY_STATE::SEARCH:
 		update_ = &EnemyBase::UpdateSearch;
 		move_ = &EnemyBase::MoveSearch;
+		moveSped_ = MOVE_POW;
 
 		serchCol_ = serchDebugCol;
 		alertCol_ = alertDebugCol2;
@@ -251,8 +277,15 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 	case ENEMY_STATE::BATTLE:
 		update_ = &EnemyBase::UpdateBattle;
 		move_ = &EnemyBase::MoveBattle;
+		moveSped_ = MOVE_POW_FIND;
 
 		serchCol_ = alertDebugCol;
+		break;
+	case ENEMY_STATE::DETH:
+		break;
+	case ENEMY_STATE::END:
+		//削除可能に
+		isDelete_ = true;
 		break;
 	default:
 		break;
@@ -289,4 +322,9 @@ void EnemyBase::DrawDebug(void)
 		fowardDir.x, fowardDir.y, fowardDir.z);*/
 
 	DrawCupcel();
+}
+
+const bool EnemyBase::IsAlive(void) const
+{
+	return isDelete_;
 }

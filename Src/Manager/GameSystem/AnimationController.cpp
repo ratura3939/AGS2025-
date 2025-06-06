@@ -16,6 +16,8 @@ AnimationController::AnimationController(int& _model):modelId_(_model)
 
 	finishAnim_ = &AnimationController::FinishAnimNomal;
 	updateAnim_ = &AnimationController::UpdateNomalAnim;
+
+	nextAnim_ = {};
 }
 
 AnimationController::~AnimationController(void)
@@ -43,7 +45,7 @@ void AnimationController::Add(const std::string& _name, const int _attach, const
 	attachAnim_ = -1;
 }
 
-void AnimationController::Play(const std::string& _name, const float _speed)
+void AnimationController::Play(const std::string& _name, const float _speed, const std::vector<std::string> _next)
 {
 	//もしかしたらこのifの中身が追加条件はいるかも
 	//現在アタッチしているものと同じものなら処理は行わない
@@ -55,6 +57,10 @@ void AnimationController::Play(const std::string& _name, const float _speed)
 		MV1DetachAnim(modelId_, attachAnim_);
 	}
 	
+	//次に再生されるアニメーションが設定されているとき
+	if (!_next.empty()) {
+		nextAnim_ = _next;
+	}
 
 	//新規を代入
 	activeAnim_.type = animDatas_[_name].type;
@@ -134,6 +140,14 @@ void AnimationController::UpdateReturnAnim(void)
 
 void AnimationController::FinishAnimNomal(void)
 {
+	//次に再生されている物が設定されているとき
+	if (!nextAnim_.empty()) {
+		//配列の最前列を再生
+		Play(nextAnim_[0], speedAnim);
+		//要素の削除
+		nextAnim_.erase(nextAnim_.begin());
+		return;
+	}
 	//待機に戻る
 	Play("idle", 1.0f);
 }

@@ -70,7 +70,7 @@ public:
 	const Quaternion GetQua(void)const;
 
 	//”»’è
-	const bool IsAlive(void)const;
+	virtual const bool IsAlive(void)const;
 
 	//ƒ_ƒ[ƒW‚ğ—^‚¦‚é
 	void Damage(const float _pow);

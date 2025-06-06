@@ -43,7 +43,7 @@ public:
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	/// <param name="_speed">再生速度</param>
-	void Play(const std::string& _name,const float _speed);
+	void Play(const std::string& _name, const float _speed, const std::vector<std::string> _next = {});
 	void Update(void);
 private:
 	//アニメーション更新処理
@@ -59,9 +59,11 @@ private:
 	int& modelId_;	//モデルID
 	std::unordered_map<std::string, AnimationInfo>animDatas_;	//アニメーションデータ総まとめ
 	AnimationInfo activeAnim_;	//再生中のアニメーション情報
-	int attachAnim_;
+	int attachAnim_;//実際の再生しているもの
 	float speedAnim;//再生速度
 	float counter;	//更新カウンター
+
+	std::vector<std::string> nextAnim_;	//次に再生するアニメーション(LOOP以外に適用)
 
 	using FinishAnimation = void(AnimationController::*)(void);
 	using UpdateAnimation = void(AnimationController::*)(void);

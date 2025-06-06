@@ -50,10 +50,9 @@ void PlayerChara::Update(void)
 	if (state_ == STATE::NOMAL || rState_ == ROCK_STATE::ROCKON) {
 		Move();
 		Rotation();
-		UpdateRotQuat();
 	}
-	
 
+	UpdateRotQuat();
 	animController_->Update();
 }
 
