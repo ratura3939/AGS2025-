@@ -45,6 +45,13 @@ void ResourceManager::InitGame(void)
 	//敵
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Enemy_Axeman.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_MDL, res);
+
+	//ステージ
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage1.mv1");
+	resourcesMap_.emplace(SRC::OBJECTS_MDL, res);
+
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "deco1.mv1");
+	resourcesMap_.emplace(SRC::STAGE_MDL, res);
 }
 
 void ResourceManager::InitClear(void)

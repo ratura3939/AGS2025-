@@ -12,6 +12,8 @@ public:
 	enum class SRC
 	{
 		START_LOGO,
+		STAGE_MDL,
+		OBJECTS_MDL,
 		PLAYER_MDL,
 		ENEMY_MDL,
 		GAMEOVER_LOGO,

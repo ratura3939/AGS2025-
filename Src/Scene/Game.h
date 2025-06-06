@@ -6,6 +6,7 @@ class PlayerManager;
 class EnemyManager;
 class AttackManager;
 class CollisionManager;
+class Stage;
 
 class Game :
     public SceneBase
@@ -43,6 +44,8 @@ private:
 	std::unique_ptr<EnemyManager>enemy_;			//敵
 	std::unique_ptr<AttackManager>atkMng_;			//攻撃関連
 	std::unique_ptr<CollisionManager>collision_;	//判定関連
+	std::unique_ptr<Stage>stage_;					//ステージ
+
 	int nearEnemyNum_;
 	bool isSlowEffect_;	//スロー演出フラグ
 	int slowCnt_;		//スロー演出カウンタ

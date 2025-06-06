@@ -5,6 +5,7 @@
 #include"../Manager/Generic/Camera.h"
 #include"../Manager/Generic/SceneManager.h"
 #include"../Manager/Generic/InputManager.h"
+#include"../Object/Stage/Stage.h"
 #include "Game.h"
 
 Game::Game(void)
@@ -38,6 +39,8 @@ void Game::Init(void)
 	//”»’è
 	collision_ = std::make_unique<CollisionManager>();
 
+	stage_ = std::make_unique<Stage>();
+	stage_->Init();
 
 	//ƒJƒƒ‰‚Ì‰ŠúÝ’è
 	Camera& camera = SceneManager::GetInstance().GetCamera();
@@ -132,6 +135,7 @@ void Game::Update(void)
 
 void Game::Draw(void)
 {
+	stage_->Draw();
 	enemy_->Draw();
 	player_->Draw();
 
