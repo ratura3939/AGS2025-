@@ -106,8 +106,10 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	InputManager& ins = InputManager::GetInstance();
 	//攻撃の生成
 	if (ins.IsTrigerrDown("attack")) {
+		//攻撃の生成および状態の設定
 		_atk.Attack(ATTACK_NOMAL, 1.0f, VAdd(character_->GetPos(), character_->GetQua().PosAxis({ 0.0f, 75.0f, 100.0f })), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, 70.0f);
 		character_->SetState(PlayerChara::STATE::ATTACK);
+		//対応するアニメーション
 		character_->PlayAnim("atkFirst");
 		//時間の設定
 		RedyStateCount(_atk.GetTotalTime(ATTACK_NOMAL));
@@ -120,6 +122,28 @@ void PlayerManager::UserInput(AttackManager& _atk)
 		//時間の設定
 		RedyStateCount(LIMIT_AVOID_STATE);
 	}
+
+	//移動
+	//入力
+	//入力があったら対応した移動方向をセット
+	if (ins.IsPressed("up")) {
+		character_->InputMoveDir(PlayerChara::MOVE_DIR::FORWARD);
+	}
+	else if (ins.IsPressed("left")) {
+		character_->InputMoveDir(PlayerChara::MOVE_DIR::LEFT);
+	}
+	else if (ins.IsPressed("down")) {
+		character_->InputMoveDir(PlayerChara::MOVE_DIR::BACK);
+	}
+	else if (ins.IsPressed("right")) {
+		character_->InputMoveDir(PlayerChara::MOVE_DIR::RIGHT);
+	}
+	//移動していないとき
+	else {
+		character_->InputMoveDir(PlayerChara::MOVE_DIR::NONE);
+	}
+	//ダッシュ
+	character_->InputDash(ins.IsPressed("dash"));
 }
 
 

@@ -111,8 +111,8 @@ void InputManager::ResetInput(void)
 
 	//各コマンド<PADは複数個所で兼用あり>
 	inputTable_["action"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_RETURN } ,{ PERIPHERAL_TYPE::MOUSE,MOUSE_INPUT_LEFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_B } };		//Bボタン(Aボタン：任天堂)
-	inputTable_["dash"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LSHIFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };		//Aボタン(Bボタン：任天堂)
-	inputTable_["cancel"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_Q },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };			//Aボタン(Bボタン：任天堂)
+	inputTable_["dash"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LSHIFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };	//Aボタン(Bボタン：任天堂)
+	inputTable_["cancel"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_Q },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };		//Aボタン(Bボタン：任天堂)
 	inputTable_["attack"] = { { PERIPHERAL_TYPE::MOUSE,MOUSE_INPUT_LEFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_C } };		//Xボタン(Yボタン：任天堂)
 	inputTable_["jump"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_SPACE },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_X } };		//Yボタン(Xボタン：任天堂)
 	inputTable_["crouch"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LCONTROL },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_START } };//LS
@@ -215,11 +215,12 @@ bool InputManager::IsTrigerrDown(const std::string& _eventCode)
 	//なのでmap型のat()関数はキー検索であり読み取り専用を使用することで中身を変えずに参照が可能になるｂ
 	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT) && !IsInputRecord(_eventCode, INPUT_RECORD::LAST);
 }
+
 bool InputManager::IsTrigerrUp(const std::string& _eventCode)
 {
 	//先に要素がない場合の予防線をはる
-// 反応しないだけという状態を作りたいから
-//containd()=引数がキーとなる要素がないとき
+	// 反応しないだけという状態を作りたいから
+	//containd()=引数がキーとなる要素がないとき
 	if (!currentInptuPeri_.contains(_eventCode)) {
 		//参照できないので
 		return false;
@@ -232,10 +233,6 @@ bool InputManager::IsTrigerrUp(const std::string& _eventCode)
 
 bool InputManager::IsPressed(const std::string& _eventCode)
 {
-	if (!currentInptuPeri_.contains(_eventCode)) {
-		//参照できないので
-		return false;
-	}
 	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT);
 }
 

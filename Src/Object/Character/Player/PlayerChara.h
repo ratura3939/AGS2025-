@@ -105,12 +105,18 @@ public:
 
     void DrawDebug(void)override;
 
+    //入力受付
+    void InputDash(const bool _flag) { isDush_ = _flag; }
+    void InputMoveDir(const MOVE_DIR _dir) { moveDir_ = _dir; }
+
 private:
     ROCK_STATE rState_; //ロックオン状態
     STATE state_;       //状態
 
     VECTOR focusPoint_; //注視点
 
-    bool isDush_;   //走る
+    //入力受付変数
+    MOVE_DIR moveDir_;  //移動方向
+    bool isDush_;        //走る
 };
 

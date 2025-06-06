@@ -150,77 +150,65 @@ void PlayerChara::AnimInit(void)
 
 void PlayerChara::Move(void)
 {
-	InputManager& ins = InputManager::GetInstance();
-	Quaternion cameraRot = SceneManager::GetInstance().GetCamera().GetRot();
-	VECTOR dir = Utility::VECTOR_ZERO;
-
-	float afterDeg = 0.0f;
-	MOVE_DIR moveDir = MOVE_DIR::NONE;
-
-	//入力
-	if (ins.IsPressed("up")) {
-		dir = cameraRot.GetForward();
-		afterDeg = Utility::Deg2RadF(DEG_FORWARD);
-		moveDir = MOVE_DIR::FORWARD;
-	}
-	if (ins.IsPressed("left")) {
-		dir = cameraRot.GetLeft();
-		afterDeg = Utility::Deg2RadF(DEG_LEFT);
-		moveDir = MOVE_DIR::LEFT;
-	}
-	if (ins.IsPressed("down")) {
-		dir = cameraRot.GetBack();
-		afterDeg = Utility::Deg2RadF(DEG_BACK);
-		moveDir = MOVE_DIR::BACK;
-	}
-	if (ins.IsPressed("right")) {
-		dir = cameraRot.GetRight();
-		afterDeg = Utility::Deg2RadF(DEG_RIGHT);
-		moveDir = MOVE_DIR::RIGHT;
-	}
-	if (ins.IsPressed("dash")) {
-		isDush_ = true;
-	}
-	else {
-		isDush_ = false;
-	}
-
-	//移動が行われていたら
-	if (!Utility::EqualsVZero(dir)) {
-		//速度設定
-		float speed = MOVE_POW;
-		if (isDush_)speed = DUSH_POW;
-		//移動処理
-		pos_ = VAdd(pos_, VScale(dir, speed));
-		//上下の移動が起きない様に
-		//ゆくゆくは重力とステージの当たり判定で処理する
-		pos_.y = 0.0f;
-
-		//ロックオンのとき
-		if (rState_ == ROCK_STATE::ROCKON) {
-			//ロックオン特有の角度設定
-			VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();			//ロックオン対象位置	
-			VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
-
-			//自分から対象へのベクトル
-			auto diff = VSub(rockPos, pos_);
-			//角度求める
-			afterDeg = atan2(diff.x, diff.z) - cameraRot.y;
-		}
-		//目標角度設定
-		SetGoalRot(afterDeg);
-
-		//アニメーション
-		animController_->Play(DecideAnim(moveDir), SPEED_ANIM);
-	}
-	else {
-		//動いていないとき
+	//移動を行わないとき
+	if (moveDir_ == MOVE_DIR::NONE) {
 		//通常なら
 		if (state_ == STATE::NOMAL) {
 			//待機アニメーション
 			animController_->Play("idle", SPEED_ANIM);
 		}
+		return;
 	}
+
+	InputManager& ins = InputManager::GetInstance();
+	Quaternion cameraRot = SceneManager::GetInstance().GetCamera().GetRot();
+	VECTOR dir = Utility::VECTOR_ZERO;
+
+	float afterDeg = 0.0f;
+
+	//入力
+	if (moveDir_ == MOVE_DIR::FORWARD) {
+		dir = cameraRot.GetForward();
+		afterDeg = Utility::Deg2RadF(DEG_FORWARD);
+	}
+	if (moveDir_ == MOVE_DIR::LEFT) {
+		dir = cameraRot.GetLeft();
+		afterDeg = Utility::Deg2RadF(DEG_LEFT);
+	}
+	if (moveDir_ == MOVE_DIR::BACK) {
+		dir = cameraRot.GetBack();
+		afterDeg = Utility::Deg2RadF(DEG_BACK);
+	}
+	if (moveDir_ == MOVE_DIR::RIGHT) {
+		dir = cameraRot.GetRight();
+		afterDeg = Utility::Deg2RadF(DEG_RIGHT);
+	}
+
+	//速度設定
+	float speed = MOVE_POW;
+	if (isDush_)speed = DUSH_POW;
+	//移動処理
+	pos_ = VAdd(pos_, VScale(dir, speed));
+	//上下の移動が起きない様に
+	//ゆくゆくは重力とステージの当たり判定で処理する
+	pos_.y = 0.0f;
+
+	//ロックオンのとき
+	if (rState_ == ROCK_STATE::ROCKON) {
+		//ロックオン特有の角度設定
+		VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();			//ロックオン対象位置	
+		VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
+
+		//自分から対象へのベクトル
+		auto diff = VSub(rockPos, pos_);
+		//角度求める
+		afterDeg = atan2(diff.x, diff.z) - cameraRot.y;
+	}
+	//目標角度設定
+	SetGoalRot(afterDeg);
+
+	//アニメーション
+	animController_->Play(DecideAnim(moveDir_), SPEED_ANIM);
 	
 }
 
