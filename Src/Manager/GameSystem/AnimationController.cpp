@@ -59,6 +59,12 @@ void AnimationController::Play(const std::string& _name, const float _speed, con
 	
 	//次に再生されるアニメーションが設定されているとき
 	if (!_next.empty()) {
+		//ミス確認用(最後にLOOPはOK)
+		for (auto& string : _next) {
+			if (animDatas_[string].type == PLAY_TYPE::LOOP && string != _next.back()) {
+				assert("順次再生の個所を見直してください。");
+			}
+		}
 		nextAnim_ = _next;
 	}
 

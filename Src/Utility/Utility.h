@@ -107,6 +107,7 @@ public:
 	// î‰är
 	static bool Equals(const VECTOR& v1, const VECTOR& v2);
 	static bool EqualsVZero(const VECTOR& v1);
+	static bool LessThanVZero(const VECTOR& v1);
 
 	// ê≥ãKâª
 	static VECTOR Normalize(const Vector2& v);

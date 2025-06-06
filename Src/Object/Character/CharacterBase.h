@@ -76,7 +76,7 @@ public:
 	void Damage(const float _pow);
 
 	//Ž€–S‚³‚¹‚é
-	void Deth(void);
+	virtual void Deth(void);
 
 	virtual void DrawDebug(void);
 	void DrawCupcel(void);

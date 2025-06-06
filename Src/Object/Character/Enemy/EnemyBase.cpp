@@ -42,7 +42,7 @@ EnemyBase::EnemyBase(void)
 	hp_ = 5;
 	moveSped_ = MOVE_POW;
 
-	isDelete_ = false;
+	isAlive_ = true;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -68,6 +68,7 @@ const bool EnemyBase::Init(void)
 	//状態を通常に
 	ChangeState(ENEMY_STATE::NOMAL);
 	//アニメーション初期化
+	animController_ = std::make_unique<AnimationController>(modelId_);
 	AnimInit();
 	animController_->Play("idle", SPEED_ANIM);
 
@@ -165,6 +166,14 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 		animController_->Play("attack", SPEED_ANIM);
 		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 		intervalCnt_ = 0.0f;
+	}
+}
+
+void EnemyBase::UpdateDeth(const VECTOR& _pPos, AttackManager& _atk)
+{
+	scl_ = VSub(scl_, SCALE_DOWN);
+	if (Utility::LessThanVZero(scl_)) {
+		ChangeState(ENEMY_STATE::END);
 	}
 }
 
@@ -269,6 +278,8 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		update_ = &EnemyBase::UpdateSearch;
 		move_ = &EnemyBase::MoveSearch;
 		moveSped_ = MOVE_POW;
+		//待機アニメーション
+		animController_->Play("idle", SPEED_ANIM);
 
 		serchCol_ = serchDebugCol;
 		alertCol_ = alertDebugCol2;
@@ -282,10 +293,14 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		serchCol_ = alertDebugCol;
 		break;
 	case ENEMY_STATE::DETH:
+		update_ = &EnemyBase::UpdateDeth;
+		//死亡アニメーション
+		animController_->Play("dethStart", SPEED_ANIM,{"dethSus"});
+
 		break;
 	case ENEMY_STATE::END:
 		//削除可能に
-		isDelete_ = true;
+		isAlive_ = false;
 		break;
 	default:
 		break;
@@ -326,5 +341,10 @@ void EnemyBase::DrawDebug(void)
 
 const bool EnemyBase::IsAlive(void) const
 {
-	return isDelete_;
+	return isAlive_;
+}
+
+void EnemyBase::Deth(void)
+{
+	ChangeState(ENEMY_STATE::DETH);
 }

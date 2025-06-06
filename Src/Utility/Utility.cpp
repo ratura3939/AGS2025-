@@ -455,6 +455,16 @@ bool Utility::EqualsVZero(const VECTOR& v1)
     return false;
 }
 
+bool Utility::LessThanVZero(const VECTOR& v1)
+{
+    const VECTOR& v2 = VECTOR_ZERO;
+    if (v1.x <= v2.x && v1.y <= v2.y && v1.z <= v2.z)
+    {
+        return true;
+    }
+    return false;
+}
+
 VECTOR Utility::Normalize(const Vector2& v)
 {
     VECTOR ret = VGet(

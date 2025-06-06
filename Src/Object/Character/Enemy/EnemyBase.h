@@ -26,6 +26,7 @@ public:
     static constexpr float MOVE_RANDOM_MAX = 600.0f - MOVE_RANDOM_MIN;;//最高値(実際の計算で採算を合わせるためこのようになる。実際の最大値から最小値を引く)
 
     static constexpr int STAY_TIME = 200;   //ステイの時間
+    static constexpr VECTOR SCALE_DOWN = { 0.01f,0.01f,0.01f };
 #pragma endregion
 
 
@@ -77,8 +78,6 @@ public:
     const bool Init(void)override;
     void Update(const VECTOR _pPos, AttackManager& _atk)override;
     void DrawDebug(void)override;
-
-    const bool IsAlive(void)const override;
 protected:
     virtual void SetPram(void);     //各敵の固有情報(いずれか外部データ化したい)
     void AnimInit(void)override;
@@ -95,6 +94,12 @@ private:    //各種更新処理
     void MoveBattle(const VECTOR& _pPos);
 
     void ChangeState(const ENEMY_STATE _state); //状態の遷移
+
+
+public:
+    const bool IsAlive(void)const override;
+    //死亡させる
+    void Deth(void)override;
 
 public: //デバッグ用
     void SetColor(int _color);
@@ -114,7 +119,7 @@ private:
     int stopTime_;      //攻撃時の停止時間
     int intervalCnt_;   //攻撃間隔のカウンタ
 
-    bool isDelete_;     //削除していいか
+    bool isAlive_;     //削除していいか
 
     //デバッグ用
     int color_;

@@ -43,6 +43,7 @@ public:
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	/// <param name="_speed">再生速度</param>
+	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
 	void Play(const std::string& _name, const float _speed, const std::vector<std::string> _next = {});
 	void Update(void);
 private:
@@ -63,7 +64,7 @@ private:
 	float speedAnim;//再生速度
 	float counter;	//更新カウンター
 
-	std::vector<std::string> nextAnim_;	//次に再生するアニメーション(LOOP以外に適用)
+	std::vector<std::string> nextAnim_;	//次に再生するアニメーション(LOOP以外に適用)<最終以外にLOOＰを入れないこと>
 
 	using FinishAnimation = void(AnimationController::*)(void);
 	using UpdateAnimation = void(AnimationController::*)(void);
