@@ -50,7 +50,7 @@ private:
 	/// <summary>
 	/// ‰ñ”ð‰Â”\•ûŒü‚ÉˆÚ“®“ü—Í‚ª‚ ‚é‚©
 	/// </summary>
-	const bool IsAvoidMove(void)const;
+	const bool IsDudgeMove(void)const;
 
 	void RedyStateCount(const int _limit);
 

@@ -77,7 +77,7 @@ public:
 
     const bool Init(void)override;
     void Update(const VECTOR _pPos, AttackManager& _atk)override;
-    void DrawDebug(void)override;
+  
 protected:
     virtual void SetPram(void);     //各敵の固有情報(いずれか外部データ化したい)
     void AnimInit(void)override;
@@ -104,6 +104,7 @@ public:
 public: //デバッグ用
     void SetColor(int _color);
     void SetPos(VECTOR _pos);
+    void DrawDebug(void)override;
 
 private:
     using Update_f = void(EnemyBase::*)(const VECTOR& _pPos, AttackManager& _atk);

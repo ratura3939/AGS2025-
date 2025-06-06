@@ -116,9 +116,23 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	}
 
 	//回避入力があったとき(ロックオン状態でしか作動しない)
-	if (IsAvoidMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
+	if (IsDudgeMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
 		//回避状態に
 		character_->SetState(PlayerChara::STATE::DODGE);
+		if (ins.IsPressed("left")) {
+			//対応するアニメーション
+ 			character_->PlayAnim("dodL");
+		}
+		else if (ins.IsPressed("right")) {
+			//対応するアニメーション
+			character_->PlayAnim("dodR");
+		}
+		else if(ins.IsPressed("down")) {
+			//対応するアニメーション
+			character_->PlayAnim("dodB");
+		}
+
+
 		//時間の設定
 		RedyStateCount(LIMIT_AVOID_STATE);
 	}
@@ -155,7 +169,7 @@ void PlayerManager::RedyStateCount(const int _limit)
 	stateLimit_ = _limit;
 }
 
-const bool PlayerManager::IsAvoidMove(void) const
+const bool PlayerManager::IsDudgeMove(void) const
 {
 	InputManager& ins = InputManager::GetInstance();
 	return ins.IsPressed("right") || ins.IsPressed("left") || ins.IsPressed("down");

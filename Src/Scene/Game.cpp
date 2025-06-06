@@ -75,7 +75,8 @@ void Game::Update(void)
 		slowCnt_++;
 		if (slowCnt_ >= LIMIT_SLOW)isSlowEffect_ = false;
 		//ある程度の感覚だけ更新する
-		if(slowCnt_%UPDATE_INTERVAL_SLOW<= UPDATE_INTERVAL_SLOW)enemy_->Update(player_->GetPos(), *atkMng_);
+		//要チェック
+		if(slowCnt_%UPDATE_INTERVAL_SLOW<= 15)enemy_->Update(player_->GetPos(), *atkMng_);
 	}
 	else {
 		//通常更新

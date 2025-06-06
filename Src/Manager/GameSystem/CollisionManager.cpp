@@ -19,7 +19,7 @@ CollisionManager::~CollisionManager(void)
 const bool CollisionManager::Collision(std::weak_ptr<PlayerChara> _player, std::vector<std::weak_ptr<EnemyBase>> _enemy, std::vector<AttackManager::AttackCollision> _atks)
 {
 	isSlow_ = false;
-	//CollisionPlayer(_player, _atks);
+	CollisionPlayer(_player, _atks);
 	CollisionEnemy(_enemy, _atks);
 
 	return isSlow_;
@@ -62,7 +62,7 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 
 			//î≠ê∂éûä‘íÜÇ…ìñÇΩÇ¡ÇƒÇ¢ÇΩÇÁ
 			if (atkCol.info.IsOuccerAttack()) {
-				//ìñÇΩÇ¡ÇƒÇ¢ÇΩÇÁ
+				//É_ÉÅÅ[ÉW
 				//_player.lock()->Deth();
 
 				//îªíËçœÇ›Ç…

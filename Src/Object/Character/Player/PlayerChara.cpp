@@ -165,7 +165,7 @@ void PlayerChara::Move(void)
 
 	float afterDeg = 0.0f;
 
-	//入力
+	//移動方向
 	if (moveDir_ == MOVE_DIR::FORWARD) {
 		dir = cameraRot.GetForward();
 		afterDeg = Utility::Deg2RadF(DEG_FORWARD);
@@ -186,6 +186,9 @@ void PlayerChara::Move(void)
 	//速度設定
 	float speed = MOVE_POW;
 	if (isDush_)speed = DUSH_POW;
+	if (rState_ == ROCK_STATE::ROCKON)speed = MOVE_POW;
+
+
 	//移動処理
 	pos_ = VAdd(pos_, VScale(dir, speed));
 	//上下の移動が起きない様に
@@ -207,8 +210,10 @@ void PlayerChara::Move(void)
 	SetGoalRot(afterDeg);
 
 	//アニメーション
-	animController_->Play(DecideAnim(moveDir_), SPEED_ANIM);
-	
+	//回避中は回避アニメーションを再生しているため他はしない
+	if (state_ != STATE::DODGE) {
+		animController_->Play(DecideAnim(moveDir_), SPEED_ANIM);
+	}
 }
 
 const std::string PlayerChara::DecideAnim(const MOVE_DIR _dir) const
