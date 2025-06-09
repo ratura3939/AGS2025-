@@ -18,34 +18,6 @@ public:
 	{
 		//使用するエフェクトを羅列
 		NONE,
-		LIFE_UP,
-		ATTACK_UP,
-		DEFENCE_UP,
-		SPEED_UP,
-		FIREWORK,
-		DAMAGE,
-		//Enemyが使用
-		BOSS_PUNCH,
-		BOSS_SHOUT,
-		BOSS_SHOUT_ATK,
-		STATE_DOWN,
-
-		//KNIGHT
-		GUARD,
-		HIT2,	//敵へ当たった時のエフェクト
-
-		//AXE
-		CHARGE_AXE_HIT,
-
-		//ARCHER
-		ARROW_RED,		//矢のエフェクト(赤)
-		ARROW_WHITE,	//矢のエフェクト(白)
-
-		//チャージスキル
-		CHARGE_SKILL,
-
-		ARCHER_SKILL2,	//アーチャースキル2
-		BUFF_ARROW_HIT, //アーチャースキル2がプレイヤーに当たったら
 	};
 
 

@@ -36,7 +36,7 @@ void SoundManager::Add(const TYPE _type, const SOUND _sound, const int _data)
 	else mode = DX_PLAYTYPE_BACK;
 
 	//新規データのため情報を追加
-	sounds_.emplace(_sound, SOUND_DATA{ _data,_type ,mode});
+	sounds_.emplace(_sound, SOUND_DATA{ _data,mode});
 }
 
 /// <summary>

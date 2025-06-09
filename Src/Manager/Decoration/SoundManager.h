@@ -20,37 +20,11 @@ public:
 	enum class SOUND {
 		//ここに使用する音楽や効果音などを羅列
 		NONE,
-		GAME_NOMAL,
-		GAME_LAST,
-		DETH_PLAYER,
-		DETH_ENEMY,
-		DETH_CHICKEN,
-		HIT,
-		GAMEOVER_SE,
-		GAMEOVER_BGM,
-		GAMECLEAR_SE,
-		GAMECLEAR_BGM,
-		TITLE,
-		SCENE_CHANGE_1,
-		LEVEL_UP,
-		CARSOL,
-		EXPLAN_SWITCH,
-		SELECT,
-		CHANGE_SELECT,
-		CANCEL_SELECT,
-		DECIDE_SELECT,
-		FAZE_REZALT,
-		POWER_UP,
-		
-		//プレイヤー
-		SKILL_CHANGE,	//スキル切り替え音
-		SKILL,MISS,		//スキル打てないとき
 	};
 
 	struct SOUND_DATA
 	{
 		int data;		//音声データ格納
-		TYPE type;		//音声データの種類	※この要素は削除するかも
 		int playMode;	//音声データの再生タイプ
 	};
 
