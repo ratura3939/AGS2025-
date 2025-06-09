@@ -5,6 +5,8 @@
 #include "../../Scene/Game.h"
 #include "../../Scene/GameClear.h"
 #include "../../Scene/GameOver.h"
+#include"../Decoration/EffectManager.h"
+#include"../Decoration/SoundManager.h"
 #include "ResourceManager.h"
 #include "Camera.h"
 #include "SceneManager.h"
@@ -31,6 +33,10 @@ void SceneManager::Init(void)
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
 	cntl_ = CNTL::NONE;
+
+	//エフェクト・サウンドの生成
+	SoundManager::CreateInstance();
+	EffectManager::CreateInstance();
 
 	fader_ = new Fader();
 	fader_->Init();
@@ -133,6 +139,9 @@ void SceneManager::Draw(void)
 
 void SceneManager::Destroy(void)
 {
+	//エフェクト・サウンドの削除
+	SoundManager::GetInstance().Destroy();
+	EffectManager::GetInstance().Destroy();
 
 	scene_->Release();
 	delete scene_;

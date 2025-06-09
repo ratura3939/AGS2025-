@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\SoundManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\AnimationController.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\CollisionManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\AttackManager.cpp" />
@@ -49,6 +51,8 @@
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
+    <ClInclude Include="Src\Manager\Decoration\SoundManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\AnimationController.h" />
     <ClInclude Include="Src\Manager\GameSystem\CollisionManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\AttackManager.h" />
