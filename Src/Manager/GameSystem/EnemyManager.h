@@ -45,6 +45,9 @@ public:
 	//画面内であるかどうか
 	bool InsideScreen(const VECTOR _pos);
 
+	//アニメのスピードの設定
+	void SetAnimSpeedRate(const float _percent);
+
 	void DrawDebug(void);
 private:
 	std::vector<std::shared_ptr<EnemyBase>> characters_;

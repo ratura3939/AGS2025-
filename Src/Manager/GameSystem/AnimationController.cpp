@@ -12,7 +12,8 @@ AnimationController::AnimationController(int& _model):modelId_(_model)
 
 	attachAnim_ = -1;
 	speedAnim = -1.0f;
-	counter = -1.0f;
+	counter_ = -1.0f;
+	speedRate_ = 1.0f;
 
 	finishAnim_ = &AnimationController::FinishAnimNomal;
 	updateAnim_ = &AnimationController::UpdateNomalAnim;
@@ -99,13 +100,13 @@ void AnimationController::Play(const std::string& _name, const float _speed, con
 	//スピード設定
 	speedAnim = _speed;
 	//カウンターの初期化
-	counter = 0.0f;
+	counter_ = 0.0f;
 	if (activeAnim_.type == PLAY_TYPE::RETURN) {
-		counter = activeAnim_.total;
+		counter_ = activeAnim_.total;
 	}
 
 	// 再生するアニメーション時間の設定
-	MV1SetAttachAnimTime(modelId_, attachAnim_, counter);
+	MV1SetAttachAnimTime(modelId_, attachAnim_, counter_);
 }
 
 void AnimationController::Update(void)
@@ -117,15 +118,20 @@ void AnimationController::Update(void)
 	(this->*updateAnim_)();
 
 	// 再生するアニメーション時間の設定
-	MV1SetAttachAnimTime(modelId_, attachAnim_, counter);
+	MV1SetAttachAnimTime(modelId_, attachAnim_, counter_);
+}
+
+void AnimationController::ChangeSpeedRate(const float _percent)
+{
+ 	speedRate_ = _percent / 100.0f;
 }
 
 void AnimationController::UpdateNomalAnim(void)
 {
 	// アニメーション再生
-	counter += speedAnim;
+	counter_ += speedAnim * speedRate_;
 	//再生上限にいった場合
-	if (counter > activeAnim_.total)
+	if (counter_ > activeAnim_.total)
 	{
 		//アニメーション終了時処理
 		(this->*finishAnim_)();
@@ -135,9 +141,9 @@ void AnimationController::UpdateNomalAnim(void)
 void AnimationController::UpdateReturnAnim(void)
 {
 	// アニメーション再生
-	counter -= speedAnim;
+	counter_ -= speedAnim * speedRate_;
 	//再生上限にいった場合
-	if (counter <= 0.0f)
+	if (counter_ <= 0.0f)
 	{
 		//アニメーション終了時処理
 		(this->*finishAnim_)();
@@ -160,10 +166,10 @@ void AnimationController::FinishAnimNomal(void)
 
 void AnimationController::FinishAnimLoop(void)
 {
-	counter = 0.0f;
+	counter_ = 0.0f;
 }
 
 void AnimationController::FinishAnimReturn(void)
 {
-	counter = 0.0f;
+	counter_ = 0.0f;
 }

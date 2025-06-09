@@ -2,6 +2,9 @@
 #include <DxLib.h>
 #include "../CharacterBase.h"
 
+//プレイヤーはスローの影響を受けない
+//よって更新に関わるカウンターは通常のインクリメント
+
 class Game;
 
 class PlayerChara :

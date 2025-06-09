@@ -51,18 +51,19 @@ void Game::Init(void)
 
 void Game::Update(void)
 {
-	Camera& camera = SceneManager::GetInstance().GetCamera();
+	SceneManager& scM = SceneManager::GetInstance();
+	Camera& camera = scM.GetCamera();
 
 #pragma region シーン遷移
 	//プレイヤーが死んでいたら
 	if (!player_->IsAlive()) {
 		//シーン遷移
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		scM.ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
 	//敵がいなくなったら
 	if (enemy_->GetEnemys().size() <= 0) {
 		//シーン遷移
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+		scM.ChangeScene(SceneManager::SCENE_ID::CLEAR);
 	}
 #pragma endregion
 
@@ -71,17 +72,18 @@ void Game::Update(void)
 	player_->Update(*atkMng_);
 	//敵はスローの効果を受ける
 	if (isSlowEffect_) {
-		//スロー時の更新
+		//スロー時の更新(このカウンタはスローの影響を受けない)
 		slowCnt_++;
-		if (slowCnt_ >= LIMIT_SLOW)isSlowEffect_ = false;
-		//ある程度の感覚だけ更新する
-		//要チェック
-		if(slowCnt_%UPDATE_INTERVAL_SLOW<= 15)enemy_->Update(player_->GetPos(), *atkMng_);
+		if (slowCnt_ >= LIMIT_SLOW) {
+			isSlowEffect_ = false;
+			//更新処理を100％にもどす
+			scM.SetUpdateSpeedRate_(NOMAL_SPEED_PERCENT);
+			enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
+		}
 	}
-	else {
-		//通常更新
-		enemy_->Update(player_->GetPos(), *atkMng_);
-	}
+	//敵
+	enemy_->Update(player_->GetPos(), *atkMng_);
+	//攻撃
 	atkMng_->Update();
 
 	//判定処理/その中でスロー演出が入るかどうか
@@ -89,6 +91,11 @@ void Game::Update(void)
 		//スロー演出準備
 		slowCnt_ = 0;
 		isSlowEffect_ = true;
+		//更新スピードを50％に設定
+		scM.SetUpdateSpeedRate_(SLOW_SPEED_PERCENT);
+		//敵もそれに対応
+		enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
+
 	}
 #pragma endregion
 

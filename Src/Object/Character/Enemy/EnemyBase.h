@@ -1,6 +1,9 @@
 #pragma once
 #include "../CharacterBase.h"
 
+//敵はスローの影響を受ける
+//よって更新に関わるカウンターはSceneManagerのupdateSpeedRateを参照する
+
 class Game;
 
 class EnemyBase :
@@ -25,7 +28,7 @@ public:
     static constexpr float MOVE_RANDOM_MIN = 200.0f;                   //最低値
     static constexpr float MOVE_RANDOM_MAX = 600.0f - MOVE_RANDOM_MIN;;//最高値(実際の計算で採算を合わせるためこのようになる。実際の最大値から最小値を引く)
 
-    static constexpr int STAY_TIME = 200;   //ステイの時間
+    static constexpr float STAY_TIME = 200.0f;   //ステイの時間
     static constexpr VECTOR SCALE_DOWN = { 0.01f,0.01f,0.01f };
 #pragma endregion
 
@@ -81,7 +84,7 @@ public:
 protected:
     virtual void SetPram(void);     //各敵の固有情報(いずれか外部データ化したい)
     void AnimInit(void)override;
-
+#pragma region 各種状態更新
 private:    //各種更新処理
     void UpdateNomal(const VECTOR& _pPos, AttackManager& _atk);  //通常
     void UpdateSearch(const VECTOR& _pPos, AttackManager& _atk); //索敵
@@ -94,10 +97,16 @@ private:    //各種更新処理
     void MoveBattle(const VECTOR& _pPos);
 
     void ChangeState(const ENEMY_STATE _state); //状態の遷移
-
+#pragma endregion
 
 public:
+    //生存判定
     const bool IsAlive(void)const override;
+    /// <summary>
+    /// アニメーションのスピード変更
+    /// </summary>
+    /// <param name="_percent">パーセンテージ</param>
+    const void SetAnimSpeedRate(const float _percent);
     //死亡させる
     void Deth(void)override;
 
@@ -112,13 +121,13 @@ private:
     Update_f update_;   //更新関数
     Move_f move_;       //移動関数
 
-    VECTOR preStayPos_;   //前回停止位置
+    VECTOR preStayPos_; //前回停止位置
     float moveOneTime_; //一回の移動量
     float moveSped_;    //１フレームでの移動量
     bool isStay_;       //ステイかどうか
-    int stayCnt_;       //ステイ状態のカウンタ
-    int stopTime_;      //攻撃時の停止時間
-    int intervalCnt_;   //攻撃間隔のカウンタ
+    float stayCnt_;     //ステイ状態のカウンタ
+    float stopTime_;    //攻撃時の停止時間
+    float intervalCnt_; //攻撃間隔のカウンタ
 
     bool isAlive_;     //削除していいか
 

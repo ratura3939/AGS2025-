@@ -136,6 +136,13 @@ bool EnemyManager::InsideScreen(const VECTOR _pos)
 	return false;
 }
 
+void EnemyManager::SetAnimSpeedRate(const float _percent)
+{
+	for (auto chara : characters_) {
+		chara->SetAnimSpeedRate(_percent);
+	}
+}
+
 void EnemyManager::DrawDebug(void)
 {
 	//‚¢‚È‚©‚Á‚½‚çˆ—‚µ‚È‚¢

@@ -46,6 +46,13 @@ public:
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
 	void Play(const std::string& _name, const float _speed, const std::vector<std::string> _next = {});
 	void Update(void);
+
+	/// <summary>
+	/// 再生速度(割合)を設定
+	/// </summary>
+	/// <param name="_percent">0％～100％</param>
+	void ChangeSpeedRate(const float _percent);
+
 private:
 	//アニメーション更新処理
 	void UpdateNomalAnim(void);
@@ -62,7 +69,8 @@ private:
 	AnimationInfo activeAnim_;	//再生中のアニメーション情報
 	int attachAnim_;//実際の再生しているもの
 	float speedAnim;//再生速度
-	float counter;	//更新カウンター
+	float counter_;	//更新カウンター
+	float speedRate_;
 
 	std::vector<std::string> nextAnim_;	//次に再生するアニメーション(LOOP以外に適用)<最終以外にLOOＰを入れないこと>
 

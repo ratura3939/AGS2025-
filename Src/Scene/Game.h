@@ -13,8 +13,9 @@ class Game :
 {
 public:
 
-	static constexpr int LIMIT_SLOW = 1000;
-	static constexpr int UPDATE_INTERVAL_SLOW = 20;
+	static constexpr int LIMIT_SLOW = 800;
+	static constexpr float NOMAL_SPEED_PERCENT = 100.0f;	//’Êí‚ÌŠ„‡
+	static constexpr float SLOW_SPEED_PERCENT = 25.0f;	//ƒXƒ[‚ÌŠ„‡(’Êí‚©‚ç”¼•ª‚Ì‘¬“x‚É‚·‚é)
 
 	Game(void);
 	~Game(void);

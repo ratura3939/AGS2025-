@@ -59,6 +59,26 @@ public:
 	const CNTL GetController(void)const;
 	void SetController(const CNTL _cntl);
 
+	//更新処理のスピード倍率
+	void SetUpdateSpeedRate_(const float _percent);	//設定
+	/// <summary>
+	/// 倍率単体を取得(インクリメントならこれを使用)
+	/// </summary>
+	/// <returns>倍率</returns>
+	const float GetUpdateSpeedRate_(void)const;
+	/// <summary>
+	/// 倍率単体<%表記>を取得(インクリメントならこれを使用)
+	/// </summary>
+	/// <param name=""></param>
+	/// <returns></returns>
+	const float GetUpdateSpeedRatePercent_(void)const;
+	/// <summary>
+	/// 倍率を含めて計算したものを返却
+	/// </summary>
+	/// <param name="_target">更新スピード</param>
+	/// <returns>更新スピード(倍率影響済み)</returns>
+	const float GetScaleUpdateSpeedRate(const float _target)const;
+
 private:
 
 	// 静的インスタンス
@@ -82,6 +102,9 @@ private:
 	// デルタタイム
 	std::chrono::system_clock::time_point preTime_;
 	float deltaTime_;
+
+	//更新カウンターの倍率
+	float updateSpeedRate_;
 	
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

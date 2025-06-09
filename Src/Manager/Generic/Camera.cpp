@@ -248,6 +248,8 @@ void Camera::SetBeforeDrawReset(void)
 
 	rot_ = Quaternion::Slerp(start_.quaRot, goal_.quaRot, stepReset_);
 	pos_ = Utility::Lerp(start_.pos, goal_.pos, stepReset_);
+	//ƒJƒƒ‰‚Ìã•ûŒü
+	cameraUp_ = rot_.GetUp();
 }
 
 void Camera::Draw(void)

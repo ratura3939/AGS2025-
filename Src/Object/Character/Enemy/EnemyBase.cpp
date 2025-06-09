@@ -150,7 +150,8 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	//移動処理
 	(this->*move_)(_pPos);
 
-	intervalCnt_++;
+	//カウンタ増加(ゲーム更新スピード)
+	intervalCnt_+=SceneManager::GetInstance().GetUpdateSpeedRate_();	
 
 	//判定
 	//プレイヤーが索敵範囲外にでたら
@@ -206,13 +207,14 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 		}
 		else {
 			//引き続きステイ
-			stayCnt_++;
+			//カウンタ増加(ゲーム更新スピード)
+			stayCnt_+= SceneManager::GetInstance().GetUpdateSpeedRate_();
 			return;
 		}
 	}
 	
 	//移動(前方方向)
-	pos_ = VAdd(pos_, VScale(GetForward(), moveSped_));
+	pos_ = VAdd(pos_, VScale(GetForward(), moveSped_* SceneManager::GetInstance().GetUpdateSpeedRate_()));
 	animController_->Play("walk", SPEED_ANIM);
 
 	//判定
@@ -245,7 +247,7 @@ void EnemyBase::MoveBattle(const VECTOR& _pPos)
 		return;
 	}
 	//移動(前方方向)
-	pos_=VAdd(pos_, VScale(GetForward(), moveSped_));
+	pos_=VAdd(pos_, VScale(GetForward(), moveSped_* SceneManager::GetInstance().GetUpdateSpeedRate_()));
 	animController_->Play("dush", SPEED_ANIM);
 
 	//回転
@@ -342,6 +344,11 @@ void EnemyBase::DrawDebug(void)
 const bool EnemyBase::IsAlive(void) const
 {
 	return isAlive_;
+}
+
+const void EnemyBase::SetAnimSpeedRate(const float _percent)
+{
+	animController_->ChangeSpeedRate(_percent);
 }
 
 void EnemyBase::Deth(void)

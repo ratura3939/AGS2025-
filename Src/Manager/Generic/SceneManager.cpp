@@ -184,6 +184,26 @@ void SceneManager::SetController(const CNTL _cntl)
 	cntl_ = _cntl;
 }
 
+void SceneManager::SetUpdateSpeedRate_(const float _percent)
+{
+	updateSpeedRate_ = _percent / 100.0f;
+}
+
+const float SceneManager::GetUpdateSpeedRate_(void) const
+{
+	return updateSpeedRate_;
+}
+
+const float SceneManager::GetUpdateSpeedRatePercent_(void) const
+{
+	return updateSpeedRate_ * 100.0f;
+}
+
+const float SceneManager::GetScaleUpdateSpeedRate(const float _target) const
+{
+	return _target * updateSpeedRate_;
+}
+
 SceneManager::SceneManager(void)
 {
 
@@ -198,7 +218,7 @@ SceneManager::SceneManager(void)
 	// デルタタイム
 	deltaTime_ = 1.0f / 60.0f;
 
-	
+	updateSpeedRate_ = 1.0f;
 }
 
 void SceneManager::ResetDeltaTime(void)
