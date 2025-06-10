@@ -7,6 +7,7 @@
 Application* Application::instance_ = nullptr;
 
 const std::string Application::PATH_IMAGE = "Data/Image/";
+const std::string Application::PATH_UI = "Data/Image/UI/";
 const std::string Application::PATH_MODEL = "Data/Model/";
 const std::string Application::PATH_CHARACTER = "Data/Model/Character/";
 const std::string Application::PATH_STAGE = "Data/Model/Stage/";

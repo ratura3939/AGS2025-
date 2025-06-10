@@ -11,13 +11,24 @@ public:
 	// リソース名
 	enum class SRC
 	{
+		//画像
 		START_LOGO,
+		PAD_IMG,
+		KEYBOARD_IMG,
+		GAMEOVER_LOGO,
+		GAMECLAR_LOGO,
+		//UI
+		ARROW_DOWN_IMG,
+		HEART_IMG,
+		SUSPECT_IMG,
+		FIND_IMG,
+		EXIT_IMG,
+
+		//モデル
 		STAGE_MDL,
 		OBJECTS_MDL,
 		PLAYER_MDL,
 		ENEMY_MDL,
-		GAMEOVER_LOGO,
-		GAMECLAR_LOGO,
 	};
 
 	// 明示的にインステンスを生成する
@@ -34,8 +45,10 @@ public:
 	void InitGame(void);
 	void InitClear(void);
 	void InitGameOver(void);
+private:
+	void ResorceDeviceIcon(void);
 
-
+public:
 	// 解放(シーン切替時に一旦解放)
 	void Release(void);
 

@@ -16,6 +16,7 @@ public:
 	// データパス関連
 	//-------------------------------------------
 	static const std::string PATH_IMAGE;
+	static const std::string PATH_UI;
 	static const std::string PATH_MODEL;
 	static const std::string PATH_CHARACTER;
 	static const std::string PATH_STAGE;

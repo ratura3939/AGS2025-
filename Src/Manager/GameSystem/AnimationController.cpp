@@ -171,5 +171,5 @@ void AnimationController::FinishAnimLoop(void)
 
 void AnimationController::FinishAnimReturn(void)
 {
-	counter_ = 0.0f;
+	counter_ = activeAnim_.total;
 }

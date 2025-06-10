@@ -32,6 +32,14 @@ void ResourceManager::InitTitle(void)
 	// スタートロゴ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
 	resourcesMap_.emplace(SRC::START_LOGO, res);
+
+	// デバイスアイコン
+	ResorceDeviceIcon();
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_ArrowDown.png");
+	resourcesMap_.emplace(SRC::ARROW_DOWN_IMG, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Exit.png");
+	resourcesMap_.emplace(SRC::EXIT_IMG, res);
 }
 
 void ResourceManager::InitGame(void)
@@ -52,6 +60,13 @@ void ResourceManager::InitGame(void)
 
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "deco1.mv1");
 	resourcesMap_.emplace(SRC::STAGE_MDL, res);
+	//UI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Question.png");
+	resourcesMap_.emplace(SRC::SUSPECT_IMG, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Exclamation.png");
+	resourcesMap_.emplace(SRC::FIND_IMG, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Heart.png");
+	resourcesMap_.emplace(SRC::HEART_IMG, res);
 }
 
 void ResourceManager::InitClear(void)
@@ -69,6 +84,17 @@ void ResourceManager::InitGameOver(void)
 	// スタートロゴ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameOver.png");
 	resourcesMap_.emplace(SRC::GAMEOVER_LOGO, res);
+}
+
+void ResourceManager::ResorceDeviceIcon(void)
+{
+	Resource res;
+	// PAD
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "IconPad.png");
+	resourcesMap_.emplace(SRC::PAD_IMG, res);
+	//Key
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "IconKeyboard.png");
+	resourcesMap_.emplace(SRC::KEYBOARD_IMG, res);
 }
 
 void ResourceManager::Release(void)
