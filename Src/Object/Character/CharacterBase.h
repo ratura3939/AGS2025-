@@ -15,7 +15,7 @@ public:
 
 	//回転作業
 	static constexpr float TIME_ROT = 5.0f;
-	static constexpr float PER_ROT = 0.05f;			//フレームごとの回転(球面補間における時間の増加量を表す)
+	static constexpr float PER_ROT = 0.1f;			//フレームごとの回転(球面補間における時間の増加量を表す)
 	static constexpr float THRESHOLD_ROT = 0.1f;	//回転のしきい値を表す
 
 	//回転量
