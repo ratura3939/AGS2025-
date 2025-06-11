@@ -40,6 +40,21 @@ void ResourceManager::InitTitle(void)
 	resourcesMap_.emplace(SRC::ARROW_DOWN_IMG, res);
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Exit.png");
 	resourcesMap_.emplace(SRC::EXIT_IMG, res);
+
+	//音
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Title.mp3");
+	resourcesMap_.emplace(SRC::TITLE_BGM, res);
+	//キャンセル
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Cancel.mp3");
+	resourcesMap_.emplace(SRC::CANCEL_SE, res);
+	//カーソル動き
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "MoveCursur.mp3");
+	resourcesMap_.emplace(SRC::MOVE_CURSUR_SE, res);
+	//コントローラー選択
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "EnterController.mp3");
+	resourcesMap_.emplace(SRC::ENTER_CNTL_SE, res);
+
 }
 
 void ResourceManager::InitGame(void)
@@ -67,6 +82,32 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::FIND_IMG, res);
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Heart.png");
 	resourcesMap_.emplace(SRC::HEART_IMG, res);
+
+	//音
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game.mp3");
+	resourcesMap_.emplace(SRC::GAME_BGM, res);
+	//バトルBGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Battle.mp3");
+	resourcesMap_.emplace(SRC::BATTLE_BGM, res);
+	//歩き
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Walk.mp3");
+	resourcesMap_.emplace(SRC::WALK_SE, res);
+	//走り
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Run.mp3");
+	resourcesMap_.emplace(SRC::RUN_SE, res);
+	//剣振り
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "SwingSword.mp3");
+	resourcesMap_.emplace(SRC::SWING_SWORD_SE, res);
+	//ロックオン
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "RockOn.mp3");
+	resourcesMap_.emplace(SRC::ROCK_ON_SE, res);
+	//敵が発見！
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "FindPlayer.mp3");
+	resourcesMap_.emplace(SRC::FIND_PLAYER_SE, res);
+	//ダメージ
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Damage.mp3");
+	resourcesMap_.emplace(SRC::DAMAGE_SE, res);
 }
 
 void ResourceManager::InitClear(void)

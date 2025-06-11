@@ -3,6 +3,8 @@
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/GameSystem/AttackManager.h"
 #include"../../../Manager/GameSystem/AnimationController.h"
+#include"../../../Manager/Decoration/SoundManager.h"
+#include"../../../Manager/Decoration/EffectManager.h"
 #include"../../../Manager/GameSystem/EnemyManager.h"
 #include"../../../Utility/Utility.h"
 #include "EnemyBase.h"
@@ -43,6 +45,7 @@ EnemyBase::EnemyBase(void)
 	moveSped_ = MOVE_POW;
 
 	isAlive_ = true;
+	state_ = ENEMY_STATE::END;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -265,7 +268,9 @@ void EnemyBase::MoveBattle(const VECTOR& _pPos)
 
 void EnemyBase::ChangeState(const ENEMY_STATE _state)
 {
-	switch (_state)
+	state_ = _state;
+
+	switch (state_)
 	{
 	case ENEMY_STATE::NOMAL:
 		update_ = &EnemyBase::UpdateNomal;
@@ -291,6 +296,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		update_ = &EnemyBase::UpdateBattle;
 		move_ = &EnemyBase::MoveBattle;
 		moveSped_ = MOVE_POW_FIND;
+		SoundManager::GetInstance().Play("FindPlayer");
 
 		serchCol_ = alertDebugCol;
 		break;

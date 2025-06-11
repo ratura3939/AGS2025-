@@ -3,6 +3,7 @@
 #include"../Generic/SceneManager.h"
 #include"../Generic/Camera.h"
 #include"../GameSystem/AttackManager.h"
+#include"../Decoration/SoundManager.h"
 #include"../../Scene/Game.h"
 #include "PlayerManager.h"
 
@@ -111,6 +112,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 		character_->SetState(PlayerChara::STATE::ATTACK);
 		//対応するアニメーション
 		character_->PlayAnim("atkFirst");
+		SoundManager::GetInstance().Play("SwingSword");
 		//時間の設定
 		RedyStateCount(_atk.GetTotalTime(ATTACK_NOMAL));
 	}

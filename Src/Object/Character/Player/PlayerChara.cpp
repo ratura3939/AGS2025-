@@ -3,6 +3,7 @@
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/GameSystem/AnimationController.h"
+#include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Utility/Utility.h"
 #include "PlayerChara.h"
 
@@ -162,6 +163,7 @@ void PlayerChara::Move(void)
 	InputManager& ins = InputManager::GetInstance();
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera().GetRot();
 	VECTOR dir = Utility::VECTOR_ZERO;
+	std::string seName = "Walk";
 
 	float afterDeg = 0.0f;
 
@@ -185,7 +187,12 @@ void PlayerChara::Move(void)
 
 	//速度設定
 	float speed = MOVE_POW;
-	if (isDush_)speed = DUSH_POW;
+	//ダッシュのとき
+	if (isDush_) {
+		speed = DUSH_POW;
+		seName = "Dush";
+	}
+	//ロックオンの時
 	if (rState_ == ROCK_STATE::ROCKON)speed = MOVE_POW;
 
 
@@ -213,6 +220,7 @@ void PlayerChara::Move(void)
 	//回避中は回避アニメーションを再生しているため他はしない
 	if (state_ != STATE::DODGE) {
 		animController_->Play(DecideAnim(moveDir_), SPEED_ANIM);
+		SoundManager::GetInstance().Play(seName);
 	}
 }
 

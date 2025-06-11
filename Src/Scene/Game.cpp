@@ -5,6 +5,8 @@
 #include"../Manager/Generic/Camera.h"
 #include"../Manager/Generic/SceneManager.h"
 #include"../Manager/Generic/InputManager.h"
+#include"../Manager/Generic/ResourceManager.h"
+#include"../Manager/Decoration/SoundManager.h"
 #include"../Object/Stage/Stage.h"
 #include "Game.h"
 
@@ -13,6 +15,7 @@ Game::Game(void)
 	nearEnemyNum_ = -1;
 	isSlowEffect_ = false;
 	slowCnt_ = -1;
+	nextBgmVol_ = 0;
 }
 
 Game::~Game(void)
@@ -47,16 +50,65 @@ void Game::Init(void)
 	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
 	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
 	camera.SetFocusPos(player_->GetFocusPoint());				//注視点
+
+	//音関係初期設定
+	InitSound();
+}
+
+void Game::InitSound(void)
+{
+	ResourceManager& rsM = ResourceManager::GetInstance();
+	SoundManager& sndM = SoundManager::GetInstance();
+
+	//BGM
+	sndM.Add(SoundManager::TYPE::BGM, "NomalBgm",
+		rsM.Load(ResourceManager::SRC::GAME_BGM).handleId_);
+	//バトルBGM
+	sndM.Add(SoundManager::TYPE::BGM, "BattleBgm",
+		rsM.Load(ResourceManager::SRC::BATTLE_BGM).handleId_);
+
+	//初手は普通のBGM
+	sndM.Play("NomalBgm");
+	nowBgmStr_ = "NomalBgm";
+	switchBgmStr_ = "BattleBgm";
+
+	//SE
+	//歩く
+	sndM.Add(SoundManager::TYPE::SE, "Walk",
+		rsM.Load(ResourceManager::SRC::WALK_SE).handleId_,20);
+	sndM.AdjustVolume("Walk",60);
+
+	//走る
+	sndM.Add(SoundManager::TYPE::SE, "Dush",
+		rsM.Load(ResourceManager::SRC::RUN_SE).handleId_,10);
+	sndM.AdjustVolume("Dush", 60);
+
+	//剣を振る
+	sndM.Add(SoundManager::TYPE::SE, "SwingSword",
+		rsM.Load(ResourceManager::SRC::SWING_SWORD_SE).handleId_);
+	//ロックオン
+	sndM.Add(SoundManager::TYPE::SE, "RockOn",
+		rsM.Load(ResourceManager::SRC::ROCK_ON_SE).handleId_);
+	//プレイヤーを発見
+	sndM.Add(SoundManager::TYPE::SE, "FindPlayer",
+		rsM.Load(ResourceManager::SRC::FIND_PLAYER_SE).handleId_);
+	//ダメージ
+	sndM.Add(SoundManager::TYPE::SE, "Damage",
+		rsM.Load(ResourceManager::SRC::DAMAGE_SE).handleId_);
+
 }
 
 void Game::Update(void)
 {
 	SceneManager& scM = SceneManager::GetInstance();
+	SoundManager& sndM = SoundManager::GetInstance();
 	Camera& camera = scM.GetCamera();
 
 #pragma region シーン遷移
 	//プレイヤーが死んでいたら
 	if (!player_->IsAlive()) {
+		//BGM念のため両方停止
+
 		//シーン遷移
 		scM.ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
@@ -97,7 +149,42 @@ void Game::Update(void)
 		enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
 
 	}
+
+	
 #pragma endregion
+
+#pragma region BGM
+	
+
+	//敵の状態(戦闘・それ以外)のトリガ
+	if (enemy_->IsSwitchBattleOrNomalEnemyTrg()) {
+		//もともと切り換え中だったら
+		if (switchBgm_) {
+			//強制終了処理
+			FinishSwitchBgm();
+		}
+
+		//切り換え開始
+		switchBgm_ = true;
+		//切り替え後の再生
+		sndM.Play(switchBgmStr_);
+	}
+	//BGM切り換え実行中
+	if (switchBgm_) {
+		//音量調整に加算
+		nextBgmVol_ += BGM_VOL_ACC;
+		sndM.AdjustVolume(switchBgmStr_, nextBgmVol_);			//次のBGMは音量をあげる
+		sndM.AdjustVolume(nowBgmStr_, (100 - nextBgmVol_));	//現在のBGMは音量を下げる
+
+		//もしボリュームが100以上なら
+		if (nextBgmVol_ >= 100) {
+			nextBgmVol_ = 100;	//音量を100％に
+			//終了処理
+			FinishSwitchBgm();
+		}
+	}
+#pragma endregion
+
 
 	//TODO
 	// カメラのロックオンの処理の最適化
@@ -110,6 +197,7 @@ void Game::Update(void)
 			nearEnemyNum_ = DecideRockEnemy();
 			//近くに敵がいるとき
 			if (nearEnemyNum_ >= 0) {
+				SoundManager::GetInstance().Play("RockOn");
 				RockOn();
 			}
 		}
@@ -165,6 +253,22 @@ void Game::AttackDataInit(void)
 const int Game::DecideRockEnemy(void)
 {
 	return enemy_->GetNearEnemyNum(player_->GetPos());
+}
+
+void Game::FinishSwitchBgm(void)
+{
+	SoundManager& sndM = SoundManager::GetInstance();
+	//切り換え終了
+	switchBgm_ = false;
+	sndM.AdjustVolume(switchBgmStr_, nextBgmVol_);
+	sndM.Stop(nowBgmStr_);	//今まで流していたものを停止
+	//現在のBGM名と切り替え後のBGM名の切り換え
+	//後々ボス個体の物も用意するのでそこで要調整
+	auto ret = nowBgmStr_;
+	nowBgmStr_ = switchBgmStr_;
+	switchBgmStr_ = ret;
+	//初期化
+	nextBgmVol_ = 0;
 }
 
 void Game::RockOn(void)

@@ -45,7 +45,7 @@ void EffectManager::Add(const EFFECT& _efc, int _data)
 /// <param name="_pos">再生位置</param>
 /// <param name="_qua">角度</param>
 /// <param name="_size">大きさ</param>
-void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const SoundManager::SOUND _sound)
+void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const std::string _sndName)
 {
 	//元データがないときは警告
 	if (effectRes_.find(_efc) == effectRes_.end())assert("設定していないエフェクトを再生しようとしています。");
@@ -63,8 +63,8 @@ void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternio
 	SyncEffect(_efc, _pos, _qua, _size);
 
 	//効果音の再生
-		if (_sound != SoundManager::SOUND::NONE) {
-			SoundManager::GetInstance().Play(_sound);
+		if (_sndName != "") {
+			SoundManager::GetInstance().Play(_sndName);
 		}
 }
 

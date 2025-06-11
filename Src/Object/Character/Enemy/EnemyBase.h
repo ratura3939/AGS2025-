@@ -102,6 +102,7 @@ private:    //各種更新処理
 public:
     //生存判定
     const bool IsAlive(void)const override;
+    const ENEMY_STATE GetNowState(void)const { return state_; }
     /// <summary>
     /// アニメーションのスピード変更
     /// </summary>
@@ -130,6 +131,7 @@ private:
     float intervalCnt_; //攻撃間隔のカウンタ
 
     bool isAlive_;     //削除していいか
+    ENEMY_STATE state_;//状態
 
     //デバッグ用
     int color_;

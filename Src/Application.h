@@ -21,6 +21,8 @@ public:
 	static const std::string PATH_CHARACTER;
 	static const std::string PATH_STAGE;
 	static const std::string PATH_EFFECT;
+	static const std::string PATH_BGM;
+	static const std::string PATH_SE;
 	//-------------------------------------------
 
 	// 明示的にインステンスを生成する

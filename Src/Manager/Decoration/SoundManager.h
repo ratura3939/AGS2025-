@@ -1,5 +1,6 @@
 #pragma once
 #include<unordered_map>
+#include<string>
 
 
 //Dxlib内に音声データを3D空間上に再生する処理がある
@@ -17,14 +18,10 @@ public:
 		SE
 	};
 
-	enum class SOUND {
-		//ここに使用する音楽や効果音などを羅列
-		NONE,
-	};
-
 	struct SOUND_DATA
 	{
 		int data;		//音声データ格納
+		TYPE type;		//再生種類
 		int playMode;	//音声データの再生タイプ
 	};
 
@@ -38,21 +35,25 @@ public:
 	/// サウンドの追加
 	/// </summary>
 	/// <param name="_type">音の種類分け(SEかBGMか)</param>
-	/// <param name="_sound">具体的な用途</param>
+	/// <param name="_name">登録名</param>
 	/// <param name="_data">音のデータ</param>
-	void Add(const TYPE _type, const SOUND _sound, const int _data);
+	/// <param name="_interval">再生間隔制限</param>
+	void Add(const TYPE _type, const std::string _name, const int _data, const int _interval = 0);
 
 	/// <summary>
 	/// 音声データ
 	/// </summary>
-	/// <param name="_sound">音声データ</param>
-	void Play(const SOUND _sound);
+	/// <param name="_name">登録名</param>
+	void Play(const std::string _name);
 
 	/// <summary>
 	/// 停止処理
 	/// </summary>
-	/// <param name="_sound">音声データ</param>
-	void Stop(const SOUND _sound);
+	/// <param name="_name">登録名</param>
+	void Stop(const std::string _name);
+
+	//更新
+	void Update(void);
 
 	//解放
 	void Release(void);
@@ -60,9 +61,9 @@ public:
 	/// <summary>
 	/// 音量調節
 	/// </summary>
-	/// <param name="_sound">音声</param>
+	/// <param name="_name">登録名</param>
 	/// <param name="_persent">調整割合(0%～100%)</param>
-	void AdjustVolume(const SOUND _sound, const int _persent);
+	void AdjustVolume(const std::string _name, const int _persent);
 
 	void Destroy(void);
 private:
@@ -70,7 +71,12 @@ private:
 	static SoundManager* instance_;
 
 	//データ格納用
-	std::unordered_map<SOUND, SOUND_DATA>sounds_;
+	std::unordered_map<std::string, SOUND_DATA>sounds_;
+	std::string activeBgm_;
+
+	//再生間隔
+	std::unordered_map<std::string,int> intervales_;
+	std::unordered_map<std::string,int> counteres_;
 
 	//コンストラクタ＆デストラクタ
 	SoundManager() = default;

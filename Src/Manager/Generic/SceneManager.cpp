@@ -45,8 +45,8 @@ void SceneManager::Init(void)
 	camera_ = std::make_shared<Camera>();
 	camera_->Init();
 
-	scene_ = new Title();
-	scene_->Init();
+	/*scene_ = new Title();
+	scene_->Init();*/
 
 	isSceneChanging_ = false;
 
@@ -107,6 +107,7 @@ void SceneManager::Update(void)
 	else
 	{
   		scene_->Update();
+		SoundManager::GetInstance().Update();
 	}
 
 	// カメラ更新
@@ -237,9 +238,12 @@ void SceneManager::ResetDeltaTime(void)
 void SceneManager::DoChangeScene(SCENE_ID sceneId)
 {
 	auto& resM = ResourceManager::GetInstance();
+	auto& sndM = SoundManager::GetInstance();
 
 	// リソースの解放
 	resM.Release();
+	sndM.Release();
+
 
 	// シーンを変更する
 	sceneId_ = sceneId;

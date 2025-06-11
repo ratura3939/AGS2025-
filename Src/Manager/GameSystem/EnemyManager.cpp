@@ -26,10 +26,13 @@ void EnemyManager::Init(void)
 	characters_[1]->SetPos(INIT_2);
 	characters_[2]->SetPos(INIT_3);
 	characters_[3]->SetPos(INIT_4);
+
+	preBattle_ = false;
 }
 
 void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 {
+	preBattle_ = IsBattleEnemy();
 
 	//いなかったら処理しない
 	if (characters_.empty())return;
@@ -131,6 +134,26 @@ bool EnemyManager::InsideScreen(const VECTOR _pos)
 	if (screenPos.x > 0.0f && screenPos.x < Application::SCREEN_SIZE_X &&
 		screenPos.y>0.0f && screenPos.y < Application::SCREEN_SIZE_Y) 
 	{
+		return true;
+	}
+	return false;
+}
+
+bool EnemyManager::IsBattleEnemy(void)
+{
+	for (auto& chara : characters_) {
+		//戦闘状態の敵が居たら
+		if (chara->GetNowState() == EnemyBase::ENEMY_STATE::BATTLE) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool EnemyManager::IsSwitchBattleOrNomalEnemyTrg(void)
+{
+	//更新前の状態と更新後の物を比較
+	if (preBattle_ != IsBattleEnemy()) {
 		return true;
 	}
 	return false;

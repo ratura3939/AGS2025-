@@ -12,6 +12,11 @@ public:
 	~GameOver(void);
 
 	void Init(void) override;
+
+private:
+	void InitSound(void)override;
+
+public:
 	void Update(void) override;
 	void Draw(void) override;
 	void Release(void) override;

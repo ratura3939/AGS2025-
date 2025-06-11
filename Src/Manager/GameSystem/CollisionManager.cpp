@@ -2,6 +2,7 @@
 #include"../../Object/Character/Player/PlayerChara.h"
 #include"../../Object/Character/CharacterBase.h"
 #include"../../Utility/Utility.h"
+#include"../Decoration/SoundManager.h"
 
 #include "CollisionManager.h"
 
@@ -64,9 +65,9 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 			if (atkCol.info.IsOuccerAttack()) {
 				//ダメージ
 				//_player.lock()->Deth();
-
+				SoundManager::GetInstance().Play("Damage");
 				//判定済みに
-				atkCol.info.isHit = true;
+				atkCol.info.HitAttack();
 			}
 		}
 	}
@@ -74,6 +75,7 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 
 void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _enemy, std::vector<AttackManager::AttackCollision> _atks)
 {
+
 	//攻撃の数だけ回す
 	for (auto& atkCol : _atks) {
 		//攻撃がそもそも判定済み・同属の攻撃だった場合
@@ -94,10 +96,11 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 
 			//攻撃(球)とキャラクター(カプセル)の当たり判定
 			if (Utility::IsHitSphereCapsule(atkPos, atkRadius, ePos, eHeadPos, CharacterBase::CHARACTER_RADIUS)) {
-				//判定済みに
-				atkCol.info.isHit = true;
 				//当たっていたら
 				enemy.lock()->Deth();
+				SoundManager::GetInstance().Play("Damage");
+				//判定済みに
+				atkCol.info.HitAttack();
 			}
 		}
 	}

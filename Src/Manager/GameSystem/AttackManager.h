@@ -57,6 +57,7 @@ public:
 		const bool IsJustGuardTiming(void)const { return (counter >= 0.0f) && (counter <= startAttack + GRACE_JUST_GUARD); }
 
 		const bool IsOuccerAttack(void)const { return (counter >= startAttack) && (counter <= endAttack); }
+		void HitAttack(void) { isHit = true; }
 	};
 
 	/// <summary>

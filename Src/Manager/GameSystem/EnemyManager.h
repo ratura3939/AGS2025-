@@ -45,11 +45,24 @@ public:
 	//画面内であるかどうか
 	bool InsideScreen(const VECTOR _pos);
 
+	/// <summary>
+	/// 戦闘状態の敵が居るかどうか
+	/// </summary>
+	/// <returns>true=いる/false=いない</returns>
+	bool IsBattleEnemy(void);
+
+	/// <summary>
+	/// IsBattleEnemyのONまたはOFFのトリガー
+	/// </summary>
+	/// <returns>true=トリガ起動/false=変化なし</returns>
+	bool IsSwitchBattleOrNomalEnemyTrg(void);
+
 	//アニメのスピードの設定
 	void SetAnimSpeedRate(const float _percent);
 
 	void DrawDebug(void);
 private:
 	std::vector<std::shared_ptr<EnemyBase>> characters_;
+	bool preBattle_;	//位置フレーム前が戦闘状態であるかどうか
 };
 

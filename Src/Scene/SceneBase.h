@@ -13,6 +13,7 @@ public:
 
 	// 初期化処理
 	virtual void Init(void) = 0;
+	virtual void InitSound(void) = 0;
 
 	// 更新ステップ
 	virtual void Update(void) = 0;

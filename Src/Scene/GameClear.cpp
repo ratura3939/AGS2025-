@@ -18,6 +18,10 @@ void GameClear::Init(void)
 	logoImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::GAMECLAR_LOGO).handleId_;
 }
 
+void GameClear::InitSound(void)
+{
+}
+
 void GameClear::Update(void)
 {
 	// ƒV[ƒ“‘JˆÚ

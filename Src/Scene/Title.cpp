@@ -6,6 +6,7 @@
 #include "../Manager/Generic/SceneManager.h"
 #include "../Manager/Generic/InputManager.h"
 #include "../Manager/Generic/Camera.h"
+#include "../Manager/Decoration/SoundManager.h"
 #include "Title.h"
 
 //ここでしか使わない物たち用
@@ -60,6 +61,33 @@ void Title::Init(void)
 	font_ = CreateFontToHandle(NULL, SIZE_FONT, THICK_FONT, DX_FONTTYPE_EDGE);
 
 	update_ = &Title::NomalUpdate;
+
+	//音関係初期化
+	InitSound();
+}
+
+void Title::InitSound(void)
+{
+	ResourceManager& rsM = ResourceManager::GetInstance();
+	SoundManager& sndM = SoundManager::GetInstance();
+
+	//BGM
+	sndM.Add(SoundManager::TYPE::BGM, "NomalBgm",
+		rsM.Load(ResourceManager::SRC::TITLE_BGM).handleId_);
+	//BGM再生
+	sndM.Play("NomalBgm");
+
+	//SE
+	//カーソル移動音
+	sndM.Add(SoundManager::TYPE::SE, "Cursur",
+		rsM.Load(ResourceManager::SRC::MOVE_CURSUR_SE).handleId_);
+	//決定
+	sndM.Add(SoundManager::TYPE::SE, "Eneter",
+		rsM.Load(ResourceManager::SRC::ENTER_CNTL_SE).handleId_);
+	//キャンセル
+	sndM.Add(SoundManager::TYPE::SE, "Cancel",
+		rsM.Load(ResourceManager::SRC::CANCEL_SE).handleId_);
+
 }
 
 void Title::Update(void)
@@ -92,6 +120,7 @@ void Title::NomalUpdate(void)
 		//コントローラー選択へ
 		isSelectDevice_ = true;
 		update_ = &Title::SelectDeviceUpdate;
+		SoundManager::GetInstance().Play("Enter");
 	}
 }
 
@@ -107,6 +136,7 @@ void Title::SelectDeviceUpdate(void)
 			//タイトルへ戻る
 			isSelectDevice_ = false;
 			update_ = &Title::NomalUpdate;
+			SoundManager::GetInstance().Play("Cancel");
 		}
 		else {
 			//ここを通るときは必ずどちらか選択されているとき
@@ -121,6 +151,8 @@ void Title::SelectDeviceUpdate(void)
 			}
 			//シーン遷移
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+			SoundManager::GetInstance().Stop("NomalBgm");
+			SoundManager::GetInstance().Play("Enter");
 		}
 		
 	}
@@ -129,17 +161,20 @@ void Title::SelectDeviceUpdate(void)
 		//右はPADなのでそれを選択に
 		selectDevice_[static_cast<int>(DEVICE::KEY)] = false;
 		selectDevice_[static_cast<int>(DEVICE::PAD)] = true;
+		SoundManager::GetInstance().Play("Cursur");
 	}
 	else if(ins.IsTrigerrDown("left")) {
 		//左ははKEYなのでそれを選択に
 		selectDevice_[static_cast<int>(DEVICE::KEY)] = true;
 		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
+		SoundManager::GetInstance().Play("Cursur");
 	}
 	if (ins.IsTrigerrDown("down") && !selectExit_) {
 		//下は戻るなのでそれを選択に
 		selectDevice_[static_cast<int>(DEVICE::KEY)] = false;
 		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
 		selectExit_ = true;
+		SoundManager::GetInstance().Play("Cursur");
 	}
 	if(ins.IsTrigerrDown("up") && selectExit_) {
 		//戻るから選択の方へ
@@ -147,6 +182,7 @@ void Title::SelectDeviceUpdate(void)
 		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
 		selectExit_ = false;
 		exitExtend_ = 1.0f;
+		SoundManager::GetInstance().Play("Cursur");
 	}
 
 	//「戻る」選択中

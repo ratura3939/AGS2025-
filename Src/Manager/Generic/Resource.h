@@ -16,7 +16,7 @@ public:
 		CSV,
 		MODEL,
 		SOUND,
-		//EFFEKSEER
+		EFFEKSEER
 	};
 
 	// コンストラクタ

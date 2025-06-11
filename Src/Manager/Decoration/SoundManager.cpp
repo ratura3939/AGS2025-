@@ -16,17 +16,12 @@ SoundManager& SoundManager::GetInstance(void)
 	return *instance_;
 }
 
-/// <summary>
-/// サウンドの追加
-/// </summary>
-/// <param name="_type">音の種類分け(SEかBGMか)</param>
-/// <param name="_sound">具体的な用途</param>
-/// <param name="_data">音のデータ</param>
-void SoundManager::Add(const TYPE _type, const SOUND _sound, const int _data)
+
+void SoundManager::Add(const TYPE _type, const std::string _name, const int _data, const int _interval)
 {
 	//連想配列内にすでに要素が入っているかを検索
 	//入っていたら処理終了
-	if (sounds_.find(_sound) != sounds_.end())return;
+	if (sounds_.find(_name) != sounds_.end())return;
 
 
 	//再生するときデータの種類によって
@@ -36,49 +31,83 @@ void SoundManager::Add(const TYPE _type, const SOUND _sound, const int _data)
 	else mode = DX_PLAYTYPE_BACK;
 
 	//新規データのため情報を追加
-	sounds_.emplace(_sound, SOUND_DATA{ _data,mode});
+	sounds_.emplace(_name, SOUND_DATA{ _data,_type,mode});
+	intervales_[_name] = _interval;
 }
 
-/// <summary>
-/// 音声データ
-/// </summary>
-/// <param name="_sound">音声データ</param>
-void SoundManager::Play(const SOUND _sound)
+
+void SoundManager::Play(const std::string _name)
 {
 	//元データがないときは警告
-	if (sounds_.find(_sound) == sounds_.end())assert("設定していない音声を再生しようとしています。");
+	if (sounds_.find(_name) == sounds_.end())assert("設定していない音声を再生しようとしています。");
 
-	//再生処理
-	PlaySoundMem(sounds_[_sound].data, sounds_[_sound].playMode);
+	//流そうとしているのがBGMのとき
+	if (sounds_[_name].type == TYPE::BGM) {
+		if (activeBgm_ == _name) {
+			//同じBGMを再生しようとしているので
+			return;
+		}
+		//流しているBGMの更新
+		activeBgm_ = _name;
+	}
+
+	//カウンターに要素がないとき
+	//カウンターに要素がないとき＝現在再生可能時
+	if(!counteres_.contains(_name)) {
+		//再生処理
+		PlaySoundMem(sounds_[_name].data, sounds_[_name].playMode);
+		//インターバルがある場合カウンタを生成
+		if (intervales_[_name] > 0) {
+			counteres_.emplace(_name, 0);
+		}
+	}
+	
 }
 
-///<summary>
-///停止処理
-///</summary>
-///<param name="_sound">音声データ</param>
-void SoundManager::Stop(const SOUND _sound)
+
+void SoundManager::Stop(const std::string _name)
 {
 	//元データがないときは警告
-	if (sounds_.find(_sound) == sounds_.end())assert("設定していない音声を停止しようとしています。");
-	StopSoundMem(sounds_[_sound].data);
+	if (sounds_.find(_name) == sounds_.end())assert("設定していない音声を停止しようとしています。");
+
+	//停止処理
+	StopSoundMem(sounds_[_name].data);
+}
+
+void SoundManager::Update(void)
+{
+	//カウンタ満了保存用
+	std::vector<std::string>delteNames;
+
+	//カウンタ更新
+	for (auto& counter : counteres_) {
+		counter.second++;
+		//インターバルを満了したら
+		if (counter.second >= intervales_[counter.first]) {
+			//削除予定に入れる
+			delteNames.push_back(counter.first);
+		}
+	}
+
+	for (auto& name : delteNames) {
+		//該当のカウンタを消去
+		counteres_.erase(name);
+	}
 }
 
 void SoundManager::Release(void)
 {
 	//配列要素善削除
 	sounds_.clear();
+	activeBgm_ = "";
 }
 
-/// <summary>
-/// 音量調節
-/// </summary>
-/// <param name="_sound">音声</param>
-/// <param name="_persent">調整割合(0%～100%)</param>
-void SoundManager::AdjustVolume(const SOUND _sound, const int _persent)
+
+void SoundManager::AdjustVolume(const std::string _name, const int _persent)
 {
 	//元データがないときは警告
-	if (sounds_.find(_sound) == sounds_.end())assert("設定していない音声を設定しようとしています。");
-	ChangeVolumeSoundMem(255 * _persent / 100, sounds_[_sound].data);
+	if (sounds_.find(_name) == sounds_.end())assert("設定していない音声を設定しようとしています。");
+	ChangeVolumeSoundMem(255 * _persent / 100, sounds_[_name].data);
 }
 
 void SoundManager::Destroy(void)

@@ -29,6 +29,21 @@ public:
 		OBJECTS_MDL,
 		PLAYER_MDL,
 		ENEMY_MDL,
+
+		//音
+		TITLE_BGM,
+		GAME_BGM,
+		BATTLE_BGM,
+
+		CANCEL_SE,
+		MOVE_CURSUR_SE,
+		ENTER_CNTL_SE,
+		WALK_SE,
+		RUN_SE,
+		SWING_SWORD_SE,
+		ROCK_ON_SE,
+		FIND_PLAYER_SE,
+		DAMAGE_SE,
 	};
 
 	// 明示的にインステンスを生成する

@@ -18,6 +18,10 @@ void GameOver::Init(void)
 	logoImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::GAMEOVER_LOGO).handleId_;
 }
 
+void GameOver::InitSound(void)
+{
+}
+
 void GameOver::Update(void)
 {
 	InputManager& ins = InputManager::GetInstance();
