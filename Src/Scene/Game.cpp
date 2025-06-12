@@ -108,12 +108,15 @@ void Game::Update(void)
 	//ƒvƒŒƒCƒ„[‚ªŽ€‚ñ‚Å‚¢‚½‚ç
 	if (!player_->IsAlive()) {
 		//BGM”O‚Ì‚½‚ß—¼•û’âŽ~
-
+		sndM.Stop(nowBgmStr_);
+		sndM.Stop(switchBgmStr_);
 		//ƒV[ƒ“‘JˆÚ
 		scM.ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
 	//“G‚ª‚¢‚È‚­‚È‚Á‚½‚ç
 	if (enemy_->GetEnemys().size() <= 0) {
+		sndM.Stop(nowBgmStr_);
+		sndM.Stop(switchBgmStr_);
 		//ƒV[ƒ“‘JˆÚ
 		scM.ChangeScene(SceneManager::SCENE_ID::CLEAR);
 	}

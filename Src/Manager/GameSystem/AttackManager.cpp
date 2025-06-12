@@ -2,6 +2,7 @@
 #include"../../Object/Attack/Arrow.h"
 #include"../../Object/Attack/AttackBase.h"
 #include"../../Object/Character/CharacterBase.h"
+#include"../Decoration/SoundManager.h"
 
 #include "AttackManager.h"
 
@@ -25,7 +26,7 @@ void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type,
 	attackInfoes_.emplace(_name, info);
 }
 
-void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _master, const float _scale, const int _arrowModel)
+void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _master, const float _scale, const std::string _sndName, const int _arrowModel)
 {
 	//—v‘f‚ª‚ ‚é‚Æ‚«
 	if (activeAttacks_.contains(_name)) {
@@ -40,7 +41,7 @@ void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _p
 	//UŒ‚”»’è‚Ì¶¬
 	//Œ•‚Ìê‡
 	if (attackInfoes_[_name].type == ATTACK_TYPE::SWORD) {
-		activeAttacks_.emplace(_name, std::make_shared<AttackBase>(_pos,_pow));
+		activeAttacks_.emplace(_name, std::make_shared<AttackBase>(_pos, _pow));
 	}
 	//‹|‚Ìê‡
 	else if (attackInfoes_[_name].type == ATTACK_TYPE::BOW) {
@@ -51,6 +52,13 @@ void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _p
 		//‹|–î‚Ìì¬
 		//arrows_.push_back(std::make_unique<Arrow>(attackInfoes_[_name].master, _arrowModel, _pos, _pow, _qua));
 	}
+
+	//‰½‚©Ä¶‚·‚é•¨‚ª‚ ‚éê‡
+	if (_sndName != "") {
+		//Œø‰Ê‰¹‚ÌÄ¶
+		SoundManager::GetInstance().Play(_sndName);
+	}
+	
 }
 
 bool AttackManager::Update(void)

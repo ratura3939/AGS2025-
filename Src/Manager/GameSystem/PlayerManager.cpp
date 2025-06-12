@@ -9,6 +9,12 @@
 
 const std::string PlayerManager::ATTACK_NOMAL = "PlayerAttack";
 
+namespace {
+	int AtkScl = 70;
+	int AtkPow = 1;
+	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
+}
+
 PlayerManager::PlayerManager(Game& _gameScene):scene_(_gameScene)
 {
 	stateCnt_ = 0;
@@ -108,11 +114,10 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	//攻撃の生成
 	if (ins.IsTrigerrDown("attack")) {
 		//攻撃の生成および状態の設定
-		_atk.Attack(ATTACK_NOMAL, 1.0f, VAdd(character_->GetPos(), character_->GetQua().PosAxis({ 0.0f, 75.0f, 100.0f })), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, 70.0f);
+		_atk.Attack(ATTACK_NOMAL, AtkPow, VAdd(character_->GetPos(), character_->GetQua().PosAxis(ATK_LOCAL_POS)), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, AtkScl, "SwingSword");
 		character_->SetState(PlayerChara::STATE::ATTACK);
 		//対応するアニメーション
 		character_->PlayAnim("atkFirst");
-		SoundManager::GetInstance().Play("SwingSword");
 		//時間の設定
 		RedyStateCount(_atk.GetTotalTime(ATTACK_NOMAL));
 	}

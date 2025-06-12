@@ -82,7 +82,7 @@ void Title::InitSound(void)
 	sndM.Add(SoundManager::TYPE::SE, "Cursur",
 		rsM.Load(ResourceManager::SRC::MOVE_CURSUR_SE).handleId_);
 	//Œˆ’è
-	sndM.Add(SoundManager::TYPE::SE, "Eneter",
+	sndM.Add(SoundManager::TYPE::SE, "Enter",
 		rsM.Load(ResourceManager::SRC::ENTER_CNTL_SE).handleId_);
 	//ƒLƒƒƒ“ƒZƒ‹
 	sndM.Add(SoundManager::TYPE::SE, "Cancel",

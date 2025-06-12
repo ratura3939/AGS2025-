@@ -67,7 +67,7 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 				//_player.lock()->Deth();
 				SoundManager::GetInstance().Play("Damage");
 				//îªíËçœÇ›Ç…
-				atkCol.info.HitAttack();
+				atkCol.info.isHit = true;
 			}
 		}
 	}
@@ -100,7 +100,7 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 				enemy.lock()->Deth();
 				SoundManager::GetInstance().Play("Damage");
 				//îªíËçœÇ›Ç…
-				atkCol.info.HitAttack();
+				atkCol.info.isHit = true;
 			}
 		}
 	}

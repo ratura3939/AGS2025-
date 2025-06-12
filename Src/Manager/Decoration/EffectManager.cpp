@@ -22,45 +22,32 @@ EffectManager::EffectManager(void) {
 	//effectTest_.emplace(EFFECT::NONE,i);
 }
 
-/// <summary>
-/// エフェクトの追加
-/// </summary>
-/// <param name="_efc">エフェクト種類名</param>
-/// <param name="_data">エフェクトのデータ</param>
-void EffectManager::Add(const EFFECT& _efc, int _data)
+void EffectManager::Add(const std::string& _name, int _data)
 {
 	//連想配列内にすでに要素が入っているかを検索
 	//入っていたら処理終了
-	if (effectRes_.find(_efc) != effectRes_.end())return;
+	if (effectRes_.find(_name) != effectRes_.end())return;
 
 	//新規データのため情報を追加
-	effectRes_.emplace(_efc, _data);
+	effectRes_.emplace(_name, _data);
 }
 
-
-/// <summary>
-/// エフェクトの再生
-/// </summary>
-/// <param name="_efc">エフェクト種類名</param>
-/// <param name="_pos">再生位置</param>
-/// <param name="_qua">角度</param>
-/// <param name="_size">大きさ</param>
-void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const std::string _sndName)
+void EffectManager::Play(const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const std::string _sndName)
 {
 	//元データがないときは警告
-	if (effectRes_.find(_efc) == effectRes_.end())assert("設定していないエフェクトを再生しようとしています。");
+	if (effectRes_.find(_name) == effectRes_.end())assert("設定していないエフェクトを再生しようとしています。");
 
 	//再生配列内に要素が入っていないかを検索
-	if (effectPlay_.find(_efc) == effectPlay_.end()) {
+	if (effectPlay_.find(_name) == effectPlay_.end()) {
 		//入っていないとき要素を追加する
-		effectPlay_.emplace(_efc, PlayEffekseer3DEffect(effectRes_[_efc]));
+		effectPlay_.emplace(_name, PlayEffekseer3DEffect(effectRes_[_name]));
 	}else {
 		//入っていたら元あるやつに上書きする
-		effectPlay_[_efc] = PlayEffekseer3DEffect(effectRes_[_efc]);
+		effectPlay_[_name] = PlayEffekseer3DEffect(effectRes_[_name]);
 	}
 
 	//各種設定同期
-	SyncEffect(_efc, _pos, _qua, _size);
+	SyncEffect(_name, _pos, _qua, _size);
 
 	//効果音の再生
 		if (_sndName != "") {
@@ -68,40 +55,34 @@ void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternio
 		}
 }
 
-
-/// <summary>
-/// エフェクトの再生停止
-/// </summary>
-/// <param name="_efc">エフェクト種類名</param>
-void EffectManager::Stop(const EFFECT& _efc)
+void EffectManager::Stop(const std::string& _name)
 {
 	//配列内に入っていないものを停止しようとしたら警告
-	if (effectPlay_.find(_efc) == effectPlay_.end())assert("設定していないエフェクトを停止しようとしています。");
+	if (effectPlay_.find(_name) == effectPlay_.end())assert("設定していないエフェクトを停止しようとしています。");
 	//再生停止
-	StopEffekseer3DEffect(effectPlay_[_efc]);
+	StopEffekseer3DEffect(effectPlay_[_name]);
 }
 
-void EffectManager::SyncEffect(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size)
+void EffectManager::SyncEffect(const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size)
 {
 	//その他各種設定
 	//大きさ
-	SetScalePlayingEffekseer3DEffect(effectPlay_[_efc], _size, _size, _size);
+	SetScalePlayingEffekseer3DEffect(effectPlay_[_name], _size, _size, _size);
 	//角度
-	SetRotationPlayingEffekseer3DEffect(effectPlay_[_efc], _qua.ToEuler().x, _qua.ToEuler().y, _qua.ToEuler().z);
+	SetRotationPlayingEffekseer3DEffect(effectPlay_[_name], _qua.ToEuler().x, _qua.ToEuler().y, _qua.ToEuler().z);
 	//位置
-	SetPosPlayingEffekseer3DEffect(effectPlay_[_efc], _pos.x, _pos.y, _pos.z);
+	SetPosPlayingEffekseer3DEffect(effectPlay_[_name], _pos.x, _pos.y, _pos.z);
 }
 
-bool EffectManager::IsPlayEffect(const EFFECT& _efc)
+bool EffectManager::IsPlayEffect(const std::string& _name)
 {
-	if (effectPlay_[_efc] == -1 || IsEffekseer3DEffectPlaying(effectPlay_[_efc]) == -1)
+	if (effectPlay_[_name] == -1 || IsEffekseer3DEffectPlaying(effectPlay_[_name]) == -1)
 	{
 		return true;
 	}
 	return false;
 }
 
-//解放処理
 void EffectManager::Release(void)
 {
 	//配列内の要素を全て消去

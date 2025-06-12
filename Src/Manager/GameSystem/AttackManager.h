@@ -57,14 +57,13 @@ public:
 		const bool IsJustGuardTiming(void)const { return (counter >= 0.0f) && (counter <= startAttack + GRACE_JUST_GUARD); }
 
 		const bool IsOuccerAttack(void)const { return (counter >= startAttack) && (counter <= endAttack); }
-		void HitAttack(void) { isHit = true; }
 	};
 
 	/// <summary>
 	/// “–‚½‚è”»’è‚Ég—p‚·‚éî•ñ‚ğ‚Ü‚Æ‚ß‚½‚à‚Ì
 	/// </summary>
 	struct AttackCollision {
-		AttackInfo info;
+		AttackInfo& info;
 		std::weak_ptr<AttackBase> attack;
 	};
 
@@ -90,8 +89,9 @@ public:
 	/// <param name="_qua">‰ñ“]î•ñ</param>
 	/// <param name="_maseter">w‰c</param>
 	/// <param name="_scale">‘å‚«‚³</param>
+	/// <param name="_sndName">Ä¶‚·‚éŒø‰Ê‰¹</param>
 	/// <param name="_arrowModel">–î‚Ìƒ‚ƒfƒ‹(‹|UŒ‚‚Ì‚İ)</param>
-	void Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _master, const float _scale, const int _arrowModel = -1);
+	void Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _master, const float _scale, const std::string _sndName = "", const int _arrowModel = -1);
 
 	bool Update(void);
 
