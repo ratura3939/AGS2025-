@@ -72,8 +72,11 @@ const bool EnemyBase::Init(void)
 	ChangeState(ENEMY_STATE::NOMAL);
 	//アニメーション初期化
 	animController_ = std::make_unique<AnimationController>(modelId_);
-	AnimInit();
+	InitAnim();
 	animController_->Play("idle", SPEED_ANIM);
+
+	//UI初期化
+	InitUI();
 
 	return true;
 }
@@ -95,7 +98,7 @@ void EnemyBase::SetPram(void)
 	//後々Jsonやったら楽になるかも？
 }
 
-void EnemyBase::AnimInit(void)
+void EnemyBase::InitAnim(void)
 {
 	animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);
 	animController_->Add("attack", ANIM_ATTACK_NOMAL, AnimationController::PLAY_TYPE::NOMAL);
@@ -103,6 +106,17 @@ void EnemyBase::AnimInit(void)
 	animController_->Add("dush", ANIM_DUSH_FORWARD, AnimationController::PLAY_TYPE::LOOP);
 	animController_->Add("dethStart", ANIM_DETH_START, AnimationController::PLAY_TYPE::NOMAL);
 	animController_->Add("dethSus", ANIM_DETH_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
+}
+
+void EnemyBase::InitUI(void)
+{
+	ResourceManager& rsM = ResourceManager::GetInstance();
+	suspectImg_ = rsM.Load(ResourceManager::SRC::SUSPECT_IMG).handleId_;
+	findImg_ = rsM.Load(ResourceManager::SRC::FIND_IMG).handleId_;
+
+	//UI関連変数初期化
+	suspectEx_ = 0.0f;
+	findUICnt_ = 0.0f;
 }
 
 
@@ -125,23 +139,36 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 {
 	//移動処理
 	(this->*move_)(_pPos);
+	
 
 	//判定
 	auto deg = Utility::AngleDeg(GetForward(), VSub(_pPos, pos_));
 	auto distance = Utility::MagnitudeF(VSub(_pPos, pos_));
 
 	//視界内なら
-	if (deg <= FIELD_VISION_DEG_HALF && 
+	if (deg <= FIELD_VISION_DEG_HALF &&
 		distance <= FIELD_VISION_DISTANCE) {
-		//戦闘状態に
-		ChangeState(ENEMY_STATE::BATTLE);
+		suspectEx_ += SUSPECT_EXT_ACC;
+		//一定時間いたら
+		if (suspectEx_ >= SUSPECT_EXT_MAX) {
+			//戦闘状態に
+			ChangeState(ENEMY_STATE::BATTLE);
+		}
+	}
+	else {
+		suspectEx_ -= SUSPECT_EXT_ACC;
+		if (suspectEx_ <= 0.0f) {
+			suspectEx_ = 0.0f;
+		}
 	}
 	//プレイヤーが索敵範囲外に出たら
-	else if (distance > ALERT_DISTANCE) {
+	if (distance > ALERT_DISTANCE) {
 		//通常に戻る
 		ChangeState(ENEMY_STATE::NOMAL);
 	}
 
+
+	//デバッグ
 	debugRot_ = deg;
 }
 
@@ -152,9 +179,11 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	
 	//移動処理
 	(this->*move_)(_pPos);
+	
 
 	//カウンタ増加(ゲーム更新スピード)
 	intervalCnt_+=SceneManager::GetInstance().GetUpdateSpeedRate_();	
+	findUICnt_ += SceneManager::GetInstance().GetUpdateSpeedRate_();;
 
 	//判定
 	//プレイヤーが索敵範囲外にでたら
@@ -285,6 +314,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		update_ = &EnemyBase::UpdateSearch;
 		move_ = &EnemyBase::MoveSearch;
 		moveSped_ = MOVE_POW;
+		suspectEx_ = 0.0f;
 		//待機アニメーション
 		animController_->Play("idle", SPEED_ANIM);
 
@@ -296,6 +326,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		update_ = &EnemyBase::UpdateBattle;
 		move_ = &EnemyBase::MoveBattle;
 		moveSped_ = MOVE_POW_FIND;
+		findUICnt_ = 0.0f;
 		SoundManager::GetInstance().Play("FindPlayer");
 
 		serchCol_ = alertDebugCol;
@@ -312,6 +343,22 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		break;
 	default:
 		break;
+	}
+}
+
+void EnemyBase::DrawUI(void)
+{
+	auto uiPos = pos_;
+	//頭位置
+	uiPos.y = 250.0f;
+
+	if (state_ == ENEMY_STATE::SEARCH) {
+		//「?」マークの描画
+		DrawBillboard3D(uiPos, 0.5f,0.5f, suspectEx_, 0.0f, suspectImg_, true);
+	}
+	if (state_ == ENEMY_STATE::BATTLE && findUICnt_ <= FIND_UI_DRAW_TIME) {
+		//「!」マークの描画
+		DrawBillboard3D(uiPos, 0.5f, 0.5f, FIND_UI_DRAW_SIZE, 0.0f, findImg_, true);
 	}
 }
 

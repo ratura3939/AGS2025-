@@ -36,11 +36,14 @@ const bool PlayerChara::Init(void)
 	UpdateRotQuat();
 	hp_ = PALYER_HP;
 
+	//アニメ初期化
 	animController_ = std::make_unique<AnimationController>(modelId_);
-
-	AnimInit();
+	InitAnim();
 	//初期アニメ
 	animController_->Play("idle", SPEED_ANIM);
+
+	//UI初期化
+	InitUI();
 
 	return true;
 }
@@ -119,7 +122,7 @@ void PlayerChara::DrawDebug(void)
 	DrawCupcel();
 }
 
-void PlayerChara::AnimInit(void)
+void PlayerChara::InitAnim(void)
 {
 	animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);
 	//攻撃
@@ -146,6 +149,10 @@ void PlayerChara::AnimInit(void)
 	animController_->Add("damage", ANIM_DAMAGE, AnimationController::PLAY_TYPE::NOMAL);
 	animController_->Add("dethStart", ANIM_DETH_START, AnimationController::PLAY_TYPE::NOMAL);
 	animController_->Add("dethSus", ANIM_DETH_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
+}
+
+void PlayerChara::InitUI(void)
+{
 }
 
 void PlayerChara::Move(void)

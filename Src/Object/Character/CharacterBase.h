@@ -42,9 +42,13 @@ public:
 protected:
 	//必ず更新・初期化処理に入れること
 	//************************************************
-	virtual void AnimInit(void) = 0;
+	virtual void InitAnim(void) = 0;
+	virtual void InitUI(void) = 0;
 	void UpdateRotQuat(void);
 	//**********************************************
+	//UI描画
+	virtual void DrawUI(void);
+
 	//回転目標角度
 	void SetGoalRot(const float _rad);
 	//回転

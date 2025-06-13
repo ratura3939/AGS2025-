@@ -87,7 +87,8 @@ public:
     void Update(void)override;
 
 private:
-    void AnimInit(void)override;
+    void InitAnim(void)override;
+    void InitUI(void)override;
     void Move(void);    //ˆÚ“®ˆ—
     const std::string DecideAnim(const MOVE_DIR _dir)const;
 

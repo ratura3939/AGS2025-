@@ -10,12 +10,21 @@
 void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type, const bool _friendFire,
 	const float _total, const int _modelId, const float _start, const float _end)
 {
+	//‚·‚Å‚É—v‘f‚ª‚ ‚é‚Æ‚«
+	if (attackInfoes_.contains(_name)) {
+		//ƒGƒ‰[–h~
+		assert("‚·‚Å‚É“o˜^‚µ‚Ä‚¢‚é‚à‚Ì‚ğÄ“o˜^‚µ‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·");
+		return;
+	}
+
+
 	//İ’è‚³‚ê‚½î•ñ‚©‚çUŒ‚‚ğ¶¬
 	AttackInfo info = {};
 	info.master = ATTACK_MASTER::NONE;
 	info.type = _type;
 
 	info.isFriendFire = _friendFire;
+
 	info.totalMotion = _total;
 	info.startAttack = _start;
 	info.endAttack = _end;
@@ -28,7 +37,14 @@ void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type,
 
 void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _master, const float _scale, const std::string _sndName, const int _arrowModel)
 {
-	//—v‘f‚ª‚ ‚é‚Æ‚«
+	//‚»‚à‚»‚àg—p‚µ‚½‚¢UŒ‚‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢‚Æ‚«
+	if (!attackInfoes_.contains(_name)) {
+		//ƒGƒ‰[–h~
+		assert("“o˜^‚³‚ê‚Ä‚¢‚È‚¢UŒ‚‚ğ”­¶‚³‚¹‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·");
+		return;
+	}
+
+	//‚·‚Å‚ÉUŒ‚’†‚Ì‚È‚©‚É—v‘f‚ª‚ ‚é‚Æ‚«
 	if (activeAttacks_.contains(_name)) {
 		//‚»‚à‚»‚à‚ ‚é‚Ì‚Åˆ—‚µ‚È‚¢
 		return;

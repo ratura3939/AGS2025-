@@ -20,9 +20,9 @@ public:
 #pragma region 状態ごと関連
       //状態遷移に関わるもの
     static constexpr float FIELD_VISION_DEG_HALF = 40.0f;	//視界の角度(両方向に展開するので全体の半分の角度を明記)
-    static constexpr float FIELD_VISION_DISTANCE = 500.0f;	//視界の距離
-    static constexpr float ALERT_DISTANCE = 700.0f;     	//警戒の距離
-    static constexpr float ATTACK_DISTANCE = 200.0f;     	//警戒の距離
+    static constexpr float FIELD_VISION_DISTANCE = 1000.0f;	//視界の距離
+    static constexpr float ALERT_DISTANCE = 1500.0f;     	//警戒の距離
+    static constexpr float ATTACK_DISTANCE = 200.0f;     	//攻撃開始の距離
 
     //乱数移動量
     static constexpr float MOVE_RANDOM_MIN = 200.0f;                   //最低値
@@ -48,6 +48,21 @@ public:
     static constexpr int ANIM_DETH_START = 29;      //死亡開始
     static constexpr int ANIM_DETH_SUSTANABLE = 28; //死亡持続
 #pragma endregion
+
+#pragma region UI関連
+    static constexpr int SUSPECT_UI_SIZE_X = 117;
+    static constexpr int SUSPECT_UI_SIZE_Y = 201;
+    static constexpr int FIND_UI_SIZE_X = 89;
+    static constexpr int FIND_UI_SIZE_Y = 204;
+
+    static constexpr float SUSPECT_EXT_MAX = 60.0f;
+    static constexpr float SUSPECT_EXT_ACC = 1.0f;
+
+    static constexpr float FIND_UI_DRAW_TIME = 30.0f;
+    static constexpr float FIND_UI_DRAW_SIZE = 50.0f;
+
+#pragma endregion
+
 
     //攻撃関連(外部ファイル化させる)
     static constexpr VECTOR RELATIVE_ATTACK_POS = { 0.0f, 75.0f, 100.0f };
@@ -83,7 +98,8 @@ public:
   
 protected:
     virtual void SetPram(void);     //各敵の固有情報(いずれか外部データ化したい)
-    void AnimInit(void)override;
+    void InitAnim(void)override;
+    void InitUI(void)override;
 #pragma region 各種状態更新
 private:    //各種更新処理
     void UpdateNomal(const VECTOR& _pPos, AttackManager& _atk);  //通常
@@ -98,6 +114,8 @@ private:    //各種更新処理
 
     void ChangeState(const ENEMY_STATE _state); //状態の遷移
 #pragma endregion
+
+    void DrawUI(void)override;
 
 public:
     //生存判定
@@ -132,6 +150,12 @@ private:
 
     bool isAlive_;     //削除していいか
     ENEMY_STATE state_;//状態
+
+    //UI
+    int suspectImg_;//疑問画像
+    int findImg_;   //発見画像
+    float suspectEx_; //拡大率
+    float findUICnt_;   //発見を表示し続けるカウンター
 
     //デバッグ用
     int color_;

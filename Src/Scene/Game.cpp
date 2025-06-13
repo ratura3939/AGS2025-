@@ -291,12 +291,12 @@ void Game::RockOff(void)
 
 void Game::DrawDebug(void)
 {
-	SceneManager::GetInstance().GetCamera().DrawDebug();
-	if (isSlowEffect_) {
-		DrawString(0, 140, "NOW_SLOW", 0xffffff);
-	}
+	//SceneManager::GetInstance().GetCamera().DrawDebug();
+	//if (isSlowEffect_) {
+	//	DrawString(0, 140, "NOW_SLOW", 0xffffff);
+	//}
 
-	//player_->DrawDebug();
-	enemy_->DrawDebug();
-	atkMng_->DrawDebug();
+	////player_->DrawDebug();
+	//enemy_->DrawDebug();
+	//atkMng_->DrawDebug();
 }

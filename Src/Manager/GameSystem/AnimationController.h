@@ -45,6 +45,16 @@ public:
 	/// <param name="_speed">再生速度</param>
 	/// <param name="_next">連続して再生する物たち<最後以外にLOOPのものを入れないこと！！></param>
 	void Play(const std::string& _name, const float _speed, const std::vector<std::string> _next = {});
+	/// <summary>
+	/// 連続して再生するアニメーションを途中で追加する
+	/// </summary>
+	/// <param name="_name">追加するアニメーション名</param>
+	void AddNextAnim(const std::string& _name);
+	/// <summary>
+	/// 連続して再生するアニメーションを途中で追加する
+	/// </summary>
+	/// <param name="_name">追加するアニメーション名(複数)</param>
+	void AddNextAnim(const std::vector<std::string> _names);
 	void Update(void);
 
 	/// <summary>

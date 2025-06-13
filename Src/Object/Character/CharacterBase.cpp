@@ -40,6 +40,7 @@ void CharacterBase::Draw(void)
 	//ï`âÊèàóù
 	DrawSphere3D(pos_, 30, 10, 0xff0000, 0xff0000, false);
 	MV1DrawModel(modelId_);
+	DrawUI();
 }
 
 const bool CharacterBase::Release(void)
@@ -70,6 +71,10 @@ void CharacterBase::UpdateRotQuat(void)
 	if (modelId_ != -1){
 		MV1SetMatrix(modelId_, mat);
 	}
+}
+
+void CharacterBase::DrawUI(void)
+{
 }
 
 void CharacterBase::SetGoalRot(const float _rad)

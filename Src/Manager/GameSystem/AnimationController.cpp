@@ -27,6 +27,13 @@ AnimationController::~AnimationController(void)
 
 void AnimationController::Add(const std::string& _name, const int _attach, const PLAY_TYPE _type)
 {
+	//すでに要素がある時
+	if (animDatas_.contains(_name)) {
+		//エラー防止
+		assert("すでに登録しているものを再登録しようとしています。");
+		return;
+	}
+
 	//初期化(アタッチ番号だけ入れる)
 	AnimationInfo anim = {};
 	anim.type = _type;
@@ -34,7 +41,7 @@ void AnimationController::Add(const std::string& _name, const int _attach, const
 	
 
 	//総再生時間を取得するためには一回アタッチする必要がある
-	attachAnim_ = MV1AttachAnim(modelId_, anim.idx);;
+	attachAnim_ = MV1AttachAnim(modelId_, anim.idx);
 	//時間取得
 	anim.total = MV1GetAttachAnimTotalTime(modelId_, attachAnim_);
 	//必要ないのでデタッチ
@@ -48,6 +55,13 @@ void AnimationController::Add(const std::string& _name, const int _attach, const
 
 void AnimationController::Play(const std::string& _name, const float _speed, const std::vector<std::string> _next)
 {
+	//要素がないとき
+	if (!animDatas_.contains(_name)) {
+		//エラー防止
+		assert("登録されていない要素を再生しようとしています。");
+		return;
+	}
+
 	//もしかしたらこのifの中身が追加条件はいるかも
 	//現在アタッチしているものと同じものなら処理は行わない
 	if (activeAnim_.idx == animDatas_[_name].idx)return;
@@ -107,6 +121,30 @@ void AnimationController::Play(const std::string& _name, const float _speed, con
 
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(modelId_, attachAnim_, counter_);
+}
+
+void AnimationController::AddNextAnim(const std::string& _name)
+{
+	//要素がないとき
+	if (!animDatas_.contains(_name)) {
+		//エラー防止
+		assert("登録されていない要素を連続で再生しようとしています。");
+		return;
+	}
+	nextAnim_.push_back(_name);
+}
+
+void AnimationController::AddNextAnim(const std::vector<std::string> _names)
+{
+	for (auto& add : _names) {
+		//要素がないとき
+		if (!animDatas_.contains(add)) {
+			//エラー防止
+			assert("登録されていない要素を連続で再生しようとしています。");
+			return;
+		}
+		nextAnim_.push_back(add);
+	}
 }
 
 void AnimationController::Update(void)
