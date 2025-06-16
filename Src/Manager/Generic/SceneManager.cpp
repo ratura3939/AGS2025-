@@ -1,5 +1,6 @@
 #include <chrono>
 #include <DxLib.h>
+#include<EffekseerForDXLib.h>
 #include "../../Common/Fader.h"
 #include "../../Scene/Title.h"
 #include "../../Scene/Game.h"
@@ -128,8 +129,14 @@ void SceneManager::Draw(void)
 	//カメラ
 	camera_->SetBeforeDraw();
 
+	//エフェクシア更新
+	UpdateEffekseer3D();
+
 	// 描画
 	scene_->Draw();
+
+	//エフェクシア描画
+	DrawEffekseer3D();
 
 	// 暗転・明転
 	fader_->Draw();

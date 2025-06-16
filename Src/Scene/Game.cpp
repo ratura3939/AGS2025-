@@ -1,3 +1,4 @@
+#include<EffekseerForDXLib.h>
 #include"../Manager/GameSystem/PlayerManager.h"
 #include"../Manager/GameSystem/EnemyManager.h"
 #include"../Manager/GameSystem/AttackManager.h"
@@ -248,7 +249,7 @@ void Game::Update(void)
 
 void Game::Draw(void)
 {
-	stage_->Draw();
+	//stage_->Draw();
 	enemy_->Draw();
 	player_->Draw();
 
@@ -313,4 +314,5 @@ void Game::DrawDebug(void)
 	////player_->DrawDebug();
 	//enemy_->DrawDebug();
 	//atkMng_->DrawDebug();
+
 }

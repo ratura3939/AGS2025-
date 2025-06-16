@@ -100,7 +100,8 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 				//“–‚½‚Á‚Ä‚¢‚½‚ç
 				enemy.lock()->Deth();
 				SoundManager::GetInstance().Play("Damage");
-				EffectManager::GetInstance().Play("Damage", eHeadPos, enemy.lock()->GetQua(), 2.0f);
+				//EffectManager::GetInstance().Play("Damage", ePos, enemy.lock()->GetQua(), 20.0f);
+				EffectManager::GetInstance().Play("Sword", ePos, enemy.lock()->GetQua(), 50.0f);
 				//”»’èÏ‚İ‚É
 				atkCol.info.isHit = true;
 			}

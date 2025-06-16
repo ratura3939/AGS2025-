@@ -1,4 +1,5 @@
 #include <DxLib.h>
+#include<EffekseerForDXLib.h>
 #include "Manager/Generic/ResourceManager.h"
 #include "Manager/Generic/InputManager.h"
 #include "Manager/Generic/SceneManager.h"
@@ -47,6 +48,14 @@ void Application::Init(void)
 		isInitFail_ = true;
 		return;
 	}
+
+	//エフェクシア初期化
+	if (Effekseer_Init(8000) == -1)
+	{
+		DxLib_End();
+	}
+	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
+	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
 	// キー制御初期化
 	SetUseDirectInputFlag(true);
@@ -100,6 +109,8 @@ void Application::Destroy(void)
 	ResourceManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
 	
+	// Effekseerを終了する。
+	Effkseer_End();
 	// DxLib終了
 	if (DxLib_End() == -1)
 	{

@@ -112,10 +112,10 @@ void ResourceManager::InitGame(void)
 
 	//エフェクト
 	//剣
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Sword1.efkproj");
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "SwordEfc.efkefc");
 	resourcesMap_.emplace(SRC::SWORD_EFC, res);
 	//ダメージ
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "ToonHit.efkefc");
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Damage.efkefc");
 	resourcesMap_.emplace(SRC::DAMAGE_EFC, res);
 }
 

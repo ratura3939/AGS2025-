@@ -37,10 +37,11 @@ void EffectManager::Play(const std::string& _name, const VECTOR& _pos, const Qua
 	//元データがないときは警告
 	if (effectRes_.find(_name) == effectRes_.end())assert("設定していないエフェクトを再生しようとしています。");
 
-	//再生配列内に要素が入っていないかを検索
-	if (effectPlay_.find(_name) == effectPlay_.end()) {
-		//入っていないとき要素を追加する
-		effectPlay_.emplace(_name, PlayEffekseer3DEffect(effectRes_[_name]));
+	//再生配列内に要素が入っていないとき
+	if (!effectPlay_.contains(_name)) {
+		//要素を追加する
+		int addEfc = PlayEffekseer3DEffect(effectRes_[_name]);
+		effectPlay_.emplace(_name, addEfc);
 	}else {
 		//入っていたら元あるやつに上書きする
 		effectPlay_[_name] = PlayEffekseer3DEffect(effectRes_[_name]);
