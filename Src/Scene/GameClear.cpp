@@ -22,6 +22,10 @@ void GameClear::InitSound(void)
 {
 }
 
+void GameClear::InitEffect(void)
+{
+}
+
 void GameClear::Update(void)
 {
 	// ƒV[ƒ“‘JˆÚ

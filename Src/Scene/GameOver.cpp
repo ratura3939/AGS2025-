@@ -22,6 +22,10 @@ void GameOver::InitSound(void)
 {
 }
 
+void GameOver::InitEffect(void)
+{
+}
+
 void GameOver::Update(void)
 {
 	InputManager& ins = InputManager::GetInstance();

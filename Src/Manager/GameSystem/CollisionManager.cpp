@@ -3,6 +3,7 @@
 #include"../../Object/Character/CharacterBase.h"
 #include"../../Utility/Utility.h"
 #include"../Decoration/SoundManager.h"
+#include"../Decoration/EffectManager.h"
 
 #include "CollisionManager.h"
 
@@ -99,6 +100,7 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 				//ìñÇΩÇ¡ÇƒÇ¢ÇΩÇÁ
 				enemy.lock()->Deth();
 				SoundManager::GetInstance().Play("Damage");
+				EffectManager::GetInstance().Play("Damage", eHeadPos, enemy.lock()->GetQua(), 2.0f);
 				//îªíËçœÇ›Ç…
 				atkCol.info.isHit = true;
 			}

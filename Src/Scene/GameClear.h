@@ -15,6 +15,7 @@ public:
 
 private:
 	void InitSound(void)override;
+	void InitEffect(void)override;
 
 public:
 	void Update(void) override;

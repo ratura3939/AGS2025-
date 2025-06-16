@@ -90,6 +90,10 @@ void Title::InitSound(void)
 
 }
 
+void Title::InitEffect(void)
+{
+}
+
 void Title::Update(void)
 {
 

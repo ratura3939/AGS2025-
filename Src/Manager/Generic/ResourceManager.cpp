@@ -75,6 +75,7 @@ void ResourceManager::InitGame(void)
 
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "deco1.mv1");
 	resourcesMap_.emplace(SRC::STAGE_MDL, res);
+
 	//UI
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Question.png");
 	resourcesMap_.emplace(SRC::SUSPECT_IMG, res);
@@ -108,6 +109,14 @@ void ResourceManager::InitGame(void)
 	//ダメージ
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Damage.mp3");
 	resourcesMap_.emplace(SRC::DAMAGE_SE, res);
+
+	//エフェクト
+	//剣
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Sword1.efkproj");
+	resourcesMap_.emplace(SRC::SWORD_EFC, res);
+	//ダメージ
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "ToonHit.efkefc");
+	resourcesMap_.emplace(SRC::DAMAGE_EFC, res);
 }
 
 void ResourceManager::InitClear(void)

@@ -7,6 +7,7 @@
 #include"../Manager/Generic/InputManager.h"
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Decoration/SoundManager.h"
+#include"../Manager/Decoration/EffectManager.h"
 #include"../Object/Stage/Stage.h"
 #include "Game.h"
 
@@ -53,6 +54,8 @@ void Game::Init(void)
 
 	//音関係初期設定
 	InitSound();
+	//エフェクト関係初期化
+	InitEffect();
 }
 
 void Game::InitSound(void)
@@ -96,6 +99,17 @@ void Game::InitSound(void)
 	sndM.Add(SoundManager::TYPE::SE, "Damage",
 		rsM.Load(ResourceManager::SRC::DAMAGE_SE).handleId_);
 
+}
+
+void Game::InitEffect(void)
+{
+	ResourceManager& rsM = ResourceManager::GetInstance();
+	EffectManager& efcM = EffectManager::GetInstance();
+
+	//剣
+	efcM.Add("Sword", rsM.Load(ResourceManager::SRC::SWORD_EFC).handleId_);
+	//ダメージ
+	efcM.Add("Damage", rsM.Load(ResourceManager::SRC::DAMAGE_EFC).handleId_);
 }
 
 void Game::Update(void)

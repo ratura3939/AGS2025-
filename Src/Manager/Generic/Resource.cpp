@@ -1,5 +1,5 @@
 #include <DxLib.h>
-//#include <EffekseerForDXLib.h>
+#include <EffekseerForDXLib.h>
 #include "Resource.h"
 
 #include<fstream>
@@ -88,10 +88,10 @@ void Resource::Load(void)
 		handleId_=LoadSoundMem(path_.c_str());
 		break;
 
-	//case Resource::TYPE::EFFEKSEER:
+	case Resource::TYPE::EFFEKSEER:
 
-	//	handleId_ = LoadEffekseerEffect(path_.c_str());
-	//	break;
+		handleId_ = LoadEffekseerEffect(path_.c_str());
+		break;
 
 	}
 
@@ -168,10 +168,10 @@ void Resource::Release(void)
 	}
 		break;
 
-	//case Resource::TYPE::EFFEKSEER:
+	case Resource::TYPE::EFFEKSEER:
 
-	//	DeleteEffekseerEffect(handleId_);
-	//	break;
+		DeleteEffekseerEffect(handleId_);
+		break;
 
 	}
 
