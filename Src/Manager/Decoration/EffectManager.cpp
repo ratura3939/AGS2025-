@@ -17,9 +17,7 @@ EffectManager& EffectManager::GetInstance(void)
 }
 
 EffectManager::EffectManager(void) {
-	int i[NONE_MAX] = {};
 
-	//effectTest_.emplace(EFFECT::NONE,i);
 }
 
 void EffectManager::Add(const std::string& _name, int _data)
@@ -32,7 +30,7 @@ void EffectManager::Add(const std::string& _name, int _data)
 	effectRes_.emplace(_name, _data);
 }
 
-void EffectManager::Play(const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const std::string _sndName)
+void EffectManager::Play(const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed, const std::string& _sndName)
 {
 	//元データがないときは警告
 	if (effectRes_.find(_name) == effectRes_.end())assert("設定していないエフェクトを再生しようとしています。");
@@ -48,7 +46,7 @@ void EffectManager::Play(const std::string& _name, const VECTOR& _pos, const Qua
 	}
 
 	//各種設定同期
-	SyncEffect(_name, _pos, _qua, _size);
+	SyncEffect(_name, _pos, _qua, _size, _speed);
 
 	//効果音の再生
 		if (_sndName != "") {
@@ -64,7 +62,7 @@ void EffectManager::Stop(const std::string& _name)
 	StopEffekseer3DEffect(effectPlay_[_name]);
 }
 
-void EffectManager::SyncEffect(const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size)
+void EffectManager::SyncEffect(const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed)
 {
 	//その他各種設定
 	//大きさ
@@ -73,6 +71,8 @@ void EffectManager::SyncEffect(const std::string& _name, const VECTOR& _pos, con
 	SetRotationPlayingEffekseer3DEffect(effectPlay_[_name], _qua.ToEuler().x, _qua.ToEuler().y, _qua.ToEuler().z);
 	//位置
 	SetPosPlayingEffekseer3DEffect(effectPlay_[_name], _pos.x, _pos.y, _pos.z);
+	//速度
+	SetSpeedPlayingEffekseer3DEffect(effectPlay_[_name], _speed);
 }
 
 bool EffectManager::IsPlayEffect(const std::string& _name)

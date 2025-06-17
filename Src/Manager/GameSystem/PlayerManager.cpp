@@ -11,7 +11,7 @@ const std::string PlayerManager::ATTACK_NOMAL = "PlayerAttack";
 
 namespace {
 	int AtkScl = 70;
-	int AtkPow = 1;
+	int AtkPow = 30;
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//UŒ‚‘Š‘ÎÀ•W
 }
 

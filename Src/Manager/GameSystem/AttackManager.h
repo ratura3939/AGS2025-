@@ -34,6 +34,7 @@ public:
 	struct AttackInfo {
 		ATTACK_MASTER master;
 		ATTACK_TYPE type;
+		float pow;
 		float scale;		//”»’è‚Ì‘å‚«‚³
 		float totalMotion;	//ƒ‚[ƒVƒ‡ƒ“‘ŠÔ
 		float startAttack;	//UŒ‚”»’è”­¶ŠÔ

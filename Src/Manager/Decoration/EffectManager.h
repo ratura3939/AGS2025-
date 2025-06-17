@@ -36,8 +36,8 @@ public:
 	/// <param name="_size">大きさ</param>
 	/// <param name="_sound">効果音</param>
 	void Play(const std::string& _name,
-		const VECTOR& _pos, const Quaternion& _qua, const float& _size,
-		const std::string _sndName = "");
+		const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed = 1.0f,
+		const std::string& _sndName = "");
 
 	/// <summary>
 	/// エフェクトの再生停止
@@ -52,7 +52,7 @@ public:
 	/// <param name="_pos">位置情報</param>
 	/// <param name="_qua">回転情報</param>
 	/// <param name="_size">大きさ</param>
-	void SyncEffect(const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size);
+	void SyncEffect(const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size,const float& _speed);
 
 	/// <summary>
 	/// エフェクトの再生確認
@@ -72,8 +72,7 @@ private:
 
 	//エフェクトデータ格納用
 	std::unordered_map<std::string,int> effectRes_;	//初期データ
-	std::unordered_map<std::string,int> effectPlay_;	//再生データ
-	std::unordered_map<std::string, int> effectMax_;	//再生データの最大所持数
+	std::unordered_map<std::string,int> effectPlay_;//再生データ
 
 	//コンストラクタ＆デストラクタ
 	EffectManager(void);

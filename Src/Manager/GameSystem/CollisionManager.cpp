@@ -94,14 +94,16 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 		for (auto& enemy : _enemy) {
 			const VECTOR ePos = enemy.lock()->GetPos();
 			const VECTOR eHeadPos = enemy.lock()->GetHeight();
+			VECTOR eEfcpos = eHeadPos;
+			eEfcpos.y /= 2.0f;
 
 			//攻撃(球)とキャラクター(カプセル)の当たり判定
 			if (Utility::IsHitSphereCapsule(atkPos, atkRadius, ePos, eHeadPos, CharacterBase::CHARACTER_RADIUS)) {
 				//当たっていたら
-				enemy.lock()->Deth();
+				enemy.lock()->Damage(atkCol.info.pow);
 				SoundManager::GetInstance().Play("Damage");
-				//EffectManager::GetInstance().Play("Damage", ePos, enemy.lock()->GetQua(), 20.0f);
-				EffectManager::GetInstance().Play("Sword", ePos, enemy.lock()->GetQua(), 50.0f);
+				EffectManager::GetInstance().Play("Damage", eEfcpos, enemy.lock()->GetQua(), 15.0f, 2.5f);
+				EffectManager::GetInstance().Play("Sword", eEfcpos, enemy.lock()->GetQua(), 50.0f,1.5f);
 				//判定済みに
 				atkCol.info.isHit = true;
 			}

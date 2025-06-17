@@ -249,7 +249,7 @@ void Game::Update(void)
 
 void Game::Draw(void)
 {
-	//stage_->Draw();
+	stage_->Draw();
 	enemy_->Draw();
 	player_->Draw();
 

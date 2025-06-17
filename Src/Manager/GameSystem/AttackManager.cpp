@@ -22,6 +22,7 @@ void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type,
 	AttackInfo info = {};
 	info.master = ATTACK_MASTER::NONE;
 	info.type = _type;
+	info.pow = -1.0f;
 
 	info.isFriendFire = _friendFire;
 
@@ -53,6 +54,7 @@ void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _p
 	//î•ñ‚Ì’Ç‰Á
 	attackInfoes_[_name].scale = _scale;
 	attackInfoes_[_name].master = _master;
+	attackInfoes_[_name].pow = _pow;
 
 	//UŒ‚”»’è‚Ì¶¬
 	//Œ•‚Ìê‡

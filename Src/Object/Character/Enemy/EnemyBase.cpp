@@ -41,7 +41,7 @@ EnemyBase::EnemyBase(void)
 	stopTime_ = -1.0f; 
 	intervalCnt_ = INTERVAL_ATTACK_NOMAL;
 
-	hp_ = 5;
+	hp_ = ENEMY_HP;
 	moveSped_ = MOVE_POW;
 
 	isAlive_ = true;
