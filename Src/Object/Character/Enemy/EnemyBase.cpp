@@ -195,7 +195,7 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	//ƒvƒŒƒCƒ„[‚ªUŒ‚”ÍˆÍ“à‚©‚ÂUŒ‚‰Â”\‚ÈŠÔŠu‚ğŠJ‚¯‚Ä‚¢‚é‚Ì‚È‚ç
 	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
 		//UŒ‚‚·‚é
-		_atk.Attack(EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(RELATIVE_ATTACK_POS)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, SCALE_ATTACK_NOMAL);
+		_atk.Attack(EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(RELATIVE_ATTACK_POS)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, SCALE_ATTACK_NOMAL, "SwingSword");
 		animController_->Play("attack", SPEED_ANIM);
 		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 		intervalCnt_ = 0.0f;
@@ -402,6 +402,22 @@ const bool EnemyBase::IsAlive(void) const
 const void EnemyBase::SetAnimSpeedRate(const float _percent)
 {
 	animController_->ChangeSpeedRate(_percent);
+}
+
+void EnemyBase::Damage(const float _pow)
+{
+	//UŒ‚—Í•ªŒ¸‚ç‚·
+	hp_ -= static_cast<int>(_pow);
+	//í“¬ó‘Ô‚Å‚Í‚È‚©‚Á‚½‚ç
+	if (state_ != ENEMY_STATE::BATTLE) {
+		//í“¬ó‘Ô‚É
+		ChangeState(ENEMY_STATE::BATTLE);
+	}
+	//0ˆÈ‰º‚Ì‚Æ‚«
+	if (hp_ <= 0) {
+		//€–Sˆ—
+		Deth();
+	}
 }
 
 void EnemyBase::Deth(void)

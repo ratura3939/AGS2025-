@@ -30,7 +30,6 @@
     <ClCompile Include="Src\Manager\GameSystem\EnemyManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
-    <ClCompile Include="Src\Object\Attack\AttackBase.cpp" />
     <ClCompile Include="Src\Scene\GameOver.cpp" />
     <ClCompile Include="Src\Scene\GameClear.cpp" />
     <ClCompile Include="Src\Scene\Game.cpp" />
@@ -62,7 +61,6 @@
     <ClInclude Include="Src\Manager\GameSystem\EnemyManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\PlayerManager.h" />
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
-    <ClInclude Include="Src\Object\Attack\AttackBase.h" />
     <ClInclude Include="Src\Scene\GameOver.h" />
     <ClInclude Include="Src\Scene\GameClear.h" />
     <ClInclude Include="Src\Scene\Game.h" />

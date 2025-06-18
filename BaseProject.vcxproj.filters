@@ -96,9 +96,6 @@
     <ClCompile Include="Src\Scene\GameOver.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Attack\AttackBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -186,9 +183,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Scene\GameOver.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Attack\AttackBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Character\CharacterBase.h">

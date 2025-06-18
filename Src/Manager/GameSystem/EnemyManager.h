@@ -17,7 +17,7 @@ public:
 
 	//デバッグ用
 	static constexpr int ATTACK_TIME = 100;
-	static constexpr int ATTACK_TIME_START = 40;
+	static constexpr int ATTACK_TIME_START = 20;
 	static constexpr int ATTACK_TIME_END = 90;
 
 	static constexpr VECTOR INIT_1 = { 0.0f,0.0f,1000.0f };

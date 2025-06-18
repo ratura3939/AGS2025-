@@ -264,8 +264,8 @@ void Game::Release(void)
 
 void Game::AttackDataInit(void)
 {
-	atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, false, PlayerManager::ATTACK_TIME);
-	atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, false, EnemyManager::ATTACK_TIME, EnemyManager::ATTACK_TIME_START, EnemyManager::ATTACK_TIME_END);
+	atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD,false, false, PlayerManager::ATTACK_TIME);
+	atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, true,false, EnemyManager::ATTACK_TIME, EnemyManager::ATTACK_TIME_START, EnemyManager::ATTACK_TIME_END);
 }
 
 const int Game::DecideRockEnemy(void)
@@ -313,6 +313,6 @@ void Game::DrawDebug(void)
 
 	////player_->DrawDebug();
 	//enemy_->DrawDebug();
-	//atkMng_->DrawDebug();
+	atkMng_->DrawDebug();
 
 }

@@ -5,7 +5,6 @@
 #include<unordered_map>
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
-#include"../../Object/Attack/AttackBase.h"
 
 
 //class AttackBase;
@@ -30,11 +29,11 @@ public:
 		BOW,	//‹|(‰“‹——£)
 	};
 
-	//UŒ‚ŠÖ˜Aî•ñ
+	//UŒ‚Šî‘bî•ñ
 	struct AttackInfo {
-		ATTACK_MASTER master;
-		ATTACK_TYPE type;
-		float pow;
+		ATTACK_MASTER master;//UŒ‚‚Ìå
+		ATTACK_TYPE type;	//UŒ‚‚Ì‘®«
+		bool isCopy;		//•¡”¶¬‰Â”\‚©(ƒvƒŒƒCƒ„[‚Íˆê‘Ì‚È‚Ì‚Å•¡»‚Í‚µ‚È‚­‚Ä‚¢‚¢)
 		float scale;		//”»’è‚Ì‘å‚«‚³
 		float totalMotion;	//ƒ‚[ƒVƒ‡ƒ“‘ŠÔ
 		float startAttack;	//UŒ‚”»’è”­¶ŠÔ
@@ -60,12 +59,18 @@ public:
 		const bool IsOuccerAttack(void)const { return (counter >= startAttack) && (counter <= endAttack); }
 	};
 
+	//UŒ‚‚»‚Ì‚à‚Ì
+	struct AttackItself {
+		VECTOR pos;
+		float pow;
+	};
+
 	/// <summary>
 	/// “–‚½‚è”»’è‚Ég—p‚·‚éî•ñ‚ğ‚Ü‚Æ‚ß‚½‚à‚Ì
 	/// </summary>
 	struct AttackCollision {
 		AttackInfo& info;
-		std::weak_ptr<AttackBase> attack;
+		AttackItself& attack;
 	};
 
 	/// <summary>
@@ -78,8 +83,8 @@ public:
 	/// <param name="_modelId">ƒ‚ƒfƒ‹î•ñ(‹|ŒÀ’è)</param>
 	/// <param name="_start">”»’èŠJn</param>
 	/// <param name="_end">”»’èI—¹</param>
-	void AddAttack(const std::string _name, const ATTACK_TYPE& _type, const bool _friendFire,
-		const float _total, const int _modelId = -1, const float _start = 0.0f, const float _end = 0.0f);
+	void AddAttack(const std::string _name, const ATTACK_TYPE& _type, const bool _copy, const bool _friendFire,
+		const float _total, const float _start = 0.0f, const float _end = 0.0f, const int _modelId = -1);
 
 	/// <summary>
 	/// ”­¶
@@ -114,7 +119,7 @@ public:
 
 private:
 	std::unordered_map<std::string, AttackInfo>attackInfoes_;
-	std::unordered_map<std::string, std::shared_ptr<AttackBase>>activeAttacks_;
+	std::unordered_map<std::string, std::vector<AttackCollision>>activeAttacks_;
 
 	//std::vector<std::unique_ptr<Arrow>>arrows_;
 };

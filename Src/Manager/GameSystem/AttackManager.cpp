@@ -1,14 +1,14 @@
 #include<cassert>
+#include<map>
 #include"../../Object/Attack/Arrow.h"
-#include"../../Object/Attack/AttackBase.h"
 #include"../../Object/Character/CharacterBase.h"
 #include"../Decoration/SoundManager.h"
 
 #include "AttackManager.h"
 
 
-void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type, const bool _friendFire,
-	const float _total, const int _modelId, const float _start, const float _end)
+void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type, const bool _copy, const bool _friendFire,
+	const float _total, const float _start, const float _end,const int _modelId)
 {
 	//すでに要素があるとき
 	if (attackInfoes_.contains(_name)) {
@@ -22,7 +22,7 @@ void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type,
 	AttackInfo info = {};
 	info.master = ATTACK_MASTER::NONE;
 	info.type = _type;
-	info.pow = -1.0f;
+	info.isCopy = _copy;
 
 	info.isFriendFire = _friendFire;
 
@@ -45,30 +45,37 @@ void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _p
 		return;
 	}
 
-	//すでに攻撃中のなかに要素があるとき
-	if (activeAttacks_.contains(_name)) {
+	//コピー不可な攻撃が、すでに攻撃中のなかに要素があるとき
+	if (activeAttacks_.contains(_name) && !attackInfoes_[_name].isCopy) {
 		//そもそもあるので処理しない
 		return;
 	}
 
-	//情報の追加
-	attackInfoes_[_name].scale = _scale;
-	attackInfoes_[_name].master = _master;
-	attackInfoes_[_name].pow = _pow;
+	//追加する攻撃の作成
+	//情報部
+	AttackInfo addInfo = attackInfoes_[_name];
+	addInfo.scale = _scale;
+	addInfo.master = _master;
+	//攻撃部
+	AttackItself addAtk = { _pos,_pow };
+	//合わせたもの
+	AttackCollision addCol = { addInfo,addAtk };
+
 
 	//攻撃判定の生成
 	//剣の場合
-	if (attackInfoes_[_name].type == ATTACK_TYPE::SWORD) {
-		activeAttacks_.emplace(_name, std::make_shared<AttackBase>(_pos, _pow));
+	if (addInfo.type == ATTACK_TYPE::SWORD) {
+		//追加」
+		activeAttacks_[_name].push_back(addCol);
 	}
 	//弓の場合
-	else if (attackInfoes_[_name].type == ATTACK_TYPE::BOW) {
+	else if (addInfo.type == ATTACK_TYPE::BOW) {
 		//念のための予防策
 		if (_arrowModel == -1) {
 			assert("弓のモデルが設定されていません");
 		}
 		//弓矢の作成
-		//arrows_.push_back(std::make_unique<Arrow>(attackInfoes_[_name].master, _arrowModel, _pos, _pow, _qua));
+		//arrows_.push_back(std::make_unique<Arrow>(addInfo.master, _arrowModel, _pos, _pow, _qua));
 	}
 
 	//何か再生する物がある場合
@@ -82,27 +89,44 @@ void AttackManager::Attack(std::string _name, const float _pow, const VECTOR& _p
 bool AttackManager::Update(void)
 {
 	//削除項目記憶用
-	std::vector<std::string>deleteIndex;
+	std::map<std::string, std::vector<int>>deleteIdx;
 
 	//攻撃更新処理（アクティブになっている攻撃分）
 	for (auto& atk : activeAttacks_) {
-		AttackInfo& info = attackInfoes_[atk.first];
-		//カウンターが上限より上だったら
-		if (info.counter >= info.totalMotion) {
-			//終了
-			info.counter = 0;
-			info.isHit = false;
-			//削除項目に追加
-			deleteIndex.push_back(atk.first);
-			continue;
+		int idxCnt = 0;
+		for (auto& data : atk.second) {
+			AttackInfo& info = data.info;
+			//カウンターが上限より上だったら
+			if (info.counter >= info.totalMotion) {
+				//終了
+				info.counter = 0;
+				info.isHit = false;
+				//削除項目に追加
+				deleteIdx[atk.first].push_back(idxCnt);
+				continue;
+			}
+			//カウンターの更新
+			info.counter++;
+			//項目カウンターの更新
+			idxCnt++;
 		}
-		//カウンターの更新
-		info.counter++;
 	}
 
 	//削除
-	for (auto& idx : deleteIndex) {
-		activeAttacks_.erase(idx);
+	for (auto& idx : deleteIdx) {
+		//削除回数カウンタ(イテレーター用)
+		int deleteCnt = 0;
+		for (auto& vecIdx : idx.second) {
+			//削除処理
+			activeAttacks_[idx.first].erase(activeAttacks_[idx.first].begin() + vecIdx - deleteCnt);
+			//削除カウンタ増加
+			deleteCnt++;
+		}
+		//中身がなくなった場合
+		if (activeAttacks_[idx.first].size() <= 0) {
+			//項目そのものを削除
+			activeAttacks_.erase(idx.first);
+		}
 	}
 
 
@@ -119,9 +143,13 @@ bool AttackManager::Update(void)
 std::vector<AttackManager::AttackCollision> AttackManager::GetActiveAttacks(void)
 {
 	std::vector<AttackCollision>retVector;
+	//攻撃の項目数分
 	for (auto& atk : activeAttacks_) {
-		AttackCollision ret = { attackInfoes_[atk.first],atk.second };
-		retVector.push_back(ret);
+		//その項目名が使われている攻撃数分
+		for (auto& data : atk.second) {
+			//情報を入れる
+			retVector.push_back(data);
+		}
 	}
 
 	return retVector;
@@ -152,7 +180,10 @@ void AttackManager::DrawDebug(void)
 			else color = 0xff00ff;
 		}
 		//デバッグ用の球体を描画
-		DrawSphere3D(atk.second->GetPos(), static_cast<int>(info.scale), 8, color, color, false);
+		for (auto& data : atk.second) {
+			DrawSphere3D(data.attack.pos, static_cast<int>(info.scale), 8, color, color, false);
+		}
+		
 	}
 	
 }

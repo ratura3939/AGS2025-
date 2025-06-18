@@ -34,21 +34,6 @@ void PlayerManager::Init(void)
 
 void PlayerManager::Update(AttackManager& _atk)
 {
-	//TODO
-	// カメラのロックオンの処理の最適化
-
-	//if (IsRockOnTrg()) {
-	//	//ロックオン作動時
-	//	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::ROCKON);
-	//	character_->ChangeRockState(true);
-	//	_parent->DecideRockEnemy();
-	//}
-	//else if (IsRockOffTrg()) {
-	//	//ロックオン作終了時
-	//	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
-	//	character_->ChangeRockState(false);
-	//}
-
 	//状態管理
 	//通常じゃないとき
 	if (character_->GetState() != PlayerChara::STATE::NOMAL) {

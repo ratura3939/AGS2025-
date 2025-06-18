@@ -106,6 +106,7 @@ public:
     void SetState(const STATE& _state); //設定(PlayerManagerからの受付)
     void PlayAnim(const std::string _anim); //アニメーションの再生(外部<マネージャ・当たり判定>より)
     const bool IsRock(void);
+    void Damage(const float _pow)override;
 
     void DrawDebug(void)override;
 

@@ -127,6 +127,9 @@ public:
     /// </summary>
     /// <param name="_percent">パーセンテージ</param>
     const void SetAnimSpeedRate(const float _percent);
+
+    //ダメージ
+    void Damage(const float _pow)override;
     //死亡させる
     void Deth(void)override;
 

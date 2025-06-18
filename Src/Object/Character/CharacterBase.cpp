@@ -165,17 +165,6 @@ const bool CharacterBase::IsAlive(void) const
 	return hp_ > 0;
 }
 
-void CharacterBase::Damage(const float _pow)
-{
-	//UŒ‚—Í•ªŒ¸‚ç‚·
-	hp_ -= static_cast<int>(_pow);
-	//0ˆÈ‰º‚Ì‚Æ‚«
-	if (hp_ <= 0) {
-		//€–Sˆ—
-		Deth();
-	}
-}
-
 void CharacterBase::Deth(void)
 {
 	hp_ = 0;

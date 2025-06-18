@@ -31,6 +31,10 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 {
 	//敵の攻撃には前隙・後隙があるのでそれらの判定も込みで行う
 
+	const VECTOR pPos = _player.lock()->GetPos();
+	const VECTOR pHeadPos = _player.lock()->GetHeight();
+	VECTOR efcPos = pHeadPos;
+	efcPos.y /= 2.0f;
 
 	//攻撃の数だけ回す
 	for (auto& atkCol : _atks) {
@@ -42,11 +46,10 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 
 		//これ以降は攻撃の判定が可能な状態
 		//攻撃位置
-		const VECTOR atkPos = atkCol.attack.lock()->GetPos();
+		const VECTOR atkPos = atkCol.attack.pos;
 		const float atkRadius = atkCol.info.scale;
 
-		const VECTOR pPos = _player.lock()->GetPos();
-		const VECTOR pHeadPos = _player.lock()->GetHeight();
+		
 
 		//攻撃(球)とキャラクター(カプセル)の当たり判定
 		if (Utility::IsHitSphereCapsule(atkPos, atkRadius, pPos, pHeadPos, CharacterBase::CHARACTER_RADIUS)) {
@@ -65,8 +68,9 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 			//発生時間中に当たっていたら
 			if (atkCol.info.IsOuccerAttack()) {
 				//ダメージ
-				//_player.lock()->Deth();
-				SoundManager::GetInstance().Play("Damage");
+				_player.lock()->Damage(atkCol.attack.pow);
+				//ダメージエフェクト・SEの再生
+				EffectManager::GetInstance().Play("Damage", efcPos, _player.lock()->GetQua(), 15.0f, 2.5f, "Damage");
 				//判定済みに
 				atkCol.info.isHit = true;
 			}
@@ -87,22 +91,24 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 
 		//これ以降は攻撃の判定が可能な状態
 		//攻撃位置
-		const VECTOR atkPos = atkCol.attack.lock()->GetPos();
+		const VECTOR atkPos = atkCol.attack.pos;
 		const float atkRadius = atkCol.info.scale;
 
 		//敵の数だけ回す
 		for (auto& enemy : _enemy) {
 			const VECTOR ePos = enemy.lock()->GetPos();
 			const VECTOR eHeadPos = enemy.lock()->GetHeight();
+			//エフェクトの再生位置は胴体ぐらいの想定なので身長の半分くらい
 			VECTOR eEfcpos = eHeadPos;
 			eEfcpos.y /= 2.0f;
 
 			//攻撃(球)とキャラクター(カプセル)の当たり判定
 			if (Utility::IsHitSphereCapsule(atkPos, atkRadius, ePos, eHeadPos, CharacterBase::CHARACTER_RADIUS)) {
 				//当たっていたら
-				enemy.lock()->Damage(atkCol.info.pow);
-				SoundManager::GetInstance().Play("Damage");
-				EffectManager::GetInstance().Play("Damage", eEfcpos, enemy.lock()->GetQua(), 15.0f, 2.5f);
+				enemy.lock()->Damage(atkCol.attack.pow);
+				//ダメージエフェクト・SEの再生
+				EffectManager::GetInstance().Play("Damage", eEfcpos, enemy.lock()->GetQua(), 15.0f, 2.5f, "Damage");
+				//武器エフェクトの再生(現在は斬撃だけなので確定でこれを流すようになってる)
 				EffectManager::GetInstance().Play("Sword", eEfcpos, enemy.lock()->GetQua(), 50.0f,1.5f);
 				//判定済みに
 				atkCol.info.isHit = true;

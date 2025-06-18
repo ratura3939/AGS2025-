@@ -77,7 +77,7 @@ public:
 	virtual const bool IsAlive(void)const;
 
 	//ƒ_ƒ[ƒW‚ğ—^‚¦‚é
-	void Damage(const float _pow);
+	virtual void Damage(const float _pow) = 0;
 
 	//€–S‚³‚¹‚é
 	virtual void Deth(void);

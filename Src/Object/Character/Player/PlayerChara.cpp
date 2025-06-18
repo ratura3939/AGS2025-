@@ -92,6 +92,17 @@ const bool PlayerChara::IsRock(void)
 	return rState_==ROCK_STATE::ROCKON;
 }
 
+void PlayerChara::Damage(const float _pow)
+{
+	//UŒ‚—Í•ªŒ¸‚ç‚·
+	hp_ -= static_cast<int>(_pow);
+	//0ˆÈ‰º‚Ì‚Æ‚«
+	if (hp_ <= 0) {
+		//€–Sˆ—
+		Deth();
+	}
+}
+
 void PlayerChara::DrawDebug(void)
 {
 	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
