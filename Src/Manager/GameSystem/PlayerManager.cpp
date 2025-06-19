@@ -12,6 +12,7 @@ const std::string PlayerManager::ATTACK_NOMAL = "PlayerAttack";
 namespace {
 	int AtkScl = 70;
 	int AtkPow = 30;
+	int playerNum = 0;
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 }
 
@@ -29,7 +30,7 @@ void PlayerManager::Init(void)
 {
 	//キャラクター生成
 	character_ = std::make_shared<PlayerChara>();
-	character_->Init();
+	character_->Init(playerNum);
 }
 
 void PlayerManager::Update(AttackManager& _atk)
@@ -99,7 +100,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	//攻撃の生成
 	if (ins.IsTrigerrDown("attack")) {
 		//攻撃の生成および状態の設定
-		_atk.Attack(ATTACK_NOMAL, AtkPow, VAdd(character_->GetPos(), character_->GetQua().PosAxis(ATK_LOCAL_POS)), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, AtkScl, "SwingSword");
+		_atk.Attack("Player",ATTACK_NOMAL, AtkPow, VAdd(character_->GetPos(), character_->GetQua().PosAxis(ATK_LOCAL_POS)), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, AtkScl, "SwingSword");
 		character_->SetState(PlayerChara::STATE::ATTACK);
 		//対応するアニメーション
 		character_->PlayAnim("atkFirst");

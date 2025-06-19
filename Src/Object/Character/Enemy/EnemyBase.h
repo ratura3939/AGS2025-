@@ -94,7 +94,7 @@ public:
     EnemyBase(void);
     ~EnemyBase(void);
 
-    const bool Init(void)override;
+    const bool Init(const int _num)override;
     void Update(const VECTOR _pPos, AttackManager& _atk)override;
   
 protected:

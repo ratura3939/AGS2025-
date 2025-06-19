@@ -31,21 +31,23 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 {
 	//敵の攻撃には前隙・後隙があるのでそれらの判定も込みで行う
 
-	const VECTOR pPos = _player.lock()->GetPos();
-	const VECTOR pHeadPos = _player.lock()->GetHeight();
-	VECTOR efcPos = pHeadPos;
+	const VECTOR pPos = _player.lock()->GetPos();		//プレイヤー位置(足元)
+	const VECTOR pHeadPos = _player.lock()->GetHeight();//プレイヤー位置(頭上)
+	VECTOR efcPos = pHeadPos;							//エフェクト位置(胴体)
 	efcPos.y /= 2.0f;
+
+	const std::string name = _player.lock()->GetSpeciesName();	//個体名
 
 	//攻撃の数だけ回す
 	for (auto& atkCol : _atks) {
-		//攻撃がそもそも判定済み・同属の攻撃だった場合
-		if (atkCol.info.isHit == true || atkCol.info.master == atkM::ATTACK_MASTER::PLAYER) {
+		//攻撃が判定済み・同陣営の攻撃だった場合
+		if (atkCol.info.isHit == true || atkCol.info.group == atkM::ATTACK_MASTER::PLAYER) {
 			//次へ
 			continue;
 		}
 
 		//これ以降は攻撃の判定が可能な状態
-		//攻撃位置
+		//攻撃位置・大きさ
 		const VECTOR atkPos = atkCol.attack.pos;
 		const float atkRadius = atkCol.info.scale;
 
@@ -70,7 +72,7 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 				//ダメージ
 				_player.lock()->Damage(atkCol.attack.pow);
 				//ダメージエフェクト・SEの再生
-				EffectManager::GetInstance().Play("Damage", efcPos, _player.lock()->GetQua(), 15.0f, 2.5f, "Damage");
+				EffectManager::GetInstance().Play(name,"Damage", efcPos, _player.lock()->GetQua(), 15.0f, 2.5f, "Damage");
 				//判定済みに
 				atkCol.info.isHit = true;
 			}
@@ -84,7 +86,7 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 	//攻撃の数だけ回す
 	for (auto& atkCol : _atks) {
 		//攻撃がそもそも判定済み・同属の攻撃だった場合
-		if (atkCol.info.isHit == true || atkCol.info.master == atkM::ATTACK_MASTER::ENEMY) {
+		if (atkCol.info.isHit == true || atkCol.info.group == atkM::ATTACK_MASTER::ENEMY) {
 			//次へ
 			continue;
 		}
@@ -102,14 +104,16 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 			VECTOR eEfcpos = eHeadPos;
 			eEfcpos.y /= 2.0f;
 
+			const std::string name = enemy.lock()->GetSpeciesName();
+
 			//攻撃(球)とキャラクター(カプセル)の当たり判定
 			if (Utility::IsHitSphereCapsule(atkPos, atkRadius, ePos, eHeadPos, CharacterBase::CHARACTER_RADIUS)) {
 				//当たっていたら
 				enemy.lock()->Damage(atkCol.attack.pow);
 				//ダメージエフェクト・SEの再生
-				EffectManager::GetInstance().Play("Damage", eEfcpos, enemy.lock()->GetQua(), 15.0f, 2.5f, "Damage");
+				EffectManager::GetInstance().Play(name,"Damage", eEfcpos, enemy.lock()->GetQua(), 15.0f, 2.5f, "Damage");
 				//武器エフェクトの再生(現在は斬撃だけなので確定でこれを流すようになってる)
-				EffectManager::GetInstance().Play("Sword", eEfcpos, enemy.lock()->GetQua(), 50.0f,1.5f);
+				EffectManager::GetInstance().Play(name, "Sword", eEfcpos, enemy.lock()->GetQua(), 50.0f,1.5f);
 				//判定済みに
 				atkCol.info.isHit = true;
 			}

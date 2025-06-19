@@ -3,6 +3,7 @@
 #include<memory>
 #include<vector>
 #include<unordered_map>
+#include<map>
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
 
@@ -31,7 +32,7 @@ public:
 
 	//UŒ‚Šî‘bî•ñ
 	struct AttackInfo {
-		ATTACK_MASTER master;//UŒ‚‚Ìå
+		ATTACK_MASTER group;//UŒ‚‚Ìå‚Ìw‰c
 		ATTACK_TYPE type;	//UŒ‚‚Ì‘®«
 		bool isCopy;		//•¡”¶¬‰Â”\‚©(ƒvƒŒƒCƒ„[‚Íˆê‘Ì‚È‚Ì‚Å•¡»‚Í‚µ‚È‚­‚Ä‚¢‚¢)
 		float scale;		//”»’è‚Ì‘å‚«‚³
@@ -70,7 +71,7 @@ public:
 	/// </summary>
 	struct AttackCollision {
 		AttackInfo& info;
-		AttackItself& attack;
+		AttackItself attack;
 	};
 
 	/// <summary>
@@ -97,7 +98,7 @@ public:
 	/// <param name="_scale">‘å‚«‚³</param>
 	/// <param name="_sndName">Ä¶‚·‚éŒø‰Ê‰¹</param>
 	/// <param name="_arrowModel">–î‚Ìƒ‚ƒfƒ‹(‹|UŒ‚‚Ì‚İ)</param>
-	void Attack(std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _master, const float _scale, const std::string _sndName = "", const int _arrowModel = -1);
+	void Attack(const std::string _master,const std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _group, const float _scale, const std::string _sndName = "", const int _arrowModel = -1);
 
 	bool Update(void);
 
@@ -119,7 +120,10 @@ public:
 
 private:
 	std::unordered_map<std::string, AttackInfo>attackInfoes_;
-	std::unordered_map<std::string, std::vector<AttackCollision>>activeAttacks_;
+	/// <summary>
+	/// Š—LÒAUŒ‚–¼AUŒ‚î•ñ
+	/// </summary>
+	std::map<std::string,std::map<std::string, AttackCollision>>activeAttacks_;
 
 	//std::vector<std::unique_ptr<Arrow>>arrows_;
 };

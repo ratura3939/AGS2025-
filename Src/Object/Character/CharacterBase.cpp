@@ -160,6 +160,11 @@ const Quaternion CharacterBase::GetQua(void) const
 	return retRot;
 }
 
+const std::string CharacterBase::GetSpeciesName(void) const
+{
+	return speciesName_;
+}
+
 const bool CharacterBase::IsAlive(void) const
 {
 	return hp_ > 0;

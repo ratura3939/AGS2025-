@@ -33,7 +33,7 @@ public:
 	CharacterBase(void);
 	~CharacterBase(void);
 
-	virtual const bool Init(void) = 0;
+	virtual const bool Init(const int _num) = 0;
 	virtual void Update(void);
 	virtual void Update(const VECTOR _pPos, AttackManager& _atk);	//敵用(敵はキャラクター自身が行動を決めるのでそれ用に分けている)
 	virtual void Draw(void);
@@ -73,6 +73,9 @@ public:
 	//回転情報の取得
 	const Quaternion GetQua(void)const;
 
+	//個体名取得
+	const std::string GetSpeciesName(void)const;
+
 	//判定
 	virtual const bool IsAlive(void)const;
 
@@ -106,6 +109,9 @@ protected:
 
 	// ローカル回転
 	Quaternion quaRotLocal_;
+
+	//個体名
+	std::string speciesName_;   
 
 	//アニメーション
 	std::unique_ptr<AnimationController> animController_;

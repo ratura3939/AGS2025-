@@ -10,6 +10,7 @@
 
 PlayerChara::PlayerChara(void)
 {
+	speciesName_ = "Player";
 	focusPoint_ = Utility::VECTOR_ZERO;
 	rState_ = ROCK_STATE::MAX;
 	state_ = STATE::NOMAL;
@@ -20,7 +21,7 @@ PlayerChara::~PlayerChara(void)
 {
 }
 
-const bool PlayerChara::Init(void)
+const bool PlayerChara::Init(const int _num)
 {
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;
 	if (modelId_ == -1)return false;
@@ -29,6 +30,9 @@ const bool PlayerChara::Init(void)
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT),0.0f);
 
 	rState_ = ROCK_STATE::NOMAL;
+
+	//å¬ëÃñºìoò^
+	speciesName_ += std::to_string(_num);
 
 	//íçéãì_ÇÃê›íË
 	focusPoint_ = FOCUS_NOMAL;

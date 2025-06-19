@@ -23,6 +23,7 @@ namespace {
 
 EnemyBase::EnemyBase(void)
 {
+	speciesName_ = "Enemy";
 	serchCol_ = serchDebugCol;
 	alertCol_ = serchDebugCol2;
 	color_ = 0xffffff;
@@ -52,8 +53,11 @@ EnemyBase::~EnemyBase(void)
 {
 }
 
-const bool EnemyBase::Init(void)
+const bool EnemyBase::Init(const int _num)
 {
+	//ŒÂ‘Ì–¼“o˜^
+	speciesName_ += std::to_string(_num);
+
 
 	SetPram();
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
@@ -195,7 +199,7 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	//ƒvƒŒƒCƒ„[‚ªUŒ‚”ÍˆÍ“à‚©‚ÂUŒ‚‰Â”\‚ÈŠÔŠu‚ğŠJ‚¯‚Ä‚¢‚é‚Ì‚È‚ç
 	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
 		//UŒ‚‚·‚é
-		_atk.Attack(EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(RELATIVE_ATTACK_POS)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, SCALE_ATTACK_NOMAL, "SwingSword");
+		_atk.Attack(speciesName_,EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(RELATIVE_ATTACK_POS)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, SCALE_ATTACK_NOMAL, "SwingSword");
 		animController_->Play("attack", SPEED_ANIM);
 		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 		intervalCnt_ = 0.0f;

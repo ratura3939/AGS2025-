@@ -83,7 +83,7 @@ public:
     PlayerChara(void);
     ~PlayerChara(void);
 
-    const bool Init(void)override;
+    const bool Init(const int _num)override;
     void Update(void)override;
 
 private:

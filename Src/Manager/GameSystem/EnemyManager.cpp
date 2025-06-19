@@ -17,7 +17,7 @@ void EnemyManager::Init(void)
 {
 	for (int i = 0; i < ENEMY_NUM; i++) {
 		std::shared_ptr enemy = std::make_shared<EnemyBase>();
-		enemy->Init();
+		enemy->Init(i);
 		characters_.push_back(std::move(enemy));
 	}
 

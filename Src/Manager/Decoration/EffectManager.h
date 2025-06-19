@@ -3,6 +3,7 @@
 #include"SoundManager.h"
 #include"../../Common/Quaternion.h"
 #include<unordered_map>
+#include<map>
 #include<string>
 
 //無駄のないように要改善
@@ -35,7 +36,7 @@ public:
 	/// <param name="_qua">角度</param>
 	/// <param name="_size">大きさ</param>
 	/// <param name="_sound">効果音</param>
-	void Play(const std::string& _name,
+	void Play(const std::string _master, const std::string& _name,
 		const VECTOR& _pos, const Quaternion& _qua, const float& _size, const float& _speed = 1.0f,
 		const std::string& _sndName = "");
 
@@ -43,7 +44,7 @@ public:
 	/// エフェクトの再生停止
 	/// </summary>
 	/// <param name="_efc">エフェクト登録名</param>
-	void Stop(const std::string& _name);
+	void Stop(const std::string _master,const std::string& _name);
 
 	/// <summary>
 	/// エフェクトの各パラメータ同期
@@ -52,13 +53,11 @@ public:
 	/// <param name="_pos">位置情報</param>
 	/// <param name="_qua">回転情報</param>
 	/// <param name="_size">大きさ</param>
-	void SyncEffect(const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size,const float& _speed);
+	void SyncEffect(const std::string _master,const std::string& _name, const VECTOR& _pos, const Quaternion& _qua, const float& _size,const float& _speed,const int _idx);
 
-	/// <summary>
-	/// エフェクトの再生確認
-	/// </summary>
-	/// <param name="_efc">エフェクト登録名</param>
-	bool IsPlayEffect(const std::string& _name);
+
+	//更新処理
+	void Update(void);
 
 	//解放処理
 	void Release(void);
@@ -72,7 +71,7 @@ private:
 
 	//エフェクトデータ格納用
 	std::unordered_map<std::string,int> effectRes_;	//初期データ
-	std::unordered_map<std::string,int> effectPlay_;//再生データ
+	std::map<std::string,std::map<std::string,std::vector<int>>> effectPlay_;//再生データ
 
 	//コンストラクタ＆デストラクタ
 	EffectManager(void);
