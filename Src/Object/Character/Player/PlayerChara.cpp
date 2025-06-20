@@ -170,6 +170,10 @@ void PlayerChara::InitUI(void)
 {
 }
 
+void PlayerChara::DrawUI(void)
+{
+}
+
 void PlayerChara::Move(void)
 {
 	//ˆÚ“®‚ğs‚í‚È‚¢‚Æ‚«

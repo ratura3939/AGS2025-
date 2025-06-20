@@ -43,16 +43,10 @@ void EffectManager::Play(const std::string _master,const std::string& _name, con
 
 	//要素の追加
 	int addEfc = PlayEffekseer3DEffect(effectRes_[_name]);
-	if (!effectPlay_[_master].contains(_name)) {
-		effectPlay_[_master].emplace(_name, addEfc);
-	}
-	else {
-		effectPlay_[_master][_name].push_back(addEfc);
-	}
+	effectPlay_[_master][_name].push_back(addEfc);
 	
 
 	//各種設定同期
-	//１エフェクトをどうやって指定するか
 	SyncEffect(_master, _name, _pos, _qua, _size, _speed, effectPlay_[_master][_name].size() - 1);
 
 	//効果音の再生

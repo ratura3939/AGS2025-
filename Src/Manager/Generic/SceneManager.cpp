@@ -109,6 +109,7 @@ void SceneManager::Update(void)
 	{
   		scene_->Update();
 		SoundManager::GetInstance().Update();
+		EffectManager::GetInstance().Update();
 	}
 
 	// ƒJƒƒ‰XV

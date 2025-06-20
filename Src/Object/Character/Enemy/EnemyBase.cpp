@@ -364,6 +364,43 @@ void EnemyBase::DrawUI(void)
 		//「!」マークの描画
 		DrawBillboard3D(uiPos, 0.5f, 0.5f, FIND_UI_DRAW_SIZE, 0.0f, findImg_, true);
 	}
+
+	//HPボックス表示
+	//HPが０以下なら表示しない
+	if (hp_ <= 0) {
+		return;
+	}
+
+	//残量HPの割合
+	float hpPercent = hp_ / ENEMY_HP;
+	
+	//Hpカプセルの始点と終点の相対座標
+	VECTOR startPos = { -50.0f,0.0f,0.0f };
+	VECTOR endPos = { -50.0f + (100.0f * hpPercent),0.0f,0.0f };
+
+	//カメラ情報取得
+	auto& camera = SceneManager::GetInstance().GetCamera();
+
+	//カメラから敵位置へのベクトル
+	VECTOR angle = VSub(pos_, camera.GetPos());
+	//角度求める
+	float afterDeg = atan2(angle.x, angle.z);
+
+	//回転情報の生成
+	Quaternion qua = {};
+	qua = qua.AngleAxis(afterDeg, Utility::AXIS_Y);
+	//相対座標の回転
+	startPos = qua.PosAxis(startPos);
+	endPos = qua.PosAxis(endPos);
+
+	//実際の表示位置
+	VECTOR hpUIStartPos = VAdd(uiPos, startPos);
+	hpUIStartPos.y -= 50;
+	VECTOR hpUIEndPos = VAdd(uiPos, endPos);
+	hpUIEndPos.y -= 50;
+
+	//表示
+	DrawCapsule3D(hpUIStartPos, hpUIEndPos, 6, 4, 0xff5555, 0x000000, true);
 }
 
 void EnemyBase::SetColor(int _color)

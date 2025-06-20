@@ -51,6 +51,8 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 		const VECTOR atkPos = atkCol.attack.pos;
 		const float atkRadius = atkCol.info.scale;
 
+		const float DmgEfcScl = 15.0f;
+		const float DmgEfcSpeed = 2.5;
 		
 
 		//攻撃(球)とキャラクター(カプセル)の当たり判定
@@ -72,7 +74,7 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 				//ダメージ
 				_player.lock()->Damage(atkCol.attack.pow);
 				//ダメージエフェクト・SEの再生
-				EffectManager::GetInstance().Play(name,"Damage", efcPos, _player.lock()->GetQua(), 15.0f, 2.5f, "Damage");
+				EffectManager::GetInstance().Play(name,"Damage", efcPos, _player.lock()->GetQua(), DmgEfcScl, DmgEfcSpeed, "Damage");
 				//判定済みに
 				atkCol.info.isHit = true;
 			}
@@ -96,6 +98,12 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 		const VECTOR atkPos = atkCol.attack.pos;
 		const float atkRadius = atkCol.info.scale;
 
+		const float DmgEfcScl = 15.0f;
+		const float DmgEfcSpeed = 2.5;
+		const float SwordEfcScl = 50.0f;
+		const float SwordEfcSpeed = 1.5;
+
+
 		//敵の数だけ回す
 		for (auto& enemy : _enemy) {
 			const VECTOR ePos = enemy.lock()->GetPos();
@@ -111,9 +119,9 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 				//当たっていたら
 				enemy.lock()->Damage(atkCol.attack.pow);
 				//ダメージエフェクト・SEの再生
-				EffectManager::GetInstance().Play(name,"Damage", eEfcpos, enemy.lock()->GetQua(), 15.0f, 2.5f, "Damage");
+				EffectManager::GetInstance().Play(name,"Damage", eEfcpos, enemy.lock()->GetQua(), DmgEfcScl, DmgEfcSpeed, "Damage");
 				//武器エフェクトの再生(現在は斬撃だけなので確定でこれを流すようになってる)
-				EffectManager::GetInstance().Play(name, "Sword", eEfcpos, enemy.lock()->GetQua(), 50.0f,1.5f);
+				EffectManager::GetInstance().Play(name, "Sword", eEfcpos, enemy.lock()->GetQua(), SwordEfcScl, SwordEfcSpeed);
 				//判定済みに
 				atkCol.info.isHit = true;
 			}

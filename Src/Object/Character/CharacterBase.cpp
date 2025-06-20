@@ -73,9 +73,6 @@ void CharacterBase::UpdateRotQuat(void)
 	}
 }
 
-void CharacterBase::DrawUI(void)
-{
-}
 
 void CharacterBase::SetGoalRot(const float _rad)
 {

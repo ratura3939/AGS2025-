@@ -23,6 +23,8 @@ public:
 		SUSPECT_IMG,
 		FIND_IMG,
 		EXIT_IMG,
+		ROCKON_IMG,
+		ANNOUNCE_ROCKON_IMG,
 
 		//ƒ‚ƒfƒ‹
 		STAGE_MDL,

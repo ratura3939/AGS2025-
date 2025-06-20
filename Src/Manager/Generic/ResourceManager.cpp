@@ -77,12 +77,21 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::STAGE_MDL, res);
 
 	//UI
+	//?マーク
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Question.png");
 	resourcesMap_.emplace(SRC::SUSPECT_IMG, res);
+	//！マーク
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Exclamation.png");
 	resourcesMap_.emplace(SRC::FIND_IMG, res);
+	//HP
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Heart.png");
 	resourcesMap_.emplace(SRC::HEART_IMG, res);
+	//ターゲット予測
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_AnnounceRockOn.png");
+	resourcesMap_.emplace(SRC::ANNOUNCE_ROCKON_IMG, res);
+	//ロックオン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_RockOn.png");
+	resourcesMap_.emplace(SRC::ROCKON_IMG, res);
 
 	//音
 	//BGM

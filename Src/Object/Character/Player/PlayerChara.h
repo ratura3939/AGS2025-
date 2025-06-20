@@ -89,6 +89,7 @@ public:
 private:
     void InitAnim(void)override;
     void InitUI(void)override;
+    void DrawUI(void)override;
     void Move(void);    //ˆÚ“®ˆ—
     const std::string DecideAnim(const MOVE_DIR _dir)const;
 

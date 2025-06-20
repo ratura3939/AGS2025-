@@ -47,7 +47,7 @@ protected:
 	void UpdateRotQuat(void);
 	//**********************************************
 	//UI•`‰æ
-	virtual void DrawUI(void);
+	virtual void DrawUI(void) = 0;
 
 	//‰ñ“]–Ú•WŠp“x
 	void SetGoalRot(const float _rad);
