@@ -60,6 +60,21 @@ public:
 	//アニメのスピードの設定
 	void SetAnimSpeedRate(const float _percent);
 
+	/// <summary>
+	/// ロックオンされる可能性のある敵をセット
+	/// </summary>
+	/// <param name="_num">敵番号</param>
+	void SetTargetEnemy(const int _num);
+
+	/// <summary>
+	/// ロックオン対象になるような敵がいないときに起こる処理
+	/// </summary>
+	/// <param name=""></param>
+	void NoTargetEnemy(void);
+
+	//ロックオンされた処理
+	void LokedOn(const int _num);
+
 	void DrawDebug(void);
 private:
 	std::vector<std::shared_ptr<EnemyBase>> characters_;

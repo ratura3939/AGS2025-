@@ -15,6 +15,7 @@
 Game::Game(void)
 {
 	nearEnemyNum_ = -1;
+	preNearEnemyNum_ = -1;
 	isSlowEffect_ = false;
 	slowCnt_ = -1;
 	nextBgmVol_ = 0;
@@ -34,7 +35,6 @@ void Game::Init(void)
 	//敵
 	enemy_ = std::make_unique<EnemyManager>();
 	enemy_->Init();
-	nearEnemyNum_ = -1;
 
 	//攻撃
 	atkMng_ = std::make_unique<AttackManager>();
@@ -92,7 +92,7 @@ void Game::InitSound(void)
 		rsM.Load(ResourceManager::SRC::SWING_SWORD_SE).handleId_);
 	//ロックオン
 	sndM.Add(SoundManager::TYPE::SE, "RockOn",
-		rsM.Load(ResourceManager::SRC::ROCK_ON_SE).handleId_);
+		rsM.Load(ResourceManager::SRC::LOCK_ON_SE).handleId_);
 	//プレイヤーを発見
 	sndM.Add(SoundManager::TYPE::SE, "FindPlayer",
 		rsM.Load(ResourceManager::SRC::FIND_PLAYER_SE).handleId_);
@@ -207,12 +207,30 @@ void Game::Update(void)
 	//TODO
 	// カメラのロックオンの処理の最適化
 	//ロックオン関係
+	
+	//下準備
+	//対象の検索
+	preNearEnemyNum_ = nearEnemyNum_;	//保存
+	nearEnemyNum_ = DecideRockEnemy();	//新規検索
+	
+	//カメラ非ロックオン時
+	if (camera.GetMode() != Camera::MODE::LOCKON) {
+		//ロックオン対象が変わったとき
+		if (preNearEnemyNum_ != nearEnemyNum_) {
+			//更新処理
+			enemy_->SetTargetEnemy(nearEnemyNum_);
+		}
+		//対象となる敵がいないとき
+		if (nearEnemyNum_ < 0) {
+			enemy_->NoTargetEnemy();
+		}
+	}
+
+	//ロックオン処理
 	//押下時
 	if (InputManager::GetInstance().IsTrigerrDown("rock")) {
-		//敵がいるとき
+		//敵が存在するとき
 		if (enemy_->GetEnemys().size() > 0) {
-			//対象の検索
-			nearEnemyNum_ = DecideRockEnemy();
 			//近くに敵がいるとき
 			if (nearEnemyNum_ >= 0) {
 				SoundManager::GetInstance().Play("RockOn");
@@ -227,13 +245,14 @@ void Game::Update(void)
 	}
 
 	//カメラがロックオン状態のとき敵がいなかったら
-	if (camera.GetMode() == Camera::MODE::ROCKON && DecideRockEnemy() < 0) {
+	if (camera.GetMode() == Camera::MODE::LOCKON && nearEnemyNum_ < 0) {
 		//各種状態の変化
 		RockOff();
 	}
 
+#pragma region カメラ更新
 	//カメラの設定
-	camera.SetFollow(player_->GetPos(),player_->GetQua());		//追従対象の更新
+	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象の更新
 
 	Camera::MODE mode = camera.GetMode();
 	//追従時
@@ -241,9 +260,10 @@ void Game::Update(void)
 		camera.SetFocusPos(player_->GetFocusPoint());//注視点の更新
 	}
 	//ロックオン時
-	else if (mode == Camera::MODE::ROCKON){
+	else if (mode == Camera::MODE::LOCKON) {
 		camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));	//ロックオン対象の設定
 	}
+#pragma endregion
 	
 }
 
@@ -292,15 +312,19 @@ void Game::FinishSwitchBgm(void)
 void Game::RockOn(void)
 {
 	Camera& camera = SceneManager::GetInstance().GetCamera();
-	player_->RockOn();
-	camera.ChangeMode(Camera::MODE::ROCKON);
+	player_->LockOn();
+	enemy_->LokedOn(nearEnemyNum_);
+	camera.ChangeMode(Camera::MODE::LOCKON);
 }
 
 void Game::RockOff(void)
 {
 	Camera& camera = SceneManager::GetInstance().GetCamera();
-	player_->RockOff();
+	player_->LockOff();
+	enemy_->NoTargetEnemy();
 	camera.ChangeMode(Camera::MODE::FOLLOW);
+	//対象をキャンセルしたとみなし初期化する
+	nearEnemyNum_ = -1;
 }
 
 

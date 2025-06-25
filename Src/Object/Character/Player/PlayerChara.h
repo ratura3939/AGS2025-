@@ -57,7 +57,7 @@ public:
     //ロックオン時状態にあるかどうか
     enum class ROCK_STATE {
         NOMAL,  //通常
-        ROCKON, //ロックオン
+        LOCKON, //ロックオン
         MAX
     };
 
@@ -124,5 +124,8 @@ private:
     //入力受付変数
     MOVE_DIR moveDir_;  //移動方向
     bool isDush_;        //走る
+
+    //UI関連
+    int hpImg_;
 };
 

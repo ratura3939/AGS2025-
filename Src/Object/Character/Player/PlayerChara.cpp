@@ -55,7 +55,7 @@ const bool PlayerChara::Init(const int _num)
 void PlayerChara::Update(void)
 {
 	//ほかにアクション行動していないときのみ
-	if (state_ == STATE::NOMAL || rState_ == ROCK_STATE::ROCKON) {
+	if (state_ == STATE::NOMAL || rState_ == ROCK_STATE::LOCKON) {
 		Move();
 		Rotation();
 	}
@@ -71,7 +71,7 @@ const VECTOR PlayerChara::GetFocusPoint(void) const
 
 void PlayerChara::ChangeRockState(const bool _state)
 {
-	if (_state)rState_ = ROCK_STATE::ROCKON;
+	if (_state)rState_ = ROCK_STATE::LOCKON;
 	else rState_ = ROCK_STATE::NOMAL;
 }
 
@@ -93,7 +93,7 @@ void PlayerChara::PlayAnim(const std::string _anim)
 
 const bool PlayerChara::IsRock(void)
 {
-	return rState_==ROCK_STATE::ROCKON;
+	return rState_==ROCK_STATE::LOCKON;
 }
 
 void PlayerChara::Damage(const float _pow)
@@ -168,6 +168,9 @@ void PlayerChara::InitAnim(void)
 
 void PlayerChara::InitUI(void)
 {
+	ResourceManager& rsM = ResourceManager::GetInstance();
+	//HP
+	hpImg_ = rsM.Load(ResourceManager::SRC::HEART_IMG).handleId_;
 }
 
 void PlayerChara::DrawUI(void)
@@ -219,7 +222,7 @@ void PlayerChara::Move(void)
 		seName = "Dush";
 	}
 	//ロックオンの時
-	if (rState_ == ROCK_STATE::ROCKON)speed = MOVE_POW;
+	if (rState_ == ROCK_STATE::LOCKON)speed = MOVE_POW;
 
 
 	//移動処理
@@ -229,7 +232,7 @@ void PlayerChara::Move(void)
 	pos_.y = 0.0f;
 
 	//ロックオンのとき
-	if (rState_ == ROCK_STATE::ROCKON) {
+	if (rState_ == ROCK_STATE::LOCKON) {
 		//ロックオン特有の角度設定
 		VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();			//ロックオン対象位置	
 		VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
@@ -256,7 +259,7 @@ const std::string PlayerChara::DecideAnim(const MOVE_DIR _dir) const
 	if(isDush_)retAnim = "dushF";
 
 	//ロックオンのとき
-	if (rState_ == ROCK_STATE::ROCKON) {
+	if (rState_ == ROCK_STATE::LOCKON) {
 		if (_dir == MOVE_DIR::LEFT) {
 			retAnim = "dushL";
 		}

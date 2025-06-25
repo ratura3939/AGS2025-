@@ -83,12 +83,12 @@ const VECTOR PlayerManager::GetFocusPoint(void)
 }
 
 
-void PlayerManager::RockOn(void)
+void PlayerManager::LockOn(void)
 {
 	character_->ChangeRockState(true);
 }
 
-void PlayerManager::RockOff(void)
+void PlayerManager::LockOff(void)
 {
 	character_->ChangeRockState(false);
 }

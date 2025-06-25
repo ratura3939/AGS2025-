@@ -6,6 +6,7 @@
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Manager/Decoration/EffectManager.h"
 #include"../../../Manager/GameSystem/EnemyManager.h"
+#include"../../UI/EnemyUIController.h"
 #include"../../../Utility/Utility.h"
 #include "EnemyBase.h"
 
@@ -79,6 +80,7 @@ const bool EnemyBase::Init(const int _num)
 	InitAnim();
 	animController_->Play("idle", SPEED_ANIM);
 
+
 	//UI初期化
 	InitUI();
 
@@ -114,13 +116,9 @@ void EnemyBase::InitAnim(void)
 
 void EnemyBase::InitUI(void)
 {
-	ResourceManager& rsM = ResourceManager::GetInstance();
-	suspectImg_ = rsM.Load(ResourceManager::SRC::SUSPECT_IMG).handleId_;
-	findImg_ = rsM.Load(ResourceManager::SRC::FIND_IMG).handleId_;
-
-	//UI関連変数初期化
-	suspectEx_ = 0.0f;
-	findUICnt_ = 0.0f;
+	//UIコントローラー初期化
+	uiCntl_ = std::make_unique<EnemyUIController>();
+	uiCntl_->Init();
 }
 
 
@@ -152,7 +150,6 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 	//視界内なら
 	if (deg <= FIELD_VISION_DEG_HALF &&
 		distance <= FIELD_VISION_DISTANCE) {
-		suspectEx_ += SUSPECT_EXT_ACC;
 		//一定時間いたら
 		if (suspectEx_ >= SUSPECT_EXT_MAX) {
 			//戦闘状態に
@@ -160,10 +157,7 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 		}
 	}
 	else {
-		suspectEx_ -= SUSPECT_EXT_ACC;
-		if (suspectEx_ <= 0.0f) {
-			suspectEx_ = 0.0f;
-		}
+		
 	}
 	//プレイヤーが索敵範囲外に出たら
 	if (distance > ALERT_DISTANCE) {
@@ -187,7 +181,6 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 
 	//カウンタ増加(ゲーム更新スピード)
 	intervalCnt_+=SceneManager::GetInstance().GetUpdateSpeedRate_();	
-	findUICnt_ += SceneManager::GetInstance().GetUpdateSpeedRate_();;
 
 	//判定
 	//プレイヤーが索敵範囲外にでたら
@@ -318,7 +311,6 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		update_ = &EnemyBase::UpdateSearch;
 		move_ = &EnemyBase::MoveSearch;
 		moveSped_ = MOVE_POW;
-		suspectEx_ = 0.0f;
 		//待機アニメーション
 		animController_->Play("idle", SPEED_ANIM);
 
@@ -330,7 +322,6 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		update_ = &EnemyBase::UpdateBattle;
 		move_ = &EnemyBase::MoveBattle;
 		moveSped_ = MOVE_POW_FIND;
-		findUICnt_ = 0.0f;
 		SoundManager::GetInstance().Play("FindPlayer");
 
 		serchCol_ = alertDebugCol;
@@ -356,51 +347,18 @@ void EnemyBase::DrawUI(void)
 	//頭位置
 	uiPos.y = 250.0f;
 
-	if (state_ == ENEMY_STATE::SEARCH) {
-		//「?」マークの描画
-		DrawBillboard3D(uiPos, 0.5f,0.5f, suspectEx_, 0.0f, suspectImg_, true);
-	}
-	if (state_ == ENEMY_STATE::BATTLE && findUICnt_ <= FIND_UI_DRAW_TIME) {
-		//「!」マークの描画
-		DrawBillboard3D(uiPos, 0.5f, 0.5f, FIND_UI_DRAW_SIZE, 0.0f, findImg_, true);
-	}
+	//発見マーク
 
 	//HPボックス表示
-	//HPが０以下なら表示しない
-	if (hp_ <= 0) {
-		return;
+	if (hp_ >= 0) {
+		
 	}
 
-	//残量HPの割合
-	float hpPercent = hp_ / ENEMY_HP;
-	
-	//Hpカプセルの始点と終点の相対座標
-	VECTOR startPos = { -50.0f,0.0f,0.0f };
-	VECTOR endPos = { -50.0f + (100.0f * hpPercent),0.0f,0.0f };
-
-	//カメラ情報取得
-	auto& camera = SceneManager::GetInstance().GetCamera();
-
-	//カメラから敵位置へのベクトル
-	VECTOR angle = VSub(pos_, camera.GetPos());
-	//角度求める
-	float afterDeg = atan2(angle.x, angle.z);
-
-	//回転情報の生成
-	Quaternion qua = {};
-	qua = qua.AngleAxis(afterDeg, Utility::AXIS_Y);
-	//相対座標の回転
-	startPos = qua.PosAxis(startPos);
-	endPos = qua.PosAxis(endPos);
-
-	//実際の表示位置
-	VECTOR hpUIStartPos = VAdd(uiPos, startPos);
-	hpUIStartPos.y -= 50;
-	VECTOR hpUIEndPos = VAdd(uiPos, endPos);
-	hpUIEndPos.y -= 50;
-
-	//表示
-	DrawCapsule3D(hpUIStartPos, hpUIEndPos, 6, 4, 0xff5555, 0x000000, true);
+	//ロックオン関係UI
+	//自身がロックオン対象だったら
+	if (isLockTarget_) {
+		
+	}
 }
 
 void EnemyBase::SetColor(int _color)

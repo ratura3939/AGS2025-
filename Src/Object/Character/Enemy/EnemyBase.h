@@ -5,6 +5,7 @@
 //よって更新に関わるカウンターはSceneManagerのupdateSpeedRateを参照する
 
 class Game;
+class EnemyUIController;
 
 class EnemyBase :
     public CharacterBase
@@ -51,16 +52,9 @@ public:
 #pragma endregion
 
 #pragma region UI関連
-    static constexpr int SUSPECT_UI_SIZE_X = 117;
-    static constexpr int SUSPECT_UI_SIZE_Y = 201;
-    static constexpr int FIND_UI_SIZE_X = 89;
-    static constexpr int FIND_UI_SIZE_Y = 204;
+ 
 
-    static constexpr float SUSPECT_EXT_MAX = 60.0f;
-    static constexpr float SUSPECT_EXT_ACC = 1.0f;
-
-    static constexpr float FIND_UI_DRAW_TIME = 30.0f;
-    static constexpr float FIND_UI_DRAW_SIZE = 50.0f;
+   
 
 #pragma endregion
 
@@ -128,6 +122,9 @@ public:
     /// <param name="_percent">パーセンテージ</param>
     const void SetAnimSpeedRate(const float _percent);
 
+    void SetIsLockTraget(const bool _flag) { isLockTarget_ = _flag; }
+    void SetIsLocked(const bool _flag) { isLocked_ = _flag; }
+
     //ダメージ
     void Damage(const float _pow)override;
     //死亡させる
@@ -144,6 +141,8 @@ private:
     Update_f update_;   //更新関数
     Move_f move_;       //移動関数
 
+    std::unique_ptr<EnemyUIController>uiCntl_;
+
     VECTOR preStayPos_; //前回停止位置
     float moveOneTime_; //一回の移動量
     float moveSped_;    //１フレームでの移動量
@@ -155,11 +154,7 @@ private:
     bool isAlive_;     //削除していいか
     ENEMY_STATE state_;//状態
 
-    //UI
-    int suspectImg_;//疑問画像
-    int findImg_;   //発見画像
-    float suspectEx_; //拡大率
-    float findUICnt_;   //発見を表示し続けるカウンター
+
 
     //デバッグ用
     int color_;

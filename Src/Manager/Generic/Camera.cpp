@@ -71,7 +71,7 @@ void Camera::SetBeforeDraw(void)
 		SetBeforeDrawFollow();
 		break;
 
-	case MODE::ROCKON:
+	case MODE::LOCKON:
 		SetBeforeDrawRockOn();
 		break;
 

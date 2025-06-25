@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\UI\Enemy\EnemyFind.cpp" />
+    <ClCompile Include="Src\Object\UI\Enemy\EnemyTargetting.cpp" />
+    <ClCompile Include="Src\Object\UI\Enemy\EnemyHp.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\Decoration\SoundManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\AnimationController.cpp" />
@@ -30,6 +33,7 @@
     <ClCompile Include="Src\Manager\GameSystem\EnemyManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
+    <ClCompile Include="Src\Object\UI\Player\PlayerHp.cpp" />
     <ClCompile Include="Src\Scene\GameOver.cpp" />
     <ClCompile Include="Src\Scene\GameClear.cpp" />
     <ClCompile Include="Src\Scene\Game.cpp" />
@@ -48,8 +52,15 @@
     <ClCompile Include="Src\Scene\Title.cpp" />
     <ClCompile Include="Src\Utility\Utility.cpp" />
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
+    <ClCompile Include="Src\Object\UI\CharacterUIController.cpp" />
+    <ClCompile Include="Src\Object\UI\EnemyUIController.cpp" />
+    <ClCompile Include="Src\Object\UI\PlayerUIController.cpp" />
+    <ClCompile Include="Src\Object\UI\UIBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\UI\Enemy\EnemyFind.h" />
+    <ClInclude Include="Src\Object\UI\Enemy\EnemyTargetting.h" />
+    <ClInclude Include="Src\Object\UI\Enemy\EnemyHp.h" />
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
     <ClInclude Include="Src\Manager\Decoration\SoundManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\AnimationController.h" />
@@ -61,6 +72,7 @@
     <ClInclude Include="Src\Manager\GameSystem\EnemyManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\PlayerManager.h" />
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
+    <ClInclude Include="Src\Object\UI\Player\PlayerHp.h" />
     <ClInclude Include="Src\Scene\GameOver.h" />
     <ClInclude Include="Src\Scene\GameClear.h" />
     <ClInclude Include="Src\Scene\Game.h" />
@@ -79,6 +91,10 @@
     <ClInclude Include="Src\Scene\Title.h" />
     <ClInclude Include="Src\Utility\Utility.h" />
     <ClInclude Include="Src\Object\Stage\Stage.h" />
+    <ClInclude Include="Src\Object\UI\CharacterUIController.h" />
+    <ClInclude Include="Src\Object\UI\EnemyUIController.h" />
+    <ClInclude Include="Src\Object\UI\PlayerUIController.h" />
+    <ClInclude Include="Src\Object\UI\UIBase.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -57,7 +57,8 @@ private:
 	std::unique_ptr<CollisionManager>collision_;	//判定関連
 	std::unique_ptr<Stage>stage_;					//ステージ
 
-	int nearEnemyNum_;
+	int nearEnemyNum_;		//ロックオン対象の配列番号
+	int preNearEnemyNum_;	//ロックオン対象の配列番号(１フレーム前)
 	bool isSlowEffect_;	//スロー演出フラグ
 	int slowCnt_;		//スロー演出カウンタ
 

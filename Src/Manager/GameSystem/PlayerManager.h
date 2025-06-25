@@ -38,8 +38,8 @@ public:
 	const bool IsAlive(void)const;
 
 	//ロックオン・オフ時に必要な処理
-	void RockOn(void);
-	void RockOff(void);
+	void LockOn(void);
+	void LockOff(void);
 
 private:
 	/// <summary>

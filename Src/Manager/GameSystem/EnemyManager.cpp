@@ -166,6 +166,41 @@ void EnemyManager::SetAnimSpeedRate(const float _percent)
 	}
 }
 
+void EnemyManager::SetTargetEnemy(const int _num)
+{
+	//ˆø”ˆÈŠO‚Ì•¨‚ğ‰ğœ‚µ‚Â‚Âİ’è
+	bool setFlag = false;
+
+	for (int i = 0; i < static_cast<int>(characters_.size()); i++) {
+		setFlag = false;
+		if (i == _num)setFlag = true;
+		//İ’è
+		characters_[i]->SetIsLockTraget(setFlag);
+	}
+}
+
+void EnemyManager::NoTargetEnemy(void)
+{
+	for (int i = 0; i < static_cast<int>(characters_.size()); i++) {
+		//İ’è
+		characters_[i]->SetIsLockTraget(false);
+		characters_[i]->SetIsLocked(false);
+	}
+}
+
+void EnemyManager::LokedOn(const int _num)
+{
+	//ˆø”ˆÈŠO‚Ì•¨‚ğ‰ğœ‚µ‚Â‚Âİ’è
+	bool setFlag = false;
+
+	for (int i = 0; i < static_cast<int>(characters_.size()); i++) {
+		setFlag = false;
+		if (i == _num)setFlag = true;
+		//İ’è
+		characters_[i]->SetIsLocked(setFlag);
+	}
+}
+
 void EnemyManager::DrawDebug(void)
 {
 	//‚¢‚È‚©‚Á‚½‚çˆ—‚µ‚È‚¢

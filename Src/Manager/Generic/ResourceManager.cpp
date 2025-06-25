@@ -88,10 +88,10 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::HEART_IMG, res);
 	//ターゲット予測
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_AnnounceRockOn.png");
-	resourcesMap_.emplace(SRC::ANNOUNCE_ROCKON_IMG, res);
+	resourcesMap_.emplace(SRC::ANNOUNCE_LOCKON_IMG, res);
 	//ロックオン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_RockOn.png");
-	resourcesMap_.emplace(SRC::ROCKON_IMG, res);
+	resourcesMap_.emplace(SRC::LOCKON_IMG, res);
 
 	//音
 	//BGM
@@ -111,7 +111,7 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::SWING_SWORD_SE, res);
 	//ロックオン
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "RockOn.mp3");
-	resourcesMap_.emplace(SRC::ROCK_ON_SE, res);
+	resourcesMap_.emplace(SRC::LOCK_ON_SE, res);
 	//敵が発見！
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "FindPlayer.mp3");
 	resourcesMap_.emplace(SRC::FIND_PLAYER_SE, res);
