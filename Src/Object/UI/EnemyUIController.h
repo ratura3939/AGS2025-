@@ -12,7 +12,7 @@ public:
 
     void Init(void)override;
     void Update(void)override;
-    void Draw(void)override;
+    void Draw(const EnemyUI _type);
     void Release(void)override;
 
 private:

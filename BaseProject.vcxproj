@@ -56,6 +56,7 @@
     <ClCompile Include="Src\Object\UI\EnemyUIController.cpp" />
     <ClCompile Include="Src\Object\UI\PlayerUIController.cpp" />
     <ClCompile Include="Src\Object\UI\UIBase.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\UIManager2d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\UI\Enemy\EnemyFind.h" />
@@ -95,6 +96,7 @@
     <ClInclude Include="Src\Object\UI\EnemyUIController.h" />
     <ClInclude Include="Src\Object\UI\PlayerUIController.h" />
     <ClInclude Include="Src\Object\UI\UIBase.h" />
+    <ClInclude Include="Src\Manager\Decoration\UIManager2d.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
