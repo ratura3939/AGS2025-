@@ -150,11 +150,11 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 	//視界内なら
 	if (deg <= FIELD_VISION_DEG_HALF &&
 		distance <= FIELD_VISION_DISTANCE) {
-		//一定時間いたら
-		if (suspectEx_ >= SUSPECT_EXT_MAX) {
-			//戦闘状態に
-			ChangeState(ENEMY_STATE::BATTLE);
-		}
+		////一定時間いたら
+		//if (suspectEx_ >= SUSPECT_EXT_MAX) {
+		//	//戦闘状態に
+		//	ChangeState(ENEMY_STATE::BATTLE);
+		//}
 	}
 	else {
 		
@@ -356,9 +356,9 @@ void EnemyBase::DrawUI(void)
 
 	//ロックオン関係UI
 	//自身がロックオン対象だったら
-	if (isLockTarget_) {
+	/*if (isLockTarget_) {
 		
-	}
+	}*/
 }
 
 void EnemyBase::SetColor(int _color)

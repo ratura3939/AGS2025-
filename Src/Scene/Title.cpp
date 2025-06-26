@@ -7,7 +7,9 @@
 #include "../Manager/Generic/InputManager.h"
 #include "../Manager/Generic/Camera.h"
 #include "../Manager/Decoration/SoundManager.h"
+#include "../Manager/Decoration/UIManager2d.h"
 #include "Title.h"
+
 
 //ここでしか使わない物たち用
 namespace {
@@ -46,7 +48,7 @@ Title::~Title(void)
 
 void Title::Init(void)
 {
-
+	UIManager2d& uiM = UIManager2d::GetInstance();
 	// カメラモード：定点カメラ
 	//SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
 
@@ -55,7 +57,22 @@ void Title::Init(void)
 	deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;
 	deviceImgs_[static_cast<int>(DEVICE::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_IMG).handleId_;
 	arrowImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::ARROW_DOWN_IMG).handleId_;
-	exitImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::EXIT_IMG).handleId_;
+
+
+
+	//描画位置
+	int screenHX = Application::SCREEN_SIZE_X / 2;
+	int screenHY = Application::SCREEN_SIZE_Y / 2;
+	VECTOR exitPos = { screenHX, screenHY + ((DEVICE_SIZE * EXTEND_IMG / 2) + (ICON_SIZE_Y / 2)) ,0.0f };
+
+	uiM.Add("exit", ResourceManager::GetInstance().Load(ResourceManager::SRC::EXIT_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::ZOOM_INOUT);
+	uiM.SetUIInfo("exit", exitPos, 1.0f);
+	uiM.SetUIDirectionPram("exit", UIManager2d::UI_DIRECTION_GROUP::ZOOM, EXIT_EXTEND_ACC, EXIT_EXTEND_MAX, EXIT_EXTEND_MIN);
+
+	uiM.PushUIDirection("exit", UIManager2d::UI_DIRECTION_2D::MOVE_LEFT);
+	uiM.PushUIDirection("exit", UIManager2d::UI_DIRECTION_2D::MOVE_RIGHT);
+	uiM.SetUIDirectionPram("exit", UIManager2d::UI_DIRECTION_GROUP::MOVE, 2, 40, -40);
+	//exitImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::EXIT_IMG).handleId_;
 
 
 	font_ = CreateFontToHandle(NULL, SIZE_FONT, THICK_FONT, DX_FONTTYPE_EDGE);
@@ -189,14 +206,18 @@ void Title::SelectDeviceUpdate(void)
 		SoundManager::GetInstance().Play("Cursur");
 	}
 
+	UIManager2d& uiM = UIManager2d::GetInstance();
+
 	//「戻る」選択中
 	if (selectExit_) {
-		//アイコンの大きさに変更を加える
-		exitExtend_ += extendAcc_;
-		if (exitExtend_ <= EXIT_EXTEND_MIN || exitExtend_ >= EXIT_EXTEND_MAX) {
-			//加算方向を逆方向へ
-			extendAcc_ *= -1.0f;
-		}
+		////アイコンの大きさに変更を加える
+		//exitExtend_ += extendAcc_;
+		//if (exitExtend_ <= EXIT_EXTEND_MIN || exitExtend_ >= EXIT_EXTEND_MAX) {
+		//	//加算方向を逆方向へ
+		//	extendAcc_ *= -1.0f;
+		//}
+
+		uiM.Update("exit");
 	}
 	else {
 		//何かしらコントローラーが選択されているとき
@@ -231,6 +252,8 @@ void Title::DrawLogo(void)
 
 void Title::DrawDevice(void)
 {
+	UIManager2d& uiM = UIManager2d::GetInstance();
+
 	int screenHX = Application::SCREEN_SIZE_X / 2;
 	int screenHY = Application::SCREEN_SIZE_Y / 2;
 
@@ -261,6 +284,8 @@ void Title::DrawDevice(void)
 	DrawRotaGraph(drawX, drawY, EXTEND_IMG, 0.0f, deviceImgs_[static_cast<int>(DEVICE::PAD)], true);
 
 
+	uiM.Draw("exit");
+
 	//戻るアイコン
-	DrawRotaGraph(screenHX, screenHY+ ((DEVICE_SIZE * EXTEND_IMG / 2)+ (ICON_SIZE_Y / 2)), exitExtend_, 0.0f, exitImg_, true);
+	//DrawRotaGraph(screenHX, screenHY+ ((DEVICE_SIZE * EXTEND_IMG / 2)+ (ICON_SIZE_Y / 2)), exitExtend_, 0.0f, exitImg_, true);
 }

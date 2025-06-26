@@ -8,7 +8,7 @@ class UIManager2d
 {
 public:
 	//UIの演出
-	enum class UI_EFFECT_2D {
+	enum class UI_DIRECTION_2D {
 		NOMAL,		//通常
 		MOVE_UP,	//上移動
 		MOVE_DOWN,	//下移動
@@ -27,15 +27,31 @@ public:
 		FLASHING,	//点滅		
 	};
 
+	enum class UI_DIRECTION_GROUP {
+		NONE,
+		MOVE,		//移動
+		ZOOM,		//拡大縮小
+		ROTATION,	//回転
+		GRADUALLY,	//透明・不透明(Transpercentがもともと使われていたので「徐々に」という英単語にした)
+	};
+
+	/// <summary>
+	/// 描画に必要なもの
+	/// </summary>
 	struct UIInfo {
 		VECTOR pos;	//位置
 		float scl;	//大きさ
 		float deg;	//角度
 		float alpha;//透明度
+	};
 
-		float speed;	//移動速度
-		float rotPow;	//回転速度
-		float alphaAcc;	//透明度増加量
+	//演出一つにつき必要なもの
+	struct DirectionInfo {
+		UI_DIRECTION_2D type;	//演出種類
+		float pow;	//今までの加算量
+		float acc;	//加算量
+		float max;	//最大値
+		float min;	//最小値
 	};
 
 	static constexpr float ALPHA_MAX = 255.0f;
@@ -52,14 +68,38 @@ public:
 	/// <param name="_name">登録名</param>
 	/// <param name="_imgHndl">描画する画像</param>
 	/// <param name="_type">演出</param>
-	void Add(const std::string& _name, const int _imgHndl, UI_EFFECT_2D _type);
+	void Add(const std::string& _name, const int _imgHndl, UI_DIRECTION_2D _type);
 
 	/// <summary>
 	/// 演出追加
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	/// <param name="_type">追加する演出</param>
-	void AddOption(const std::string& _name, UI_EFFECT_2D _type);
+	void PushUIDirection(const std::string& _name, UI_DIRECTION_2D _type);
+	/// <summary>
+	/// 直近で追加した演出を削除
+	/// </summary>
+	/// <param name="_name"></param>
+	void PopUIDirection(const std::string& _name);
+
+	/// <summary>
+	/// 描画基礎情報設定
+	/// </summary>
+	/// <param name="_name">登録名</param>
+	/// <param name="_pos">描画位置(中心座標)</param>
+	/// <param name="_scale">大きさ</param>
+	/// <param name="_deg">角度</param>
+	/// <param name="_alpha">透明度</param>
+	void SetUIInfo(const std::string& _name, const VECTOR _pos, const float _scale = 1.0f, const float _deg = 0.0f, const float _alpha = ALPHA_MAX);
+
+	/// <summary>
+	/// UI演出用情報設定
+	/// </summary>
+	/// <param name="_name">登録名</param>
+	/// <param name="_acc">加速度</param>
+	/// <param name="_max">最大値</param>
+	/// <param name="_min">最小値</param>
+	void SetUIDirectionPram(const std::string& _name, const UI_DIRECTION_GROUP _group, const float _acc, const float _max, const float _min);
 
 	//更新
 	void Update(const std::string _name);				//単体更新
@@ -69,33 +109,51 @@ public:
 	void Draw(const std::string _name);					//単体描画
 	void Draw(const std::vector<std::string> _names);	//複数描画
 
+	//解放
+	void Relese(void);
+
+	//消去
+	void Destroy(void);
+
 private:
 	//インスタンス用
 	static UIManager2d* instance_;
 
-	std::map<std::string, int>images_;	//描画画像格納
-	std::map<std::string, UIInfo>infoes_;	//UIに関わる情報
+	std::map<std::string, int>images_;				//描画画像格納
+	std::map<std::string, UIInfo>infoes_;			//UIの描画に関わる情報
+	std::map<std::string, std::vector<DirectionInfo>>direcInfoes_;	//UIの演出に関わる情報
 
 
-	using Update_UI = void(UIManager2d::*)(const std::string);
-	std::map<std::string, Update_UI>updates_;	//UI更新処理
+	using Update_UI = void(UIManager2d::*)(const std::string&, DirectionInfo& _direcInfo);
+	std::map<std::string, std::vector<Update_UI>>updates_;	//UI更新処理
+
+	/// <summary>
+	/// 演出の大まかな種類を取得
+	/// </summary>
+	/// <param name="_name">登録名</param>
+	/// <returns>グループ</returns>
+	const UI_DIRECTION_GROUP GetDirectionGroup(const std::string _name);
+	//種類版
+	const UI_DIRECTION_GROUP GetDirectionGroup(const UI_DIRECTION_2D _type);
 
 	/// <summary>
 	/// 移動処理
 	/// </summary>
 	/// <param name="_name">登録名</param>
-	void Move(const std::string _name);
+	void Move(const std::string& _name, DirectionInfo& _direcInfo);
+
+	void Zoom(const std::string& _name, DirectionInfo& _direcInfo);
 
 	/// <summary>
 	/// 回転処理
 	/// </summary>
 	/// <param name="_name">登録名</param>
-	void Rotation(const std::string _name);
+	void Rotation(const std::string& _name, DirectionInfo& _direcInfo);
 
 	/// <summary>
 	/// アルファ値調整
 	/// </summary>
 	/// <param name="_name">登録名</param>
-	void AlphaAcc(const std::string _name);
+	void AlphaAcc(const std::string& _name, DirectionInfo& _direcInfo);
 };
 

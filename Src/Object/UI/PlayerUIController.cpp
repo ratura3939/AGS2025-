@@ -8,7 +8,7 @@ void PlayerUIController::Update(void)
 {
 }
 
-void PlayerUIController::Draw(void)
+void PlayerUIController::Draw(const PlayerUI _type)
 {
 }
 

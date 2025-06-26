@@ -8,7 +8,7 @@ void EnemyUIController::Update(void)
 {
 }
 
-void EnemyUIController::Draw(void)
+void EnemyUIController::Draw(const EnemyUI _type)
 {
 }
 

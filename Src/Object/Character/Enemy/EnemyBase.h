@@ -122,8 +122,8 @@ public:
     /// <param name="_percent">パーセンテージ</param>
     const void SetAnimSpeedRate(const float _percent);
 
-    void SetIsLockTraget(const bool _flag) { isLockTarget_ = _flag; }
-    void SetIsLocked(const bool _flag) { isLocked_ = _flag; }
+    //void SetIsLockTraget(const bool _flag) { isLockTarget_ = _flag; }
+    //void SetIsLocked(const bool _flag) { isLocked_ = _flag; }
 
     //ダメージ
     void Damage(const float _pow)override;

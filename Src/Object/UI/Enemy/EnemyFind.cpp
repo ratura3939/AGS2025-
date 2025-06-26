@@ -39,14 +39,14 @@ bool EnemyFind::Update(void)
 
 void EnemyFind::Draw(void)
 {
-	if (state_ == ENEMY_STATE::SEARCH) {
-		//「?」マークの描画
-		DrawBillboard3D(drawPos_, 0.5f, 0.5f, suspectEx_, 0.0f, suspectImg_, true);
-	}
-	if (state_ == ENEMY_STATE::BATTLE && findUICnt_ <= FIND_UI_DRAW_TIME) {
-		//「!」マークの描画
-		DrawBillboard3D(drawPos_, 0.5f, 0.5f, FIND_UI_DRAW_SIZE, 0.0f, findImg_, true);
-	}
+	//if (state_ == ENEMY_STATE::SEARCH) {
+	//	//「?」マークの描画
+	//	DrawBillboard3D(drawPos_, 0.5f, 0.5f, suspectEx_, 0.0f, suspectImg_, true);
+	//}
+	//if (state_ == ENEMY_STATE::BATTLE && findUICnt_ <= FIND_UI_DRAW_TIME) {
+	//	//「!」マークの描画
+	//	DrawBillboard3D(drawPos_, 0.5f, 0.5f, FIND_UI_DRAW_SIZE, 0.0f, findImg_, true);
+	//}
 }
 
 void EnemyFind::Reset(void)

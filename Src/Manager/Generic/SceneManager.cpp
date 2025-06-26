@@ -8,6 +8,7 @@
 #include "../../Scene/GameOver.h"
 #include"../Decoration/EffectManager.h"
 #include"../Decoration/SoundManager.h"
+#include"../Decoration/UIManager2d.h"
 #include "ResourceManager.h"
 #include "Camera.h"
 #include "SceneManager.h"
@@ -38,6 +39,9 @@ void SceneManager::Init(void)
 	//エフェクト・サウンドの生成
 	SoundManager::CreateInstance();
 	EffectManager::CreateInstance();
+
+	//UIマネージャの生成
+	UIManager2d::CreateInstance();
 
 	fader_ = new Fader();
 	fader_->Init();
@@ -149,6 +153,7 @@ void SceneManager::Destroy(void)
 	//エフェクト・サウンドの削除
 	SoundManager::GetInstance().Destroy();
 	EffectManager::GetInstance().Destroy();
+	UIManager2d::GetInstance().Destroy();
 
 	scene_->Release();
 	delete scene_;
@@ -247,10 +252,12 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 {
 	auto& resM = ResourceManager::GetInstance();
 	auto& sndM = SoundManager::GetInstance();
+	auto& uiM = UIManager2d::GetInstance();
 
 	// リソースの解放
 	resM.Release();
 	sndM.Release();
+	uiM.Relese();
 
 
 	// シーンを変更する

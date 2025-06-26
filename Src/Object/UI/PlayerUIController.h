@@ -10,7 +10,7 @@ public:
 
     void Init(void)override;
     void Update(void)override;
-    void Draw(const PlayerUI _);
+    void Draw(const PlayerUI _type);
     void Release(void)override;
 
 private:

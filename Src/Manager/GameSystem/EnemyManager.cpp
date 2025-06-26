@@ -175,7 +175,7 @@ void EnemyManager::SetTargetEnemy(const int _num)
 		setFlag = false;
 		if (i == _num)setFlag = true;
 		//Ý’è
-		characters_[i]->SetIsLockTraget(setFlag);
+		//characters_[i]->SetIsLockTraget(setFlag);
 	}
 }
 
@@ -183,8 +183,8 @@ void EnemyManager::NoTargetEnemy(void)
 {
 	for (int i = 0; i < static_cast<int>(characters_.size()); i++) {
 		//Ý’è
-		characters_[i]->SetIsLockTraget(false);
-		characters_[i]->SetIsLocked(false);
+		//characters_[i]->SetIsLockTraget(false);
+		//characters_[i]->SetIsLocked(false);
 	}
 }
 
@@ -197,7 +197,7 @@ void EnemyManager::LokedOn(const int _num)
 		setFlag = false;
 		if (i == _num)setFlag = true;
 		//Ý’è
-		characters_[i]->SetIsLocked(setFlag);
+		//characters_[i]->SetIsLocked(setFlag);
 	}
 }
 
