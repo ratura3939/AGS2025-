@@ -89,7 +89,6 @@ void UIManager2d::SetUIDirectionPram(const std::string& _name, const UI_DIRECTIO
 		info.max = _max;
 		info.min = _min;
 
-
 		//â¡ë¨Ç™ïâÇÃï˚å¸ÇÃï®ÇΩÇøÇÕêÊÇ…ê›íËÇµÇƒÇ®Ç≠
 		auto direcType = info.type;
 		if (direcType == UI_DIRECTION_2D::MOVE_UP ||
@@ -102,6 +101,11 @@ void UIManager2d::SetUIDirectionPram(const std::string& _name, const UI_DIRECTIO
 	}
 
 	
+}
+
+void UIManager2d::SetPos(const std::string& _name, const VECTOR& _pos)
+{
+	infoes_[_name].pos = _pos;
 }
 
 void UIManager2d::Update(const std::string _name)
@@ -127,14 +131,16 @@ void UIManager2d::Update(const std::vector<std::string> _names)
 void UIManager2d::Draw(const std::string _name)
 {
 	auto info = infoes_[_name];
+	//Ç§Ç¡Ç∑ÇÁçïÇ≠Ç∑ÇÈ
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, info.alpha);
 	DrawRotaGraph(info.pos.x, info.pos.y, info.scl, info.deg / 180.0f, images_[_name], true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
 void UIManager2d::Draw(const std::vector<std::string> _names)
 {
 	for (auto& name : _names) {
-		auto info = infoes_[name];
-		DrawRotaGraph(info.pos.x, info.pos.y, info.scl, info.deg / 180.0f, images_[name], true);
+		Draw(name);	//íPëÃï`âÊÇ…ìnÇ∑ÅB
 	}
 }
 
@@ -256,6 +262,7 @@ void UIManager2d::Zoom(const std::string& _name, DirectionInfo& _direcInfo)
 	auto direcType = _direcInfo.type;
 
 	afterScl += _direcInfo.acc;
+	_direcInfo.pow += _direcInfo.acc;
 
 	//êßå¿
 	//à⁄ìÆè„å¿ÅEâ∫å¿ÇÃê›íË
@@ -278,11 +285,12 @@ void UIManager2d::Rotation(const std::string& _name, DirectionInfo& _direcInfo)
 	auto direcType = _direcInfo.type;
 
 	afterDeg += _direcInfo.acc;
+	_direcInfo.pow += _direcInfo.acc;
 
 	//êßå¿
 	//à⁄ìÆè„å¿ÅEâ∫å¿ÇÃê›íË
-	if (afterDeg >= _direcInfo.max ||
-		afterDeg <= _direcInfo.min) {
+	if (_direcInfo.pow >= _direcInfo.max ||
+		_direcInfo.pow <= _direcInfo.min) {
 		//åJÇËï‘ÇµèàóùÇ»ÇÁÇŒâ¡éZï˚å¸ÇãtÇ…
 		if (_direcInfo.type == UI_DIRECTION_2D::ROT_CRADLE) {
 			_direcInfo.acc *= -1.0f;
@@ -300,6 +308,7 @@ void UIManager2d::AlphaAcc(const std::string& _name, DirectionInfo& _direcInfo)
 	auto direcType = _direcInfo.type;
 
 	afterAlpha += _direcInfo.acc;
+	_direcInfo.pow += _direcInfo.acc;
 
 	//êßå¿
 	//à⁄ìÆè„å¿ÅEâ∫å¿ÇÃê›íË

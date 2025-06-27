@@ -1,8 +1,8 @@
 #include "EnemyHp.h"
-#include"../../../Manager/Generic/SceneManager.h"
-#include"../../../Manager/Generic/Camera.h"
-#include"../../../Common/Quaternion.h"
-#include"../../../Utility/Utility.h"
+#include"../../Manager/Generic/SceneManager.h"
+#include"../../Manager/Generic/Camera.h"
+#include"../../Common/Quaternion.h"
+#include"../../Utility/Utility.h"
 
 EnemyHp::EnemyHp(void)
 {

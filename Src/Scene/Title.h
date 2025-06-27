@@ -14,6 +14,7 @@ public:
 
 	static constexpr int SIZE_FONT = 32;	//フォントの大きさ
 	static constexpr int THICK_FONT = 4;	//フォントの太さ
+	
 
 	// コンストラクタ
 	Title(void);
@@ -22,6 +23,7 @@ public:
 	~Title(void);
 
 	void Init(void) override;
+	void InitUI(void);
 
 private:
 	void InitSound(void)override;
@@ -35,19 +37,13 @@ public:
 private:
 
 	int logoImg_;	//ロゴ
-	int arrowImg_;	//矢印
-	int exitImg_;	//「戻る」アイコン
 	int deviceImgs_[static_cast<int>(DEVICE::MAX)];	//コントローラー画像
 
 	bool isSelectDevice_;	//コントローラー選択中かどうか
 	bool selectDevice_[static_cast<int>(DEVICE::MAX)];//選ばれているか
 	bool selectExit_;	//「戻る」が選択されているかどうか
 
-	float exitExtend_;	//「戻る」の大きさ倍率
-	float extendAcc_;	//倍率加算
-
-	int arrowJumpPow_;	//ちょっとした演出用の差分
-	int jumpAcc_;		//上記の動き用
+	VECTOR allowPos_[static_cast<int>(DEVICE::MAX)];
 
 	int font_;			//フォント
 

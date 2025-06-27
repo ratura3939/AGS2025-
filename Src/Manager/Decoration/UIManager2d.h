@@ -48,7 +48,7 @@ public:
 	//演出一つにつき必要なもの
 	struct DirectionInfo {
 		UI_DIRECTION_2D type;	//演出種類
-		float pow;	//今までの加算量
+		float pow;	//今までの加算量（主にRotationとMoveで使用、開始時その状態を０として扱うため上限下限に注意が必要）
 		float acc;	//加算量
 		float max;	//最大値
 		float min;	//最小値
@@ -100,6 +100,8 @@ public:
 	/// <param name="_max">最大値</param>
 	/// <param name="_min">最小値</param>
 	void SetUIDirectionPram(const std::string& _name, const UI_DIRECTION_GROUP _group, const float _acc, const float _max, const float _min);
+
+	void SetPos(const std::string& _name,const VECTOR& _pos);
 
 	//更新
 	void Update(const std::string _name);				//単体更新

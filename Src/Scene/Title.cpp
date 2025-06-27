@@ -25,6 +25,10 @@ namespace {
 	int JUMP_POW_MAX = 0;	//動き幅(上限)
 	int JUMP_POW_MIN = -60;//動き幅(下限)
 	int JUMP_ACC = -5;	//矢印動き用
+
+	//各種UI登録名
+	std::string UI_EXIT_STR = "exit";
+	std::string UI_ALLOW_STR = "allow";
 }
 
 Title::Title(void)
@@ -35,11 +39,6 @@ Title::Title(void)
 	selectDevice_[static_cast<int>(DEVICE::KEY)] = true;
 	selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
 	selectExit_ = false;
-	exitExtend_ = 1.0f;
-	extendAcc_ = EXIT_EXTEND_ACC;
-
-	arrowJumpPow_ = 0;
-	jumpAcc_ = JUMP_ACC;
 }
 
 Title::~Title(void)
@@ -48,7 +47,6 @@ Title::~Title(void)
 
 void Title::Init(void)
 {
-	UIManager2d& uiM = UIManager2d::GetInstance();
 	// カメラモード：定点カメラ
 	//SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
 
@@ -56,31 +54,53 @@ void Title::Init(void)
 	logoImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::START_LOGO).handleId_;
 	deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;
 	deviceImgs_[static_cast<int>(DEVICE::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_IMG).handleId_;
-	arrowImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::ARROW_DOWN_IMG).handleId_;
 
+	//UI初期化
+	InitUI();
 
-
-	//描画位置
-	int screenHX = Application::SCREEN_SIZE_X / 2;
-	int screenHY = Application::SCREEN_SIZE_Y / 2;
-	VECTOR exitPos = { screenHX, screenHY + ((DEVICE_SIZE * EXTEND_IMG / 2) + (ICON_SIZE_Y / 2)) ,0.0f };
-
-	uiM.Add("exit", ResourceManager::GetInstance().Load(ResourceManager::SRC::EXIT_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::ZOOM_INOUT);
-	uiM.SetUIInfo("exit", exitPos, 1.0f);
-	uiM.SetUIDirectionPram("exit", UIManager2d::UI_DIRECTION_GROUP::ZOOM, EXIT_EXTEND_ACC, EXIT_EXTEND_MAX, EXIT_EXTEND_MIN);
-
-	uiM.PushUIDirection("exit", UIManager2d::UI_DIRECTION_2D::MOVE_LEFT);
-	uiM.PushUIDirection("exit", UIManager2d::UI_DIRECTION_2D::MOVE_RIGHT);
-	uiM.SetUIDirectionPram("exit", UIManager2d::UI_DIRECTION_GROUP::MOVE, 2, 40, -40);
-	//exitImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::EXIT_IMG).handleId_;
-
-
+	
 	font_ = CreateFontToHandle(NULL, SIZE_FONT, THICK_FONT, DX_FONTTYPE_EDGE);
 
 	update_ = &Title::NomalUpdate;
 
 	//音関係初期化
 	InitSound();
+}
+
+void Title::InitUI(void)
+{
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	ResourceManager& rsM = ResourceManager::GetInstance();
+	using UI_DIREC = UIManager2d::UI_DIRECTION_2D;
+	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
+
+	//描画位置
+	int screenHX = Application::SCREEN_SIZE_X / 2;
+	int screenHY = Application::SCREEN_SIZE_Y / 2;
+	//戻るアイコン描画位置
+	VECTOR exitPos = { screenHX, screenHY + ((DEVICE_SIZE * EXTEND_IMG / 2) + (ICON_SIZE_Y / 2)) ,0.0f };
+	VECTOR alPos = {};
+
+	//矢印位置
+	alPos.x= screenHX - (DEVICE_SIZE * EXTEND_IMG / 2) - (MARGIN_SIZE * EXTEND_IMG);
+	alPos.y = screenHY - ((DEVICE_SIZE * EXTEND_IMG / 2) + (ICON_SIZE_Y / 2));
+	alPos.z = 0.0f;
+	//キーボード時の矢印
+	allowPos_[static_cast<int>(DEVICE::KEY)] = alPos;
+
+	alPos.x = screenHX + (DEVICE_SIZE * EXTEND_IMG / 2) + (MARGIN_SIZE * EXTEND_IMG);
+	//PAD時の矢印
+	allowPos_[static_cast<int>(DEVICE::PAD)] = alPos;
+
+	//矢印アイコン
+	uiM.Add(UI_ALLOW_STR, rsM.Load(ResourceManager::SRC::ARROW_DOWN_IMG).handleId_, UI_DIREC::UP_DOWN);	//追加
+	uiM.SetUIInfo(UI_ALLOW_STR, allowPos_[static_cast<int>(DEVICE::KEY)], 1.0f);						//基礎設定
+	uiM.SetUIDirectionPram(UI_ALLOW_STR, UI_GROUP::MOVE, JUMP_ACC, JUMP_POW_MAX, JUMP_POW_MIN);			//詳細設定
+	//戻るアイコン
+	uiM.Add(UI_EXIT_STR, rsM.Load(ResourceManager::SRC::EXIT_IMG).handleId_, UI_DIREC::ZOOM_INOUT);		//追加
+	uiM.SetUIInfo(UI_EXIT_STR, exitPos, 1.0f);															//基礎設定
+	uiM.SetUIDirectionPram(UI_EXIT_STR, UI_GROUP::ZOOM, EXIT_EXTEND_ACC, EXIT_EXTEND_MAX, EXIT_EXTEND_MIN);//詳細設定
+
 }
 
 void Title::InitSound(void)
@@ -149,6 +169,7 @@ void Title::SelectDeviceUpdate(void)
 {
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
+	UIManager2d& uiM = UIManager2d::GetInstance();
 	//決定
 	if (ins.IsTrigerrDown("action"))
 	{
@@ -182,12 +203,18 @@ void Title::SelectDeviceUpdate(void)
 		//右はPADなのでそれを選択に
 		selectDevice_[static_cast<int>(DEVICE::KEY)] = false;
 		selectDevice_[static_cast<int>(DEVICE::PAD)] = true;
+		//UI位置設定
+		uiM.SetPos(UI_ALLOW_STR, allowPos_[static_cast<int>(DEVICE::PAD)]);
+		//カーソル移動音
 		SoundManager::GetInstance().Play("Cursur");
 	}
 	else if(ins.IsTrigerrDown("left")) {
 		//左ははKEYなのでそれを選択に
 		selectDevice_[static_cast<int>(DEVICE::KEY)] = true;
 		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
+		//UI位置設定
+		uiM.SetPos(UI_ALLOW_STR, allowPos_[static_cast<int>(DEVICE::KEY)]);
+		//カーソル移動音
 		SoundManager::GetInstance().Play("Cursur");
 	}
 	if (ins.IsTrigerrDown("down") && !selectExit_) {
@@ -195,6 +222,7 @@ void Title::SelectDeviceUpdate(void)
 		selectDevice_[static_cast<int>(DEVICE::KEY)] = false;
 		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
 		selectExit_ = true;
+		//カーソル移動音
 		SoundManager::GetInstance().Play("Cursur");
 	}
 	if(ins.IsTrigerrDown("up") && selectExit_) {
@@ -202,31 +230,20 @@ void Title::SelectDeviceUpdate(void)
 		selectDevice_[static_cast<int>(DEVICE::KEY)] = true;
 		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
 		selectExit_ = false;
-		exitExtend_ = 1.0f;
+		//UI位置設定
+		uiM.SetPos(UI_ALLOW_STR, allowPos_[static_cast<int>(DEVICE::KEY)]);
+		//カーソル移動音
 		SoundManager::GetInstance().Play("Cursur");
 	}
 
-	UIManager2d& uiM = UIManager2d::GetInstance();
-
 	//「戻る」選択中
 	if (selectExit_) {
-		////アイコンの大きさに変更を加える
-		//exitExtend_ += extendAcc_;
-		//if (exitExtend_ <= EXIT_EXTEND_MIN || exitExtend_ >= EXIT_EXTEND_MAX) {
-		//	//加算方向を逆方向へ
-		//	extendAcc_ *= -1.0f;
-		//}
-
-		uiM.Update("exit");
+		//戻るアイコン更新
+		uiM.Update(UI_EXIT_STR);
 	}
 	else {
-		//何かしらコントローラーが選択されているとき
-		//矢印に動きをつける
-		arrowJumpPow_ += jumpAcc_;
-		if (arrowJumpPow_ <= JUMP_POW_MIN || arrowJumpPow_ >= JUMP_POW_MAX) {
-			//加算方向を逆方向へ
-			jumpAcc_ *= -1;
-		}
+		//矢印アイコン更新
+		uiM.Update(UI_ALLOW_STR);
 	}
 
 }
@@ -270,7 +287,7 @@ void Title::DrawDevice(void)
 	drawX = screenHX - (DEVICE_SIZE * EXTEND_IMG / 2) - (MARGIN_SIZE * EXTEND_IMG);
 	//選ばれていたら矢印を描画
 	if (selectDevice_[static_cast<int>(DEVICE::KEY)]) {
-		DrawRotaGraph(drawX, drawY+ arrowJumpPow_ - ((DEVICE_SIZE * EXTEND_IMG / 2) + (ICON_SIZE_Y / 2)), 1.0f, 0.0f, arrowImg_, true);
+		uiM.Draw(UI_ALLOW_STR);
 	}
 
 	DrawRotaGraph(drawX, drawY, EXTEND_IMG, 0.0f, deviceImgs_[static_cast<int>(DEVICE::KEY)], true);
@@ -279,12 +296,12 @@ void Title::DrawDevice(void)
 	drawX = screenHX + (DEVICE_SIZE * EXTEND_IMG / 2) + (MARGIN_SIZE * EXTEND_IMG);
 	//選ばれていたら矢印を描画
 	if (selectDevice_[static_cast<int>(DEVICE::PAD)]) {
-		DrawRotaGraph(drawX, drawY+ arrowJumpPow_ - ((DEVICE_SIZE * EXTEND_IMG / 2) + (ICON_SIZE_Y / 2)), 1.0f, 0.0f, arrowImg_, true);
+		uiM.Draw(UI_ALLOW_STR);
 	}
 	DrawRotaGraph(drawX, drawY, EXTEND_IMG, 0.0f, deviceImgs_[static_cast<int>(DEVICE::PAD)], true);
 
-
-	uiM.Draw("exit");
+	//戻るアイコン
+	uiM.Draw(UI_EXIT_STR);
 
 	//戻るアイコン
 	//DrawRotaGraph(screenHX, screenHY+ ((DEVICE_SIZE * EXTEND_IMG / 2)+ (ICON_SIZE_Y / 2)), exitExtend_, 0.0f, exitImg_, true);
