@@ -1,5 +1,11 @@
 #pragma once
 #include "CharacterUIController.h"
+#include<memory>
+
+class EnemyFind;
+class EnemyHp;
+class EnemyTargetting;
+
 class EnemyUIController :
     public CharacterUIController
 {
@@ -17,5 +23,9 @@ public:
 
 private:
     void DrawHp(void)override;
+
+    std::unique_ptr<EnemyFind>findUI_;
+    std::unique_ptr<EnemyHp>hpUI_;
+    std::unique_ptr<EnemyTargetting>targetUI_;
 };
 

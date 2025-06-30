@@ -96,6 +96,7 @@ void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
 	UpdateRotQuat();
 
 	animController_->Update();
+	uiCntl_->Update();
 }
 
 void EnemyBase::SetPram(void)
@@ -118,7 +119,7 @@ void EnemyBase::InitUI(void)
 {
 	//UIコントローラー初期化
 	uiCntl_ = std::make_unique<EnemyUIController>();
-	uiCntl_->Init();
+	uiCntl_->Init(speciesName_);
 }
 
 
@@ -343,6 +344,10 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 
 void EnemyBase::DrawUI(void)
 {
+
+	
+	uiCntl_->Draw(EnemyUIController::EnemyUI::FIND);
+	uiCntl_->Draw(EnemyUIController::EnemyUI::TARGETTING);
 	auto uiPos = pos_;
 	//頭位置
 	uiPos.y = 250.0f;
@@ -351,7 +356,7 @@ void EnemyBase::DrawUI(void)
 
 	//HPボックス表示
 	if (hp_ >= 0) {
-		
+		uiCntl_->Draw(EnemyUIController::EnemyUI::HP);
 	}
 
 	//ロックオン関係UI

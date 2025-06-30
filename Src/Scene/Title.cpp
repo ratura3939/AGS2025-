@@ -101,6 +101,7 @@ void Title::InitUI(void)
 	uiM.SetUIInfo(UI_EXIT_STR, exitPos, 1.0f);															//КоСbРЁТи
 	uiM.SetUIDirectionPram(UI_EXIT_STR, UI_GROUP::ZOOM, EXIT_EXTEND_ACC, EXIT_EXTEND_MAX, EXIT_EXTEND_MIN);//ПЏН„РЁТи
 
+
 }
 
 void Title::InitSound(void)
