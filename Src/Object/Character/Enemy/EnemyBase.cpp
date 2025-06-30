@@ -6,7 +6,7 @@
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Manager/Decoration/EffectManager.h"
 #include"../../../Manager/GameSystem/EnemyManager.h"
-#include"../../UI/EnemyUIController.h"
+#include"../../../UI/EnemyUIController.h"
 #include"../../../Utility/Utility.h"
 #include "EnemyBase.h"
 

@@ -22,7 +22,7 @@ public:
 		MAX
 	};
 
-	bool Init(void)override;
+	bool Init(const std::string& _master)override;
 	bool Update(void)override;
 	void Draw(void)override;
 

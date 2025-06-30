@@ -1,4 +1,5 @@
 #pragma once
+#include<string>
 #include"../UIBase.h"
 
 class EnemyTargetting :
@@ -10,15 +11,16 @@ public:
 	EnemyTargetting(void);
 	~EnemyTargetting(void);
 
-	bool Init(void)override;
+	bool Init(const std::string& _master)override;
 	bool Update(void)override;
 	void Draw(void)override;
 
 	void Reset(void)override;
 
 private:
-	int lockNoticeImg_; //ロックオン可能UI
-	int lockOnImg_;     //ロックオンUI
+	std::string noticeStr_;
+	std::string lockStr_;
+
 	bool isLocked_;     //ロックオンされているか
 	bool isLockTarget_;   //ロックオン対象になっているか
 };

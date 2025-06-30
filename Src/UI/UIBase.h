@@ -1,5 +1,6 @@
 #pragma once
 #include<DxLib.h>
+#include<string>
 
 class UIBase
 {
@@ -7,7 +8,7 @@ public:
 	UIBase(void);
 	~UIBase(void);
 
-	virtual bool Init(void) = 0;
+	virtual bool Init(const std::string& _master) = 0;
 	virtual bool Update(void) = 0;
 	virtual void Draw(void) = 0;
 

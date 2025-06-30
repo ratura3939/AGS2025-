@@ -4,7 +4,7 @@
 #include"../../Common/Quaternion.h"
 #include"../../Utility/Utility.h"
 
-EnemyHp::EnemyHp(void)
+EnemyHp::EnemyHp(float& _now, float& _max) :nowHp_(_now), hpMax_(_max)
 {
 }
 
@@ -12,7 +12,7 @@ EnemyHp::~EnemyHp(void)
 {
 }
 
-bool EnemyHp::Init(void)
+bool EnemyHp::Init(const std::string& _master)
 {
 	return false;
 }

@@ -1,10 +1,10 @@
-#include"../../../Manager/Generic/ResourceManager.h"
-#include"../../../Manager/Generic/SceneManager.h"
+#include"../../Manager/Generic/ResourceManager.h"
+#include"../../Manager/Generic/SceneManager.h"
+#include"../../Manager/Decoration/UIManager2d.h"
 #include "EnemyFind.h"
 
 EnemyFind::EnemyFind(void)
 {
-	suspectEx_ = 0.0f;
 	findUICnt_ = 0.0f;
 }
 
@@ -12,27 +12,28 @@ EnemyFind::~EnemyFind(void)
 {
 }
 
-bool EnemyFind::Init(void)
+bool EnemyFind::Init(const std::string& _master)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
+	UIManager2d& uiM = UIManager2d::GetInstance();
 
-	suspectImg_ = rsM.Load(ResourceManager::SRC::SUSPECT_IMG).handleId_;
-	findImg_ = rsM.Load(ResourceManager::SRC::FIND_IMG).handleId_;
+	suspectStr_ = _master + "Suspect";
+	findStr_ = _master + "Find";
+
+	uiM.Add(suspectStr_, rsM.Load(ResourceManager::SRC::SUSPECT_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::ZOOM_IN);
+	uiM.SetUIInfo(suspectStr_, drawPos_);
+	uiM.SetUIDirectionPram(suspectStr_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, SUSPECT_EXT_ACC, SUSPECT_EXT_MAX, 1.0f);
+
+	uiM.Add(findStr_, rsM.Load(ResourceManager::SRC::FIND_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL);
+	uiM.SetUIInfo(findStr_, drawPos_);
+
 	return true;
 }
 
 bool EnemyFind::Update(void)
 {
-	//Ž‹ŠE“à
-	suspectEx_ += SUSPECT_EXT_ACC;
-
-	//Ž‹ŠEŠO
-	suspectEx_ -= SUSPECT_EXT_ACC;
-	if (suspectEx_ <= 0.0f) {
-		suspectEx_ = 0.0f;
-	}
-
-	findUICnt_ += SceneManager::GetInstance().GetUpdateSpeedRate_();
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	uiM.Update(suspectStr_);
 
 	return true;
 }
@@ -47,10 +48,13 @@ void EnemyFind::Draw(void)
 	//	//u!vƒ}[ƒN‚Ì•`‰æ
 	//	DrawBillboard3D(drawPos_, 0.5f, 0.5f, FIND_UI_DRAW_SIZE, 0.0f, findImg_, true);
 	//}
+
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	uiM.Draw(suspectStr_);
+	uiM.Draw(findStr_);
 }
 
 void EnemyFind::Reset(void)
 {
-	suspectEx_ = 0.0f;
 	findUICnt_ = 0.0f;
 }

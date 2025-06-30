@@ -1,6 +1,6 @@
 #include "EnemyUIController.h"
 
-void EnemyUIController::Init(void)
+void EnemyUIController::Init(const std::string& _master)
 {
 }
 

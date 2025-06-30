@@ -1,4 +1,5 @@
-#include"../../../Manager/Generic/ResourceManager.h"
+#include"../../Manager/Generic/ResourceManager.h"
+#include"../../Manager/Decoration/UIManager2d.h"
 #include "EnemyTargetting.h"
 
 EnemyTargetting::EnemyTargetting(void)
@@ -11,28 +12,47 @@ EnemyTargetting::~EnemyTargetting(void)
 {
 }
 
-bool EnemyTargetting::Init(void)
+bool EnemyTargetting::Init(const std::string& _master)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
-	lockNoticeImg_ = rsM.Load(ResourceManager::SRC::ANNOUNCE_LOCKON_IMG).handleId_;
-	lockOnImg_ = rsM.Load(ResourceManager::SRC::LOCKON_IMG).handleId_;
+	UIManager2d& uiM = UIManager2d::GetInstance();
+
+	noticeStr_ = _master + "LockNotice";
+	lockStr_ = _master + "Locked";
+	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ANNOUNCE_LOCKON_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING);
+	uiM.SetUIInfo(noticeStr_, drawPos_);
+	uiM.SetUIDirectionPram(noticeStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 1.0f, 255.0f, 1.0f);
+
+	uiM.Add(lockStr_, rsM.Load(ResourceManager::SRC::LOCKON_IMG ).handleId_, UIManager2d::UI_DIRECTION_2D::UP_DOWN);
+	uiM.SetUIInfo(lockStr_, drawPos_);
+	uiM.SetUIDirectionPram(lockStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 1.0f, 255.0f, 1.0f);
+
 	return true;
 }
 
 bool EnemyTargetting::Update(void)
 {
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	//ロックオンされていたら
+	if (isLocked_) {
+		uiM.Update(lockStr_);
+	}
+	else {
+		uiM.Update(noticeStr_);
+	}
 	return true;
 }
 
 void EnemyTargetting::Draw(void)
 {
-	int rockUIImg = lockNoticeImg_;
+	UIManager2d& uiM = UIManager2d::GetInstance();
 	//ロックオンされていたら
 	if (isLocked_) {
-		//UI画像の差し替え
-		rockUIImg = lockOnImg_;
+		uiM.Draw(lockStr_);
 	}
-	DrawBillboard3D(drawPos_, 0.5f, 0.5f, LOCK_UI_DRAW_SIZE, 0.0f, rockUIImg, true);
+	else {
+		uiM.Draw(noticeStr_);
+	}
 }
 
 void EnemyTargetting::Reset(void)

@@ -10,7 +10,7 @@ public:
         FIND,
     };
 
-    void Init(void)override;
+    void Init(const std::string& _master)override;
     void Update(void)override;
     void Draw(const EnemyUI _type);
     void Release(void)override;

@@ -1,6 +1,6 @@
 #include "PlayerUIController.h"
 
-void PlayerUIController::Init(void)
+void PlayerUIController::Init(const std::string& _master)
 {
 }
 

@@ -8,7 +8,7 @@ public:
         HP,
     };
 
-    void Init(void)override;
+    void Init(const std::string& _master)override;
     void Update(void)override;
     void Draw(const PlayerUI _type);
     void Release(void)override;

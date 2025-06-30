@@ -1,7 +1,8 @@
-#include"../../../Manager/Generic/ResourceManager.h"
+#include"../../Manager/Generic/ResourceManager.h"
+#include"../../Manager/Decoration/UIManager2d.h"
 #include "PlayerHp.h"
 
-bool PlayerHp::Init(void)
+bool PlayerHp::Init(const std::string& _master)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	

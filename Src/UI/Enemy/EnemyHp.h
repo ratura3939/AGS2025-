@@ -5,17 +5,17 @@ class EnemyHp :
 	public UIBase
 {
 public:
-	EnemyHp(void);
+	EnemyHp(float& _now, float& _max);
 	~EnemyHp(void);
 
-	bool Init(void)override;
+	bool Init(const std::string& _master)override;
 	bool Update(void)override;
 	void Draw(void)override;
 
 	void Reset(void)override;
 
 private:
-	int nowHp_;
-	int hpMax_;
+	float& nowHp_;
+	float& hpMax_;
 };
 
