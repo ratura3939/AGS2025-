@@ -85,7 +85,7 @@ public:
         bool isFind;
     };
 
-    EnemyBase(void);
+    EnemyBase(VECTOR& _pos);
     ~EnemyBase(void);
 
     const bool Init(const int _num)override;
@@ -122,8 +122,8 @@ public:
     /// <param name="_percent">パーセンテージ</param>
     const void SetAnimSpeedRate(const float _percent);
 
-    //void SetIsLockTraget(const bool _flag) { isLockTarget_ = _flag; }
-    //void SetIsLocked(const bool _flag) { isLocked_ = _flag; }
+    void SetIsLockTraget(const bool _flag) { isLockTarget_ = _flag; }
+    void SetIsLocked(const bool _flag);
 
     //ダメージ
     void Damage(const float _pow)override;
@@ -144,6 +144,7 @@ private:
     std::unique_ptr<EnemyUIController>uiCntl_;
 
     VECTOR preStayPos_; //前回停止位置
+    VECTOR uiPos_; //UI表示位置
     float moveOneTime_; //一回の移動量
     float moveSped_;    //１フレームでの移動量
     bool isStay_;       //ステイかどうか
@@ -154,7 +155,7 @@ private:
     bool isAlive_;     //削除していいか
     ENEMY_STATE state_;//状態
 
-
+    bool isLockTarget_;   //ロックオン対象になっているか(マネージャでのみ変更が可能)
 
     //デバッグ用
     int color_;

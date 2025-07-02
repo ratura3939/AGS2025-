@@ -3,7 +3,11 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include "EnemyFind.h"
 
-EnemyFind::EnemyFind(void)
+namespace {
+	constexpr int IMAGE_SIZE = 128;
+}
+
+EnemyFind::EnemyFind(VECTOR& _followPos):UIBase(_followPos)
 {
 	findUICnt_ = 0.0f;
 }
@@ -16,16 +20,19 @@ bool EnemyFind::Init(const std::string& _master)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	UIManager2d& uiM = UIManager2d::GetInstance();
+	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
 
 	suspectStr_ = _master + "Suspect";
 	findStr_ = _master + "Find";
 
-	uiM.Add(suspectStr_, rsM.Load(ResourceManager::SRC::SUSPECT_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::ZOOM_IN);
-	uiM.SetUIInfo(suspectStr_, drawPos_);
+	VECTOR size = { IMAGE_SIZE ,IMAGE_SIZE ,0.0f };
+
+	uiM.Add(suspectStr_, rsM.Load(ResourceManager::SRC::SUSPECT_IMG).handleId_, size, UIManager2d::UI_DIRECTION_2D::ZOOM_IN, UI_DIMENSION::DIMENSION_3);
+	uiM.SetUIInfo(suspectStr_, drawFollowPos_);
 	uiM.SetUIDirectionPram(suspectStr_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, SUSPECT_EXT_ACC, SUSPECT_EXT_MAX, 1.0f);
 
-	uiM.Add(findStr_, rsM.Load(ResourceManager::SRC::FIND_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL);
-	uiM.SetUIInfo(findStr_, drawPos_);
+	uiM.Add(findStr_, rsM.Load(ResourceManager::SRC::FIND_IMG).handleId_, size, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_3);
+	uiM.SetUIInfo(findStr_, drawFollowPos_);
 
 	return true;
 }
@@ -33,6 +40,7 @@ bool EnemyFind::Init(const std::string& _master)
 bool EnemyFind::Update(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
+	uiM.SetPos(suspectStr_, drawFollowPos_);
 	uiM.Update(suspectStr_);
 
 	return true;

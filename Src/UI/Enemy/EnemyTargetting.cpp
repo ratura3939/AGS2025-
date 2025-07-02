@@ -2,10 +2,14 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include "EnemyTargetting.h"
 
-EnemyTargetting::EnemyTargetting(void)
+namespace {
+	constexpr int IMAGE_SIZE = 128;
+}
+
+
+EnemyTargetting::EnemyTargetting(VECTOR& _followPos):UIBase(_followPos)
 {
 	isLocked_ = false;
-	isLockTarget_ = false;
 }
 
 EnemyTargetting::~EnemyTargetting(void)
@@ -16,15 +20,19 @@ bool EnemyTargetting::Init(const std::string& _master)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	UIManager2d& uiM = UIManager2d::GetInstance();
+	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
 
 	noticeStr_ = _master + "LockNotice";
 	lockStr_ = _master + "Locked";
-	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ANNOUNCE_LOCKON_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING);
-	uiM.SetUIInfo(noticeStr_, drawPos_);
+
+	VECTOR size = { IMAGE_SIZE ,IMAGE_SIZE ,0.0f };
+
+	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ANNOUNCE_LOCKON_IMG).handleId_, size, UIManager2d::UI_DIRECTION_2D::FLASHING, UI_DIMENSION::DIMENSION_3);
+	uiM.SetUIInfo(noticeStr_, drawFollowPos_);
 	uiM.SetUIDirectionPram(noticeStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 1.0f, 255.0f, 1.0f);
 
-	uiM.Add(lockStr_, rsM.Load(ResourceManager::SRC::LOCKON_IMG ).handleId_, UIManager2d::UI_DIRECTION_2D::UP_DOWN);
-	uiM.SetUIInfo(lockStr_, drawPos_);
+	uiM.Add(lockStr_, rsM.Load(ResourceManager::SRC::LOCKON_IMG ).handleId_, size, UIManager2d::UI_DIRECTION_2D::UP_DOWN, UI_DIMENSION::DIMENSION_3);
+	uiM.SetUIInfo(lockStr_, drawFollowPos_);
 	uiM.SetUIDirectionPram(lockStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 1.0f, 255.0f, 1.0f);
 
 	return true;
@@ -35,9 +43,11 @@ bool EnemyTargetting::Update(void)
 	UIManager2d& uiM = UIManager2d::GetInstance();
 	//ÉçÉbÉNÉIÉìÇ≥ÇÍÇƒÇ¢ÇΩÇÁ
 	if (isLocked_) {
+		uiM.SetPos(lockStr_, drawFollowPos_);
 		uiM.Update(lockStr_);
 	}
 	else {
+		uiM.SetPos(noticeStr_, drawFollowPos_);
 		uiM.Update(noticeStr_);
 	}
 	return true;

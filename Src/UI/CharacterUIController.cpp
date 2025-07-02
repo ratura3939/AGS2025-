@@ -1,6 +1,6 @@
 #include "CharacterUIController.h"
 
-CharacterUIController::CharacterUIController(void)
+CharacterUIController::CharacterUIController(VECTOR& _followPos):followUIPos_(_followPos)
 {
 }
 

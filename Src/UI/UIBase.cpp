@@ -1,6 +1,6 @@
 #include "UIBase.h"
 
-UIBase::UIBase(void)
+UIBase::UIBase(VECTOR& _followPos):drawFollowPos_(_followPos)
 {
 }
 

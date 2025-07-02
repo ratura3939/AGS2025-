@@ -14,7 +14,11 @@
 //ここでしか使わない物たち用
 namespace {
 	int DEVICE_SIZE = 300;	//コントローラ画像サイズ
-	int ICON_SIZE_Y = 288;	//アイコン縦サイズ
+	int ALLOW_ICON_SIZE_X = 199;	//アイコン縦サイズ
+	int ALLOW_ICON_SIZE_Y = 288;	//アイコン縦サイズ
+	int EXIT_ICON_SIZE_X = 180;
+	int EXIT_ICON_SIZE_Y = 243;
+
 	int MARGIN_SIZE = 30;	//隙間の大きさ
 	float EXTEND_IMG = 1.5f;//画像拡大率
 
@@ -73,17 +77,20 @@ void Title::InitUI(void)
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	using UI_DIREC = UIManager2d::UI_DIRECTION_2D;
 	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
+	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
 
 	//描画位置
 	int screenHX = Application::SCREEN_SIZE_X / 2;
 	int screenHY = Application::SCREEN_SIZE_Y / 2;
 	//戻るアイコン描画位置
-	VECTOR exitPos = { screenHX, screenHY + ((DEVICE_SIZE * EXTEND_IMG / 2) + (ICON_SIZE_Y / 2)) ,0.0f };
+	VECTOR exitPos = { screenHX, screenHY + ((DEVICE_SIZE * EXTEND_IMG / 2) + (ALLOW_ICON_SIZE_Y / 2)) ,0.0f };
+	VECTOR exitSize = { EXIT_ICON_SIZE_X ,EXIT_ICON_SIZE_Y ,0.0f };
 	VECTOR alPos = {};
+	VECTOR allowSize = { ALLOW_ICON_SIZE_X ,ALLOW_ICON_SIZE_Y ,0.0f };
 
 	//矢印位置
 	alPos.x= screenHX - (DEVICE_SIZE * EXTEND_IMG / 2) - (MARGIN_SIZE * EXTEND_IMG);
-	alPos.y = screenHY - ((DEVICE_SIZE * EXTEND_IMG / 2) + (ICON_SIZE_Y / 2));
+	alPos.y = screenHY - ((DEVICE_SIZE * EXTEND_IMG / 2) + (ALLOW_ICON_SIZE_Y / 2));
 	alPos.z = 0.0f;
 	//キーボード時の矢印
 	allowPos_[static_cast<int>(DEVICE::KEY)] = alPos;
@@ -93,11 +100,11 @@ void Title::InitUI(void)
 	allowPos_[static_cast<int>(DEVICE::PAD)] = alPos;
 
 	//矢印アイコン
-	uiM.Add(UI_ALLOW_STR, rsM.Load(ResourceManager::SRC::ARROW_DOWN_IMG).handleId_, UI_DIREC::UP_DOWN);	//追加
+	uiM.Add(UI_ALLOW_STR, rsM.Load(ResourceManager::SRC::ARROW_DOWN_IMG).handleId_, allowSize, UI_DIREC::UP_DOWN, UI_DIMENSION::DIMENSION_2);	//追加
 	uiM.SetUIInfo(UI_ALLOW_STR, allowPos_[static_cast<int>(DEVICE::KEY)], 1.0f);						//基礎設定
 	uiM.SetUIDirectionPram(UI_ALLOW_STR, UI_GROUP::MOVE, JUMP_ACC, JUMP_POW_MAX, JUMP_POW_MIN);			//詳細設定
 	//戻るアイコン
-	uiM.Add(UI_EXIT_STR, rsM.Load(ResourceManager::SRC::EXIT_IMG).handleId_, UI_DIREC::ZOOM_INOUT);		//追加
+	uiM.Add(UI_EXIT_STR, rsM.Load(ResourceManager::SRC::EXIT_IMG).handleId_, exitSize, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
 	uiM.SetUIInfo(UI_EXIT_STR, exitPos, 1.0f);															//基礎設定
 	uiM.SetUIDirectionPram(UI_EXIT_STR, UI_GROUP::ZOOM, EXIT_EXTEND_ACC, EXIT_EXTEND_MAX, EXIT_EXTEND_MIN);//詳細設定
 

@@ -14,19 +14,22 @@ public:
 		MOVE_DOWN,	//下移動
 		MOVE_LEFT,	//左移動
 		MOVE_RIGHT,	//右移動
-		UP_DOWN,	//上下移動
-		LEFT_RIGHT,	//左右移動
+		UP_DOWN,	//上下移動(ループ)
+		LEFT_RIGHT,	//左右移動(ループ)
 		ZOOM_IN,	//拡大
 		ZOOM_OUT,	//縮小
-		ZOOM_INOUT,	//拡大縮小
+		ZOOM_INOUT,	//拡大縮小(ループ)
 		ROT_RIGHT,	//右回転
 		ROT_LEFT,	//左回転
-		ROT_CRADLE,	//左右に回転
+		ROT_CRADLE,	//左右に回転(ループ)
 		GRAD_DISAP,	//徐々に消える
 		GRAD_AP,	//徐々に現れる
-		FLASHING,	//点滅		
+		FLASHING,	//点滅(ループ)
 	};
 
+	/// <summary>
+	/// 項目分類(１項目につき一つまでを許可)
+	/// </summary>
 	enum class UI_DIRECTION_GROUP {
 		NONE,
 		MOVE,		//移動
@@ -35,11 +38,18 @@ public:
 		GRADUALLY,	//透明・不透明(Transpercentがもともと使われていたので「徐々に」という英単語にした)
 	};
 
+	enum class UI_DRAW_DIMENSION {
+		DIMENSION_2,
+		DIMENSION_3,
+	};
+
 	/// <summary>
 	/// 描画に必要なもの
 	/// </summary>
 	struct UIInfo {
+		UI_DRAW_DIMENSION dimension;
 		VECTOR pos;	//位置
+		VECTOR size;//画像サイズ
 		float scl;	//大きさ
 		float deg;	//角度
 		float alpha;//透明度
@@ -68,7 +78,7 @@ public:
 	/// <param name="_name">登録名</param>
 	/// <param name="_imgHndl">描画する画像</param>
 	/// <param name="_type">演出</param>
-	void Add(const std::string& _name, const int _imgHndl, UI_DIRECTION_2D _type);
+	void Add(const std::string& _name, const int _imgHndl, VECTOR _size, const UI_DIRECTION_2D _type,const UI_DRAW_DIMENSION _dimension);
 
 	/// <summary>
 	/// 演出追加
@@ -117,6 +127,15 @@ public:
 	//消去
 	void Destroy(void);
 
+	/// <summary>
+	/// 特定の更新が終了したか(ループしないものが前提とする)
+	/// </summary>
+	/// <param name="_name"></param>
+	/// <param name="_group"></param>
+	/// <returns></returns>
+	const bool IsFinishDirection(const std::string _name,const UI_DIRECTION_GROUP _group);
+
+	const bool IsLoopUpdate(const std::string _name, const UI_DIRECTION_GROUP _group);
 private:
 	//インスタンス用
 	static UIManager2d* instance_;

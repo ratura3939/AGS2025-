@@ -15,14 +15,26 @@ UIManager2d& UIManager2d::GetInstance(void)
 	return *instance_;
 }
 
-void UIManager2d::Add(const std::string& _name, const int _imgHndl, const UI_DIRECTION_2D _type)
+void UIManager2d::Add(const std::string& _name, const int _imgHndl, VECTOR _size, const UI_DIRECTION_2D _type, const UI_DRAW_DIMENSION _dimension)
 {
+	//要素があるとき
+	if (direcInfoes_.contains(_name)) {
+		//今ある分回す
+		for (auto& direc : direcInfoes_[_name]) {
+			if (GetDirectionGroup(direc.type) == GetDirectionGroup(_type)) {
+				return;
+			}
+		}
+	}
+
 	//画像の格納
 	images_.emplace(_name, _imgHndl);
 
 	//基礎情報初期化
 	UIInfo info = {};
+	info.dimension = _dimension;
 	info.pos = Utility::VECTOR_INIT;
+	info.size = _size;
 	info.scl = 1.0f;
 	info.deg = 0.0f;
 	info.alpha = ALPHA_MAX;
@@ -133,7 +145,12 @@ void UIManager2d::Draw(const std::string _name)
 	auto info = infoes_[_name];
 	//うっすら黒くする
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, info.alpha);
-	DrawRotaGraph(info.pos.x, info.pos.y, info.scl, info.deg / 180.0f, images_[_name], true);
+	if (info.dimension == UI_DRAW_DIMENSION::DIMENSION_2) {
+		DrawRotaGraph(info.pos.x, info.pos.y, info.scl, info.deg / 180.0f, images_[_name], true);
+	}
+	else {
+		DrawBillboard3D(info.pos, info.size.x / 2.0f, info.size.y / 2.0f, info.scl, images_[_name], info.deg / 180.0f, true);
+	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
@@ -156,6 +173,33 @@ void UIManager2d::Destroy(void)
 {
 	Relese();
 	delete instance_;
+}
+
+const bool UIManager2d::IsFinishDirection(const std::string _name, const UI_DIRECTION_GROUP _group)
+{
+	//ループする場合は処理が必要ないため終了
+
+	return false;
+}
+
+const bool UIManager2d::IsLoopUpdate(const std::string _name, const UI_DIRECTION_GROUP _group)
+{
+	//情報分回す
+	for (auto& direction : direcInfoes_[_name]) {
+		//該当の更新のとき判定を加える。
+		if (GetDirectionGroup(direction.type) == _group) {
+			//ループ以外ならtrueを返す。
+			if (direction.type != UI_DIRECTION_2D::UP_DOWN &&
+				direction.type != UI_DIRECTION_2D::LEFT_RIGHT &&
+				direction.type != UI_DIRECTION_2D::ZOOM_INOUT &&
+				direction.type != UI_DIRECTION_2D::ROT_CRADLE &&
+				direction.type != UI_DIRECTION_2D::FLASHING)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 const UIManager2d::UI_DIRECTION_GROUP UIManager2d::GetDirectionGroup(const std::string _name)
@@ -221,7 +265,7 @@ void UIManager2d::Move(const std::string& _name, DirectionInfo& _direcInfo)
 			}
 			else {
 				//動かさない
-				afterPos = infoes_[_name].pos;
+				return;
 			}
 			
 		}
@@ -246,7 +290,7 @@ void UIManager2d::Move(const std::string& _name, DirectionInfo& _direcInfo)
 			}
 			else {
 				//動かさない
-				afterPos = infoes_[_name].pos;
+				return;
 			}
 
 		}
@@ -271,6 +315,10 @@ void UIManager2d::Zoom(const std::string& _name, DirectionInfo& _direcInfo)
 		//繰り返し処理ならば加算方向を逆に
 		if (_direcInfo.type == UI_DIRECTION_2D::ZOOM_INOUT) {
 			_direcInfo.acc *= -1.0f;
+		}
+		else {
+			//これ以上変更を加えない
+			return;
 		}
 	}
 
@@ -317,6 +365,10 @@ void UIManager2d::AlphaAcc(const std::string& _name, DirectionInfo& _direcInfo)
 		//繰り返し処理ならば加算方向を逆に
 		if (_direcInfo.type == UI_DIRECTION_2D::FLASHING) {
 			_direcInfo.acc *= -1.0f;
+		}
+		else {
+			//これ以上変更を加えない
+			return;
 		}
 	}
 

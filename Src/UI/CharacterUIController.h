@@ -1,20 +1,24 @@
 #pragma once
 #include<string>
-
+#include <DxLib.h>
 class CharacterUIController
 {
 public:
-	CharacterUIController(void);
+	CharacterUIController(VECTOR& _followPos);
 	~CharacterUIController(void);
 
 	virtual void Init(const std::string& _master) = 0;
 	virtual void Update(void) = 0;
 	virtual void Release(void) = 0;
 
+	virtual void SetDrawPos(const VECTOR _pos) = 0;
+
 protected:
 	/// <summary>
 	/// HP‚Ì•`‰æ
 	/// </summary>
 	virtual void DrawHp(void) = 0;
+
+	VECTOR& followUIPos_;
 };
 

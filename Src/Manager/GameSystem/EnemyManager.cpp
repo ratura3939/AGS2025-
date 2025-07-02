@@ -15,17 +15,17 @@ EnemyManager::~EnemyManager(void)
 
 void EnemyManager::Init(void)
 {
+	//デバッグ用
+	VECTOR initPos[4] = { INIT_1 ,INIT_2 ,INIT_3 ,INIT_4 };
+
 	for (int i = 0; i < ENEMY_NUM; i++) {
-		std::shared_ptr enemy = std::make_shared<EnemyBase>();
+		std::shared_ptr enemy = std::make_shared<EnemyBase>(initPos[i]);
 		enemy->Init(i);
 		characters_.push_back(std::move(enemy));
 	}
 
-	//デバッグ用
-	characters_[0]->SetPos(INIT_1);
-	characters_[1]->SetPos(INIT_2);
-	characters_[2]->SetPos(INIT_3);
-	characters_[3]->SetPos(INIT_4);
+	
+	
 
 	preBattle_ = false;
 }
@@ -175,7 +175,7 @@ void EnemyManager::SetTargetEnemy(const int _num)
 		setFlag = false;
 		if (i == _num)setFlag = true;
 		//設定
-		//characters_[i]->SetIsLockTraget(setFlag);
+		characters_[i]->SetIsLockTraget(setFlag);
 	}
 }
 
@@ -183,8 +183,8 @@ void EnemyManager::NoTargetEnemy(void)
 {
 	for (int i = 0; i < static_cast<int>(characters_.size()); i++) {
 		//設定
-		//characters_[i]->SetIsLockTraget(false);
-		//characters_[i]->SetIsLocked(false);
+		characters_[i]->SetIsLockTraget(false);
+		characters_[i]->SetIsLocked(false);
 	}
 }
 
@@ -197,7 +197,7 @@ void EnemyManager::LokedOn(const int _num)
 		setFlag = false;
 		if (i == _num)setFlag = true;
 		//設定
-		//characters_[i]->SetIsLocked(setFlag);
+		characters_[i]->SetIsLocked(setFlag);
 	}
 }
 

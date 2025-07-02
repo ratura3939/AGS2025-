@@ -2,6 +2,14 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include "PlayerHp.h"
 
+PlayerHp::PlayerHp(VECTOR& _followPos):UIBase(_followPos)
+{
+}
+
+PlayerHp::~PlayerHp(void)
+{
+}
+
 bool PlayerHp::Init(const std::string& _master)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();

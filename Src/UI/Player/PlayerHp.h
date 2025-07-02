@@ -22,6 +22,9 @@ public:
 		MAX
 	};
 
+	PlayerHp(VECTOR& _followPos);
+	~PlayerHp(void);
+
 	bool Init(const std::string& _master)override;
 	bool Update(void)override;
 	void Draw(void)override;

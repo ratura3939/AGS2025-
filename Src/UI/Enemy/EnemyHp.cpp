@@ -4,7 +4,7 @@
 #include"../../Common/Quaternion.h"
 #include"../../Utility/Utility.h"
 
-EnemyHp::EnemyHp(float& _now, float& _max) :nowHp_(_now), hpMax_(_max)
+EnemyHp::EnemyHp(VECTOR& _followPos,float& _now, float _max) :UIBase(_followPos),nowHp_(_now), hpMax_(_max)
 {
 }
 
@@ -35,7 +35,7 @@ void EnemyHp::Draw(void)
 	auto& camera = SceneManager::GetInstance().GetCamera();
 
 	//カメラから敵位置へのベクトル
-	VECTOR angle = VSub(drawPos_, camera.GetPos());
+	VECTOR angle = VSub(drawFollowPos_, camera.GetPos());
 	//角度求める
 	float afterDeg = atan2(angle.x, angle.z);
 
@@ -47,9 +47,9 @@ void EnemyHp::Draw(void)
 	endPos = qua.PosAxis(endPos);
 
 	//実際の表示位置
-	VECTOR hpUIStartPos = VAdd(drawPos_, startPos);
+	VECTOR hpUIStartPos = VAdd(drawFollowPos_, startPos);
 	hpUIStartPos.y -= 50;
-	VECTOR hpUIEndPos = VAdd(drawPos_, endPos);
+	VECTOR hpUIEndPos = VAdd(drawFollowPos_, endPos);
 	hpUIEndPos.y -= 50;
 
 	//表示

@@ -20,7 +20,7 @@ public:
 	static constexpr float FIND_UI_DRAW_TIME = 30.0f;	//•`‰æŠÔ
 	static constexpr float FIND_UI_DRAW_SIZE = 50.0f;	//•`‰æƒTƒCƒY
 
-	EnemyFind(void);
+	EnemyFind(VECTOR& _followPos);
 	~EnemyFind(void);
 
 	bool Init(const std::string& _master)override;

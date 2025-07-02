@@ -5,7 +5,7 @@
 class UIBase
 {
 public:
-	UIBase(void);
+	UIBase(VECTOR& _followPos);
 	~UIBase(void);
 
 	virtual bool Init(const std::string& _master) = 0;
@@ -18,5 +18,6 @@ public:
 
 protected:
 	VECTOR drawPos_;	//ï`âÊà íu
+	VECTOR& drawFollowPos_;	//í«è]å^ÇÃUIÇ…égópÇ∑ÇÈ
 };
 

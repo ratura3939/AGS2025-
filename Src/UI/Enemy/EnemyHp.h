@@ -5,7 +5,7 @@ class EnemyHp :
 	public UIBase
 {
 public:
-	EnemyHp(float& _now, float& _max);
+	EnemyHp(VECTOR& _followPos,float& _now, float _max);
 	~EnemyHp(void);
 
 	bool Init(const std::string& _master)override;
@@ -16,6 +16,6 @@ public:
 
 private:
 	float& nowHp_;
-	float& hpMax_;
+	float hpMax_;
 };
 

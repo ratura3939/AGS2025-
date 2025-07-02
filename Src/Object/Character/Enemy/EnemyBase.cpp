@@ -22,7 +22,7 @@ namespace {
 	constexpr int alertDebugCol2 = 0xffdd88;
 }
 
-EnemyBase::EnemyBase(void)
+EnemyBase::EnemyBase(VECTOR& _pos)
 {
 	speciesName_ = "Enemy";
 	serchCol_ = serchDebugCol;
@@ -35,7 +35,10 @@ EnemyBase::EnemyBase(void)
 	moveOneTime_ = -1.0f;
 
 	debugRot_ = -1.0;
+
+	pos_ = _pos;
 	preStayPos_ = Utility::VECTOR_INIT;
+	uiPos_ = Utility::VECTOR_INIT;
 
 	//行先設定のため初期はステイ状態にする
 	isStay_ = true;
@@ -48,6 +51,8 @@ EnemyBase::EnemyBase(void)
 
 	isAlive_ = true;
 	state_ = ENEMY_STATE::END;
+
+	isLockTarget_ = false;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -67,7 +72,6 @@ const bool EnemyBase::Init(const int _num)
 	}
 	//パラメータ関係
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
-	pos_ = { 0.0f,0.0f,1000.0f };
 	preStayPos_ = pos_;
 	rot_ = { 0.0f,0.0f,-1.0f };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
@@ -96,6 +100,11 @@ void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
 	UpdateRotQuat();
 
 	animController_->Update();
+	//位置設定
+	uiPos_ = pos_;
+	//頭位置
+	uiPos_.y = 250.0f;
+
 	uiCntl_->Update();
 }
 
@@ -117,9 +126,16 @@ void EnemyBase::InitAnim(void)
 
 void EnemyBase::InitUI(void)
 {
+	//位置設定
+	uiPos_ = pos_;
+	//頭位置
+	uiPos_.y = 250.0f;
 	//UIコントローラー初期化
-	uiCntl_ = std::make_unique<EnemyUIController>();
+	uiCntl_ = std::make_unique<EnemyUIController>(uiPos_);
 	uiCntl_->Init(speciesName_);
+	uiCntl_->CreateUI(speciesName_, hp_, ENEMY_HP);
+	
+	//uiCntl_->SetDrawPos(uiPos);
 }
 
 
@@ -151,7 +167,7 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 	//視界内なら
 	if (deg <= FIELD_VISION_DEG_HALF &&
 		distance <= FIELD_VISION_DISTANCE) {
-		////一定時間いたら
+		//一定時間いたら
 		//if (suspectEx_ >= SUSPECT_EXT_MAX) {
 		//	//戦闘状態に
 		//	ChangeState(ENEMY_STATE::BATTLE);
@@ -344,26 +360,21 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 
 void EnemyBase::DrawUI(void)
 {
-
-	
-	uiCntl_->Draw(EnemyUIController::EnemyUI::FIND);
-	uiCntl_->Draw(EnemyUIController::EnemyUI::TARGETTING);
-	auto uiPos = pos_;
-	//頭位置
-	uiPos.y = 250.0f;
-
 	//発見マーク
+	if (state_ == ENEMY_STATE::SEARCH) {
+		uiCntl_->Draw(EnemyUIController::ENEMY_UI::FIND);
+	}
 
 	//HPボックス表示
 	if (hp_ >= 0) {
-		uiCntl_->Draw(EnemyUIController::EnemyUI::HP);
+		uiCntl_->Draw(EnemyUIController::ENEMY_UI::HP);
 	}
 
 	//ロックオン関係UI
 	//自身がロックオン対象だったら
-	/*if (isLockTarget_) {
-		
-	}*/
+	if (isLockTarget_) {
+		uiCntl_->Draw(EnemyUIController::ENEMY_UI::TARGETTING);
+	}
 }
 
 void EnemyBase::SetColor(int _color)
@@ -406,6 +417,11 @@ const bool EnemyBase::IsAlive(void) const
 const void EnemyBase::SetAnimSpeedRate(const float _percent)
 {
 	animController_->ChangeSpeedRate(_percent);
+}
+
+void EnemyBase::SetIsLocked(const bool _flag)
+{
+	uiCntl_->ChangeTargetUI(_flag);
 }
 
 void EnemyBase::Damage(const float _pow)
