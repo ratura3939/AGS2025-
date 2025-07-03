@@ -1,7 +1,7 @@
 #include "EnemyUIController.h"
 
 
-EnemyUIController::EnemyUIController(VECTOR& _followPos) :CharacterUIController(_followPos)
+EnemyUIController::EnemyUIController(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state) :CharacterUIController(_followPos),eState_(_state)
 {
 }
 
@@ -16,7 +16,7 @@ void EnemyUIController::Init(const std::string& _master)
 
 void EnemyUIController::CreateUI(const std::string& _master,float& _hp, float _hpMax)
 {
-	findUI_ = std::make_unique<EnemyFind>(followUIPos_);
+	findUI_ = std::make_unique<EnemyFind>(followUIPos_,eState_);
 	findUI_->Init(_master);
 
 	hpUI_ = std::make_unique<EnemyHp>(followUIPos_,_hp,_hpMax);
@@ -36,7 +36,7 @@ void EnemyUIController::Update(void)
 void EnemyUIController::Draw(const ENEMY_UI _type)
 {
 	if (_type == ENEMY_UI::FIND) {
-		//findUI_->Draw();
+		findUI_->Draw();
 	}
 	if (_type == ENEMY_UI::HP) {
 		hpUI_->Draw();
@@ -55,6 +55,11 @@ void EnemyUIController::SetDrawPos(const VECTOR _pos)
 	findUI_->SetPos(_pos);
 	hpUI_->SetPos(_pos);
 	targetUI_->SetPos(_pos);
+}
+
+void EnemyUIController::FindReset(void)
+{
+	findUI_->Reset();
 }
 
 void EnemyUIController::ChangeTargetUI(const bool _flag)

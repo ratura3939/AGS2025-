@@ -61,6 +61,7 @@ public:
 		float acc;	//加算量
 		float max;	//最大値
 		float min;	//最小値
+		bool isFinish;//終了したか
 	};
 
 	static constexpr float ALPHA_MAX = 255.0f;
@@ -125,6 +126,9 @@ public:
 
 	//消去
 	void Destroy(void);
+
+	//更新の初期化
+	void ResetUpdate(const std::string _name, const UI_DIRECTION_GROUP _group);
 
 	/// <summary>
 	/// 特定の更新が終了したか(ループしないものが前提とする)

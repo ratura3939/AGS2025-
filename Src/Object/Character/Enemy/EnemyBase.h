@@ -23,8 +23,11 @@ public:
       //状態遷移に関わるもの
     static constexpr float FIELD_VISION_DEG_HALF = 40.0f;	//視界の角度(両方向に展開するので全体の半分の角度を明記)
     static constexpr float FIELD_VISION_DISTANCE = 1000.0f;	//視界の距離
-    static constexpr float ALERT_DISTANCE = 1500.0f;     	//警戒の距離
+    static constexpr float ALERT_DISTANCE = 3000.0f;     	//警戒の距離
     static constexpr float ATTACK_DISTANCE = 200.0f;     	//攻撃開始の距離
+    static constexpr float BATTLE_FINISH_DISTANCE = 1500.0f; //攻撃状態解除の距離
+
+    static constexpr float SEARCH_CNT_MAX = 60.0f;
 
     //乱数移動量
     static constexpr float MOVE_RANDOM_MIN = 200.0f;                   //最低値
@@ -151,6 +154,8 @@ private:
     float stayCnt_;     //ステイ状態のカウンタ
     float stopTime_;    //攻撃時の停止時間
     float intervalCnt_; //攻撃間隔のカウンタ
+
+    float searchCnt_;   //疑いカウンタ
 
     bool isAlive_;     //削除していいか
     ENEMY_STATE state_;//状態

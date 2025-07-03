@@ -102,6 +102,7 @@ void UIManager2d::SetUIDirectionPram(const std::string& _name, const UI_DIRECTIO
 		info.acc = _acc;
 		info.max = _max;
 		info.min = _min;
+		info.isFinish = false;
 
 		//加速が負の方向の物たちは先に設定しておく
 		auto direcType = info.type;
@@ -119,7 +120,42 @@ void UIManager2d::SetUIDirectionPram(const std::string& _name, const UI_DIRECTIO
 
 void UIManager2d::SetPos(const std::string& _name, const VECTOR& _pos)
 {
-	infoes_[_name].pos = _pos;
+	//動きのエフェクトがあるかを検出
+	bool isMoveDirec = false;
+	UI_DIRECTION_2D moveType = UI_DIRECTION_2D::NOMAL;
+	for (auto& info : direcInfoes_[_name]) {
+		if (GetDirectionGroup(info.type) == UI_DIRECTION_GROUP::MOVE) {
+			isMoveDirec = true;
+			moveType = info.type;
+			break;
+		}
+	}
+	
+	//動きがある場合
+	if (isMoveDirec) {
+		//動きの方向には同期しない
+		//上下移動ならば
+		if (moveType == UI_DIRECTION_2D::MOVE_DOWN ||
+			moveType == UI_DIRECTION_2D::MOVE_UP ||
+			moveType == UI_DIRECTION_2D::UP_DOWN) {
+			//Y以外を同期
+			infoes_[_name].pos.x = _pos.x;
+			infoes_[_name].pos.z = _pos.z;
+		}
+		//左右移動ならば
+		if (moveType == UI_DIRECTION_2D::MOVE_LEFT ||
+			moveType == UI_DIRECTION_2D::MOVE_RIGHT ||
+			moveType == UI_DIRECTION_2D::LEFT_RIGHT) {
+			//X軸は同期しない
+			infoes_[_name].pos.y = _pos.y;
+			infoes_[_name].pos.z = _pos.z;
+		}
+	}
+	else {
+		//すべて同期
+		infoes_[_name].pos = _pos;
+	}
+	
 }
 
 void UIManager2d::Update(const std::string _name)
@@ -146,24 +182,15 @@ void UIManager2d::Draw(const std::string _name)
 {
 	auto info = infoes_[_name];
 	//うっすら黒くする
-	/*SetDrawBlendMode(DX_BLENDMODE_ALPHA, info.alpha);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, info.alpha);
 	if (info.dimension == UI_DRAW_DIMENSION::DIMENSION_2) {
 		DrawRotaGraph(info.pos.x, info.pos.y, info.scl, info.deg / 180.0f, images_[_name], true);
 	}
 	else {
 		DrawBillboard3D(info.pos, 0.5f, 0.5f, info.scl, info.deg*DX_PI_F / 180.0f,  images_[_name],  false);
-		DrawSphere3D(info.pos, 6, 6, 0xff8888, 0xff8888, false);
 	}
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);*/
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	if (info.dimension == UI_DRAW_DIMENSION::DIMENSION_2) {
-		DrawRotaGraph(info.pos.x, info.pos.y, info.scl, info.deg / 180.0f, images_[_name], true);
-	}
-	else {
-		//DrawBillboard3D(info.pos, 0.5f, 0.5f, info.scl, info.deg * DX_PI_F / 180.0f, images_[_name], true);
-		DrawBillboard3D(info.pos, 0.5f, 0.5f, 2.0f, 1.0f, images_[_name], true);
-		DrawSphere3D(info.pos, 6, 6, 0xff8888, 0xff8888, false);
-	}
 }
 
 void UIManager2d::Draw(const std::vector<std::string> _names)
@@ -187,10 +214,33 @@ void UIManager2d::Destroy(void)
 	delete instance_;
 }
 
+void UIManager2d::ResetUpdate(const std::string _name, const UI_DIRECTION_GROUP _group)
+{
+	//更新の数分回す
+	for (auto& direction : direcInfoes_[_name]) {
+		//該当する更新を見つけたら
+		if (GetDirectionGroup(direction.type) == _group) {
+			//その更新が終了したかのフラグを返す。
+			direction.pow = 0.0f;
+		}
+	}
+}
+
 const bool UIManager2d::IsFinishDirection(const std::string _name, const UI_DIRECTION_GROUP _group)
 {
-	//ループする場合は処理が必要ないため終了
-
+	//ループじゃないことが前提
+	if (!IsLoopUpdate(_name, _group)) 
+	{
+		//更新の数分回す
+		for (auto& direction : direcInfoes_[_name]) {
+			//該当する更新を見つけたら
+			if (GetDirectionGroup(direction.type) == _group) {
+				//その更新が終了したかのフラグを返す。
+				return direction.isFinish;
+			}
+		}
+	}
+	//ループ・そもそも該当するものがなかった時用
 	return false;
 }
 
@@ -200,12 +250,12 @@ const bool UIManager2d::IsLoopUpdate(const std::string _name, const UI_DIRECTION
 	for (auto& direction : direcInfoes_[_name]) {
 		//該当の更新のとき判定を加える。
 		if (GetDirectionGroup(direction.type) == _group) {
-			//ループ以外ならtrueを返す。
-			if (direction.type != UI_DIRECTION_2D::UP_DOWN &&
-				direction.type != UI_DIRECTION_2D::LEFT_RIGHT &&
-				direction.type != UI_DIRECTION_2D::ZOOM_INOUT &&
-				direction.type != UI_DIRECTION_2D::ROT_CRADLE &&
-				direction.type != UI_DIRECTION_2D::FLASHING)
+			//ループならtrueを返す。
+			if (direction.type == UI_DIRECTION_2D::UP_DOWN ||
+				direction.type == UI_DIRECTION_2D::LEFT_RIGHT ||
+				direction.type == UI_DIRECTION_2D::ZOOM_INOUT ||
+				direction.type == UI_DIRECTION_2D::ROT_CRADLE ||
+				direction.type == UI_DIRECTION_2D::FLASHING)
 			{
 				return true;
 			}
@@ -267,8 +317,8 @@ void UIManager2d::Move(const std::string& _name, DirectionInfo& _direcInfo)
 		_direcInfo.pow += _direcInfo.acc;
 
 		//移動上限・下限の設定
-		if (_direcInfo.pow >= _direcInfo.max ||
-			_direcInfo.pow <= _direcInfo.min) {
+		if (_direcInfo.pow > _direcInfo.max ||
+			_direcInfo.pow < _direcInfo.min) {
 			
 			//上下移動繰り返しのとき
 			if (direcType == UI_DIRECTION_2D::UP_DOWN) {
@@ -276,6 +326,8 @@ void UIManager2d::Move(const std::string& _name, DirectionInfo& _direcInfo)
 				_direcInfo.acc *= -1.0f;
 			}
 			else {
+				//終了
+				_direcInfo.isFinish = true;
 				//動かさない
 				return;
 			}
@@ -292,8 +344,8 @@ void UIManager2d::Move(const std::string& _name, DirectionInfo& _direcInfo)
 		afterPos.x += _direcInfo.acc;
 
 		//移動上限・下限の設定
-		if (_direcInfo.pow >= _direcInfo.max ||
-			_direcInfo.pow <= _direcInfo.min) {
+		if (_direcInfo.pow > _direcInfo.max ||
+			_direcInfo.pow < _direcInfo.min) {
 
 			//上下移動繰り返しのとき
 			if (direcType == UI_DIRECTION_2D::LEFT_RIGHT) {
@@ -301,6 +353,8 @@ void UIManager2d::Move(const std::string& _name, DirectionInfo& _direcInfo)
 				_direcInfo.acc *= -1.0f;
 			}
 			else {
+				//終了
+				_direcInfo.isFinish = true;
 				//動かさない
 				return;
 			}
@@ -322,13 +376,15 @@ void UIManager2d::Zoom(const std::string& _name, DirectionInfo& _direcInfo)
 
 	//制限
 	//移動上限・下限の設定
-	if (afterScl >= _direcInfo.max ||
-		afterScl <= _direcInfo.min) {
+	if (afterScl > _direcInfo.max ||
+		afterScl < _direcInfo.min) {
 		//繰り返し処理ならば加算方向を逆に
 		if (_direcInfo.type == UI_DIRECTION_2D::ZOOM_INOUT) {
 			_direcInfo.acc *= -1.0f;
 		}
 		else {
+			//終了
+			_direcInfo.isFinish = true;
 			//これ以上変更を加えない
 			return;
 		}
@@ -349,8 +405,8 @@ void UIManager2d::Rotation(const std::string& _name, DirectionInfo& _direcInfo)
 
 	//制限
 	//移動上限・下限の設定
-	if (_direcInfo.pow >= _direcInfo.max ||
-		_direcInfo.pow <= _direcInfo.min) {
+	if (_direcInfo.pow > _direcInfo.max ||
+		_direcInfo.pow < _direcInfo.min) {
 		//繰り返し処理ならば加算方向を逆に
 		if (_direcInfo.type == UI_DIRECTION_2D::ROT_CRADLE) {
 			_direcInfo.acc *= -1.0f;
@@ -372,13 +428,15 @@ void UIManager2d::AlphaAcc(const std::string& _name, DirectionInfo& _direcInfo)
 
 	//制限
 	//移動上限・下限の設定
-	if (afterAlpha >= _direcInfo.max ||
-		afterAlpha <= _direcInfo.min) {
+	if (afterAlpha > _direcInfo.max ||
+		afterAlpha < _direcInfo.min) {
 		//繰り返し処理ならば加算方向を逆に
 		if (_direcInfo.type == UI_DIRECTION_2D::FLASHING) {
 			_direcInfo.acc *= -1.0f;
 		}
 		else {
+			//終了
+			_direcInfo.isFinish = true;
 			//これ以上変更を加えない
 			return;
 		}

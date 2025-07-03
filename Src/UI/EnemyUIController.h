@@ -3,6 +3,7 @@
 #include<memory>
 #include<DxLib.h>
 
+#include"../Object/Character/Enemy/EnemyBase.h"
 #include"Enemy/EnemyFind.h"
 #include"Enemy/EnemyHp.h"
 #include"Enemy/EnemyTargetting.h"
@@ -17,7 +18,7 @@ public:
         FIND,
     };
 
-    EnemyUIController(VECTOR& _followPos);
+    EnemyUIController(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state);
     ~EnemyUIController(void);
 
     void Init(const std::string& _master)override;
@@ -27,6 +28,8 @@ public:
     void Release(void)override;
 
     void SetDrawPos(const VECTOR _pos)override;
+
+    void FindReset(void);
 
     /// <summary>
     /// ÉçÉbÉNÉIÉìUIêÿÇËä∑Ç¶
@@ -40,5 +43,7 @@ private:
     std::unique_ptr<EnemyFind>findUI_;
     std::unique_ptr<EnemyHp>hpUI_;
     std::unique_ptr<EnemyTargetting>targetUI_;
+
+    EnemyBase::ENEMY_STATE& eState_;
 };
 

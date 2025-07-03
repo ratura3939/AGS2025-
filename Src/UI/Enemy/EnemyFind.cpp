@@ -4,7 +4,7 @@
 #include "EnemyFind.h"
 
 
-EnemyFind::EnemyFind(VECTOR& _followPos):UIBase(_followPos)
+EnemyFind::EnemyFind(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state):UIBase(_followPos),eState_(_state)
 {
 	findUICnt_ = 0.0f;
 }
@@ -27,7 +27,7 @@ bool EnemyFind::Init(const std::string& _master)
 	uiM.SetUIDirectionPram(suspectStr_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, SUSPECT_EXT_ACC, SUSPECT_EXT_MAX, 1.0f);
 
 	uiM.Add(findStr_, rsM.Load(ResourceManager::SRC::FIND_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_3);
-	uiM.SetUIInfo(findStr_, drawFollowPos_);
+	uiM.SetUIInfo(findStr_, drawFollowPos_,80.0f);
 
 	return true;
 }
@@ -35,29 +35,38 @@ bool EnemyFind::Init(const std::string& _master)
 bool EnemyFind::Update(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
-	uiM.SetPos(suspectStr_, drawFollowPos_);
-	uiM.Update(suspectStr_);
+	if (eState_==EnemyBase::ENEMY_STATE::SEARCH) {
+		//見つかっていないとき
+		uiM.SetPos(suspectStr_, drawFollowPos_);
+		uiM.Update(suspectStr_);
+	}
+	if(eState_ == EnemyBase::ENEMY_STATE::BATTLE&& findUICnt_<= FIND_UI_DRAW_TIME) {
+		uiM.SetPos(findStr_, drawFollowPos_);
+		uiM.Update(findStr_);
+		findUICnt_++;
+	}
+	
+
 
 	return true;
 }
 
 void EnemyFind::Draw(void)
 {
-	//if (state_ == ENEMY_STATE::SEARCH) {
-	//	//「?」マークの描画
-	//	DrawBillboard3D(drawPos_, 0.5f, 0.5f, suspectEx_, 0.0f, suspectImg_, true);
-	//}
-	//if (state_ == ENEMY_STATE::BATTLE && findUICnt_ <= FIND_UI_DRAW_TIME) {
-	//	//「!」マークの描画
-	//	DrawBillboard3D(drawPos_, 0.5f, 0.5f, FIND_UI_DRAW_SIZE, 0.0f, findImg_, true);
-	//}
 
 	UIManager2d& uiM = UIManager2d::GetInstance();
-	uiM.Draw(suspectStr_);
-	uiM.Draw(findStr_);
+
+	if (eState_ == EnemyBase::ENEMY_STATE::SEARCH) {
+		//見つかっていないとき
+		uiM.Draw(suspectStr_);
+	}
+	if (eState_ == EnemyBase::ENEMY_STATE::BATTLE && findUICnt_ <= FIND_UI_DRAW_TIME) {
+		uiM.Draw(findStr_);
+	}
 }
 
 void EnemyFind::Reset(void)
 {
 	findUICnt_ = 0.0f;
+	UIManager2d::GetInstance().ResetUpdate(suspectStr_, UIManager2d::UI_DIRECTION_GROUP::ZOOM);
 }

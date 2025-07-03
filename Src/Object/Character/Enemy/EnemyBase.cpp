@@ -46,6 +46,8 @@ EnemyBase::EnemyBase(VECTOR& _pos)
 	stopTime_ = -1.0f; 
 	intervalCnt_ = INTERVAL_ATTACK_NOMAL;
 
+	searchCnt_ = 0.0f;
+
 	hp_ = ENEMY_HP;
 	moveSped_ = MOVE_POW;
 
@@ -77,8 +79,7 @@ const bool EnemyBase::Init(const int _num)
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
 	//初期化用に一回実行
 	UpdateRotQuat();
-	//状態を通常に
-	ChangeState(ENEMY_STATE::NOMAL);
+	
 	//アニメーション初期化
 	animController_ = std::make_unique<AnimationController>(modelId_);
 	InitAnim();
@@ -88,6 +89,8 @@ const bool EnemyBase::Init(const int _num)
 	//UI初期化
 	InitUI();
 
+	//状態を通常に
+	ChangeState(ENEMY_STATE::NOMAL);
 	return true;
 }
 
@@ -131,11 +134,9 @@ void EnemyBase::InitUI(void)
 	//頭位置
 	uiPos_.y = 250.0f;
 	//UIコントローラー初期化
-	uiCntl_ = std::make_unique<EnemyUIController>(uiPos_);
+	uiCntl_ = std::make_unique<EnemyUIController>(uiPos_,state_);
 	uiCntl_->Init(speciesName_);
 	uiCntl_->CreateUI(speciesName_, hp_, ENEMY_HP);
-	
-	//uiCntl_->SetDrawPos(uiPos);
 }
 
 
@@ -147,8 +148,13 @@ void EnemyBase::UpdateNomal(const VECTOR& _pPos, AttackManager& _atk)
 	(this->*move_)(_pPos);
 
 	//判定
+	
+	//判定
+	auto deg = Utility::AngleDeg(GetForward(), VSub(_pPos, pos_));
+
 	//索敵可能範囲内に入ったら
-	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ALERT_DISTANCE) {
+	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ALERT_DISTANCE&&
+		deg <= FIELD_VISION_DEG_HALF) {
 		//索敵状態に
 		ChangeState(ENEMY_STATE::SEARCH);
 	}
@@ -166,15 +172,16 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 
 	//視界内なら
 	if (deg <= FIELD_VISION_DEG_HALF &&
-		distance <= FIELD_VISION_DISTANCE) {
+		distance <= ALERT_DISTANCE) {
 		//一定時間いたら
-		//if (suspectEx_ >= SUSPECT_EXT_MAX) {
-		//	//戦闘状態に
-		//	ChangeState(ENEMY_STATE::BATTLE);
-		//}
-	}
-	else {
-		
+		if (searchCnt_ >= SEARCH_CNT_MAX) {
+			//戦闘状態に
+			ChangeState(ENEMY_STATE::BATTLE);
+		}
+		else {
+			//カウンタ増加
+			searchCnt_++;
+		}
 	}
 	//プレイヤーが索敵範囲外に出たら
 	if (distance > ALERT_DISTANCE) {
@@ -200,8 +207,8 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	intervalCnt_+=SceneManager::GetInstance().GetUpdateSpeedRate_();	
 
 	//判定
-	//プレイヤーが索敵範囲外にでたら
-	if (Utility::MagnitudeF(VSub(_pPos, pos_)) > ALERT_DISTANCE) {
+	//プレイヤーが戦闘状態範囲度外にでたら
+	if (Utility::MagnitudeF(VSub(_pPos, pos_)) > BATTLE_FINISH_DISTANCE) {
 		//通常に戻る
 		ChangeState(ENEMY_STATE::NOMAL);
 	}
@@ -319,6 +326,8 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		update_ = &EnemyBase::UpdateNomal;
 		move_ = &EnemyBase::MoveNomal;
 		moveSped_ = MOVE_POW;
+		uiCntl_->FindReset();
+		searchCnt_ = 0.0f;
 
 		serchCol_ = serchDebugCol;
 		alertCol_ = serchDebugCol2;
@@ -361,19 +370,19 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 void EnemyBase::DrawUI(void)
 {
 	//発見マーク
-	if (state_ == ENEMY_STATE::SEARCH) {
+	if (state_ == ENEMY_STATE::SEARCH|| state_ == ENEMY_STATE::BATTLE) {
 		uiCntl_->Draw(EnemyUIController::ENEMY_UI::FIND);
 	}
 
 	//HPボックス表示
 	if (hp_ >= 0) {
-		//uiCntl_->Draw(EnemyUIController::ENEMY_UI::HP);
+		uiCntl_->Draw(EnemyUIController::ENEMY_UI::HP);
 	}
 
 	//ロックオン関係UI
 	//自身がロックオン対象だったら
 	if (isLockTarget_) {
-		//uiCntl_->Draw(EnemyUIController::ENEMY_UI::TARGETTING);
+		uiCntl_->Draw(EnemyUIController::ENEMY_UI::TARGETTING);
 	}
 }
 

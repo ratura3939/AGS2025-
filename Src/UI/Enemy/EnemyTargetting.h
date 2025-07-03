@@ -25,6 +25,5 @@ private:
 
 	bool isLocked_;     //ƒƒbƒNƒIƒ“‚³‚ê‚Ä‚¢‚é‚©
 
-	int dbgImg_;
 };
 
