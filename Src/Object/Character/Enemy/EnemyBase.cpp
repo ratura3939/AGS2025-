@@ -362,12 +362,12 @@ void EnemyBase::DrawUI(void)
 {
 	//発見マーク
 	if (state_ == ENEMY_STATE::SEARCH) {
-		uiCntl_->Draw(EnemyUIController::ENEMY_UI::FIND);
+		//uiCntl_->Draw(EnemyUIController::ENEMY_UI::FIND);
 	}
 
 	//HPボックス表示
 	if (hp_ >= 0) {
-		uiCntl_->Draw(EnemyUIController::ENEMY_UI::HP);
+		//uiCntl_->Draw(EnemyUIController::ENEMY_UI::HP);
 	}
 
 	//ロックオン関係UI

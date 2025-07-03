@@ -41,7 +41,7 @@ void EnemyUIController::Draw(const ENEMY_UI _type)
 	if (_type == ENEMY_UI::HP) {
 		hpUI_->Draw();
 	}
-	if (_type == ENEMY_UI::FIND) {
+	if (_type == ENEMY_UI::TARGETTING) {
 		targetUI_->Draw();
 	}
 }

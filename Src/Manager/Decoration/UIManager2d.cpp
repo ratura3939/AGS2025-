@@ -15,7 +15,7 @@ UIManager2d& UIManager2d::GetInstance(void)
 	return *instance_;
 }
 
-void UIManager2d::Add(const std::string& _name, const int _imgHndl, VECTOR _size, const UI_DIRECTION_2D _type, const UI_DRAW_DIMENSION _dimension)
+void UIManager2d::Add(const std::string& _name, const int _imgHndl, const UI_DIRECTION_2D _type, const UI_DRAW_DIMENSION _dimension)
 {
 	//要素があるとき
 	if (direcInfoes_.contains(_name)) {
@@ -34,13 +34,15 @@ void UIManager2d::Add(const std::string& _name, const int _imgHndl, VECTOR _size
 	UIInfo info = {};
 	info.dimension = _dimension;
 	info.pos = Utility::VECTOR_INIT;
-	info.size = _size;
 	info.scl = 1.0f;
 	info.deg = 0.0f;
 	info.alpha = ALPHA_MAX;
 
 	//基礎情報追加
 	infoes_.emplace(_name, info);
+
+	//通常描画なら演出追加の必要はない
+	if (_type == UI_DIRECTION_2D::NOMAL)return;
 
 	//演出処理の追加
 	PushUIDirection(_name, _type);
@@ -144,14 +146,24 @@ void UIManager2d::Draw(const std::string _name)
 {
 	auto info = infoes_[_name];
 	//うっすら黒くする
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, info.alpha);
+	/*SetDrawBlendMode(DX_BLENDMODE_ALPHA, info.alpha);
 	if (info.dimension == UI_DRAW_DIMENSION::DIMENSION_2) {
 		DrawRotaGraph(info.pos.x, info.pos.y, info.scl, info.deg / 180.0f, images_[_name], true);
 	}
 	else {
-		DrawBillboard3D(info.pos, info.size.x / 2.0f, info.size.y / 2.0f, info.scl, images_[_name], info.deg / 180.0f, true);
+		DrawBillboard3D(info.pos, 0.5f, 0.5f, info.scl, info.deg*DX_PI_F / 180.0f,  images_[_name],  false);
+		DrawSphere3D(info.pos, 6, 6, 0xff8888, 0xff8888, false);
 	}
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);*/
+
+	if (info.dimension == UI_DRAW_DIMENSION::DIMENSION_2) {
+		DrawRotaGraph(info.pos.x, info.pos.y, info.scl, info.deg / 180.0f, images_[_name], true);
+	}
+	else {
+		//DrawBillboard3D(info.pos, 0.5f, 0.5f, info.scl, info.deg * DX_PI_F / 180.0f, images_[_name], true);
+		DrawBillboard3D(info.pos, 0.5f, 0.5f, 2.0f, 1.0f, images_[_name], true);
+		DrawSphere3D(info.pos, 6, 6, 0xff8888, 0xff8888, false);
+	}
 }
 
 void UIManager2d::Draw(const std::vector<std::string> _names)

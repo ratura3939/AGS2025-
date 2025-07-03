@@ -49,7 +49,6 @@ public:
 	struct UIInfo {
 		UI_DRAW_DIMENSION dimension;
 		VECTOR pos;	//位置
-		VECTOR size;//画像サイズ
 		float scl;	//大きさ
 		float deg;	//角度
 		float alpha;//透明度
@@ -78,7 +77,7 @@ public:
 	/// <param name="_name">登録名</param>
 	/// <param name="_imgHndl">描画する画像</param>
 	/// <param name="_type">演出</param>
-	void Add(const std::string& _name, const int _imgHndl, VECTOR _size, const UI_DIRECTION_2D _type,const UI_DRAW_DIMENSION _dimension);
+	void Add(const std::string& _name, const int _imgHndl, const UI_DIRECTION_2D _type,const UI_DRAW_DIMENSION _dimension);
 
 	/// <summary>
 	/// 演出追加

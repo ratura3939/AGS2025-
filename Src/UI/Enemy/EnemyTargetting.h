@@ -24,5 +24,7 @@ private:
 	std::string lockStr_;
 
 	bool isLocked_;     //ƒƒbƒNƒIƒ“‚³‚ê‚Ä‚¢‚é‚©
+
+	int* dbgImg_;
 };
 

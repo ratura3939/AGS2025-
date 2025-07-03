@@ -84,9 +84,7 @@ void Title::InitUI(void)
 	int screenHY = Application::SCREEN_SIZE_Y / 2;
 	//戻るアイコン描画位置
 	VECTOR exitPos = { screenHX, screenHY + ((DEVICE_SIZE * EXTEND_IMG / 2) + (ALLOW_ICON_SIZE_Y / 2)) ,0.0f };
-	VECTOR exitSize = { EXIT_ICON_SIZE_X ,EXIT_ICON_SIZE_Y ,0.0f };
 	VECTOR alPos = {};
-	VECTOR allowSize = { ALLOW_ICON_SIZE_X ,ALLOW_ICON_SIZE_Y ,0.0f };
 
 	//矢印位置
 	alPos.x= screenHX - (DEVICE_SIZE * EXTEND_IMG / 2) - (MARGIN_SIZE * EXTEND_IMG);
@@ -100,11 +98,11 @@ void Title::InitUI(void)
 	allowPos_[static_cast<int>(DEVICE::PAD)] = alPos;
 
 	//矢印アイコン
-	uiM.Add(UI_ALLOW_STR, rsM.Load(ResourceManager::SRC::ARROW_DOWN_IMG).handleId_, allowSize, UI_DIREC::UP_DOWN, UI_DIMENSION::DIMENSION_2);	//追加
+	uiM.Add(UI_ALLOW_STR, rsM.Load(ResourceManager::SRC::ARROW_DOWN_IMG).handleId_, UI_DIREC::UP_DOWN, UI_DIMENSION::DIMENSION_2);	//追加
 	uiM.SetUIInfo(UI_ALLOW_STR, allowPos_[static_cast<int>(DEVICE::KEY)], 1.0f);						//基礎設定
 	uiM.SetUIDirectionPram(UI_ALLOW_STR, UI_GROUP::MOVE, JUMP_ACC, JUMP_POW_MAX, JUMP_POW_MIN);			//詳細設定
 	//戻るアイコン
-	uiM.Add(UI_EXIT_STR, rsM.Load(ResourceManager::SRC::EXIT_IMG).handleId_, exitSize, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
+	uiM.Add(UI_EXIT_STR, rsM.Load(ResourceManager::SRC::EXIT_IMG).handleId_,UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
 	uiM.SetUIInfo(UI_EXIT_STR, exitPos, 1.0f);															//基礎設定
 	uiM.SetUIDirectionPram(UI_EXIT_STR, UI_GROUP::ZOOM, EXIT_EXTEND_ACC, EXIT_EXTEND_MAX, EXIT_EXTEND_MIN);//詳細設定
 

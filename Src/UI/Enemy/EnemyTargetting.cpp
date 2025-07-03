@@ -2,10 +2,6 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include "EnemyTargetting.h"
 
-namespace {
-	constexpr int IMAGE_SIZE = 128;
-}
-
 
 EnemyTargetting::EnemyTargetting(VECTOR& _followPos):UIBase(_followPos)
 {
@@ -25,15 +21,19 @@ bool EnemyTargetting::Init(const std::string& _master)
 	noticeStr_ = _master + "LockNotice";
 	lockStr_ = _master + "Locked";
 
-	VECTOR size = { IMAGE_SIZE ,IMAGE_SIZE ,0.0f };
+	/*uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ANNOUNCE_LOCKON_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UI_DIMENSION::DIMENSION_3);
+	uiM.SetUIInfo(noticeStr_, drawFollowPos_, 10.0f);
+	uiM.SetUIDirectionPram(noticeStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 1.0f, 255.0f, 1.0f);*/
 
-	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ANNOUNCE_LOCKON_IMG).handleId_, size, UIManager2d::UI_DIRECTION_2D::FLASHING, UI_DIMENSION::DIMENSION_3);
-	uiM.SetUIInfo(noticeStr_, drawFollowPos_);
-	uiM.SetUIDirectionPram(noticeStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 1.0f, 255.0f, 1.0f);
+	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ANNOUNCE_LOCKON_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_3);
+	uiM.SetUIInfo(noticeStr_, drawFollowPos_, 3.0f);
+	//uiM.SetUIDirectionPram(noticeStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 1.0f, 255.0f, 1.0f);
 
-	uiM.Add(lockStr_, rsM.Load(ResourceManager::SRC::LOCKON_IMG ).handleId_, size, UIManager2d::UI_DIRECTION_2D::UP_DOWN, UI_DIMENSION::DIMENSION_3);
+	uiM.Add(lockStr_, rsM.Load(ResourceManager::SRC::LOCKON_IMG ).handleId_, UIManager2d::UI_DIRECTION_2D::UP_DOWN, UI_DIMENSION::DIMENSION_3);
 	uiM.SetUIInfo(lockStr_, drawFollowPos_);
 	uiM.SetUIDirectionPram(lockStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 1.0f, 255.0f, 1.0f);
+
+	dbgImg_ = rsM.Load(ResourceManager::SRC::ANNOUNCE_LOCKON_IMG).handleId_;
 
 	return true;
 }
@@ -62,6 +62,11 @@ void EnemyTargetting::Draw(void)
 	}
 	else {
 		uiM.Draw(noticeStr_);
+
+		VECTOR pos = drawFollowPos_;
+		DrawBillboard3D(pos, 0.5f, 0.5f, 2.0f, 10.0f, dbgImg_, true);
+		/*int dbg = DrawBillboard3D(pos, 0.5f, 0.5f, 2.0f, 10.0f, dbgImg_, true);
+		pos.x = 1.0f;*/
 	}
 }
 
