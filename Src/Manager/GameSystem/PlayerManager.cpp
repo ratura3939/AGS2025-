@@ -10,8 +10,8 @@
 const std::string PlayerManager::ATTACK_NOMAL = "PlayerAttack";
 
 namespace {
-	int AtkScl = 70;
-	int AtkPow = 30;
+	float AtkScl = 70.0f;
+	float AtkPow = 30.0f;
 	int playerNum = 0;
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 }
@@ -105,7 +105,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 		//対応するアニメーション
 		character_->PlayAnim("atkFirst");
 		//時間の設定
-		RedyStateCount(_atk.GetTotalTime(ATTACK_NOMAL));
+		RedyStateCount(static_cast<int>(_atk.GetTotalTime(ATTACK_NOMAL)));
 	}
 
 	//回避入力があったとき(ロックオン状態でしか作動しない)

@@ -26,9 +26,9 @@ namespace {
 	float EXIT_EXTEND_MIN = 0.8f;	//拡大率(下限)
 	float EXIT_EXTEND_ACC = 0.05f;	//拡大率(加算)
 
-	int JUMP_POW_MAX = 0;	//動き幅(上限)
-	int JUMP_POW_MIN = -60;//動き幅(下限)
-	int JUMP_ACC = -5;	//矢印動き用
+	float JUMP_POW_MAX = 0;	//動き幅(上限)
+	float JUMP_POW_MIN = -60;//動き幅(下限)
+	float JUMP_ACC = -5;	//矢印動き用
 
 	//各種UI登録名
 	std::string UI_EXIT_STR = "exit";
@@ -83,7 +83,7 @@ void Title::InitUI(void)
 	int screenHX = Application::SCREEN_SIZE_X / 2;
 	int screenHY = Application::SCREEN_SIZE_Y / 2;
 	//戻るアイコン描画位置
-	VECTOR exitPos = { screenHX, screenHY + ((DEVICE_SIZE * EXTEND_IMG / 2) + (ALLOW_ICON_SIZE_Y / 2)) ,0.0f };
+	VECTOR exitPos = { screenHX, screenHY + ((static_cast<float>(DEVICE_SIZE * EXTEND_IMG) / 2.0f) + (static_cast<float>(ALLOW_ICON_SIZE_Y) / 2.0f)) ,0.0f };
 	VECTOR alPos = {};
 
 	//矢印位置

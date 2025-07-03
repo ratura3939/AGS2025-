@@ -112,7 +112,7 @@ void PlayerChara::DrawDebug(void)
 	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
 	DrawFormatString(0, 120, 0xffffff, "GoalRot={%.1f,%.1f,%.1f}", goalQua_.x, goalQua_.y, goalQua_.z);
 	VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();
-	float deg = Utility::AngleDeg(pos_, VSub(rockPos, pos_));
+	float deg = static_cast<float>(Utility::AngleDeg(pos_, VSub(rockPos, pos_)));
 	if (pos_.x > rockPos.x)deg = 180.0f + (180.0f - deg);
 	DrawFormatString(0, 140, 0xffffff, "RockDeg={%.1f}", deg);
 

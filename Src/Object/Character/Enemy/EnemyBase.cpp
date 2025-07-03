@@ -245,7 +245,7 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 			characterRotY_ = quaGoal;
 
 			//移動量を範囲付きのランダムで生成
-			moveOneTime_ = static_cast<float>(GetRand(MOVE_RANDOM_MAX)) + MOVE_RANDOM_MIN;
+			moveOneTime_ = static_cast<float>(GetRand(static_cast<int>(MOVE_RANDOM_MAX))) + MOVE_RANDOM_MIN;
 			//ステイ状態の解除
 			isStay_ = false;
 			//前回停止位置の更新
@@ -362,7 +362,7 @@ void EnemyBase::DrawUI(void)
 {
 	//発見マーク
 	if (state_ == ENEMY_STATE::SEARCH) {
-		//uiCntl_->Draw(EnemyUIController::ENEMY_UI::FIND);
+		uiCntl_->Draw(EnemyUIController::ENEMY_UI::FIND);
 	}
 
 	//HPボックス表示
@@ -373,7 +373,7 @@ void EnemyBase::DrawUI(void)
 	//ロックオン関係UI
 	//自身がロックオン対象だったら
 	if (isLockTarget_) {
-		uiCntl_->Draw(EnemyUIController::ENEMY_UI::TARGETTING);
+		//uiCntl_->Draw(EnemyUIController::ENEMY_UI::TARGETTING);
 	}
 }
 
