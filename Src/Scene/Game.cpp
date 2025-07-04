@@ -257,7 +257,8 @@ void Game::Update(void)
 	Camera::MODE mode = camera.GetMode();
 	//追従時
 	if (mode == Camera::MODE::FOLLOW) {
-		camera.SetFocusPos(player_->GetFocusPoint());//注視点の更新
+		//camera.SetFocusPos(player_->GetFocusPoint());//注視点の更新
+		camera.SetFocusPos(player_->GetPos());//注視点の更新
 	}
 	//ロックオン時
 	else if (mode == Camera::MODE::LOCKON) {

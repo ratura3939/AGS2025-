@@ -189,7 +189,7 @@ void Camera::SetBeforeDrawRockOn(void)
 	//カメラの初期ゴールを計算結果で算出した場所にする
 	if (!isReset_) {
 		ChangeMode(MODE::RESET);
-		goal_.pos = pos_;
+		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(RELATIVE_F2C_POS_FOLLOW));
 		goal_.quaRot = followObject_.quaRot;
 	}
 }
@@ -239,17 +239,21 @@ void Camera::SetBeforeDrawShake(void)
 
 void Camera::SetBeforeDrawReset(void)
 {
+	//angleを逆算させる方法を考える
+
 	stepReset_ += RESET_STEP;
 	//終了条件
 	if (stepReset_ >= RESET_TIME) {
 		ChangeMode(currentMode_);
 		isReset_ = true;
+		angles_ = Utility::VECTOR_ZERO;
 		return;
 	}
 
 	//球面補間
 	rot_ = Quaternion::Slerp(start_.quaRot, goal_.quaRot, stepReset_);
-	pos_ = Utility::Lerp(start_.pos, goal_.pos, stepReset_);
+	//pos_ = Utility::Lerp(start_.pos, goal_.pos, stepReset_);
+	pos_ = VAdd(followObject_.pos, rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW));
 
 	//カメラの上方向
 	cameraUp_ = rot_.GetUp();
