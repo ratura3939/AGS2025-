@@ -46,6 +46,7 @@ EnemyBase::EnemyBase(VECTOR& _pos)
 	stopTime_ = -1.0f; 
 	intervalCnt_ = INTERVAL_ATTACK_NOMAL;
 
+	searchRestartCnt_ = 0.0f;
 	searchCnt_ = 0.0f;
 
 	hp_ = ENEMY_HP;
@@ -147,17 +148,22 @@ void EnemyBase::UpdateNomal(const VECTOR& _pPos, AttackManager& _atk)
 	//移動処理
 	(this->*move_)(_pPos);
 
-	//判定
-	
-	//判定
-	auto deg = Utility::AngleDeg(GetForward(), VSub(_pPos, pos_));
+	//カウンタ増加
+	searchRestartCnt_++;
 
-	//索敵可能範囲内に入ったら
-	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ALERT_DISTANCE&&
-		deg <= FIELD_VISION_DEG_HALF) {
-		//索敵状態に
-		ChangeState(ENEMY_STATE::SEARCH);
+	//サーチ完了時間になったら
+	if (searchRestartCnt_ > SEARCH_RESTART_TIME) {
+		//判定
+		auto deg = Utility::AngleDeg(GetForward(), VSub(_pPos, pos_));
+
+		//索敵可能範囲内に入ったら
+		if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ALERT_DISTANCE &&
+			deg <= FIELD_VISION_DEG_HALF) {
+			//索敵状態に
+			ChangeState(ENEMY_STATE::SEARCH);
+		}
 	}
+	
 }
 
 void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
@@ -328,6 +334,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		moveSped_ = MOVE_POW;
 		uiCntl_->FindReset();
 		searchCnt_ = 0.0f;
+		searchRestartCnt_ = 0.0f;
 
 		serchCol_ = serchDebugCol;
 		alertCol_ = serchDebugCol2;

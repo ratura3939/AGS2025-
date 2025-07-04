@@ -73,6 +73,9 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage1.mv1");
 	resourcesMap_.emplace(SRC::OBJECTS_MDL, res);
 
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "SkyDome.mv1");
+	resourcesMap_.emplace(SRC::SKY_DOME, res);
+
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "deco1.mv1");
 	resourcesMap_.emplace(SRC::STAGE_MDL, res);
 

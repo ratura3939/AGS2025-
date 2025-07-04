@@ -31,6 +31,7 @@ public:
 		OBJECTS_MDL,
 		PLAYER_MDL,
 		ENEMY_MDL,
+		SKY_DOME,
 
 		//‰¹
 		TITLE_BGM,

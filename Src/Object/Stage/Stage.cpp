@@ -1,6 +1,8 @@
 #include "Stage.h"
+
 #include"../../Utility/Utility.h"
 #include"../../Manager/Generic/ResourceManager.h"
+#include"../../Application.h"
 
 void Stage::Init(void)
 {
@@ -12,6 +14,9 @@ void Stage::Init(void)
 	rot_ = Utility::VECTOR_ZERO;
 
 	MV1SetPosition(modelId_,pos_);
+
+	sky_ = std::make_unique<SkyDome>();
+	sky_->Init();
 }
 
 void Stage::Update(void)
@@ -22,5 +27,7 @@ void Stage::Update(void)
 
 void Stage::Draw(void)
 {
+	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y,0x0055ff,false);
+	//sky_->Draw();
 	MV1DrawModel(modelId_);
 }

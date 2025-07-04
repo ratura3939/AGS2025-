@@ -27,7 +27,9 @@ public:
     static constexpr float ATTACK_DISTANCE = 200.0f;     	//攻撃開始の距離
     static constexpr float BATTLE_FINISH_DISTANCE = 1500.0f; //攻撃状態解除の距離
 
-    static constexpr float SEARCH_CNT_MAX = 60.0f;
+
+    static constexpr float SEARCH_RESTART_TIME = 100.0f;  //警戒再開時間
+    static constexpr float SEARCH_CNT_MAX = 60.0f;  //サーチ完了時間
 
     //乱数移動量
     static constexpr float MOVE_RANDOM_MIN = 200.0f;                   //最低値
@@ -155,6 +157,7 @@ private:
     float stopTime_;    //攻撃時の停止時間
     float intervalCnt_; //攻撃間隔のカウンタ
 
+    float searchRestartCnt_;    //疑い再開カウンタ
     float searchCnt_;   //疑いカウンタ
 
     bool isAlive_;     //削除していいか

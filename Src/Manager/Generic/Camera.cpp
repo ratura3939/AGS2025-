@@ -247,8 +247,10 @@ void Camera::SetBeforeDrawReset(void)
 		return;
 	}
 
+	//ãÖñ ï‚ä‘
 	rot_ = Quaternion::Slerp(start_.quaRot, goal_.quaRot, stepReset_);
 	pos_ = Utility::Lerp(start_.pos, goal_.pos, stepReset_);
+
 	//ÉJÉÅÉâÇÃè„ï˚å¸
 	cameraUp_ = rot_.GetUp();
 }
@@ -309,7 +311,7 @@ void Camera::ChangeMode(MODE mode)
 		stepReset_ = 0.0f;
 		start_.pos = pos_;
 		start_.quaRot = rot_;
-		goal_.pos = VAdd(followObject_.pos, RELATIVE_F2C_POS_FOLLOW);
+		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(RELATIVE_F2C_POS_FOLLOW));
 		goal_.quaRot = followObject_.quaRot;
 		break;
 	}

@@ -151,6 +151,8 @@ const VECTOR CharacterBase::GetHeight(void) const
 
 const Quaternion CharacterBase::GetQua(void) const
 {
+	return characterRotY_;
+
 	Quaternion retRot = Quaternion();
 	//VECTOR‚È‚Ì‚ÅQuaternion‚É•Ï‰»
 	retRot = retRot.Mult(characterRotY_);

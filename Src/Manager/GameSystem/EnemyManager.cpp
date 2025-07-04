@@ -55,9 +55,11 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 	}
 
 	//€–SƒŠƒXƒg•ª‰ñ‚·
+	int dethCnt = 0;
 	for (auto& idx : dethEnemy) {
 		//ŠY“–‚Ì“G‚ğÁ‹
-		characters_.erase(characters_.begin()+idx);
+		characters_.erase(characters_.begin()+(idx-dethCnt));
+		dethCnt++;
 	}
 }
 
