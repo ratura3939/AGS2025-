@@ -38,7 +38,7 @@ public:
 	//カメラ移動関連の定数---------------------------------------------------------------------
 	
 	static constexpr float MAX_MOVE_SPEED = 5.0f;	//移動速度の最大値
-	static constexpr float MAX_ROT_SPEED = 0.75f;	//移動速度の最大値
+	static constexpr float MAX_ROT_SPEED = 0.01f;	//移動速度の最大値
 
 	//カメラ揺らし関連の定数--------------------------------------------------------------------
 

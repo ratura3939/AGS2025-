@@ -247,6 +247,15 @@ void Camera::SetBeforeDrawReset(void)
 		ChangeMode(currentMode_);
 		isReset_ = true;
 		angles_ = Utility::VECTOR_ZERO;
+		//angles_.x = 1.0f;
+		//angles_.y = 1.0f;
+		//angles_.z = 1.0f;
+		//angles_ = rot_.PosAxis(angles_);
+
+		VECTOR axY = { 0.0f,1.0f,0.0f };
+
+		rot_.ToAngleAxis(&angles_.y, &axY);
+
 		return;
 	}
 
@@ -254,6 +263,11 @@ void Camera::SetBeforeDrawReset(void)
 	rot_ = Quaternion::Slerp(start_.quaRot, goal_.quaRot, stepReset_);
 	//pos_ = Utility::Lerp(start_.pos, goal_.pos, stepReset_);
 	pos_ = VAdd(followObject_.pos, rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW));
+
+
+	VECTOR axY = { 0.0f,1.0f,0.0f };
+
+	rot_.ToAngleAxis(&angles_.y, &axY);
 
 	//カメラの上方向
 	cameraUp_ = rot_.GetUp();
@@ -386,23 +400,23 @@ void Camera::Rotation(void)
 
 	if (ins.IsPressed("subUp"))
 	{
-		angles_.x -= Utility::Deg2RadF(MAX_ROT_SPEED);
+		angles_.x -= MAX_ROT_SPEED;
 		if (angles_.x <= LIMIT_X_DW_RAD)
 			angles_.x = LIMIT_X_DW_RAD;
 	}
 	if (ins.IsPressed("subDown"))
 	{
-		angles_.x += Utility::Deg2RadF(MAX_ROT_SPEED);
+		angles_.x += MAX_ROT_SPEED;
 		if (angles_.x >= LIMIT_X_UP_RAD)
 			angles_.x = LIMIT_X_UP_RAD;
 	}
 	if (ins.IsPressed("subLeft"))
 	{
-		angles_.y -= Utility::Deg2RadF(MAX_ROT_SPEED);
+		angles_.y -= MAX_ROT_SPEED;
 	}
 	if (ins.IsPressed("subRight"))
 	{
-		angles_.y += Utility::Deg2RadF(MAX_ROT_SPEED);
+		angles_.y += MAX_ROT_SPEED;
 	}
 
 	//カメラ座標を中心として、注視点を回転させる
