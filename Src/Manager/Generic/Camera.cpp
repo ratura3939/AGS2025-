@@ -12,6 +12,7 @@ Camera::Camera(void)
 	currentMode_ = MODE::NONE;
 	pos_ = { 0.0f, 0.0f, 0.0f };
 	focusPos_ = { 0.0f, 0.0f, 0.0f };
+	goalFocusPos_ = { 0.0f, 0.0f, 0.0f };
 	rockPos_ = { 0.0f, 0.0f, 0.0f };
 	rot_ = Quaternion::Identity();
 
@@ -72,7 +73,7 @@ void Camera::SetBeforeDraw(void)
 		break;
 
 	case MODE::LOCKON:
-		SetBeforeDrawRockOn();
+		SetBeforeDrawLockOn();
 		break;
 
 	case MODE::FOLLOW_SPRING:
@@ -123,6 +124,7 @@ void Camera::SetBeforeDrawFollow(void)
 	auto& ins = InputManager::GetInstance();
 	if (ins.IsTrigerrDown("rock")) {
 		ChangeMode(MODE::RESET);
+		return;
 	}
 
 	//追従対象までの距離ベクトルを回転させ相対座標を生成
@@ -142,7 +144,7 @@ void Camera::SetBeforeDrawFollow(void)
 
 }
 
-void Camera::SetBeforeDrawRockOn(void)
+void Camera::SetBeforeDrawLockOn(void)
 {
 
 	//TODO
@@ -150,13 +152,14 @@ void Camera::SetBeforeDrawRockOn(void)
 
 	Rotation();
 
+
 	//追従対象の位置
 	VECTOR followPos = followObject_.pos;
 	//追従対象の向き
 	Quaternion followRot = followObject_.quaRot;
 
 	//ロックオン対象と追従対象の離れている距離
-	VECTOR distance = VSub(rockPos_,followPos);
+	VECTOR distance = VSub(rockPos_, followPos);
 
 	//離れる距離を数値化
 	float disMag = Utility::MagnitudeF(distance);
@@ -167,31 +170,40 @@ void Camera::SetBeforeDrawRockOn(void)
 	}
 
 	//カメラ位置調整(カメラは後方位置に。Y方向は距離に応じて高さを変える。)
-	VECTOR relative = { 0.0f,disMag* ROCK_MAGNIFICATION_Y,-disMag};
+	VECTOR relative = { 0.0f,disMag * ROCK_MAGNIFICATION_Y,-disMag };
 	//カメラの回転情報をもとに相対座標を回転させる
 	VECTOR relativeCPos = rot_.PosAxis(relative);
-
-	//カメラ位置の更新
-	pos_ = VAdd(focusPos_, relativeCPos);
-
-	//ある程度の高さは保つ
-	if (pos_.y < UNDERLIMIT_Y)pos_.y = UNDERLIMIT_Y;
-
-
-	//注視点の更新
-	//ロックオン中の注視点は追従対象とロックオン対象の中間地点にある。
-	focusPos_ = VAdd(followPos,VScale(distance, 0.5f));
-
-	//カメラの上方向
-	cameraUp_ = rot_.GetUp();
 
 	//初動時のみに発動する
 	//カメラの初期ゴールを計算結果で算出した場所にする
 	if (!isReset_) {
 		ChangeMode(MODE::RESET);
-		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(RELATIVE_F2C_POS_FOLLOW));
+		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(relative));
 		goal_.quaRot = followObject_.quaRot;
+		return;
 	}
+
+	//注視点の更新
+	//ロックオン中の注視点は追従対象とロックオン対象の中間地点にある。
+	//focusPos_ = VAdd(followPos,VScale(distance, 0.5f));
+	goalFocusPos_ = VAdd(followPos, VScale(distance, 0.5f));
+	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.2f);
+
+	//カメラ位置の更新
+	auto gPos = VAdd(focusPos_, relativeCPos);
+	pos_ = Utility::Lerp(pos_, gPos, 0.2f);
+	//pos_ = VAdd(focusPos_, relativeCPos);
+
+	//ある程度の高さは保つ
+	if (pos_.y < UNDERLIMIT_Y)pos_.y = UNDERLIMIT_Y;
+
+
+	
+
+	//カメラの上方向
+	cameraUp_ = rot_.GetUp();
+
+	
 }
 
 void Camera::SetBeforeDrawShake(void)
@@ -264,6 +276,7 @@ void Camera::SetBeforeDrawReset(void)
 	//pos_ = Utility::Lerp(start_.pos, goal_.pos, stepReset_);
 	pos_ = VAdd(followObject_.pos, rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW));
 
+	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.8f);
 
 	VECTOR axY = { 0.0f,1.0f,0.0f };
 
@@ -350,7 +363,8 @@ void Camera::SetPos(const VECTOR& pos, const VECTOR& target)
 
 void Camera::SetFocusPos(const VECTOR& _focus)
 {
-	focusPos_ = _focus;
+	//focusPos_ = _focus;
+	goalFocusPos_ = _focus;
 }
 
 void Camera::SetRockPos(const VECTOR& _rock)

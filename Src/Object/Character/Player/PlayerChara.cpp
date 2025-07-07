@@ -71,7 +71,13 @@ const VECTOR PlayerChara::GetFocusPoint(void) const
 
 void PlayerChara::ChangeRockState(const bool _state)
 {
-	if (_state)rState_ = ROCK_STATE::LOCKON;
+	if (_state) {
+		rState_ = ROCK_STATE::LOCKON;
+		//プレイヤーの角度を強制的に敵に向ける
+		float deg = GetToLockDeg();
+		SetGoalRot(deg);
+		characterRotY_ = goalQua_;
+	}
 	else rState_ = ROCK_STATE::NOMAL;
 }
 
@@ -137,6 +143,17 @@ void PlayerChara::DrawDebug(void)
 	DrawCupcel();
 }
 
+float PlayerChara::GetToLockDeg(void)
+{//ロックオン特有の角度設定
+	VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();			//ロックオン対象位置	
+	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
+
+	//自分から対象へのベクトル
+	auto diff = VSub(rockPos, pos_);
+	//角度求める
+	return atan2(diff.x, diff.z) - cameraRot.y;
+}
+
 void PlayerChara::InitAnim(void)
 {
 	animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);
@@ -180,7 +197,7 @@ void PlayerChara::DrawUI(void)
 void PlayerChara::Move(void)
 {
 	//移動を行わないとき
-	if (moveDir_ == MOVE_DIR::NONE) {
+	if (moveDir_ == MOVE_DIR::NONE || state_ == STATE::ATTACK) {
 		//通常なら
 		if (state_ == STATE::NOMAL) {
 			//待機アニメーション
@@ -233,14 +250,8 @@ void PlayerChara::Move(void)
 
 	//ロックオンのとき
 	if (rState_ == ROCK_STATE::LOCKON) {
-		//ロックオン特有の角度設定
-		VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();			//ロックオン対象位置	
-		VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
-
-		//自分から対象へのベクトル
-		auto diff = VSub(rockPos, pos_);
-		//角度求める
-		afterDeg = atan2(diff.x, diff.z) - cameraRot.y;
+		//敵との角度差を設定
+		afterDeg = GetToLockDeg();
 	}
 	//目標角度設定
 	SetGoalRot(afterDeg);

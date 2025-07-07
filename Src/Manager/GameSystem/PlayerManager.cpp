@@ -5,6 +5,7 @@
 #include"../GameSystem/AttackManager.h"
 #include"../Decoration/SoundManager.h"
 #include"../../Scene/Game.h"
+#include"../../Utility/Utility.h"
 #include "PlayerManager.h"
 
 const std::string PlayerManager::ATTACK_NOMAL = "PlayerAttack";
@@ -97,6 +98,10 @@ void PlayerManager::UserInput(AttackManager& _atk)
 {
 	//プレイヤーからの入力総まとめ
 	InputManager& ins = InputManager::GetInstance();
+
+	//攻撃中は入力を受け付けない
+	if (character_->GetState() == PlayerChara::STATE::ATTACK)return;
+
 	//攻撃の生成
 	if (ins.IsTrigerrDown("attack")) {
 		//攻撃の生成および状態の設定
@@ -112,18 +117,49 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	if (IsDudgeMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
 		//回避状態に
 		character_->SetState(PlayerChara::STATE::DODGE);
-		if (ins.IsPressed("left")) {
-			//対応するアニメーション
- 			character_->PlayAnim("dodL");
+
+		//カメラとキャラクターの前方同士の内積
+		auto cFor = SceneManager::GetInstance().GetCamera().GetRot().GetForward();
+		auto pFor = character_->GetForward();
+		bool isReverse = false;
+
+		float CtoP = Utility::DotF(cFor,pFor);
+		if (CtoP < 0.0f) {
+			//キャラクターの向きが反転している。
+			isReverse = true;
 		}
-		else if (ins.IsPressed("right")) {
-			//対応するアニメーション
-			character_->PlayAnim("dodR");
+
+		if (!isReverse) {
+			//反転していない場合
+			if (ins.IsPressed("left")) {
+				//対応するアニメーション
+				character_->PlayAnim("dodL");
+			}
+			else if (ins.IsPressed("right")) {
+				//対応するアニメーション
+				character_->PlayAnim("dodR");
+			}
+			else if (ins.IsPressed("down")) {
+				//対応するアニメーション
+				character_->PlayAnim("dodB");
+			}
 		}
-		else if(ins.IsPressed("down")) {
-			//対応するアニメーション
-			character_->PlayAnim("dodB");
+		else {
+			if (ins.IsPressed("left")) {
+				//対応するアニメーション
+				character_->PlayAnim("dodR");
+			}
+			else if (ins.IsPressed("right")) {
+				//対応するアニメーション
+				character_->PlayAnim("dodL");
+			}
+			else if (ins.IsPressed("up")) {
+				//対応するアニメーション
+				character_->PlayAnim("dodB");
+			}
 		}
+
+		
 
 
 		//時間の設定
@@ -165,7 +201,7 @@ void PlayerManager::RedyStateCount(const int _limit)
 const bool PlayerManager::IsDudgeMove(void) const
 {
 	InputManager& ins = InputManager::GetInstance();
-	return ins.IsPressed("right") || ins.IsPressed("left") || ins.IsPressed("down");
+	return ins.IsPressed("right") || ins.IsPressed("left") || ins.IsPressed("down")|| ins.IsPressed("up");
 }
 
 const bool PlayerManager::IsAlive(void) const

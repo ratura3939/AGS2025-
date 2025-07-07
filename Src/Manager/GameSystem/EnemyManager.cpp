@@ -112,13 +112,18 @@ int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
 
 	for (int i = 0; i < characters_.size(); i++) {
 		//‰æ–Ê“à‚É‚¢‚È‚¢‚Æ‚«‚Í‚Â‚¬‚Ö
-		if (!InsideScreen(characters_[i]->GetPos()))continue;
+		VECTOR myPos = characters_[i]->GetPos();
+		distance = VSub(characters_[i]->GetPos(), _pPos);
+
+		float disMag = Utility::MagnitudeF(distance);
+
+		if (!InsideScreen(myPos)|| disMag > TARGETTING_PERMISSION_DISTANCE)continue;
 
 		//‹——£”äŠr
-		distance = VSub(characters_[i]->GetPos(), _pPos);
-		if (min > Utility::MagnitudeF(distance)) {
+		
+		if (min > disMag) {
 			nearNum = i;
-			min = Utility::MagnitudeF(distance);
+			min = disMag;
 		}
 	}
 

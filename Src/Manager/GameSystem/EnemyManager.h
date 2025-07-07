@@ -15,6 +15,8 @@ public:
 	//攻撃登録名(ゆくゆくは外部データ)
 	static const std::string ATTACK_NOMAL;
 
+	static constexpr float TARGETTING_PERMISSION_DISTANCE = 1000.0f;	//ターゲティングを許可する範囲
+
 	//デバッグ用
 	static constexpr int ATTACK_TIME = 100;
 	static constexpr int ATTACK_TIME_START = 20;

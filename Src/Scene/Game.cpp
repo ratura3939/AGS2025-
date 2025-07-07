@@ -225,6 +225,20 @@ void Game::Update(void)
 			enemy_->NoTargetEnemy();
 		}
 	}
+	else {
+		//ロックオン中
+		//押下終了時
+		if (InputManager::GetInstance().IsTrigerrUp("rock")) {
+			//各種状態の変化
+			RockOff();
+		}
+
+		//対象となる敵がいなかったら
+		if (nearEnemyNum_ < 0) {
+			//各種状態の変化
+			RockOff();
+		}
+	}
 
 	//ロックオン処理
 	//押下時
@@ -237,17 +251,6 @@ void Game::Update(void)
 				RockOn();
 			}
 		}
-	}
-	//押下終了時
-	else if (InputManager::GetInstance().IsTrigerrUp("rock")) {
-		//各種状態の変化
-		RockOff();
-	}
-
-	//カメラがロックオン状態のとき敵がいなかったら
-	if (camera.GetMode() == Camera::MODE::LOCKON && nearEnemyNum_ < 0) {
-		//各種状態の変化
-		RockOff();
 	}
 
 #pragma region カメラ更新
@@ -313,6 +316,7 @@ void Game::FinishSwitchBgm(void)
 void Game::RockOn(void)
 {
 	Camera& camera = SceneManager::GetInstance().GetCamera();
+	camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));	//ロックオン対象の設定
 	player_->LockOn();
 	enemy_->LokedOn(nearEnemyNum_);
 	camera.ChangeMode(Camera::MODE::LOCKON);

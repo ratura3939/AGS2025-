@@ -96,7 +96,7 @@ public:
 	void SetBeforeDrawFixedPoint(void);		//定点カメラ
 	void SetBeforeDrawFree(void);			//フリーカメラ
 	void SetBeforeDrawFollow(void);			//追従カメラ
-	void SetBeforeDrawRockOn(void);			//ロックオンカメラ
+	void SetBeforeDrawLockOn(void);			//ロックオンカメラ
 	void SetBeforeDrawShake(void);			//カメラシェイク
 	void SetBeforeDrawReset(void);			//カメラリセット
 
@@ -153,6 +153,7 @@ private:
 
 	//カメラの注視点
 	VECTOR focusPos_;
+	VECTOR goalFocusPos_;
 
 	//カメラの上方向
 	VECTOR cameraUp_;

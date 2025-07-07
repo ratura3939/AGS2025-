@@ -58,11 +58,18 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 		//攻撃(球)とキャラクター(カプセル)の当たり判定
 		if (Utility::IsHitSphereCapsule(atkPos, atkRadius, pPos, pHeadPos, CharacterBase::CHARACTER_RADIUS)) {
 			
-			//ジャスト回避
-			if (atkCol.info.IsPreGap()&&_player.lock()->GetState()==PlayerChara::STATE::DODGE) {
-   				isSlow_ = true;
-				//判定済みに
-				atkCol.info.isHit = true;
+			//回避可能時間に当たっていたら
+			if (atkCol.info.IsPreGap()) {
+
+				//ジャスト回避できるよ！！という予測を出すようにする。
+
+				//回避していたら
+				if (_player.lock()->GetState() == PlayerChara::STATE::DODGE) {
+					//スローに
+					isSlow_ = true;
+					//判定済みに
+					atkCol.info.isHit = true;
+				}
 				continue;
 			}
 

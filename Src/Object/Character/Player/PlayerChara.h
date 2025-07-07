@@ -115,6 +115,8 @@ public:
     void InputDash(const bool _flag) { isDush_ = _flag; }
     void InputMoveDir(const MOVE_DIR _dir) { moveDir_ = _dir; }
 
+    float GetToLockDeg(void);
+
 private:
     ROCK_STATE rState_; //ƒƒbƒNƒIƒ“ó‘Ô
     STATE state_;       //ó‘Ô

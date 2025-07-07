@@ -121,5 +121,8 @@ public:
 	static void DrawLineXYZ(const VECTOR& pos, const MATRIX& rot, float len = 50.0f);
 	static void DrawLineXYZ(const VECTOR& pos, const Quaternion& rot, float len = 50.0f);
 
+	//ì‡êœ
+	static float DotF(VECTOR& v1, VECTOR& v2);
+
 };
 
