@@ -50,7 +50,7 @@ public:
 
 	//ƒŠƒZƒbƒgŠÖŒW
 	static constexpr float RESET_TIME = 1.0f;
-	static constexpr float RESET_STEP = 0.02f;
+	static constexpr float RESET_STEP = 0.05f;
 
 	//‹——£Å’á§ŒÀ
 	static constexpr float UNDERLIMIT_Y = 280.0f;
