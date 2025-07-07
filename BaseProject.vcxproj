@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\UI\Player\NoticeDodge.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\Decoration\SoundManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\AnimationController.cpp" />
@@ -60,6 +61,7 @@
     <ClCompile Include="Src\Manager\Decoration\UIManager2d.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\UI\Player\NoticeDodge.h" />
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
     <ClInclude Include="Src\Manager\Decoration\SoundManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\AnimationController.h" />
