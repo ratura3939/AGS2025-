@@ -67,7 +67,3 @@ void EnemyUIController::ChangeTargetUI(const bool _flag)
 	targetUI_->IsLock(_flag);
 }
 
-
-void EnemyUIController::DrawHp(void)
-{
-}

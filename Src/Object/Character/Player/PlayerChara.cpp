@@ -187,7 +187,7 @@ void PlayerChara::InitUI(void)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	//HP
-	hpImg_ = rsM.Load(ResourceManager::SRC::HEART_IMG).handleId_;
+	
 }
 
 void PlayerChara::DrawUI(void)

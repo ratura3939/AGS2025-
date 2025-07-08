@@ -14,10 +14,6 @@ public:
 	virtual void SetDrawPos(const VECTOR _pos) = 0;
 
 protected:
-	/// <summary>
-	/// HP‚Ì•`‰æ
-	/// </summary>
-	virtual void DrawHp(void) = 0;
 
 	VECTOR& followUIPos_;
 };

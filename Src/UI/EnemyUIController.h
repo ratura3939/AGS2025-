@@ -38,7 +38,6 @@ public:
     void ChangeTargetUI(const bool _flag);
 
 private:
-    void DrawHp(void)override;
 
     std::unique_ptr<EnemyFind>findUI_;
     std::unique_ptr<EnemyHp>hpUI_;
