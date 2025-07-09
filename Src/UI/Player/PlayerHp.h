@@ -16,7 +16,7 @@ public:
 	static constexpr float ALPHA_DEG = 2.0f;
 	static constexpr float FALL_ACC = 0.5f;
 
-	static constexpr float HP_EX = 30.0f;
+	static constexpr float HP_EX = 0.2f;
 
 	enum class STATE {
 		NOMAL,

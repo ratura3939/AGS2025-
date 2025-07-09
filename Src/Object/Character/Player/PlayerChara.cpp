@@ -5,6 +5,7 @@
 #include"../../../Manager/GameSystem/AnimationController.h"
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Utility/Utility.h"
+
 #include "PlayerChara.h"
 
 
@@ -62,6 +63,7 @@ void PlayerChara::Update(void)
 
 	UpdateRotQuat();
 	animController_->Update();
+	uiCntl_->Update();
 }
 
 const VECTOR PlayerChara::GetFocusPoint(void) const
@@ -106,6 +108,8 @@ void PlayerChara::Damage(const float _pow)
 {
 	//UŒ‚—Í•ªŒ¸‚ç‚·
 	hp_ -= static_cast<int>(_pow);
+
+	uiCntl_->Damage();
 	//0ˆÈ‰º‚Ì‚Æ‚«
 	if (hp_ <= 0) {
 		//€–Sˆ—
@@ -187,11 +191,13 @@ void PlayerChara::InitUI(void)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	//HP
-	
+	uiCntl_ = std::make_unique<PlayerUIController>(pos_, PALYER_HP);
+	uiCntl_->Init(speciesName_);
 }
 
 void PlayerChara::DrawUI(void)
 {
+	uiCntl_->Draw();
 }
 
 void PlayerChara::Move(void)

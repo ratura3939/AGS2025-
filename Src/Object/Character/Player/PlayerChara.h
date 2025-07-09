@@ -1,6 +1,8 @@
 #pragma once
 #include <DxLib.h>
+#include<memory>
 #include "../CharacterBase.h"
+#include"../../../UI/PlayerUIController.h"
 
 //プレイヤーはスローの影響を受けない
 //よって更新に関わるカウンターは通常のインクリメント
@@ -126,6 +128,8 @@ private:
     //入力受付変数
     MOVE_DIR moveDir_;  //移動方向
     bool isDush_;        //走る
+
+    std::unique_ptr<PlayerUIController>uiCntl_;
 
     //UI関連
     int hpImg_;

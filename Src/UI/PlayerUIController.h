@@ -17,12 +17,15 @@ public:
 
     void Init(const std::string& _master)override;
     void Update(void)override;
-    void Draw(const PlayerUI _type);
+    void Draw(void);
     void Release(void)override;
 
     void SetDrawPos(const VECTOR _pos)override;
 
+    void Damage(void);
 private:
     std::unique_ptr<PlayerHp>hp_;
+
+    VECTOR hpDrawPos_;
 };
 

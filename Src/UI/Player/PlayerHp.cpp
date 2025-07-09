@@ -21,6 +21,10 @@ bool PlayerHp::Init(const std::string& _master)
 
 	VECTOR pos = drawFollowPos_;
 
+	nomalStr_ = _master + "NomalHp";
+	emptyStr_ = _master + "EmptyHp";
+	brokenStr_ = _master + "BrokenHp";
+
 	for (int i = 0; i < states_.size(); i++) {
 		//ƒm[ƒ}ƒ‹HP
 		std::string nomal = nomalStr_.c_str() + i;
@@ -35,7 +39,7 @@ bool PlayerHp::Init(const std::string& _master)
 		//‚Ð‚ÑŠ„‚êHP(—Ž‚¿‚Ä‚¤‚Á‚·‚çÁ‚¦‚Ä‚¢‚­)
 		uiM.Add(broken, rsM.Load(ResourceManager::SRC::HEART_BROKEN_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::GRAD_DISAP, UI_DIMENSION::DIMENSION_2);
 		uiM.SetUIInfo(broken, pos, HP_EX);
-		uiM.SetUIDirectionPram(broken, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 1.0f, 255.0f, 0.0f);
+		uiM.SetUIDirectionPram(broken, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 3.0f, 255.0f, 0.0f);
 
 		uiM.PushUIDirection(broken, UIManager2d::UI_DIRECTION_2D::MOVE_DOWN);
 		uiM.SetUIDirectionPram(broken, UIManager2d::UI_DIRECTION_GROUP::MOVE, 1.0f, 50.0f, 0.0f);
@@ -102,7 +106,7 @@ void PlayerHp::Reset(void)
 
 void PlayerHp::Damage(void)
 {
-	for (int cnt = states_.size() - 1; cnt >= 0; cnt) {
+	for (int cnt = states_.size() - 1; cnt >= 0; cnt--) {
 		if (states_[cnt] == STATE::NOMAL) {
 			states_[cnt] = STATE::BROKEN;
 			break;
