@@ -2,8 +2,11 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include "PlayerHp.h"
 
-PlayerHp::PlayerHp(VECTOR& _followPos):UIBase(_followPos)
+PlayerHp::PlayerHp(VECTOR& _followPos, const int _hp):UIBase(_followPos)
 {
+	for (int num = 0; num < _hp; num++) {
+		states_.push_back(STATE::NOMAL);
+	}
 }
 
 PlayerHp::~PlayerHp(void)
@@ -13,18 +16,34 @@ PlayerHp::~PlayerHp(void)
 bool PlayerHp::Init(const std::string& _master)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
+
+	VECTOR pos = drawFollowPos_;
+
+	for (int i = 0; i < states_.size(); i++) {
+		//ノーマルHP
+		std::string nomal = nomalStr_.c_str() + i;
+		std::string empty = emptyStr_.c_str() + i;
+		std::string broken = brokenStr_.c_str() + i;
+
+		uiM.Add(nomal, rsM.Load(ResourceManager::SRC::HEART_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
+		uiM.SetUIInfo(nomal, pos, HP_EX);
+		//空のHP
+		uiM.Add(empty, rsM.Load(ResourceManager::SRC::HEART_EMPTY_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
+		uiM.SetUIInfo(empty, pos, HP_EX);
+		//ひび割れHP(落ちてうっすら消えていく)
+		uiM.Add(broken, rsM.Load(ResourceManager::SRC::HEART_BROKEN_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::GRAD_DISAP, UI_DIMENSION::DIMENSION_2);
+		uiM.SetUIInfo(broken, pos, HP_EX);
+		uiM.SetUIDirectionPram(broken, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 1.0f, 255.0f, 0.0f);
+
+		uiM.PushUIDirection(broken, UIManager2d::UI_DIRECTION_2D::MOVE_DOWN);
+		uiM.SetUIDirectionPram(broken, UIManager2d::UI_DIRECTION_GROUP::MOVE, 1.0f, 50.0f, 0.0f);
+
+		pos.x += 100.0f;
+	}
+
 	
-	/*img_[static_cast<int>(STATE::NOMAL)] = resM.Load(ResourceManager::SRC::HP_NOMAL).handleId_;
-	img_[static_cast<int>(STATE::BROKEN)] = resM.Load(ResourceManager::SRC::HP_BROKEN).handleId_;
-	img_[static_cast<int>(STATE::EMPTY)] = resM.Load(ResourceManager::SRC::HP_EMPTY).handleId_;*/
-
-	fallImg_ = img_[static_cast<int>(STATE::NOMAL)];
-
-	state_ = STATE::NOMAL;
-	pos_ = { SIZE_X / 2.0f,SIZE_Y / 2.0f,0.0f };
-	fallPos_ = pos_;
-
-	fallAlpha_ = 255;
 
 	//正常終了
 	return true;
@@ -32,38 +51,61 @@ bool PlayerHp::Init(const std::string& _master)
 
 bool PlayerHp::Update(void)
 {
-	//更新が必要なのは演出が入る壊れ状態のみ
-	if (state_ == STATE::BROKEN) {
-		fallAlpha_ -= ALPHA_DEG;
-		if (fallAlpha_ < 0)ChangeState(STATE::EMPTY);
-		fallPos_.y += FALL_ACC;
+	//ダメージ位状態のHPがあるなら更新をかける
+	int cnt = 0;
+
+	for (auto& state : states_) {
+		if (state == STATE::BROKEN) {
+			UIManager2d::GetInstance().Update(brokenStr_.c_str() + cnt);
+			if (UIManager2d::GetInstance().IsFinishDirection(brokenStr_.c_str() + cnt, UIManager2d::UI_DIRECTION_GROUP::MOVE)) {
+				state = STATE::EMPTY;
+			}
+			break;
+		}
+		cnt++;
 	}
 
-	//正常終了
+	////正常終了
 	return true;
 }
 
 void PlayerHp::Draw(void)
 {
-	if (state_ == STATE::BROKEN) {
-		DrawRotaGraph(pos_.x, pos_.y, SCALE_DOWN, 0.0f, img_[static_cast<int>(STATE::EMPTY)], true);
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)fallAlpha_);
-		DrawRotaGraph(fallPos_.x, fallPos_.y, SCALE_DOWN, 0.0f, fallImg_, true);
+	UIManager2d& uiM = UIManager2d::GetInstance();
 
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	}
-	else {
-		//通常描画
-		DrawRotaGraph(pos_.x, pos_.y, SCALE_DOWN, 0.0f, img_[static_cast<int>(state_)], true);
+	VECTOR pos = drawPos_;
+	int cnt = 0;
+
+	for (auto& state : states_) {
+		
+		if (state == STATE::NOMAL) {
+			uiM.Draw(nomalStr_.c_str() + cnt);
+		}
+		else {
+			uiM.Draw(emptyStr_.c_str() + cnt);
+			if (state == STATE::BROKEN) {
+				uiM.Draw(brokenStr_.c_str() + cnt);
+			}
+		}
+		cnt++;
 	}
 }
 
 void PlayerHp::SetPos(const VECTOR& _pos)
 {
-	pos_ = _pos;
-	fallPos_ = pos_;
+	drawPos_ = _pos;
 }
 
 void PlayerHp::Reset(void)
 {
+}
+
+void PlayerHp::Damage(void)
+{
+	for (int cnt = states_.size() - 1; cnt >= 0; cnt) {
+		if (states_[cnt] == STATE::NOMAL) {
+			states_[cnt] = STATE::BROKEN;
+			break;
+		}
+	}
 }

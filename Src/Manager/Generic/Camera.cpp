@@ -30,6 +30,7 @@ Camera::Camera(void)
 	angles_.y = 0.0f;
 	angles_.z = 0.0f;
 
+	lerpSpeed_ = NO_LERP;
 }
 
 Camera::~Camera(void)
@@ -131,7 +132,13 @@ void Camera::SetBeforeDrawFollow(void)
 	VECTOR relativeCPos = rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW);
 
 	//カメラ位置の更新(追従対象位置から相対座標を足す)
-	pos_ = VAdd(followPos, relativeCPos);
+	VECTOR gPos = VAdd(followPos, relativeCPos);
+
+	if (fabs(Utility::MagnitudeF(gPos) - Utility::MagnitudeF(pos_)) <= 10.0f) {
+		lerpSpeed_ = NO_LERP;
+	}
+
+	pos_ = Utility::Lerp(pos_, gPos, lerpSpeed_);
 
 	//注視点までの距離ベクトルを回転させ相対座標を生成
 	VECTOR relativeTPos = rot_.PosAxis(RELATIVE_C2T_POS);
@@ -191,7 +198,7 @@ void Camera::SetBeforeDrawLockOn(void)
 
 	//カメラ位置の更新
 	auto gPos = VAdd(focusPos_, relativeCPos);
-	pos_ = Utility::Lerp(pos_, gPos, 0.2f);
+	pos_ = Utility::Lerp(pos_, gPos, NO_LERP);
 	//pos_ = VAdd(focusPos_, relativeCPos);
 
 	//ある程度の高さは保つ
@@ -259,10 +266,6 @@ void Camera::SetBeforeDrawReset(void)
 		ChangeMode(currentMode_);
 		isReset_ = true;
 		angles_ = Utility::VECTOR_ZERO;
-		//angles_.x = 1.0f;
-		//angles_.y = 1.0f;
-		//angles_.z = 1.0f;
-		//angles_ = rot_.PosAxis(angles_);
 
 		VECTOR axY = { 0.0f,1.0f,0.0f };
 
@@ -331,6 +334,7 @@ void Camera::ChangeMode(MODE mode)
 	case MODE::FREE:
 		break;
 	case MODE::FOLLOW:
+		lerpSpeed_ = LERP_SPEED;
 		break;
 	case MODE::FOLLOW_SPRING:
 		break;

@@ -87,8 +87,16 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Exclamation.png");
 	resourcesMap_.emplace(SRC::FIND_IMG, res);
 	//HP
-	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Heart.png");
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "HP.png");
 	resourcesMap_.emplace(SRC::HEART_IMG, res);
+
+	//HP(壊れ)
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "HP_BROKEN.png");
+	resourcesMap_.emplace(SRC::HEART_BROKEN_IMG, res);
+	//HP(空)
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "HP_EMPTY.png");
+	resourcesMap_.emplace(SRC::HEART_EMPTY_IMG, res);
+
 	//ターゲット予測
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_AnnounceRockOn.png");
 	resourcesMap_.emplace(SRC::ANNOUNCE_LOCKON_IMG, res);

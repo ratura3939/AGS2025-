@@ -59,6 +59,10 @@ public:
 	static constexpr float LIMIT_X_UP_RAD = 45.0f * (DX_PI_F / 180.0f);
 	static constexpr float LIMIT_X_DW_RAD = -25.0f * (DX_PI_F / 180.0f);
 
+	//線形補完
+	static constexpr float NO_LERP = 1.0f;
+	static constexpr float LERP_SPEED = 0.05f;
+
 	//カメラモード
 	enum class MODE
 	{
@@ -172,6 +176,8 @@ private:
 	VECTOR defaultPos_;
 
 	VECTOR shakeDir_;
+
+	float lerpSpeed_;
 
 	
 	//カメラを初期位置に戻す

@@ -1,6 +1,9 @@
 #pragma once
 #include "CharacterUIController.h"
+#include<memory>
 #include <DxLib.h>
+#include"Player/PlayerHp.h"
+
 class PlayerUIController :
     public CharacterUIController
 {
@@ -9,7 +12,7 @@ public:
         HP,
     };
 
-    PlayerUIController(VECTOR& _followPos);
+    PlayerUIController(VECTOR& _followPos,const int _hp);
     ~PlayerUIController(void);
 
     void Init(const std::string& _master)override;
@@ -20,6 +23,6 @@ public:
     void SetDrawPos(const VECTOR _pos)override;
 
 private:
-    void DrawHp(void)override;
+    std::unique_ptr<PlayerHp>hp_;
 };
 

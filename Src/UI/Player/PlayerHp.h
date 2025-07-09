@@ -1,5 +1,6 @@
 #pragma once
 #include<DxLib.h>
+#include<vector>
 #include "../UIBase.h"
 
 class PlayerHp :
@@ -15,6 +16,8 @@ public:
 	static constexpr float ALPHA_DEG = 2.0f;
 	static constexpr float FALL_ACC = 0.5f;
 
+	static constexpr float HP_EX = 30.0f;
+
 	enum class STATE {
 		NOMAL,
 		BROKEN,
@@ -22,7 +25,7 @@ public:
 		MAX
 	};
 
-	PlayerHp(VECTOR& _followPos);
+	PlayerHp(VECTOR& _followPos,const int _hp);
 	~PlayerHp(void);
 
 	bool Init(const std::string& _master)override;
@@ -30,22 +33,21 @@ public:
 	void Draw(void)override;
 
 	//状態変更
-	void ChangeState(const STATE _state) { state_ = _state; }
+	//void ChangeState(const STATE _state) { state_ = _state; }
 
 	void SetPos(const VECTOR& _pos)override;
 
 	void Reset(void)override;
 
+	void Damage(void);
+
 private:
 	//UI画像
-	int img_[static_cast<int>(STATE::MAX)];
-	int fallImg_;
+	std::string nomalStr_;
+	std::string emptyStr_;
+	std::string brokenStr_;
 
-	STATE state_;		//状態を表す
+	std::vector<STATE> states_;		//状態を表す
 
-	VECTOR pos_;		//キャラクターのHPを示すよう
-	VECTOR fallPos_;	//HP減らされたときの演出用の位置
-
-	float fallAlpha_;
 };
 
