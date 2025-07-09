@@ -2,6 +2,10 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include "PlayerHp.h"
 
+namespace {
+	constexpr float HP_DISTANCE = 100.0f;
+}
+
 PlayerHp::PlayerHp(VECTOR& _followPos, const int _hp):UIBase(_followPos)
 {
 	for (int num = 0; num < _hp; num++) {
@@ -44,7 +48,7 @@ bool PlayerHp::Init(const std::string& _master)
 		uiM.PushUIDirection(broken, UIManager2d::UI_DIRECTION_2D::MOVE_DOWN);
 		uiM.SetUIDirectionPram(broken, UIManager2d::UI_DIRECTION_GROUP::MOVE, 1.0f, 50.0f, 0.0f);
 
-		pos.x += 100.0f;
+		pos.x += HP_DISTANCE;
 	}
 
 	

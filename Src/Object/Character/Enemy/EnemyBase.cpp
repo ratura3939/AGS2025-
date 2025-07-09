@@ -8,6 +8,8 @@
 #include"../../../Manager/GameSystem/EnemyManager.h"
 #include"../../../UI/EnemyUIController.h"
 #include"../../../Utility/Utility.h"
+#include"../../../Renderer/ModelMaterial.h"
+#include"../../../Renderer/ModelRenderer.h"
 #include "EnemyBase.h"
 
 namespace {
@@ -67,9 +69,10 @@ const bool EnemyBase::Init(const int _num)
 	//ŒÂ‘Ì–¼“o˜^
 	speciesName_ += std::to_string(_num);
 
-
 	SetPram();
+
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
+	itemModel_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
 	if (modelId_ == -1) {
 		return false;
 	}
@@ -90,8 +93,39 @@ const bool EnemyBase::Init(const int _num)
 	//UI‰Šú‰»
 	InitUI();
 
+
+	//ƒ‚ƒfƒ‹•`‰æƒNƒ‰ƒX¶¬
+	material_ = std::make_unique<ModelMaterial>("SkinVS.cso", 0, "StdModelPS.cso", 1);
+	//PS
+	//ŠeF‚Ì‹­‚³(ŠgUŒõ)
+	material_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
+
+
+	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
+
+	//ƒ‚ƒfƒ‹•`‰æƒNƒ‰ƒX¶¬
+	noBornMaterial_ = std::make_unique<ModelMaterial>("NoBornVS.cso", 0, "StdModelPS.cso", 1);
+	//PS
+	//ŠeF‚Ì‹­‚³(ŠgUŒõ)
+	noBornMaterial_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
+	
+	noBornRenderer_ = std::make_unique<ModelRenderer>(itemModel_, *material_);
+
 	//ó‘Ô‚ğ’Êí‚É
 	ChangeState(ENEMY_STATE::NOMAL);
+
+	int max = -1;
+	auto num = MV1GetTriangleListNum(modelId_);
+	for (int i = 0; i < num; i++)
+	{
+		int temp = MV1GetTriangleListVertexType(modelId_, i);
+		if (max < temp)
+		{
+			max = temp;
+		}
+	}
+
+	max;
 	return true;
 }
 
@@ -372,6 +406,13 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 	default:
 		break;
 	}
+}
+
+void EnemyBase::Draw(void)
+{
+	renderer_->Draw();
+	noBornRenderer_->Draw();
+	DrawUI();
 }
 
 void EnemyBase::DrawUI(void)

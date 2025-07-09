@@ -1,10 +1,13 @@
 #pragma once
 #include<DxLib.h>
+#include<memory>
 #include "../../Common/Quaternion.h"
 #include"../../Manager/GameSystem/AnimationController.h"
 
 //class AnimationController;
 class AttackManager;
+class ModelMaterial;
+class ModelRenderer;
 class Game;
 
 class CharacterBase
@@ -90,6 +93,8 @@ public:
 
 protected:
 	int modelId_;	//モデルID
+	int itemModel_;
+
 	VECTOR pos_;	//座標
 	VECTOR scl_;	//モデル大きさ
 	VECTOR rot_;	//回転情報(XYZ)
@@ -115,6 +120,13 @@ protected:
 
 	//アニメーション
 	std::unique_ptr<AnimationController> animController_;
+
+	//描画関係
+	std::unique_ptr<ModelMaterial>material_;
+	std::unique_ptr<ModelRenderer>renderer_;
+
+	std::unique_ptr<ModelMaterial>noBornMaterial_;
+	std::unique_ptr<ModelRenderer>noBornRenderer_;
 
 	//ステータスなど
 	float hp_;

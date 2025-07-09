@@ -95,6 +95,7 @@ public:
 
     const bool Init(const int _num)override;
     void Update(const VECTOR _pPos, AttackManager& _atk)override;
+    void Draw(void)override;
   
 protected:
     virtual void SetPram(void);     //各敵の固有情報(いずれか外部データ化したい)
@@ -115,6 +116,7 @@ private:    //各種更新処理
     void ChangeState(const ENEMY_STATE _state); //状態の遷移
 #pragma endregion
 
+    
     void DrawUI(void)override;
 
 public:

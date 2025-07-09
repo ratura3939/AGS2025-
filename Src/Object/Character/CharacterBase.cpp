@@ -1,6 +1,8 @@
 #include"../../Utility/Utility.h"
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/Camera.h"
+#include"../../Renderer/ModelMaterial.h"
+#include"../../Renderer/ModelRenderer.h"
 #include "CharacterBase.h"
 
 CharacterBase::CharacterBase(void)
