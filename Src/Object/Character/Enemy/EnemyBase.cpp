@@ -66,6 +66,8 @@ EnemyBase::~EnemyBase(void)
 
 const bool EnemyBase::Init(const int _num)
 {
+
+
 	//ŒÂ‘Ì–¼“o˜^
 	speciesName_ += std::to_string(_num);
 
