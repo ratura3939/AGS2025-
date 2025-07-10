@@ -1,4 +1,5 @@
 #pragma once
+#include<DxLib.h>
 #include "../CharacterBase.h"
 
 //“G‚ÍƒXƒ[‚Ì‰e‹¿‚ğó‚¯‚é
@@ -172,5 +173,9 @@ private:
     int serchCol_;
     int alertCol_;
     double debugRot_;
+
+    MV1_MATRIX_PALETTE_SHADER_PARAM g_currentBonePalette;
+    MV1_MATRIX_PALETTE_SHADER_PARAM g_prevBonePalette;
+
 };
 

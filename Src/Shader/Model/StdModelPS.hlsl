@@ -26,31 +26,19 @@ float4 main(PS_INPUT PSInput) : SV_TARGET0
 		discard;
 	}
 
-	if (PSInput.isDraw==false) {
-		discard;
-	}
-
 	//どちらもワールド座標
 	//法線
 	float3 nomal = PSInput.normal;
 	//ライト方向
-	float3 lightDir = g_light.xyz;
+	//float3 lightDir = g_light.xyz;
 	//lightDir.xyz = 1.0f;
 
-	float dotF = dot(nomal,lightDir);
-	dotF += 1.0f;
-	dotF /= 2.0f;
+	//float dotF = dot(nomal,lightDir);
+	//dotF += 1.0f;
+	//dotF /= 2.0f;
 
-	color.rgb *= (1 - dotF);
+	//color.rgb *= (1 - dotF);
 
 	//関数の戻り値がラスタライザに渡される
 	return color * g_color;
-
-	//// ③法線がワールド空間になっているか確認
-	//return float4(
-	//	PSInput.normal.x, PSInput.normal.x, PSInput.normal.x, 1.0f);
-
-	////ライトの方向を色に変換
-	//
-	//return float4(lightDir.x, lightDir.y, lightDir.z, 1.0f);
 }

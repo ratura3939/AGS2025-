@@ -17,8 +17,6 @@ VS_OUTPUT main(VS_INPUT VSInput)
 	float4 lWorldPosition;
 	float4 lViewPosition;
 
-	ret.isDraw = true;
-
 	// float3 Å® float4
 	lLocalPosition.xyz = VSInput.pos;
 	lLocalPosition.w = 1.0f;

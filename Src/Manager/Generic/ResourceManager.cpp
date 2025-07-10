@@ -66,7 +66,7 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
 
 	//敵
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Enemy_Axeman.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "EneAxe.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_MDL, res);
 
 	//ステージ

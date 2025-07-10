@@ -93,7 +93,6 @@ public:
 
 protected:
 	int modelId_;	//モデルID
-	int itemModel_;
 
 	VECTOR pos_;	//座標
 	VECTOR scl_;	//モデル大きさ
@@ -124,9 +123,6 @@ protected:
 	//描画関係
 	std::unique_ptr<ModelMaterial>material_;
 	std::unique_ptr<ModelRenderer>renderer_;
-
-	std::unique_ptr<ModelMaterial>noBornMaterial_;
-	std::unique_ptr<ModelRenderer>noBornRenderer_;
 
 	//ステータスなど
 	float hp_;

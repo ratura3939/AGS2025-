@@ -53,6 +53,8 @@ public:
 		//エフェクト
 		SWORD_EFC,
 		DAMAGE_EFC,
+
+		TEST_MDL,
 	};
 
 	// 明示的にインステンスを生成する

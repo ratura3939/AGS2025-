@@ -72,7 +72,7 @@ const bool EnemyBase::Init(const int _num)
 	SetPram();
 
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
-	itemModel_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
+
 	if (modelId_ == -1) {
 		return false;
 	}
@@ -89,27 +89,25 @@ const bool EnemyBase::Init(const int _num)
 	InitAnim();
 	animController_->Play("idle", SPEED_ANIM);
 
-
 	//UI初期化
 	InitUI();
 
-
 	//モデル描画クラス生成
-	material_ = std::make_unique<ModelMaterial>("SkinVS.cso", 0, "StdModelPS.cso", 1);
+	material_ = std::make_unique<ModelMaterial>("BlurSkinVS.cso", 2, "BlurSkinPS.cso", 3);
+	//VS
+
+
 	//PS
 	//各色の強さ(拡散光)
 	material_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
+	//ブラーの強さ(最初の項目のみ関係する)
+	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+	//サンプル数(最初の項目のみ関係する)
+	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
 
 
 	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
 
-	//モデル描画クラス生成
-	noBornMaterial_ = std::make_unique<ModelMaterial>("NoBornVS.cso", 0, "StdModelPS.cso", 1);
-	//PS
-	//各色の強さ(拡散光)
-	noBornMaterial_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
-	
-	noBornRenderer_ = std::make_unique<ModelRenderer>(itemModel_, *material_);
 
 	//状態を通常に
 	ChangeState(ENEMY_STATE::NOMAL);
@@ -411,7 +409,6 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 void EnemyBase::Draw(void)
 {
 	renderer_->Draw();
-	noBornRenderer_->Draw();
 	DrawUI();
 }
 

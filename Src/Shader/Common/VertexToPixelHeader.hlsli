@@ -17,7 +17,7 @@ struct VertexToPixelLit
 	float3 lightDir     : TEXCOORD3;	// ライト方向(ローカル)
 	float3 lightAtPos   : TEXCOORD4;	// ライトから見た座標
 	float3 worldPos		: TEXCOORD5;	// 頂点座標（ワールド座標）
-	float isDraw		: TEXCOORD6;
+	float4 prevSvPos	: TEXCOORD6;	//前フレーム頂点座標
 };
 
 struct VertexToPixelShadow

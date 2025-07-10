@@ -313,15 +313,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Src\Shader\Model\NoneTexPS.hlsl" />
-    <FxCompile Include="Src\Shader\Model\NoneTexVS.hlsl" />
     <FxCompile Include="Src\Shader\Model\StdModelPS.hlsl" />
     <FxCompile Include="Src\Shader\Model\StdModelVS.hlsl" />
-    <FxCompile Include="Src\Shader\Model\MotionBlurVS.hlsl" />
-    <FxCompile Include="Src\Shader\Model\MotionBlurPS.hlsl" />
     <FxCompile Include="Src\Shader\Model\NomalTexPS.hlsl" />
     <FxCompile Include="Src\Shader\Model\SkinVS.hlsl" />
-    <FxCompile Include="Src\Shader\Model\NoBornVS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\BlurSkinVS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\BlurSkinPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />

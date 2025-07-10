@@ -1,3 +1,4 @@
+//スキンメッシュ対応
 // VS/PS共通
 #include "../Common/VertexToPixelHeader.hlsli"
 
