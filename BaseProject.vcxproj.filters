@@ -315,7 +315,6 @@
   <ItemGroup>
     <FxCompile Include="Src\Shader\Model\StdModelPS.hlsl" />
     <FxCompile Include="Src\Shader\Model\StdModelVS.hlsl" />
-    <FxCompile Include="Src\Shader\Model\NomalTexPS.hlsl" />
     <FxCompile Include="Src\Shader\Model\SkinVS.hlsl" />
     <FxCompile Include="Src\Shader\Model\BlurSkinVS.hlsl" />
     <FxCompile Include="Src\Shader\Model\BlurSkinPS.hlsl" />
