@@ -21,46 +21,64 @@ cbuffer BoneMat:register(b7) {
 VS_OUTPUT main(VS_INPUT VSInput)
 {
 	VS_OUTPUT ret;
-	 // --- 現在のフレームのスキンメッシュ変換行列を構築 ---
-	//// BONE4
-	float4x4 current_CombinedBoneMatrix = (float4x4)0;
-	int4 lBoneIdx = VSInput.blendIndices0;
-	float4 lWeight = VSInput.blendWeight0;
-	current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.x] * lWeight.xxxx;
-	current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.y] * lWeight.yyyy;
-	current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.z] * lWeight.zzzz;
-	current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.w] * lWeight.wwww;
+	// // --- 現在のフレームのスキンメッシュ変換行列を構築 ---
+	////// BONE4
+	//float4x4 current_CombinedBoneMatrix = (float4x4)0;
+	//int4 lBoneIdx = VSInput.blendIndices0;
+	//float4 lWeight = VSInput.blendWeight0;
+	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.x] * lWeight.xxxx;
+	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.y] * lWeight.yyyy;
+	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.z] * lWeight.zzzz;
+	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.w] * lWeight.wwww;
 
-	// --- 前フレームのスキンメッシュ変換行列を構築 ---
-	float4x4 prev_CombinedBoneMatrix = (float4x4)0;
-	prev_CombinedBoneMatrix += g_prevLocalWorldMatrix[lBoneIdx.x] * lWeight.xxxx;
-	prev_CombinedBoneMatrix += g_prevLocalWorldMatrix[lBoneIdx.y] * lWeight.yyyy;
-	prev_CombinedBoneMatrix += g_prevLocalWorldMatrix[lBoneIdx.z] * lWeight.zzzz;
-	prev_CombinedBoneMatrix += g_prevLocalWorldMatrix[lBoneIdx.w] * lWeight.wwww;
+	////// BONE8
+	//lBoneIdx = VSInput.blendIndices1;
+	//lWeight = VSInput.blendWeight1;
+	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.x] * lWeight.xxxx;
+	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.y] * lWeight.yyyy;
+	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.z] * lWeight.zzzz;
+	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.w] * lWeight.wwww;
 
+	//// 現在のワールド座標
+	//float4 lCurrentWorldPosition = mul(lLocalPosition, current_CombinedBoneMatrix);
+	//ret.worldPos = lCurrentWorldPosition.xyz;
+	//ret.svPos = mul(lCurrentWorldPosition, g_currentViewProjectionMatrix); 
 
-	//// BONE8
+	// スキンメッシュ用のローカル⇒ワールド変換行列を作成+++( 開始 )
+	int4 lBoneIdx;
+	float4 lL_W_Mat[3];
+	float4 lWeight;
+	// BONE4
+	lBoneIdx = VSInput.blendIndices0;
+	lWeight = VSInput.blendWeight0;
+	lL_W_Mat[0] = L_W_MAT[lBoneIdx.x + 0] * lWeight.xxxx;
+	lL_W_Mat[1] = L_W_MAT[lBoneIdx.x + 1] * lWeight.xxxx;
+	lL_W_Mat[2] = L_W_MAT[lBoneIdx.x + 2] * lWeight.xxxx;
+	lL_W_Mat[0] += L_W_MAT[lBoneIdx.y + 0] * lWeight.yyyy;
+	lL_W_Mat[1] += L_W_MAT[lBoneIdx.y + 1] * lWeight.yyyy;
+	lL_W_Mat[2] += L_W_MAT[lBoneIdx.y + 2] * lWeight.yyyy;
+	lL_W_Mat[0] += L_W_MAT[lBoneIdx.z + 0] * lWeight.zzzz;
+	lL_W_Mat[1] += L_W_MAT[lBoneIdx.z + 1] * lWeight.zzzz;
+	lL_W_Mat[2] += L_W_MAT[lBoneIdx.z + 2] * lWeight.zzzz;
+	lL_W_Mat[0] += L_W_MAT[lBoneIdx.w + 0] * lWeight.wwww;
+	lL_W_Mat[1] += L_W_MAT[lBoneIdx.w + 1] * lWeight.wwww;
+	lL_W_Mat[2] += L_W_MAT[lBoneIdx.w + 2] * lWeight.wwww;
+	// BONE8
 	lBoneIdx = VSInput.blendIndices1;
 	lWeight = VSInput.blendWeight1;
-	current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.x] * lWeight.xxxx;
-	current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.y] * lWeight.yyyy;
-	current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.z] * lWeight.zzzz;
-	current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.w] * lWeight.wwww;
-
-	// 現在のワールド座標
-	float4 lCurrentWorldPosition = mul(lLocalPosition, current_CombinedBoneMatrix);
-	ret.worldPos = lCurrentWorldPosition.xyz;
-	ret.svPos = mul(lCurrentWorldPosition, g_currentViewProjectionMatrix); // g_currentViewProjectionMatrix は BaseMatrices から
-
-	// --- 前フレームのスキンメッシュ変換行列を構築 ---
-	prev_CombinedBoneMatrix += g_prevLocalWorldMatrix[lBoneIdx.x] * lWeight.xxxx;
-	prev_CombinedBoneMatrix += g_prevLocalWorldMatrix[lBoneIdx.y] * lWeight.yyyy;
-	prev_CombinedBoneMatrix += g_prevLocalWorldMatrix[lBoneIdx.z] * lWeight.zzzz;
-	prev_CombinedBoneMatrix += g_prevLocalWorldMatrix[lBoneIdx.w] * lWeight.wwww;
-
-	// 前フレームのワールド座標
-	float4 lPrevWorldPosition = mul(lLocalPosition, prev_CombinedBoneMatrix);
-	ret.prevSvPos = mul(lPrevWorldPosition, g_prevViewProjectionMatrix); // g_prevViewProjectionMatrix は BaseMatrices から
+	lL_W_Mat[0] += L_W_MAT[lBoneIdx.x + 0] * lWeight.xxxx;
+	lL_W_Mat[1] += L_W_MAT[lBoneIdx.x + 1] * lWeight.xxxx;
+	lL_W_Mat[2] += L_W_MAT[lBoneIdx.x + 2] * lWeight.xxxx;
+	lL_W_Mat[0] += L_W_MAT[lBoneIdx.y + 0] * lWeight.yyyy;
+	lL_W_Mat[1] += L_W_MAT[lBoneIdx.y + 1] * lWeight.yyyy;
+	lL_W_Mat[2] += L_W_MAT[lBoneIdx.y + 2] * lWeight.yyyy;
+	lL_W_Mat[0] += L_W_MAT[lBoneIdx.z + 0] * lWeight.zzzz;
+	lL_W_Mat[1] += L_W_MAT[lBoneIdx.z + 1] * lWeight.zzzz;
+	lL_W_Mat[2] += L_W_MAT[lBoneIdx.z + 2] * lWeight.zzzz;
+	lL_W_Mat[0] += L_W_MAT[lBoneIdx.w + 0] * lWeight.wwww;
+	lL_W_Mat[1] += L_W_MAT[lBoneIdx.w + 1] * lWeight.wwww;
+	lL_W_Mat[2] += L_W_MAT[lBoneIdx.w + 2] * lWeight.wwww;
+	// スキンメッシュ用のローカル⇒ワールド変換行列を作成+++( 終了 
 
 
 	// 頂点座標変換 +++++++++++++++++++++++++++++++++++++( 開始 )
