@@ -38,7 +38,7 @@ void CharacterBase::Update(const VECTOR _pPos, AttackManager& _atk)
 void CharacterBase::Draw(void)
 {
 	//•`‰æˆ—
-	DrawSphere3D(pos_, 30, 10, 0xff0000, 0xff0000, false);
+	//DrawSphere3D(pos_, 30, 10, 0xff0000, 0xff0000, false);
 	MV1DrawModel(modelId_);
 	DrawUI();
 }

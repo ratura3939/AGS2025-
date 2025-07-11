@@ -277,7 +277,7 @@ void Game::Draw(void)
 	enemy_->Draw();
 	player_->Draw();
 
-	DrawDebug();
+	//DrawDebug();
 }
 
 void Game::Release(void)
