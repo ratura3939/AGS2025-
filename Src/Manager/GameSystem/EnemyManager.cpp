@@ -208,6 +208,11 @@ void EnemyManager::LokedOn(const int _num)
 	}
 }
 
+void EnemyManager::CreateBoss(void)
+{
+	
+}
+
 void EnemyManager::DrawDebug(void)
 {
 	//‚¢‚È‚©‚Á‚½‚çˆ—‚µ‚È‚¢

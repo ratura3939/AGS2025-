@@ -158,6 +158,12 @@ void UIManager2d::SetPos(const std::string& _name, const VECTOR& _pos)
 	
 }
 
+void UIManager2d::SetImage(const std::string& _name, const int _imageHndl)
+{
+	//‰æ‘œ‚Ì·‚µ‘Ö‚¦
+	images_[_name] = _imageHndl;
+}
+
 void UIManager2d::Update(const std::string _name)
 {
 	int cnt = 0;

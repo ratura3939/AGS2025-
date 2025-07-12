@@ -27,12 +27,15 @@ public:
 		EXIT_IMG,
 		LOCKON_IMG,
 		ANNOUNCE_LOCKON_IMG,
+		PLATE_IMG,
+		NUMBER_IMGS,
 
 		//ƒ‚ƒfƒ‹
 		STAGE_MDL,
 		OBJECTS_MDL,
 		PLAYER_MDL,
 		ENEMY_MDL,
+		BOSS_MDL,
 		SKY_DOME,
 
 		//‰¹

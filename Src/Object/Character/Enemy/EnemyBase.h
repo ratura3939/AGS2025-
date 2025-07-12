@@ -142,7 +142,7 @@ public: //デバッグ用
     void SetPos(VECTOR _pos);
     void DrawDebug(void)override;
 
-private:
+protected:
     using Update_f = void(EnemyBase::*)(const VECTOR& _pPos, AttackManager& _atk);
     using Move_f = void(EnemyBase::*)(const VECTOR& _pPos);
     Update_f update_;   //更新関数

@@ -1,3 +1,4 @@
+//プレイヤーキャラクターに付随するもの
 #pragma once
 #include "CharacterUIController.h"
 #include<memory>

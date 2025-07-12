@@ -73,59 +73,10 @@ const bool EnemyBase::Init(const int _num)
 
 	SetPram();
 
-	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
-
-	if (modelId_ == -1) {
-		return false;
-	}
-	//パラメータ関係
-	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
-	preStayPos_ = pos_;
-	rot_ = { 0.0f,0.0f,-1.0f };
-	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
-	//初期化用に一回実行
-	UpdateRotQuat();
-	
-	//アニメーション初期化
-	animController_ = std::make_unique<AnimationController>(modelId_);
-	InitAnim();
-	animController_->Play("idle", SPEED_ANIM);
-
-	//UI初期化
-	InitUI();
-
-	//モデル描画クラス生成
-	material_ = std::make_unique<ModelMaterial>("BlurSkinVS.cso", 2, "BlurSkinPS.cso", 3);
-	//VS
-
-
-	//PS
-	//各色の強さ(拡散光)
-	material_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
-	//ブラーの強さ(最初の項目のみ関係する)
-	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
-	//サンプル数(最初の項目のみ関係する)
-	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
-
-
 	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
-
 
 	//状態を通常に
 	ChangeState(ENEMY_STATE::NOMAL);
-
-	int max = -1;
-	auto num = MV1GetTriangleListNum(modelId_);
-	for (int i = 0; i < num; i++)
-	{
-		int temp = MV1GetTriangleListVertexType(modelId_, i);
-		if (max < temp)
-		{
-			max = temp;
-		}
-	}
-
-	max;
 	return true;
 }
 
@@ -150,6 +101,40 @@ void EnemyBase::SetPram(void)
 {
 	//各敵たち
 	//後々Jsonやったら楽になるかも？
+	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
+
+	if (modelId_ == -1) {
+		return;
+	}
+	//パラメータ関係
+	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
+	preStayPos_ = pos_;
+	rot_ = { 0.0f,0.0f,-1.0f };
+	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
+	//初期化用に一回実行
+	UpdateRotQuat();
+
+
+	//アニメーション初期化
+	animController_ = std::make_unique<AnimationController>(modelId_);
+	InitAnim();
+	animController_->Play("idle", SPEED_ANIM);
+
+	//UI初期化
+	InitUI();
+
+	//モデル描画クラス生成
+	material_ = std::make_unique<ModelMaterial>("BlurSkinVS.cso", 2, "BlurSkinPS.cso", 3);
+	//VS
+
+
+	//PS
+	//各色の強さ(拡散光)
+	material_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
+	//ブラーの強さ(最初の項目のみ関係する)
+	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+	//サンプル数(最初の項目のみ関係する)
+	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
 }
 
 void EnemyBase::InitAnim(void)

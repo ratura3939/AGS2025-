@@ -69,6 +69,9 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "EneAxe.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_MDL, res);
 
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Boss_Golem.mv1");
+	resourcesMap_.emplace(SRC::BOSS_MDL, res);
+
 	//ステージ
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage1.mv1");
 	resourcesMap_.emplace(SRC::OBJECTS_MDL, res);
@@ -103,6 +106,13 @@ void ResourceManager::InitGame(void)
 	//ロックオン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_RockOn.png");
 	resourcesMap_.emplace(SRC::LOCKON_IMG, res);
+
+	//プレート
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "PlateWood.png");
+	resourcesMap_.emplace(SRC::PLATE_IMG, res);
+	//数字
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + "plateNumber.png", 4, 2, 240, 350);
+	resourcesMap_.emplace(SRC::NUMBER_IMGS, res);
 
 	//音
 	//BGM

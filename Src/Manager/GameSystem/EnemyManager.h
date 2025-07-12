@@ -77,9 +77,15 @@ public:
 	//ロックオンされた処理
 	void LokedOn(const int _num);
 
+	void CreateBoss(void);
+
 	void DrawDebug(void);
 private:
 	std::vector<std::shared_ptr<EnemyBase>> characters_;
 	bool preBattle_;	//位置フレーム前が戦闘状態であるかどうか
+
+	int enemyCnt_;
+	int* numImg_;
+	VECTOR platePos_;	//敵数表示　プレート
 };
 
