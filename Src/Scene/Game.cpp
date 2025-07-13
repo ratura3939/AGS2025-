@@ -10,7 +10,15 @@
 #include"../Manager/Decoration/SoundManager.h"
 #include"../Manager/Decoration/EffectManager.h"
 #include"../Object/Stage/Stage.h"
+#include"../Utility/Utility.h"
 #include "Game.h"
+
+namespace {
+	constexpr VECTOR CAMERA_START_1 = { 100.0f,200.0f,0.0f };	//カメラ演出開始位置
+	constexpr VECTOR CAMERA_GOAL_1 = { 100.0f,400.0f,0.0f };	//カメラ演出目標位置その①
+	constexpr VECTOR CAMERA_GOAL_2 = { 0.0f,200.0f,150.0f };	//カメラ演出目標位置その②
+	constexpr float ALLOWABLE_DISTANCE = 1.0f;		//カメラの移動完了判定をがば目にするために
+}
 
 Game::Game(void)
 {
@@ -19,6 +27,11 @@ Game::Game(void)
 	isSlowEffect_ = false;
 	slowCnt_ = -1;
 	nextBgmVol_ = 0;
+
+	directionCnt_ = 0;
+	directionStartPos_ = CAMERA_START_1;
+	directionGoalPos_[0] = CAMERA_GOAL_1;
+	directionGoalPos_[1] = CAMERA_GOAL_2;
 }
 
 Game::~Game(void)
@@ -27,6 +40,8 @@ Game::~Game(void)
 
 void Game::Init(void)
 {
+	update_ = &Game::GameUpdate;
+
 	//生成
 	//プレイヤー
 	player_ = std::make_unique<PlayerManager>(*this);
@@ -137,6 +152,15 @@ void Game::Update(void)
 	}
 #pragma endregion
 
+	//更新
+	(this->*update_)();
+}
+
+void Game::GameUpdate(void)
+{
+	SceneManager& scM = SceneManager::GetInstance();
+	SoundManager& sndM = SoundManager::GetInstance();
+	Camera& camera = scM.GetCamera();
 
 #pragma region 基礎アプデ
 	player_->Update(*atkMng_);
@@ -168,11 +192,11 @@ void Game::Update(void)
 
 	}
 
-	
+
 #pragma endregion
 
 #pragma region BGM
-	
+
 
 	//敵の状態(戦闘・それ以外)のトリガ
 	if (enemy_->IsSwitchBattleOrNomalEnemyTrg()) {
@@ -207,12 +231,12 @@ void Game::Update(void)
 	//TODO
 	// カメラのロックオンの処理の最適化
 	//ロックオン関係
-	
+
 	//下準備
 	//対象の検索
 	preNearEnemyNum_ = nearEnemyNum_;	//保存
 	nearEnemyNum_ = DecideRockEnemy();	//新規検索
-	
+
 	//カメラ非ロックオン時
 	if (camera.GetMode() != Camera::MODE::LOCKON) {
 		//ロックオン対象が変わったとき
@@ -268,7 +292,45 @@ void Game::Update(void)
 		camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));	//ロックオン対象の設定
 	}
 #pragma endregion
-	
+}
+
+void Game::DirectionUpdate(void)
+{
+	//危険のポストエフェクト→画面揺れ→カメラ
+
+
+	//カメラ演出用
+	auto& camera = SceneManager::GetInstance().GetCamera();
+	//ゴール位置についたら次のスタート位置へ
+	auto cameraPos = camera.GetPos();
+	if (Utility::MagnitudeF(VSub(directionGoalPos_[directionCnt_], cameraPos))<=ALLOWABLE_DISTANCE) {
+		//移動演出回数の上限に到達していたら
+		if (directionCnt_ >= CAMERA_DIRECTION_NUM) {
+			//追従対象を戻したりなんだり
+
+			//一通り終わったので更新を戻す
+			update_ = &Game::GameUpdate;
+		}
+		else {
+			//次の目標地点への設定
+			directionCnt_++;
+			camera.SetGoalPos(directionGoalPos_[directionCnt_]);
+		}
+		
+
+	}
+}
+
+void Game::DirectionPostEffect(void)
+{
+}
+
+void Game::DirectionShakeScreen(void)
+{
+}
+
+void Game::DirectionCameraMove(void)
+{
 }
 
 void Game::Draw(void)
@@ -284,6 +346,11 @@ void Game::Release(void)
 {
 	player_->Release();
 	enemy_->Release();
+}
+
+void Game::StartBossFaze(void)
+{
+	update_ = &Game::DirectionUpdate;
 }
 
 void Game::AttackDataInit(void)

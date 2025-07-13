@@ -5,6 +5,7 @@
 #include"../../Common/Quaternion.h"
 
 class EnemyBase;
+class EnemyCount;
 class Game;
 
 class EnemyManager
@@ -27,7 +28,7 @@ public:
 	static constexpr VECTOR INIT_3 = { 0.0f,0.0f,-1000.0f };
 	static constexpr VECTOR INIT_4 = { -500.0f,0.0f,-1000.0f };
 
-	EnemyManager(void);
+	EnemyManager(Game& _scene);
 	~EnemyManager(void);
 
 	void Init(void);
@@ -87,5 +88,9 @@ private:
 	int enemyCnt_;
 	int* numImg_;
 	VECTOR platePos_;	//敵数表示　プレート
+
+	std::unique_ptr<EnemyCount>counterUI_;
+
+	Game& gameScene_;
 };
 

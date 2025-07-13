@@ -73,7 +73,8 @@ public:
 		FOLLOW_SPRING,	//ばね付き追従モード
 		SHAKE,			//カメラ揺らし
 		LOCKON,			//ロックオン
-		RESET,			//リセット用
+		RESET,			//カメラ位置リセット用
+		AUTO_MOVE,		//目標位置まで自動的に移動
 	};
 
 	struct FOR_FOLLOW_INFO
@@ -103,6 +104,7 @@ public:
 	void SetBeforeDrawLockOn(void);			//ロックオンカメラ
 	void SetBeforeDrawShake(void);			//カメラシェイク
 	void SetBeforeDrawReset(void);			//カメラリセット
+	void SetBeforeDrawAutoMove(void);			//カメラリセット
 
 	//----------------------------------------
 	// 描画処理
@@ -130,6 +132,7 @@ public:
 	void SetPos(const VECTOR& pos,const VECTOR& focus);
 	void SetFocusPos(const VECTOR& _focus);
 	void SetRockPos(const VECTOR& _rock);
+	void SetGoalPos(const VECTOR& _goal);
 	
 
 	const MODE GetMode(void);
@@ -158,6 +161,9 @@ private:
 	//カメラの注視点
 	VECTOR focusPos_;
 	VECTOR goalFocusPos_;
+	
+	//移動目標位置
+	VECTOR goalPos_;
 
 	//カメラの上方向
 	VECTOR cameraUp_;
@@ -176,7 +182,7 @@ private:
 	VECTOR defaultPos_;
 
 	VECTOR shakeDir_;
-
+	//補完スピード
 	float lerpSpeed_;
 
 	

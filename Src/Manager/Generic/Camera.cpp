@@ -289,6 +289,16 @@ void Camera::SetBeforeDrawReset(void)
 	cameraUp_ = rot_.GetUp();
 }
 
+void Camera::SetBeforeDrawAutoMove(void)
+{
+	//目標位置まで移動する
+	//終了の判定は呼び出した側で行う
+	pos_ = Utility::Lerp(pos_, goalPos_, 0.8f);
+
+	//カメラの上方向
+	cameraUp_ = rot_.GetUp();
+}
+
 void Camera::Draw(void)
 {
 }
@@ -374,6 +384,11 @@ void Camera::SetFocusPos(const VECTOR& _focus)
 void Camera::SetRockPos(const VECTOR& _rock)
 {
 	rockPos_ = _rock;
+}
+
+void Camera::SetGoalPos(const VECTOR& _goal)
+{
+	goalPos_ = _goal;
 }
 
 const VECTOR Camera::GetRockPos(void) const

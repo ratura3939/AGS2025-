@@ -20,11 +20,14 @@ bool EnemyCount::Init(const std::string& _master)
 	plateStr_ = _master + "CounterPlate";
 	numberStr_ = "UseNumber";
 
+	//プレート
 	uiM.Add(plateStr_, rsM.Load(ResourceManager::SRC::PLATE_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(plateStr_, drawFollowPos_);
-
+	//数字
 	uiM.Add(numberStr_, -1, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(numberStr_, drawFollowPos_);
+
+	//アイコン×
 
 	update_ = &EnemyCount::NomalUpdate;
 	return true;

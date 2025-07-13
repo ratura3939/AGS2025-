@@ -1,11 +1,14 @@
 #include"../../Object/Character/Enemy/EnemyBase.h"
+#include"../../Object/Character/Enemy/Boss.h"
 #include"../../Utility/Utility.h"
 #include"../../Application.h"
+#include"../../UI/Enemy/EnemyCount.h"
+#include"../Generic/ResourceManager.h"
 #include "EnemyManager.h"
 
 const std::string EnemyManager::ATTACK_NOMAL = "EnemyAttack";
 
-EnemyManager::EnemyManager(void)
+EnemyManager::EnemyManager(Game& _scene):gameScene_(_scene)
 {
 }
 
@@ -18,6 +21,9 @@ void EnemyManager::Init(void)
 	//デバッグ用
 	VECTOR initPos[4] = { INIT_1 ,INIT_2 ,INIT_3 ,INIT_4 };
 
+	enemyCnt_ = ENEMY_NUM;
+	numImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::NUMBER_IMGS).handleIds_;
+
 	for (int i = 0; i < ENEMY_NUM; i++) {
 		std::shared_ptr enemy = std::make_shared<EnemyBase>(initPos[i]);
 		enemy->Init(i);
@@ -25,7 +31,10 @@ void EnemyManager::Init(void)
 	}
 
 	
-	
+	counterUI_ = std::make_unique<EnemyCount>(VECTOR{0,0,0});
+	counterUI_->Init("Manager");
+	//残りカウントのの設定
+	counterUI_->SetNumImg(numImg_[enemyCnt_ - 1]);
 
 	preBattle_ = false;
 }
@@ -59,7 +68,16 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 	for (auto& idx : dethEnemy) {
 		//該当の敵を消去
 		characters_.erase(characters_.begin()+(idx-dethCnt));
+		enemyCnt_--;
+
 		dethCnt++;
+	}
+	if (dethCnt != 0) {
+		//残りカウントのの設定
+		counterUI_->SetNumImg(numImg_[enemyCnt_ - 1]);
+		if (enemyCnt_ <= 0) {
+			CreateBoss();
+		}
 	}
 }
 
@@ -210,7 +228,12 @@ void EnemyManager::LokedOn(const int _num)
 
 void EnemyManager::CreateBoss(void)
 {
-	
+	auto boss = std::make_shared<Boss>();
+	boss->Init(0);
+	boss->SetPos(INIT_1);
+	characters_.push_back(boss);
+
+	enemyCnt_++;
 }
 
 void EnemyManager::DrawDebug(void)

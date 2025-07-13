@@ -18,6 +18,16 @@ public:
 	static constexpr float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
 	static constexpr float SLOW_SPEED_PERCENT = 25.0f;	//スローの割合(通常時から半分の速度にする)
 
+	static constexpr int CAMERA_DIRECTION_NUM = 2;	//カメラ演出における移動回数
+
+	enum class BOSS_DIRECTION {
+		NONE,
+		POST_EFFECT,
+		SHAKE_SCREEN,
+		CAMERA_MOVE,
+		END
+	};
+
 	Game(void);
 	~Game(void);
 
@@ -29,8 +39,19 @@ private:
 
 public:
 	void Update(void) override;
+
+private:
+	void GameUpdate(void);		//通常のゲームアップデート
+	void DirectionUpdate(void);	//演出アップデート
+	void DirectionPostEffect(void);	//ポストエフェクト
+	void DirectionShakeScreen(void);//画面揺れ
+	void DirectionCameraMove(void);	//カメラ移動
+
+public:
 	void Draw(void) override;
 	void Release(void) override;
+
+	void StartBossFaze(void);	//ボス出現最初の処理用に。。(力技です)
 
 private:
 	/// <summary>
@@ -62,6 +83,9 @@ private:
 	bool isSlowEffect_;	//スロー演出フラグ
 	int slowCnt_;		//スロー演出カウンタ
 
+	using Update_f = void(Game::*)(void);
+	Update_f update_;
+
 
 	//下二つの変数はBGMが二つの場合で製作している
 	//ボス個体を製作したら要調整]
@@ -70,6 +94,14 @@ private:
 	std::string switchBgmStr_;	//切り替え後のBGM
 	int nextBgmVol_;	//BGMの音量調整用(BGM切り替え時に使用)
 	bool switchBgm_;	//切り換え開始
+
+	//カメラの演出用
+	BOSS_DIRECTION direcState_;
+	VECTOR directionStartPos_;
+	VECTOR directionGoalPos_[CAMERA_DIRECTION_NUM];
+	int directionCnt_;
+	
+
 
 	void DrawDebug(void);
 };
