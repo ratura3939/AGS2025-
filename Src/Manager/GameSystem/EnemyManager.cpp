@@ -83,7 +83,8 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 		//残りカウントのの設定
 		counterUI_->SetNumImg(numImg_[enemyCnt_]);
 		if (enemyCnt_ <= 0) {
-			CreateBoss();
+			//シーンにボス出現を伝える
+			gameScene_.StartBossFaze();
 		}
 	}
 }
@@ -250,8 +251,6 @@ void EnemyManager::CreateBoss(void)
 	characters_.push_back(boss);
 
 	enemyCnt_++;
-	//シーンにボス出現を伝える
-	gameScene_.StartBossFaze();
 }
 
 void EnemyManager::DrawDebug(void)

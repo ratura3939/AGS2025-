@@ -114,6 +114,10 @@ void Game::InitSound(void)
 	sndM.Add(SoundManager::TYPE::BGM, "BattleBgm",
 		rsM.Load(ResourceManager::SRC::BATTLE_BGM).handleId_);
 
+	//警告音
+	sndM.Add(SoundManager::TYPE::BGM, "WarningBgm",
+		rsM.Load(ResourceManager::SRC::WARNING_BGM).handleId_);
+
 	//初手は普通のBGM
 	sndM.Play("NomalBgm");
 	nowBgmStr_ = "NomalBgm";
@@ -176,13 +180,7 @@ void Game::Update(void)
 		//シーン遷移
 		scM.ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
-	//敵がいなくなったら
-	if (enemy_->GetEnemys().size() <= 0) {
-		sndM.Stop(nowBgmStr_);
-		sndM.Stop(switchBgmStr_);
-		//シーン遷移
-		scM.ChangeScene(SceneManager::SCENE_ID::CLEAR);
-	}
+	
 #pragma endregion
 
 	//更新
@@ -194,6 +192,15 @@ void Game::GameUpdate(void)
 	SceneManager& scM = SceneManager::GetInstance();
 	SoundManager& sndM = SoundManager::GetInstance();
 	Camera& camera = scM.GetCamera();
+
+	//敵がいなくなったら
+	if (enemy_->GetEnemys().size() <= 0) {
+		sndM.Stop(nowBgmStr_);
+		sndM.Stop(switchBgmStr_);
+		//シーン遷移
+		scM.ChangeScene(SceneManager::SCENE_ID::CLEAR);
+	}
+
 
 #pragma region 基礎アプデ
 	player_->Update(*atkMng_);
@@ -347,6 +354,7 @@ void Game::DirectionUpdate(void)
 		}
 		//カメラ移動
 		else if (direcState_ == BOSS_DIRECTION::CAMERA_MOVE) {
+			enemy_->CreateBoss();
 			direcUpdate_ = &Game::DirectionCameraMove;
 		}
 
@@ -361,8 +369,10 @@ bool Game::DirectionPostEffect(void)
 	scanLineMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
 	direcCnt_++;
 	if (direcCnt_ > WARNING_DIRECTION_TIME) {
+		SoundManager::GetInstance().Stop("WarningBgm");	//警告音止める
 		SoundManager::GetInstance().Play("Impact");
 		SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);
+		
 		return true;
 	}
 	return false;
@@ -396,6 +406,9 @@ bool Game::DirectionShakeScreen(void)
 
 bool Game::DirectionCameraMove(void)
 {
+	//アニメーションのみ更新
+	enemy_->UpdateAnim();
+
 	//カメラ演出用
 	auto& camera = SceneManager::GetInstance().GetCamera();
 	//ゴール位置についたら次のスタート位置へ
@@ -454,6 +467,10 @@ void Game::Release(void)
 
 void Game::StartBossFaze(void)
 {
+	SoundManager& sndM = SoundManager::GetInstance();
+	sndM.Stop("NomalBgm");	//今まで流していたものを停止
+	sndM.Stop("BattleBgm");	//今まで流していたものを停止
+	sndM.Play("WarningBgm");	//警告音流す
 	direcState_ = BOSS_DIRECTION::POST_EFFECT;
 	update_ = &Game::DirectionUpdate;
 	direcUpdate_ = &Game::DirectionPostEffect;

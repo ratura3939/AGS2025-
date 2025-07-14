@@ -129,6 +129,9 @@ void ResourceManager::InitGame(void)
 	//バトルBGM
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Battle.mp3");
 	resourcesMap_.emplace(SRC::BATTLE_BGM, res);
+	//警告音
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Warning.mp3");
+	resourcesMap_.emplace(SRC::WARNING_BGM, res);
 	//歩き
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Walk.mp3");
 	resourcesMap_.emplace(SRC::WALK_SE, res);
@@ -150,6 +153,7 @@ void ResourceManager::InitGame(void)
 	//ボス足音
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Impact.mp3");
 	resourcesMap_.emplace(SRC::BOSS_IMPACT_SE, res);
+	
 
 	//エフェクト
 	//剣
