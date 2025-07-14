@@ -75,8 +75,7 @@ const bool EnemyBase::Init(const int _num)
 
 	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
 
-	//ó‘Ô‚ğ’Êí‚É
-	ChangeState(ENEMY_STATE::NOMAL);
+	
 	return true;
 }
 
@@ -135,6 +134,9 @@ void EnemyBase::SetPram(void)
 	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
 	//ƒTƒ“ƒvƒ‹”(Å‰‚Ì€–Ú‚Ì‚İŠÖŒW‚·‚é)
 	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+
+	//ó‘Ô‚ğ’Êí‚É
+	ChangeState(ENEMY_STATE::NOMAL);
 }
 
 void EnemyBase::InitAnim(void)

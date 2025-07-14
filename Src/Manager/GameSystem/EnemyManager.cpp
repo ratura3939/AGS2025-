@@ -88,6 +88,14 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 	}
 }
 
+void EnemyManager::UpdateAnim(void)
+{
+	for (auto& chara : characters_) {
+		//XV‚ğ‚©‚¯‚é
+		chara->UpdateAnimOnly();
+	}
+}
+
 void EnemyManager::Draw(void)
 {
 	//‚¢‚È‚©‚Á‚½‚çˆ—‚µ‚È‚¢

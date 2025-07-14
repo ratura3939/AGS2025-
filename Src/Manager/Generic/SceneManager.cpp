@@ -103,8 +103,12 @@ void SceneManager::Update(void)
 
 	// デルタタイム
 	auto nowTime = std::chrono::system_clock::now();
+	auto checkDelta = nowTime - preTime_;
+
 	deltaTime_ = static_cast<float>(
 		std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
+
+
 
 	totalTime_ += deltaTime_;
 	preTime_ = nowTime;

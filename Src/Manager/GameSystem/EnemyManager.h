@@ -33,6 +33,7 @@ public:
 
 	void Init(void);
 	void Update(const VECTOR& _playerPos, AttackManager& _atkMng);
+	void UpdateAnim(void);
 	void Draw(void);
 	void Release(void);
 

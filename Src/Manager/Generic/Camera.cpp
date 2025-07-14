@@ -217,7 +217,9 @@ void Camera::SetBeforeDrawLockOn(void)
 void Camera::SetBeforeDrawShake(void)
 {
 	// ˆê’èŠÔƒJƒƒ‰‚ğ—h‚ç‚·
-	stepShake_ -= SceneManager::GetInstance().GetDeltaTime();
+	//stepShake_ -= SceneManager::GetInstance().GetDeltaTime();
+
+	stepShake_ -= 0.01f;
 
 	if (stepShake_ < 0.0f)
 	{
@@ -355,6 +357,7 @@ void Camera::ChangeMode(MODE mode)
 		stepShake_ = TIME_SHAKE;
 		shakeDir_ = VNorm({ 0.7f, 0.7f ,0.0f });
 		defaultPos_ = pos_;
+		break;
 	case MODE::RESET:
 		stepReset_ = 0.0f;
 		start_.pos = pos_;

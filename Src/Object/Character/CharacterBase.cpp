@@ -37,6 +37,11 @@ void CharacterBase::Update(const VECTOR _pPos, AttackManager& _atk)
 {
 }
 
+void CharacterBase::UpdateAnimOnly(void)
+{
+	animController_->Update();
+}
+
 void CharacterBase::Draw(void)
 {
 	//•`‰æˆ—

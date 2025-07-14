@@ -54,6 +54,7 @@ public:
 		LOCK_ON_SE,
 		FIND_PLAYER_SE,
 		DAMAGE_SE,
+		BOSS_IMPACT_SE,
 
 		//エフェクト
 		SWORD_EFC,

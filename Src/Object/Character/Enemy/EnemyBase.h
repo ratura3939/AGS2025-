@@ -99,19 +99,19 @@ public:
   
 protected:
     virtual void SetPram(void);     //各敵の固有情報(いずれか外部データ化したい)
-    void InitAnim(void)override;
+    virtual void InitAnim(void)override;
     void InitUI(void)override;
 #pragma region 各種状態更新
-private:    //各種更新処理
+protected:    //各種更新処理
     void UpdateNomal(const VECTOR& _pPos, AttackManager& _atk);  //通常
     void UpdateSearch(const VECTOR& _pPos, AttackManager& _atk); //索敵
-    void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk); //戦闘
+    virtual void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk); //戦闘
     void UpdateDeth(const VECTOR& _pPos, AttackManager& _atk); //戦闘
 
     //各種移動処理
     void MoveNomal(const VECTOR& _pPos);
     void MoveSearch(const VECTOR& _pPos);
-    void MoveBattle(const VECTOR& _pPos);
+    virtual void MoveBattle(const VECTOR& _pPos);
 
     void ChangeState(const ENEMY_STATE _state); //状態の遷移
 #pragma endregion

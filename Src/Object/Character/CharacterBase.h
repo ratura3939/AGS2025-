@@ -39,6 +39,7 @@ public:
 	virtual const bool Init(const int _num) = 0;
 	virtual void Update(void);
 	virtual void Update(const VECTOR _pPos, AttackManager& _atk);	//敵用(敵はキャラクター自身が行動を決めるのでそれ用に分けている)
+	void UpdateAnimOnly(void);
 	virtual void Draw(void);
 	virtual const bool Release(void);
 

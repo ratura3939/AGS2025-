@@ -147,6 +147,9 @@ void ResourceManager::InitGame(void)
 	//ダメージ
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Damage.mp3");
 	resourcesMap_.emplace(SRC::DAMAGE_SE, res);
+	//ボス足音
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Impact.mp3");
+	resourcesMap_.emplace(SRC::BOSS_IMPACT_SE, res);
 
 	//エフェクト
 	//剣

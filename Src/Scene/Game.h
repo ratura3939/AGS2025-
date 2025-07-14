@@ -22,8 +22,9 @@ public:
 	static constexpr float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
 	static constexpr float SLOW_SPEED_PERCENT = 25.0f;	//スローの割合(通常時から半分の速度にする)
 
-	static constexpr int WARNING_DIRECTION_TIME = 300;	//WARNING警告時間
+	static constexpr int WARNING_DIRECTION_TIME = 150;	//WARNING警告時間
 	static constexpr int CAMERA_SHAKE_NUM = 3;	//カメラ演出における移動回数
+	static constexpr int CAMERA_SHAKE_COOL_TIME = 40;	//カメラ演出における移動回数
 	static constexpr int CAMERA_DIRECTION_NUM = 2;	//カメラ演出における移動回数
 
 	enum class BOSS_DIRECTION {
@@ -110,12 +111,14 @@ private:
 	VECTOR directionStartPos_;
 	VECTOR directionGoalPos_[CAMERA_DIRECTION_NUM];
 	int directionCnt_;
+	int directionCollTimeCnt_;
 	
 	std::unique_ptr<PixelMaterial>scanLineMaterial_;
 	std::unique_ptr<PixelRenderer>scanLineRender_;
 	int scanLineScreen_;
 	std::string warningStr_;
 	int direcCnt_;	//演出に関わるカウンタ
+	bool stayCameraShake_;
 
 	void DrawDebug(void);
 };

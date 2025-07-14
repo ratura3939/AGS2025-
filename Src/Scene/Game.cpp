@@ -37,6 +37,8 @@ Game::Game(void)
 	directionGoalPos_[0] = CAMERA_GOAL_1;
 	directionGoalPos_[1] = CAMERA_GOAL_2;
 	direcState_ = BOSS_DIRECTION::NONE;
+	directionCollTimeCnt_ = 0;
+	stayCameraShake_ = false;
 }
 
 Game::~Game(void)
@@ -97,6 +99,7 @@ void Game::Init(void)
 	auto& uiM = UIManager2d::GetInstance();
 	uiM.Add(warningStr_, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(warningStr_, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
+	uiM.SetUIDirectionPram(warningStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 10.0f, 255.0f, 0.0f);
 }
 
 void Game::InitSound(void)
@@ -139,6 +142,11 @@ void Game::InitSound(void)
 	//ダメージ
 	sndM.Add(SoundManager::TYPE::SE, "Damage",
 		rsM.Load(ResourceManager::SRC::DAMAGE_SE).handleId_);
+
+	//ボス足音
+	sndM.Add(SoundManager::TYPE::SE, "Impact",
+		rsM.Load(ResourceManager::SRC::BOSS_IMPACT_SE).handleId_);
+	sndM.AdjustVolume("Impact", 60);
 
 }
 
@@ -353,6 +361,7 @@ bool Game::DirectionPostEffect(void)
 	scanLineMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
 	direcCnt_++;
 	if (direcCnt_ > WARNING_DIRECTION_TIME) {
+		SoundManager::GetInstance().Play("Impact");
 		SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);
 		return true;
 	}
@@ -361,13 +370,26 @@ bool Game::DirectionPostEffect(void)
 
 bool Game::DirectionShakeScreen(void)
 {
-	//シェイクの回数を満たしたら
+	//カメラノーシェイク時
+	if (stayCameraShake_) {
+		directionCollTimeCnt_++;
+		if (directionCollTimeCnt_ >= CAMERA_SHAKE_COOL_TIME) {
+			SoundManager::GetInstance().Play("Impact");
+			SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);
+			stayCameraShake_ = false;
+		}
+		return false;
+	}
+
+
+	//カメラシェイク終了時
 	if (SceneManager::GetInstance().GetCamera().IsFinishShake()) {
 		direcCnt_++;
 		if (direcCnt_ >= CAMERA_SHAKE_NUM) {
 			return true;
 		}
-		SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);
+		directionCollTimeCnt_ = 0;
+		stayCameraShake_ = true;
 	}
 	return false;
 }
