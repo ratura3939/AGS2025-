@@ -110,9 +110,17 @@ void ResourceManager::InitGame(void)
 	//プレート
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "PlateWood.png");
 	resourcesMap_.emplace(SRC::PLATE_IMG, res);
+	//スケルトン×
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "SkeltonCounter.png");
+	resourcesMap_.emplace(SRC::SKELTON_IMG, res);
+	
 	//数字
-	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + "plateNumber.png", 4, 2, 240, 350);
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + "PlateNumber.png", 4, 2, 230, 350);
 	resourcesMap_.emplace(SRC::NUMBER_IMGS, res);
+
+	//WARNING
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Warning.png");
+	resourcesMap_.emplace(SRC::WARNING_IMG, res);
 
 	//音
 	//BGM
@@ -153,7 +161,7 @@ void ResourceManager::InitClear(void)
 {
 	Resource res;
 
-	// スタートロゴ
+	//ロゴ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameClear.png");
 	resourcesMap_.emplace(SRC::GAMECLAR_LOGO, res);
 }
@@ -161,7 +169,7 @@ void ResourceManager::InitClear(void)
 void ResourceManager::InitGameOver(void)
 {
 	Resource res;
-	// スタートロゴ
+	// ロゴ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameOver.png");
 	resourcesMap_.emplace(SRC::GAMEOVER_LOGO, res);
 }

@@ -136,6 +136,7 @@ public:
 	
 
 	const MODE GetMode(void);
+	const bool IsFinishShake(void) { return finishShake_; }
 
 	void DrawDebug(void);
 private:
@@ -185,15 +186,12 @@ private:
 	//補完スピード
 	float lerpSpeed_;
 
+	bool finishShake_;
+
 	
 	//カメラを初期位置に戻す
 	void SetDefault(void);
 
-	//カメラシェイク
-	void Shake(void);
-
-	//カメラシェイクさせるための準備
-	void SetShake(float intensity, float duration);
 
 	//回転
 	void Rotation(void);

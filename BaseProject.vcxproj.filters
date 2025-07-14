@@ -177,6 +177,12 @@
     <ClCompile Include="Src\Renderer\PixelRenderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Object\Character\Enemy\Boss.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\UI\Enemy\EnemyCount.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">
@@ -311,6 +317,12 @@
     <ClInclude Include="Src\Renderer\PixelRenderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Object\Character\Enemy\Boss.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\UI\Enemy\EnemyCount.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\Model\StdModelPS.hlsl" />
@@ -318,6 +330,7 @@
     <FxCompile Include="Src\Shader\Model\SkinVS.hlsl" />
     <FxCompile Include="Src\Shader\Model\BlurSkinVS.hlsl" />
     <FxCompile Include="Src\Shader\Model\BlurSkinPS.hlsl" />
+    <FxCompile Include="Src\Shader\PostEffect\ScanLine.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />

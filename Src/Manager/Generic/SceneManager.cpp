@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include<EffekseerForDXLib.h>
 #include "../../Common/Fader.h"
+#include "../../Application.h"
 #include "../../Scene/Title.h"
 #include "../../Scene/Game.h"
 #include "../../Scene/GameClear.h"
@@ -64,7 +65,9 @@ void SceneManager::Init(void)
 	// 初期シーンの設定
 	DoChangeScene(SCENE_ID::TITLE);
 
-
+	// メインスクリーン
+	mainScreen_ = MakeScreen(
+		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 }
 
 void SceneManager::Init3D(void)
@@ -102,6 +105,8 @@ void SceneManager::Update(void)
 	auto nowTime = std::chrono::system_clock::now();
 	deltaTime_ = static_cast<float>(
 		std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
+
+	totalTime_ += deltaTime_;
 	preTime_ = nowTime;
 
 	fader_->Update();
@@ -126,7 +131,7 @@ void SceneManager::Draw(void)
 	
 	// 描画先グラフィック領域の指定
 	// (３Ｄ描画で使用するカメラの設定などがリセットされる)
-	SetDrawScreen(DX_SCREEN_BACK);
+	SetDrawScreen(mainScreen_);
 
 	// 画面を初期化
 	ClearDrawScreen();
@@ -146,6 +151,10 @@ void SceneManager::Draw(void)
 	// 暗転・明転
 	fader_->Draw();
 
+	// 背面スクリーンにメインスクリーンを描画
+	SetDrawScreen(DX_SCREEN_BACK);
+	ClearDrawScreen();
+	DrawGraph(0, 0, mainScreen_, true);
 }
 
 void SceneManager::Destroy(void)
@@ -156,6 +165,8 @@ void SceneManager::Destroy(void)
 	UIManager2d::GetInstance().Destroy();
 
 	scene_->Release();
+
+	DeleteGraph(mainScreen_);
 	delete scene_;
 
 	delete fader_;
@@ -238,8 +249,10 @@ SceneManager::SceneManager(void)
 
 	// デルタタイム
 	deltaTime_ = 1.0f / 60.0f;
+	totalTime_ = 0.0f;
 
 	updateSpeedRate_ = 1.0f;
+
 }
 
 void SceneManager::ResetDeltaTime(void)

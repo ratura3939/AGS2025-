@@ -3,6 +3,14 @@
 #include"../../../Renderer/ModelMaterial.h"
 #include "Boss.h"
 
+Boss::Boss(VECTOR& _pos):EnemyBase(_pos)
+{
+}
+
+Boss::~Boss(void)
+{
+}
+
 void Boss::SetPram(void)
 {
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::BOSS_MDL);
@@ -11,10 +19,11 @@ void Boss::SetPram(void)
 		return;
 	}
 	//パラメータ関係
-	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
+	const float SCALE = 0.02f;
+	scl_ = { SCALE,SCALE ,SCALE };
 	preStayPos_ = pos_;
 	rot_ = { 0.0f,0.0f,-1.0f };
-	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
+	quaRotLocal_ = Quaternion::Euler(Utility::Deg2RadF(-INIT_MODEL_ROT/2.0f), Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
 	//初期化用に一回実行
 	UpdateRotQuat();
 

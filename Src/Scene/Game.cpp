@@ -9,8 +9,12 @@
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Decoration/SoundManager.h"
 #include"../Manager/Decoration/EffectManager.h"
+#include"../Manager/Decoration/UIManager2d.h"
 #include"../Object/Stage/Stage.h"
 #include"../Utility/Utility.h"
+#include"../Renderer/PixelMaterial.h"
+#include"../Renderer/PixelRenderer.h"
+#include"../Application.h"
 #include "Game.h"
 
 namespace {
@@ -32,10 +36,12 @@ Game::Game(void)
 	directionStartPos_ = CAMERA_START_1;
 	directionGoalPos_[0] = CAMERA_GOAL_1;
 	directionGoalPos_[1] = CAMERA_GOAL_2;
+	direcState_ = BOSS_DIRECTION::NONE;
 }
 
 Game::~Game(void)
 {
+	DeleteGraph(scanLineScreen_);
 }
 
 void Game::Init(void)
@@ -48,7 +54,7 @@ void Game::Init(void)
 	player_->Init();
 
 	//敵
-	enemy_ = std::make_unique<EnemyManager>();
+	enemy_ = std::make_unique<EnemyManager>(*this);
 	enemy_->Init();
 
 	//攻撃
@@ -72,6 +78,25 @@ void Game::Init(void)
 	InitSound();
 	//エフェクト関係初期化
 	InitEffect();
+
+	//PS
+	scanLineMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", 2);
+	//拡散光
+	scanLineMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
+	//時間
+	scanLineMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
+
+	scanLineRender_ = std::make_unique<PixelRenderer>(*scanLineMaterial_);
+	scanLineRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
+	// ポストエフェクト用スクリーン
+	scanLineScreen_ = MakeScreen(
+		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+
+	//「WARNING」画像
+	ResourceManager& rsM = ResourceManager::GetInstance();
+	auto& uiM = UIManager2d::GetInstance();
+	uiM.Add(warningStr_, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(warningStr_, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
 }
 
 void Game::InitSound(void)
@@ -297,40 +322,74 @@ void Game::GameUpdate(void)
 void Game::DirectionUpdate(void)
 {
 	//危険のポストエフェクト→画面揺れ→カメラ
+	if ((this->*direcUpdate_)()) {
+		//次の演出に
+		direcState_ = static_cast<BOSS_DIRECTION>(static_cast<int>(direcState_) + 1);
+		direcCnt_ = 0;
+		//もし終了したら
+		if (direcState_ == BOSS_DIRECTION::END) {
+			//カメラの追従対象を戻す
+			SceneManager::GetInstance().GetCamera().SetFocusPos(player_->GetFocusPoint());
+			//更新を通常に
+			update_ = &Game::GameUpdate;
+		}
+		//画面揺れ
+		else if (direcState_ == BOSS_DIRECTION::SHAKE_SCREEN) {
+			direcUpdate_ = &Game::DirectionShakeScreen;
+		}
+		//カメラ移動
+		else if (direcState_ == BOSS_DIRECTION::CAMERA_MOVE) {
+			direcUpdate_ = &Game::DirectionCameraMove;
+		}
 
+	}
+}
 
+bool Game::DirectionPostEffect(void)
+{
+	//WARNING更新
+	UIManager2d::GetInstance().Update(warningStr_);
+	//ポストエフェクト更新
+	scanLineMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
+	direcCnt_++;
+	if (direcCnt_ > WARNING_DIRECTION_TIME) {
+		SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);
+		return true;
+	}
+	return false;
+}
+
+bool Game::DirectionShakeScreen(void)
+{
+	//シェイクの回数を満たしたら
+	if (SceneManager::GetInstance().GetCamera().IsFinishShake()) {
+		direcCnt_++;
+		if (direcCnt_ >= CAMERA_SHAKE_NUM) {
+			return true;
+		}
+		SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);
+	}
+	return false;
+}
+
+bool Game::DirectionCameraMove(void)
+{
 	//カメラ演出用
 	auto& camera = SceneManager::GetInstance().GetCamera();
 	//ゴール位置についたら次のスタート位置へ
 	auto cameraPos = camera.GetPos();
-	if (Utility::MagnitudeF(VSub(directionGoalPos_[directionCnt_], cameraPos))<=ALLOWABLE_DISTANCE) {
+	if (Utility::MagnitudeF(VSub(directionGoalPos_[directionCnt_], cameraPos)) <= ALLOWABLE_DISTANCE) {
 		//移動演出回数の上限に到達していたら
 		if (directionCnt_ >= CAMERA_DIRECTION_NUM) {
-			//追従対象を戻したりなんだり
-
-			//一通り終わったので更新を戻す
-			update_ = &Game::GameUpdate;
+			return true;
 		}
 		else {
 			//次の目標地点への設定
 			directionCnt_++;
 			camera.SetGoalPos(directionGoalPos_[directionCnt_]);
 		}
-		
-
 	}
-}
-
-void Game::DirectionPostEffect(void)
-{
-}
-
-void Game::DirectionShakeScreen(void)
-{
-}
-
-void Game::DirectionCameraMove(void)
-{
+	return false;
 }
 
 void Game::Draw(void)
@@ -340,6 +399,29 @@ void Game::Draw(void)
 	player_->Draw();
 
 	DrawDebug();
+
+	if (direcState_ == BOSS_DIRECTION::POST_EFFECT) {
+		DrawScanLine();
+	}
+}
+
+void Game::DrawScanLine(void)
+{
+	int mainScreen = SceneManager::GetInstance().GetMainScreen();
+
+	SetDrawScreen(scanLineScreen_);
+
+	// 画面を初期化
+	//ClearDrawScreen();
+
+	DrawGraph(0, 0, mainScreen, false);
+	scanLineRender_->Draw();
+
+	// メインに戻す
+	SetDrawScreen(mainScreen);
+	DrawGraph(0, 0, scanLineScreen_, false);
+	//ポストエフェクトの上から鮮明な文字を出す
+	UIManager2d::GetInstance().Draw(warningStr_);
 }
 
 void Game::Release(void)
@@ -350,7 +432,9 @@ void Game::Release(void)
 
 void Game::StartBossFaze(void)
 {
+	direcState_ = BOSS_DIRECTION::POST_EFFECT;
 	update_ = &Game::DirectionUpdate;
+	direcUpdate_ = &Game::DirectionPostEffect;
 }
 
 void Game::AttackDataInit(void)

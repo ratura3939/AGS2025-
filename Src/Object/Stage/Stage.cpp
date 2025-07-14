@@ -27,7 +27,7 @@ void Stage::Update(void)
 
 void Stage::Draw(void)
 {
-	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y,0x0055ff,false);
+	//DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y,0x0055ff,false);
 	//sky_->Draw();
 	MV1DrawModel(modelId_);
 }

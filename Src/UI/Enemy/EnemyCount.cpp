@@ -17,17 +17,29 @@ bool EnemyCount::Init(const std::string& _master)
 	UIManager2d& uiM = UIManager2d::GetInstance();
 	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
 
+	constexpr float SCALE_SKEL = 0.2f;
+	constexpr float SCALE_PALTE_NUM = 0.4f;
+	constexpr float POS_AJUST = 100.0f;
+
 	plateStr_ = _master + "CounterPlate";
-	numberStr_ = "UseNumber";
+	numberStr_ = _master + "UseNumber";
+	SkeltonConterStr_ = _master + "SkeltonIcon";
 
 	//プレート
 	uiM.Add(plateStr_, rsM.Load(ResourceManager::SRC::PLATE_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(plateStr_, drawFollowPos_);
+	uiM.SetUIInfo(plateStr_, drawFollowPos_, SCALE_PALTE_NUM);
 	//数字
-	uiM.Add(numberStr_, -1, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(numberStr_, drawFollowPos_);
+	auto numPos = drawFollowPos_;
+	numPos.x += POS_AJUST;
+	uiM.Add(numberStr_, -1, UIManager2d::UI_DIRECTION_2D::UP_DOWN, UI_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(numberStr_, numPos, SCALE_PALTE_NUM);
+	uiM.SetUIDirectionPram(numberStr_, UIManager2d::UI_DIRECTION_GROUP::MOVE, 2.0f, 20.0f, -20.0f);			//詳細設定
 
 	//アイコン×
+	auto iconPos = drawFollowPos_;
+	iconPos.x -= POS_AJUST/2;
+	uiM.Add(SkeltonConterStr_, rsM.Load(ResourceManager::SRC::SKELTON_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(SkeltonConterStr_, iconPos, SCALE_SKEL);
 
 	update_ = &EnemyCount::NomalUpdate;
 	return true;
@@ -42,6 +54,9 @@ bool EnemyCount::Update(void)
 void EnemyCount::Draw(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
+	//uiM.Draw({ plateStr_, SkeltonConterStr_,numberStr_ });
+	uiM.Draw(plateStr_);
+	uiM.Draw(SkeltonConterStr_);
 	uiM.Draw(numberStr_);
 }
 
@@ -79,7 +94,7 @@ void EnemyCount::NomalUpdate(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
 	//表示項目を常にぴょこぴょこさせる
-	
+	uiM.Update(numberStr_);
 }
 
 void EnemyCount::ActionUpdate(void)

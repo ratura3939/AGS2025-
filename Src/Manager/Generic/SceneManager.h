@@ -79,6 +79,9 @@ public:
 	/// <returns>更新スピード(倍率影響済み)</returns>
 	const float GetScaleUpdateSpeedRate(const float _target)const;
 
+	int GetMainScreen(void)const { return mainScreen_; }
+	const float GetTotalTime(void)const { return totalTime_; }
+
 private:
 
 	// 静的インスタンス
@@ -89,6 +92,9 @@ private:
 	CNTL cntl_;
 
 	std::shared_ptr<Camera> camera_;
+
+	// メインスクリーン
+	int mainScreen_;
 
 	// フェード
 	Fader* fader_;
@@ -102,6 +108,7 @@ private:
 	// デルタタイム
 	std::chrono::system_clock::time_point preTime_;
 	float deltaTime_;
+	float totalTime_;
 
 	//更新カウンターの倍率
 	float updateSpeedRate_;

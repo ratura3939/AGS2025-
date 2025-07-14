@@ -4,12 +4,17 @@
 #include"../../Application.h"
 #include"../../UI/Enemy/EnemyCount.h"
 #include"../Generic/ResourceManager.h"
+#include"../../Scene/Game.h"
 #include "EnemyManager.h"
 
 const std::string EnemyManager::ATTACK_NOMAL = "EnemyAttack";
 
 EnemyManager::EnemyManager(Game& _scene):gameScene_(_scene)
 {
+	enemyCnt_ = -1;
+	numImg_ = nullptr;
+	platePos_ = Utility::VECTOR_INIT;
+	preBattle_ = false;
 }
 
 EnemyManager::~EnemyManager(void)
@@ -30,11 +35,11 @@ void EnemyManager::Init(void)
 		characters_.push_back(std::move(enemy));
 	}
 
-	
-	counterUI_ = std::make_unique<EnemyCount>(VECTOR{0,0,0});
+	platePos_ = VECTOR{ Application::SCREEN_SIZE_X - 300.0f,150.0f,0.0f };
+	counterUI_ = std::make_unique<EnemyCount>(platePos_);
 	counterUI_->Init("Manager");
 	//残りカウントのの設定
-	counterUI_->SetNumImg(numImg_[enemyCnt_ - 1]);
+	counterUI_->SetNumImg(numImg_[enemyCnt_]);
 
 	preBattle_ = false;
 }
@@ -45,6 +50,8 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 
 	//いなかったら処理しない
 	if (characters_.empty())return;
+
+	counterUI_->Update();
 
 	//死亡したキャラクターの配列番号保存とそのカウンター
 	std::vector<int>dethEnemy = {};
@@ -74,7 +81,7 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 	}
 	if (dethCnt != 0) {
 		//残りカウントのの設定
-		counterUI_->SetNumImg(numImg_[enemyCnt_ - 1]);
+		counterUI_->SetNumImg(numImg_[enemyCnt_]);
 		if (enemyCnt_ <= 0) {
 			CreateBoss();
 		}
@@ -89,6 +96,7 @@ void EnemyManager::Draw(void)
 	for (auto& chara : characters_) {
 		chara->Draw();
 	}
+	counterUI_->Draw();
 }
 
 void EnemyManager::Release(void)
@@ -228,12 +236,14 @@ void EnemyManager::LokedOn(const int _num)
 
 void EnemyManager::CreateBoss(void)
 {
-	auto boss = std::make_shared<Boss>();
+	VECTOR pos = INIT_1;
+	auto boss = std::make_shared<Boss>(pos);
 	boss->Init(0);
-	boss->SetPos(INIT_1);
 	characters_.push_back(boss);
 
 	enemyCnt_++;
+	//シーンにボス出現を伝える
+	gameScene_.StartBossFaze();
 }
 
 void EnemyManager::DrawDebug(void)

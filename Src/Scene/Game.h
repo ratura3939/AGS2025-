@@ -1,12 +1,16 @@
 #pragma once
 #include "SceneBase.h"
 #include<memory>
+#include<string>
 
 class PlayerManager;
 class EnemyManager;
 class AttackManager;
 class CollisionManager;
 class Stage;
+
+class PixelMaterial;
+class PixelRenderer;
 
 class Game :
     public SceneBase
@@ -18,6 +22,8 @@ public:
 	static constexpr float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
 	static constexpr float SLOW_SPEED_PERCENT = 25.0f;	//スローの割合(通常時から半分の速度にする)
 
+	static constexpr int WARNING_DIRECTION_TIME = 300;	//WARNING警告時間
+	static constexpr int CAMERA_SHAKE_NUM = 3;	//カメラ演出における移動回数
 	static constexpr int CAMERA_DIRECTION_NUM = 2;	//カメラ演出における移動回数
 
 	enum class BOSS_DIRECTION {
@@ -43,12 +49,14 @@ public:
 private:
 	void GameUpdate(void);		//通常のゲームアップデート
 	void DirectionUpdate(void);	//演出アップデート
-	void DirectionPostEffect(void);	//ポストエフェクト
-	void DirectionShakeScreen(void);//画面揺れ
-	void DirectionCameraMove(void);	//カメラ移動
+	bool DirectionPostEffect(void);	//ポストエフェクト
+	bool DirectionShakeScreen(void);//画面揺れ
+	bool DirectionCameraMove(void);	//カメラ移動
 
 public:
 	void Draw(void) override;
+	void DrawScanLine(void);
+
 	void Release(void) override;
 
 	void StartBossFaze(void);	//ボス出現最初の処理用に。。(力技です)
@@ -84,7 +92,9 @@ private:
 	int slowCnt_;		//スロー演出カウンタ
 
 	using Update_f = void(Game::*)(void);
+	using DirecUpdate_f = bool(Game::*)(void);
 	Update_f update_;
+	DirecUpdate_f direcUpdate_;
 
 
 	//下二つの変数はBGMが二つの場合で製作している
@@ -101,7 +111,11 @@ private:
 	VECTOR directionGoalPos_[CAMERA_DIRECTION_NUM];
 	int directionCnt_;
 	
-
+	std::unique_ptr<PixelMaterial>scanLineMaterial_;
+	std::unique_ptr<PixelRenderer>scanLineRender_;
+	int scanLineScreen_;
+	std::string warningStr_;
+	int direcCnt_;	//演出に関わるカウンタ
 
 	void DrawDebug(void);
 };

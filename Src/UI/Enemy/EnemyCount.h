@@ -26,13 +26,14 @@ public:
 private:
 	void StartAction(void);
 	void NomalUpdate(void);		//通常更新
-	void ActionUpdate(void);	//敵現象時演出用
+	void ActionUpdate(void);	//敵減少時演出用
 
 	void UpdateMove(void);		//目標位置へ移動用の関数(スケール拡大も行う)
 	void UpdateDirection(void);	//減らした時に揺らすよう
 
 	std::string plateStr_;
 	std::string numberStr_;
+	std::string SkeltonConterStr_;
 	COUNTER_STATE state_;
 
 	using Update_f = void(EnemyCount::*)(void);

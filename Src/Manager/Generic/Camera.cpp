@@ -31,6 +31,7 @@ Camera::Camera(void)
 	angles_.z = 0.0f;
 
 	lerpSpeed_ = NO_LERP;
+	finishShake_ = false;
 }
 
 Camera::~Camera(void)
@@ -221,7 +222,8 @@ void Camera::SetBeforeDrawShake(void)
 	if (stepShake_ < 0.0f)
 	{
 		pos_ = defaultPos_;
-		ChangeMode(MODE::FOLLOW_SPRING);
+		ChangeMode(MODE::FOLLOW);
+		finishShake_ = true;
 		return;
 	}
 
@@ -349,6 +351,7 @@ void Camera::ChangeMode(MODE mode)
 	case MODE::FOLLOW_SPRING:
 		break;
 	case MODE::SHAKE:
+		finishShake_ = false;
 		stepShake_ = TIME_SHAKE;
 		shakeDir_ = VNorm({ 0.7f, 0.7f ,0.0f });
 		defaultPos_ = pos_;
