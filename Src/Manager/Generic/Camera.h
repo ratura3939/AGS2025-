@@ -116,6 +116,7 @@ public:
 	//À•Wæ“¾
 	const VECTOR GetPos(void) const;
 	const VECTOR GetRockPos(void)const;
+	const VECTOR GetGoalPos(void)const { return goalPos_; }
 
 	//‰ñ“]æ“¾
 	const Quaternion GetRot(void)const;

@@ -35,6 +35,12 @@ public:
 		END
 	};
 
+	enum class ACTION_DIRECTION {
+		NOMAL,
+		BLUR,
+		END
+	};
+
 	Game(void);
 	~Game(void);
 
@@ -52,11 +58,13 @@ private:
 	void DirectionUpdate(void);	//演出アップデート
 	bool DirectionPostEffect(void);	//ポストエフェクト
 	bool DirectionShakeScreen(void);//画面揺れ
+	void DoShake(void);
 	bool DirectionCameraMove(void);	//カメラ移動
 
 public:
 	void Draw(void) override;
 	void DrawScanLine(void);
+	void DrawBlur(void);
 
 	void Release(void) override;
 
@@ -113,12 +121,20 @@ private:
 	int directionCnt_;
 	int directionCollTimeCnt_;
 	
+	//走査線
 	std::unique_ptr<PixelMaterial>scanLineMaterial_;
 	std::unique_ptr<PixelRenderer>scanLineRender_;
 	int scanLineScreen_;
 	std::string warningStr_;
 	int direcCnt_;	//演出に関わるカウンタ
 	bool stayCameraShake_;
+
+	//ブラー関連
+	ACTION_DIRECTION actionDirec_;
+	std::unique_ptr<PixelMaterial>blurMaterial_;
+	std::unique_ptr<PixelRenderer>blurRender_;
+	int blurScreen_;
+
 
 	void DrawDebug(void);
 };

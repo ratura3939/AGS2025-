@@ -44,6 +44,7 @@ public:
 		TITLE_BGM,
 		GAME_BGM,
 		BATTLE_BGM,
+		BOSS_BGM,
 		WARNING_BGM,
 
 		CANCEL_SE,
@@ -56,6 +57,7 @@ public:
 		FIND_PLAYER_SE,
 		DAMAGE_SE,
 		BOSS_IMPACT_SE,
+		BOSS_SHOUT_SE,
 
 		//エフェクト
 		SWORD_EFC,

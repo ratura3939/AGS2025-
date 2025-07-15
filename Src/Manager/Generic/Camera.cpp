@@ -42,8 +42,6 @@ void Camera::Init(void)
 {
 	//カメラの初期設定
 	SetDefault();
-
-
 }
 
 void Camera::Update(void)
@@ -87,6 +85,9 @@ void Camera::SetBeforeDraw(void)
 
 	case MODE::RESET:
 		SetBeforeDrawReset();
+		break;
+	case MODE::AUTO_MOVE:
+		SetBeforeDrawAutoMove();
 		break;
 	}
 
@@ -297,7 +298,7 @@ void Camera::SetBeforeDrawAutoMove(void)
 {
 	//目標位置まで移動する
 	//終了の判定は呼び出した側で行う
-	pos_ = Utility::Lerp(pos_, goalPos_, 0.8f);
+	pos_ = Utility::Lerp(pos_, goalPos_, 0.01f);
 
 	//カメラの上方向
 	cameraUp_ = rot_.GetUp();

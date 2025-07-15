@@ -11,7 +11,7 @@ class Game;
 class EnemyManager
 {
 public:
-	static constexpr int ENEMY_NUM = 1;			//敵総数
+	static constexpr int ENEMY_NUM = 4;			//敵総数
 
 	//攻撃登録名(ゆくゆくは外部データ)
 	static const std::string ATTACK_NOMAL;
@@ -80,6 +80,7 @@ public:
 	void LokedOn(const int _num);
 
 	void CreateBoss(void);
+	void BossShout(void);
 
 	void DrawDebug(void);
 private:
@@ -89,6 +90,8 @@ private:
 	int enemyCnt_;
 	int* numImg_;
 	VECTOR platePos_;	//敵数表示　プレート
+
+	bool createBoss_;	//ボスを生成した形跡
 
 	std::unique_ptr<EnemyCount>counterUI_;
 

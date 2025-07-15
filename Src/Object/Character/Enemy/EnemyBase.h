@@ -137,6 +137,8 @@ public:
     //死亡させる
     void Deth(void)override;
 
+    virtual void Shout(void);//ボス専用
+
 public: //デバッグ用
     void SetColor(int _color);
     void SetPos(VECTOR _pos);

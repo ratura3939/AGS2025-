@@ -43,7 +43,7 @@ void ResourceManager::InitTitle(void)
 
 	//音
 	//BGM
-	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Title.mp3");
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Title2.mp3");
 	resourcesMap_.emplace(SRC::TITLE_BGM, res);
 	//キャンセル
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Cancel.mp3");
@@ -129,6 +129,10 @@ void ResourceManager::InitGame(void)
 	//バトルBGM
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Battle.mp3");
 	resourcesMap_.emplace(SRC::BATTLE_BGM, res);
+	//バトルBGM(ボス)
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Boss.mp3");
+	resourcesMap_.emplace(SRC::BOSS_BGM, res);
+
 	//警告音
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Warning.mp3");
 	resourcesMap_.emplace(SRC::WARNING_BGM, res);
@@ -153,6 +157,9 @@ void ResourceManager::InitGame(void)
 	//ボス足音
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Impact.mp3");
 	resourcesMap_.emplace(SRC::BOSS_IMPACT_SE, res);
+	//ボス足音
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "BossShout.mp3");
+	resourcesMap_.emplace(SRC::BOSS_SHOUT_SE, res);
 	
 
 	//エフェクト

@@ -203,6 +203,7 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 		//ˆê’èŠÔ‚¢‚½‚ç
 		if (searchCnt_ >= SEARCH_CNT_MAX) {
 			//í“¬ó‘Ô‚É
+			SoundManager::GetInstance().Play("FindPlayer");
 			ChangeState(ENEMY_STATE::BATTLE);
 		}
 		else {
@@ -376,7 +377,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		update_ = &EnemyBase::UpdateBattle;
 		move_ = &EnemyBase::MoveBattle;
 		moveSped_ = MOVE_POW_FIND;
-		SoundManager::GetInstance().Play("FindPlayer");
+		
 
 		serchCol_ = alertDebugCol;
 		break;
@@ -474,6 +475,7 @@ void EnemyBase::Damage(const float _pow)
 	//í“¬ó‘Ô‚Å‚Í‚È‚©‚Á‚½‚ç
 	if (state_ != ENEMY_STATE::BATTLE) {
 		//í“¬ó‘Ô‚É
+		SoundManager::GetInstance().Play("FindPlayer");
 		ChangeState(ENEMY_STATE::BATTLE);
 	}
 	//0ˆÈ‰º‚Ì‚Æ‚«
@@ -486,4 +488,9 @@ void EnemyBase::Damage(const float _pow)
 void EnemyBase::Deth(void)
 {
 	ChangeState(ENEMY_STATE::DETH);
+}
+
+void EnemyBase::Shout(void)
+{
+	//ƒ{ƒXê—p
 }

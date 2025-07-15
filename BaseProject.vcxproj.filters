@@ -331,6 +331,7 @@
     <FxCompile Include="Src\Shader\Model\BlurSkinVS.hlsl" />
     <FxCompile Include="Src\Shader\Model\BlurSkinPS.hlsl" />
     <FxCompile Include="Src\Shader\PostEffect\ScanLine.hlsl" />
+    <FxCompile Include="Src\Shader\PostEffect\Blur.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />

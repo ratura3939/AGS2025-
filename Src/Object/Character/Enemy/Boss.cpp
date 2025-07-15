@@ -3,6 +3,7 @@
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/GameSystem/AttackManager.h"
 #include"../../../Manager/GameSystem/EnemyManager.h"
+#include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Utility/Utility.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include "Boss.h"
@@ -15,6 +16,12 @@ Boss::~Boss(void)
 {
 }
 
+void Boss::Shout(void)
+{
+	animController_->Play("preShout", 0.8f, { "shout" });
+	SoundManager::GetInstance().Play("shout");
+}
+
 void Boss::InitAnim(void)
 {
 	animController_->Add("idle", BOSS_IDLE, AnimationController::PLAY_TYPE::LOOP);
@@ -25,6 +32,9 @@ void Boss::InitAnim(void)
 	animController_->Add("walk", BOSS_WALK, AnimationController::PLAY_TYPE::LOOP);
 	animController_->Add("dethStart", BOSS_DETH, AnimationController::PLAY_TYPE::NOMAL);
 	
+
+	//‚»‚Ìê‚µ‚Ì‚¬‚Å‚±‚±‚É–Â‚«º“ü‚ê‚é
+	SoundManager::GetInstance().Add(SoundManager::TYPE::SE, "shout", ResourceManager::GetInstance().Load(ResourceManager::SRC::BOSS_SHOUT_SE).handleId_);
 }
 
 void Boss::SetPram(void)
@@ -39,7 +49,7 @@ void Boss::SetPram(void)
 	scl_ = { SCALE,SCALE ,SCALE };
 	preStayPos_ = pos_;
 	rot_ = { 0.0f,0.0f,-1.0f };
-	quaRotLocal_ = Quaternion::Euler(Utility::Deg2RadF(-INIT_MODEL_ROT/2.0f), Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
+	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
 	//‰Šú‰»—p‚Éˆê‰ñÀs
 	UpdateRotQuat();
 

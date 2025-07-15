@@ -13,6 +13,9 @@ public:
     static constexpr int BOSS_DETH = 12;
     Boss(VECTOR& _pos);
     ~Boss(void);
+
+    void Shout(void)override;
+
 private:
     void InitAnim(void)override;
     void SetPram(void)override;

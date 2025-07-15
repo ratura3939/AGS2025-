@@ -15,6 +15,7 @@ EnemyManager::EnemyManager(Game& _scene):gameScene_(_scene)
 	numImg_ = nullptr;
 	platePos_ = Utility::VECTOR_INIT;
 	preBattle_ = false;
+	createBoss_ = false;
 }
 
 EnemyManager::~EnemyManager(void)
@@ -82,7 +83,7 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 	if (dethCnt != 0) {
 		//残りカウントのの設定
 		counterUI_->SetNumImg(numImg_[enemyCnt_]);
-		if (enemyCnt_ <= 0) {
+		if (enemyCnt_ <= 0 && !createBoss_) {
 			//シーンにボス出現を伝える
 			gameScene_.StartBossFaze();
 		}
@@ -249,8 +250,18 @@ void EnemyManager::CreateBoss(void)
 	auto boss = std::make_shared<Boss>(pos);
 	boss->Init(0);
 	characters_.push_back(boss);
+	createBoss_ = true;
 
 	enemyCnt_++;
+
+	counterUI_->SetNumImg(numImg_[enemyCnt_]);
+}
+
+void EnemyManager::BossShout(void)
+{
+	for (auto& chara : characters_) {
+		chara->Shout();
+	}
 }
 
 void EnemyManager::DrawDebug(void)

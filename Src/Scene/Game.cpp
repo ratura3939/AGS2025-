@@ -18,10 +18,11 @@
 #include "Game.h"
 
 namespace {
-	constexpr VECTOR CAMERA_START_1 = { 100.0f,200.0f,0.0f };	//カメラ演出開始位置
-	constexpr VECTOR CAMERA_GOAL_1 = { 100.0f,400.0f,0.0f };	//カメラ演出目標位置その①
-	constexpr VECTOR CAMERA_GOAL_2 = { 0.0f,200.0f,150.0f };	//カメラ演出目標位置その②
-	constexpr float ALLOWABLE_DISTANCE = 1.0f;		//カメラの移動完了判定をがば目にするために
+	constexpr VECTOR CAMERA_START_1 = { 600.0f,200.0f,0.0f };	//カメラ演出開始位置
+	constexpr VECTOR CAMERA_GOAL_1 = { 600.0f,1000.0f,0.0f };	//カメラ演出目標位置その①
+	constexpr VECTOR CAMERA_GOAL_2 = { 0.0f,800.0f,600.0f };	//カメラ演出目標位置その②
+	constexpr float ALLOWABLE_DISTANCE = 10.0f;		//カメラの移動完了判定をがば目にするために
+	constexpr int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
 }
 
 Game::Game(void)
@@ -39,11 +40,14 @@ Game::Game(void)
 	direcState_ = BOSS_DIRECTION::NONE;
 	directionCollTimeCnt_ = 0;
 	stayCameraShake_ = false;
+
+	actionDirec_ = ACTION_DIRECTION::NOMAL;
 }
 
 Game::~Game(void)
 {
 	DeleteGraph(scanLineScreen_);
+	DeleteGraph(blurScreen_);
 }
 
 void Game::Init(void)
@@ -82,6 +86,20 @@ void Game::Init(void)
 	InitEffect();
 
 	//PS
+	blurMaterial_ = std::make_unique<PixelMaterial>("Blur.cso", 2);
+	//拡散光
+	blurMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
+	//時間
+	blurMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
+
+	blurRender_ = std::make_unique<PixelRenderer>(*blurMaterial_);
+	blurRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
+	// ポストエフェクト用スクリーン
+	blurScreen_ = MakeScreen(
+		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+
+
+	//PS
 	scanLineMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", 2);
 	//拡散光
 	scanLineMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
@@ -113,6 +131,10 @@ void Game::InitSound(void)
 	//バトルBGM
 	sndM.Add(SoundManager::TYPE::BGM, "BattleBgm",
 		rsM.Load(ResourceManager::SRC::BATTLE_BGM).handleId_);
+
+	//バトルBGM
+	sndM.Add(SoundManager::TYPE::BGM, "BossBgm",
+		rsM.Load(ResourceManager::SRC::BOSS_BGM).handleId_);
 
 	//警告音
 	sndM.Add(SoundManager::TYPE::BGM, "WarningBgm",
@@ -344,17 +366,34 @@ void Game::DirectionUpdate(void)
 		//もし終了したら
 		if (direcState_ == BOSS_DIRECTION::END) {
 			//カメラの追従対象を戻す
-			SceneManager::GetInstance().GetCamera().SetFocusPos(player_->GetFocusPoint());
+			Camera& camera = SceneManager::GetInstance().GetCamera();
+			camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
+			camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
+			camera.SetFocusPos(player_->GetFocusPoint());				//注視点
+
+			//BGM流す
+			SoundManager::GetInstance().Play("BossBgm");
+			nowBgmStr_ = "BossBgm";
+			switchBgm_ = false;
+
 			//更新を通常に
 			update_ = &Game::GameUpdate;
 		}
 		//画面揺れ
 		else if (direcState_ == BOSS_DIRECTION::SHAKE_SCREEN) {
+			DoShake();
 			direcUpdate_ = &Game::DirectionShakeScreen;
 		}
 		//カメラ移動
 		else if (direcState_ == BOSS_DIRECTION::CAMERA_MOVE) {
 			enemy_->CreateBoss();
+			auto& camera = SceneManager::GetInstance().GetCamera();
+			//カメラを自動移動に設定
+			camera.ChangeMode(Camera::MODE::AUTO_MOVE);
+			//場所の設定
+			auto bossPos = enemy_->GetPos(BOSS_IDX);
+			camera.SetPos(VAdd(bossPos,directionStartPos_), bossPos);
+			camera.SetGoalPos(VAdd(bossPos, directionGoalPos_[directionCnt_]));
 			direcUpdate_ = &Game::DirectionCameraMove;
 		}
 
@@ -370,9 +409,6 @@ bool Game::DirectionPostEffect(void)
 	direcCnt_++;
 	if (direcCnt_ > WARNING_DIRECTION_TIME) {
 		SoundManager::GetInstance().Stop("WarningBgm");	//警告音止める
-		SoundManager::GetInstance().Play("Impact");
-		SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);
-		
 		return true;
 	}
 	return false;
@@ -384,8 +420,7 @@ bool Game::DirectionShakeScreen(void)
 	if (stayCameraShake_) {
 		directionCollTimeCnt_++;
 		if (directionCollTimeCnt_ >= CAMERA_SHAKE_COOL_TIME) {
-			SoundManager::GetInstance().Play("Impact");
-			SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);
+			DoShake();
 			stayCameraShake_ = false;
 		}
 		return false;
@@ -404,6 +439,12 @@ bool Game::DirectionShakeScreen(void)
 	return false;
 }
 
+void Game::DoShake(void)
+{
+	SoundManager::GetInstance().Play("Impact");
+	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);
+}
+
 bool Game::DirectionCameraMove(void)
 {
 	//アニメーションのみ更新
@@ -413,15 +454,16 @@ bool Game::DirectionCameraMove(void)
 	auto& camera = SceneManager::GetInstance().GetCamera();
 	//ゴール位置についたら次のスタート位置へ
 	auto cameraPos = camera.GetPos();
-	if (Utility::MagnitudeF(VSub(directionGoalPos_[directionCnt_], cameraPos)) <= ALLOWABLE_DISTANCE) {
+	if (Utility::MagnitudeF(VSub(camera.GetGoalPos(), cameraPos)) <= ALLOWABLE_DISTANCE) {
+		directionCnt_++;
 		//移動演出回数の上限に到達していたら
 		if (directionCnt_ >= CAMERA_DIRECTION_NUM) {
 			return true;
 		}
 		else {
 			//次の目標地点への設定
-			directionCnt_++;
-			camera.SetGoalPos(directionGoalPos_[directionCnt_]);
+			camera.SetGoalPos(VAdd(enemy_->GetPos(BOSS_IDX), directionGoalPos_[directionCnt_]));
+			enemy_->BossShout();
 		}
 	}
 	return false;
@@ -437,6 +479,9 @@ void Game::Draw(void)
 
 	if (direcState_ == BOSS_DIRECTION::POST_EFFECT) {
 		DrawScanLine();
+	}
+	if (actionDirec_ == ACTION_DIRECTION::BLUR) {
+		DrawBlur();
 	}
 }
 
@@ -457,6 +502,23 @@ void Game::DrawScanLine(void)
 	DrawGraph(0, 0, scanLineScreen_, false);
 	//ポストエフェクトの上から鮮明な文字を出す
 	UIManager2d::GetInstance().Draw(warningStr_);
+}
+
+void Game::DrawBlur(void)
+{
+	int mainScreen = SceneManager::GetInstance().GetMainScreen();
+
+	SetDrawScreen(blurScreen_);
+
+	// 画面を初期化
+	//ClearDrawScreen();
+
+	DrawGraph(0, 0, mainScreen, false);
+	blurRender_->Draw();
+
+	// メインに戻す
+	SetDrawScreen(mainScreen);
+	DrawGraph(0, 0, blurScreen_, false);
 }
 
 void Game::Release(void)
