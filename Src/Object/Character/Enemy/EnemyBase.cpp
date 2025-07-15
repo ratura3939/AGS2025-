@@ -91,7 +91,7 @@ void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
 	//位置設定
 	uiPos_ = pos_;
 	//頭位置
-	uiPos_.y = 250.0f;
+	uiPos_.y = uiDeviationY_;
 
 	uiCntl_->Update();
 }
@@ -118,6 +118,14 @@ void EnemyBase::SetPram(void)
 	animController_ = std::make_unique<AnimationController>(modelId_);
 	InitAnim();
 	animController_->Play("idle", SPEED_ANIM);
+
+	uiDeviationY_ = 250.0f;
+	maxHp_ = ENEMY_HP;
+
+	//位置設定
+	uiPos_ = pos_;
+	//頭位置
+	uiPos_.y += uiDeviationY_;
 
 	//UI初期化
 	InitUI();
@@ -151,14 +159,11 @@ void EnemyBase::InitAnim(void)
 
 void EnemyBase::InitUI(void)
 {
-	//位置設定
-	uiPos_ = pos_;
-	//頭位置
-	uiPos_.y = 250.0f;
+	
 	//UIコントローラー初期化
 	uiCntl_ = std::make_unique<EnemyUIController>(uiPos_,state_);
 	uiCntl_->Init(speciesName_);
-	uiCntl_->CreateUI(speciesName_, hp_, ENEMY_HP);
+	uiCntl_->CreateUI(speciesName_, hp_, maxHp_);
 }
 
 

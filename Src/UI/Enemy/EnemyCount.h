@@ -21,6 +21,7 @@ public:
 	void Reset(void)override;
 
 	void SetNumImg(int _img);
+	void SetIconImg(void);
 	void Action(void);
 	
 private:
@@ -39,5 +40,7 @@ private:
 	using Update_f = void(EnemyCount::*)(void);
 	Update_f update_;
 	Update_f actionUpdate_;
+
+	int golemIcon_;
 };
 

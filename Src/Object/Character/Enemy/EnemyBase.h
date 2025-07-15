@@ -117,7 +117,7 @@ protected:    //各種更新処理
 #pragma endregion
 
     
-    void DrawUI(void)override;
+    virtual void DrawUI(void)override;
 
 public:
     //生存判定
@@ -151,9 +151,11 @@ protected:
     Move_f move_;       //移動関数
 
     std::unique_ptr<EnemyUIController>uiCntl_;
+    float maxHp_;
 
     VECTOR preStayPos_; //前回停止位置
     VECTOR uiPos_; //UI表示位置
+    float uiDeviationY_;
     float moveOneTime_; //一回の移動量
     float moveSped_;    //１フレームでの移動量
     bool isStay_;       //ステイかどうか

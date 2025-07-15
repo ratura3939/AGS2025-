@@ -5,6 +5,7 @@
 #include"../../../Manager/GameSystem/EnemyManager.h"
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Utility/Utility.h"
+#include"../../../UI/EnemyUIController.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include "Boss.h"
 
@@ -39,6 +40,8 @@ void Boss::InitAnim(void)
 
 void Boss::SetPram(void)
 {
+	speciesName_ = "Boss";
+
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::BOSS_MDL);
 
 	if (modelId_ == -1) {
@@ -58,6 +61,16 @@ void Boss::SetPram(void)
 	animController_ = std::make_unique<AnimationController>(modelId_);
 	InitAnim();
 	animController_->Play("idle", SPEED_ANIM);
+
+	hp_ = BOSS_HP;
+	maxHp_ = BOSS_HP;
+
+	uiDeviationY_ = 600.0f;
+
+	//位置設定
+	uiPos_ = pos_;
+	//頭位置
+	uiPos_.y += uiDeviationY_;
 
 	//UI初期化
 	InitUI();
@@ -128,3 +141,18 @@ void Boss::MoveBattle(const VECTOR& _pPos)
 
 	debugRot_ = Utility::Deg2RadF(rad);
 }
+
+void Boss::DrawUI(void)
+{
+	//HPボックス表示
+	if (hp_ >= 0) {
+		uiCntl_->Draw(EnemyUIController::ENEMY_UI::HP);
+	}
+
+	//ロックオン関係UI
+	//自身がロックオン対象だったら
+	if (isLockTarget_) {
+		uiCntl_->Draw(EnemyUIController::ENEMY_UI::TARGETTING);
+	}
+}
+

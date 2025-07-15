@@ -11,6 +11,8 @@ public:
     static constexpr int BOSS_PRE_SHOUT = 9;
     static constexpr int BOSS_SHOUT = 10;
     static constexpr int BOSS_DETH = 12;
+
+    static constexpr float BOSS_HP = 300.0f;
     Boss(VECTOR& _pos);
     ~Boss(void);
 
@@ -22,5 +24,7 @@ private:
 
     void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)override; //êÌì¨
     void MoveBattle(const VECTOR& _pPos)override;
+
+    void DrawUI(void)override;
 };
 

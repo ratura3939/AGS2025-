@@ -41,7 +41,11 @@ bool EnemyCount::Init(const std::string& _master)
 	uiM.Add(SkeltonConterStr_, rsM.Load(ResourceManager::SRC::SKELTON_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(SkeltonConterStr_, iconPos, SCALE_SKEL);
 
+	golemIcon_ = rsM.Load(ResourceManager::SRC::GOLEM_IMG).handleId_;
+
 	update_ = &EnemyCount::NomalUpdate;
+
+
 	return true;
 }
 
@@ -68,6 +72,12 @@ void EnemyCount::SetNumImg(int _img)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
 	uiM.SetImage(numberStr_, _img);
+}
+
+void EnemyCount::SetIconImg(void)
+{
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	uiM.SetImage(SkeltonConterStr_, golemIcon_);
 }
 
 void EnemyCount::Action(void)

@@ -113,9 +113,12 @@ void ResourceManager::InitGame(void)
 	//スケルトン×
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "SkeltonCounter.png");
 	resourcesMap_.emplace(SRC::SKELTON_IMG, res);
+	//ゴーレム×
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "GolemCounter.png");
+	resourcesMap_.emplace(SRC::GOLEM_IMG, res);
 	
 	//数字
-	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + "PlateNumber.png", 4, 2, 230, 350);
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + "PlateNumber.png", 4, 2, 240, 350);
 	resourcesMap_.emplace(SRC::NUMBER_IMGS, res);
 
 	//WARNING

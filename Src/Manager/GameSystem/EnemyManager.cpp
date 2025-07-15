@@ -255,6 +255,7 @@ void EnemyManager::CreateBoss(void)
 	enemyCnt_++;
 
 	counterUI_->SetNumImg(numImg_[enemyCnt_]);
+	counterUI_->SetIconImg();
 }
 
 void EnemyManager::BossShout(void)
