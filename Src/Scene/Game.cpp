@@ -71,7 +71,7 @@ void Game::Init(void)
 	//判定
 	collision_ = std::make_unique<CollisionManager>();
 
-	stage_ = std::make_unique<Stage>();
+	stage_ = std::make_unique<Stage>(false);
 	stage_->Init();
 
 	//カメラの初期設定
@@ -84,33 +84,10 @@ void Game::Init(void)
 	InitSound();
 	//エフェクト関係初期化
 	InitEffect();
+	//シェーダー初期化
+	InitShader();
 
-	//PS
-	blurMaterial_ = std::make_unique<PixelMaterial>("Blur.cso", 2);
-	//拡散光
-	blurMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
-	//時間
-	blurMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
-
-	blurRender_ = std::make_unique<PixelRenderer>(*blurMaterial_);
-	blurRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	// ポストエフェクト用スクリーン
-	blurScreen_ = MakeScreen(
-		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
-
-
-	//PS
-	scanLineMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", 2);
-	//拡散光
-	scanLineMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
-	//時間
-	scanLineMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
-
-	scanLineRender_ = std::make_unique<PixelRenderer>(*scanLineMaterial_);
-	scanLineRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	// ポストエフェクト用スクリーン
-	scanLineScreen_ = MakeScreen(
-		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+	
 
 	//「WARNING」画像
 	ResourceManager& rsM = ResourceManager::GetInstance();
@@ -187,6 +164,58 @@ void Game::InitEffect(void)
 	efcM.Add("Damage", rsM.Load(ResourceManager::SRC::DAMAGE_EFC).handleId_);
 }
 
+void Game::InitShader(void)
+{
+	//ブラー
+	//PS
+	blurMaterial_ = std::make_unique<PixelMaterial>("Blur.cso", 3);
+	//拡散光
+	blurMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
+	//時間
+	blurMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
+	//画面大きさ
+	blurMaterial_->AddConstBuf({ Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y,0.0f,0.0f });
+
+	blurRender_ = std::make_unique<PixelRenderer>(*blurMaterial_);
+	blurRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
+	// ポストエフェクト用スクリーン
+	blurScreen_ = MakeScreen(
+		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+
+	//ブラー
+	//PS
+	dodgeMaterial_ = std::make_unique<PixelMaterial>("JustDodgePS.cso", 3);
+	//拡散光
+	dodgeMaterial_->AddConstBuf({ 1.0f,1.0f,1.0f,1.0f });
+	//時間
+	dodgeMaterial_->AddConstBuf({ 0.0f,0.0f ,0.0f,0.0f });
+	//画面X・Y・強さ・半径
+	dodgeMaterial_->AddConstBuf({ Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y ,0.02f,0.4f });
+
+	dodgeMaterial_->SetTextureBuf(11, ResourceManager::GetInstance().Load(ResourceManager::SRC::FOCUS_IMG).handleId_);
+
+	dodgeRender_ = std::make_unique<PixelRenderer>(*dodgeMaterial_);
+
+	dodgeRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
+	// ポストエフェクト用スクリーン
+	dodgeScreen_ = MakeScreen(
+		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+
+	//走査線
+	//PS
+	scanLineMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", 2);
+	//拡散光
+	scanLineMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
+	//時間
+	scanLineMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
+
+	scanLineRender_ = std::make_unique<PixelRenderer>(*scanLineMaterial_);
+	scanLineRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
+	// ポストエフェクト用スクリーン
+	scanLineScreen_ = MakeScreen(
+		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+}
+
 void Game::Update(void)
 {
 	SceneManager& scM = SceneManager::GetInstance();
@@ -232,6 +261,7 @@ void Game::GameUpdate(void)
 		slowCnt_++;
 		if (slowCnt_ >= LIMIT_SLOW) {
 			isSlowEffect_ = false;
+			ChangeActionDirec(ACTION_DIRECTION::NOMAL);
 			//更新処理を100％にもどす
 			scM.SetUpdateSpeedRate_(NOMAL_SPEED_PERCENT);
 			enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
@@ -246,6 +276,7 @@ void Game::GameUpdate(void)
 	if (collision_->Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks())) {
 		//スロー演出準備
 		slowCnt_ = 0;
+		ChangeActionDirec(ACTION_DIRECTION::JUST_DODGE);
 		isSlowEffect_ = true;
 		//更新スピードを50％に設定
 		scM.SetUpdateSpeedRate_(SLOW_SPEED_PERCENT);
@@ -371,6 +402,9 @@ void Game::DirectionUpdate(void)
 			camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
 			camera.SetFocusPos(player_->GetFocusPoint());				//注視点
 
+			//ブラーをなくす
+			ChangeActionDirec(ACTION_DIRECTION::NOMAL);
+
 			//BGM流す
 			SoundManager::GetInstance().Play("BossBgm");
 			nowBgmStr_ = "BossBgm";
@@ -464,6 +498,7 @@ bool Game::DirectionCameraMove(void)
 			//次の目標地点への設定
 			camera.SetGoalPos(VAdd(enemy_->GetPos(BOSS_IDX), directionGoalPos_[directionCnt_]));
 			enemy_->BossShout();
+			ChangeActionDirec(ACTION_DIRECTION::BLUR);
 		}
 	}
 	return false;
@@ -475,13 +510,16 @@ void Game::Draw(void)
 	enemy_->Draw();
 	player_->Draw();
 
-	DrawDebug();
+	//DrawDebug();
 
 	if (direcState_ == BOSS_DIRECTION::POST_EFFECT) {
 		DrawScanLine();
 	}
 	if (actionDirec_ == ACTION_DIRECTION::BLUR) {
 		DrawBlur();
+	}
+	else if (actionDirec_ == ACTION_DIRECTION::JUST_DODGE) {
+		DrawDodgeEffect();
 	}
 }
 
@@ -507,6 +545,7 @@ void Game::DrawScanLine(void)
 void Game::DrawBlur(void)
 {
 	int mainScreen = SceneManager::GetInstance().GetMainScreen();
+	blurMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
 
 	SetDrawScreen(blurScreen_);
 
@@ -521,6 +560,24 @@ void Game::DrawBlur(void)
 	DrawGraph(0, 0, blurScreen_, false);
 }
 
+void Game::DrawDodgeEffect(void)
+{
+	int mainScreen = SceneManager::GetInstance().GetMainScreen();
+	dodgeMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
+
+	SetDrawScreen(dodgeScreen_);
+
+	// 画面を初期化
+	//ClearDrawScreen();
+
+	DrawGraph(0, 0, mainScreen, false);
+	dodgeRender_->Draw();
+
+	// メインに戻す
+	SetDrawScreen(mainScreen);
+	DrawGraph(0, 0, dodgeScreen_, false);
+}
+
 void Game::Release(void)
 {
 	player_->Release();
@@ -530,12 +587,18 @@ void Game::Release(void)
 void Game::StartBossFaze(void)
 {
 	SoundManager& sndM = SoundManager::GetInstance();
+	ChangeActionDirec(ACTION_DIRECTION::NOMAL);
 	sndM.Stop("NomalBgm");	//今まで流していたものを停止
 	sndM.Stop("BattleBgm");	//今まで流していたものを停止
 	sndM.Play("WarningBgm");	//警告音流す
 	direcState_ = BOSS_DIRECTION::POST_EFFECT;
 	update_ = &Game::DirectionUpdate;
 	direcUpdate_ = &Game::DirectionPostEffect;
+}
+
+void Game::ChangeActionDirec(const ACTION_DIRECTION _direc)
+{
+	actionDirec_ = _direc;
 }
 
 void Game::AttackDataInit(void)

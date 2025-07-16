@@ -82,6 +82,8 @@ const bool EnemyBase::Init(const int _num)
 
 void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
 {
+	prePos_ = pos_;
+
 	(this->*update_)(_pPos,_atk);
 	//共通更新
 	Rotation();
@@ -113,6 +115,11 @@ void EnemyBase::SetPram(void)
 	//初期化用に一回実行
 	UpdateRotQuat();
 
+	//攻撃の発生位置(相対座標)
+	atkRelative_ = RELATIVE_ATTACK_POS;
+	//攻撃の大きさ
+	atkScale_ = SCALE_ATTACK_NOMAL;
+
 
 	//アニメーション初期化
 	animController_ = std::make_unique<AnimationController>(modelId_);
@@ -142,6 +149,8 @@ void EnemyBase::SetPram(void)
 	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
 	//サンプル数(最初の項目のみ関係する)
 	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+
+	intervalCnt_ = 0.0f;
 
 	//状態を通常に
 	ChangeState(ENEMY_STATE::NOMAL);
@@ -249,7 +258,7 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
 	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
 		//攻撃する
-		_atk.Attack(speciesName_,EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(RELATIVE_ATTACK_POS)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, SCALE_ATTACK_NOMAL, "SwingSword");
+		_atk.Attack(speciesName_,EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(atkRelative_)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, atkScale_, "SwingSword");
 		animController_->Play("attack", SPEED_ANIM);
 		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 		intervalCnt_ = 0.0f;

@@ -382,6 +382,11 @@ void Camera::SetPos(const VECTOR& pos, const VECTOR& target)
 	focusPos_ = target;
 }
 
+void Camera::SetPos(const VECTOR& pos)
+{
+	pos_ = pos;
+}
+
 void Camera::SetFocusPos(const VECTOR& _focus)
 {
 	//focusPos_ = _focus;

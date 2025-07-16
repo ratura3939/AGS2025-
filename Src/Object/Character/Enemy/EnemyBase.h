@@ -68,7 +68,7 @@ public:
     static constexpr VECTOR RELATIVE_ATTACK_POS = { 0.0f, 75.0f, 100.0f };
     static constexpr float SCALE_ATTACK_NOMAL = 70.0f;
     static constexpr float POW_ATTACK_NOMAL = 1.0f;
-    static constexpr float INTERVAL_ATTACK_NOMAL = 500.0f;
+    static constexpr float INTERVAL_ATTACK_NOMAL = 150.0f;
 
     /// <summary>
     /// 敵の状態
@@ -154,7 +154,6 @@ protected:
     float maxHp_;
 
     VECTOR preStayPos_; //前回停止位置
-    VECTOR uiPos_; //UI表示位置
     float uiDeviationY_;
     float moveOneTime_; //一回の移動量
     float moveSped_;    //１フレームでの移動量
@@ -170,6 +169,9 @@ protected:
     ENEMY_STATE state_;//状態
 
     bool isLockTarget_;   //ロックオン対象になっているか(マネージャでのみ変更が可能)
+
+    VECTOR atkRelative_;
+    float atkScale_;
 
     //デバッグ用
     int color_;

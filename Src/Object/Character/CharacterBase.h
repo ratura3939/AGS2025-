@@ -74,6 +74,8 @@ public:
 	const VECTOR GetPos(void)const;//座標(足元)
 	const VECTOR GetHeight(void)const;//座標(頭辺り)
 
+	void SetPrePos(void);
+
 	//回転情報の取得
 	const Quaternion GetQua(void)const;
 
@@ -96,6 +98,8 @@ protected:
 	int modelId_;	//モデルID
 
 	VECTOR pos_;	//座標
+	VECTOR prePos_;	//座標
+	VECTOR uiPos_; //UI表示位置
 	VECTOR scl_;	//モデル大きさ
 	VECTOR rot_;	//回転情報(XYZ)
 	Quaternion characterRotY_;	//Y軸回転用

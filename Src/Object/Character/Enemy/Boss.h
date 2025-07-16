@@ -26,5 +26,7 @@ private:
     void MoveBattle(const VECTOR& _pPos)override;
 
     void DrawUI(void)override;
+
+    float atkDistance_;
 };
 

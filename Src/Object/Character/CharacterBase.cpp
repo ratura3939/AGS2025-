@@ -45,7 +45,7 @@ void CharacterBase::UpdateAnimOnly(void)
 void CharacterBase::Draw(void)
 {
 	//ï`âÊèàóù
-	DrawSphere3D(pos_, 30, 10, 0xff0000, 0xff0000, false);
+	//DrawSphere3D(pos_, 30, 10, 0xff0000, 0xff0000, false);
 	MV1DrawModel(modelId_);
 	DrawUI();
 }
@@ -154,6 +154,11 @@ const VECTOR CharacterBase::GetPos(void) const
 const VECTOR CharacterBase::GetHeight(void) const
 {
 	return VAdd(pos_, CHARACTER_HEIGHT);
+}
+
+void CharacterBase::SetPrePos(void)
+{
+	pos_ = prePos_;
 }
 
 const Quaternion CharacterBase::GetQua(void) const

@@ -12,11 +12,20 @@ public:
 	enum class SRC
 	{
 		//画像
-		START_LOGO,
+		TITLE_LOGO,
+		SHADOW_LOGO,
 		PAD_IMG,
 		KEYBOARD_IMG,
 		GAMEOVER_LOGO,
 		GAMECLAR_LOGO,
+		TITLE_BACK,
+		BACK_GAME_IMG,
+		MENU_IMG,
+		START_GAME_IMG,
+		STOP_GAME_IMG,
+		CLICK_STR_IMG,
+
+		FOCUS_IMG,
 		//UI
 		ARROW_DOWN_IMG,
 		HEART_IMG,
@@ -32,6 +41,8 @@ public:
 		GOLEM_IMG,
 		NUMBER_IMGS,
 		WARNING_IMG,
+		ATK_ALLERT_IMG,
+		
 
 		//モデル
 		STAGE_MDL,
@@ -48,6 +59,9 @@ public:
 		BOSS_BGM,
 		WARNING_BGM,
 
+		GAMECLEAR_BGM,
+		GAMEOVER_BGM,
+
 		CANCEL_SE,
 		MOVE_CURSUR_SE,
 		ENTER_CNTL_SE,
@@ -59,6 +73,9 @@ public:
 		DAMAGE_SE,
 		BOSS_IMPACT_SE,
 		BOSS_SHOUT_SE,
+
+		ATK_ALLERT_SE,
+		
 
 		//エフェクト
 		SWORD_EFC,
@@ -83,6 +100,7 @@ public:
 	void InitGameOver(void);
 private:
 	void ResorceDeviceIcon(void);
+	void ResorceStage(void);
 
 public:
 	// 解放(シーン切替時に一旦解放)

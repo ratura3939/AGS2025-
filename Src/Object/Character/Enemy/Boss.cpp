@@ -57,6 +57,13 @@ void Boss::SetPram(void)
 	UpdateRotQuat();
 
 
+	atkDistance_ = 500.0f;
+
+	//攻撃の発生位置(相対座標)
+	atkRelative_ = VECTOR{ 0.0f,75.0f,atkDistance_ };
+	//攻撃の大きさ
+	atkScale_ = 500.0f;
+
 	//アニメーション初期化
 	animController_ = std::make_unique<AnimationController>(modelId_);
 	InitAnim();
@@ -79,7 +86,7 @@ void Boss::SetPram(void)
 	material_ = std::make_unique<ModelMaterial>("BlurSkinVS.cso", 2, "BlurSkinPS.cso", 3);
 	//VS
 
-
+	intervalCnt_ = 0.0f;
 	//PS
 	//各色の強さ(拡散光)
 	material_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
@@ -106,11 +113,11 @@ void Boss::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 
 	//判定
 	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
-	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
+	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= atkDistance_ && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
 		//攻撃の準備時間
 
 		//準備時間が終わったら攻撃する
-		_atk.Attack(speciesName_, EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(RELATIVE_ATTACK_POS)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, SCALE_ATTACK_NOMAL, "SwingSword");
+		_atk.Attack(speciesName_, EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(atkRelative_)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, atkScale_, "SwingSword");
 		animController_->Play("attack", SPEED_ANIM);
 		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 		intervalCnt_ = 0.0f;

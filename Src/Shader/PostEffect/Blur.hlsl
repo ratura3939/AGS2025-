@@ -3,45 +3,37 @@
 // 定数バッファ：スロット4番目(b4と書く)
 cbuffer cbParam : register(b4)
 {
-	float4 g_color;
-	float  g_time;
+	float4 g_color;	//拡散光
+	float  g_time;	//時間
+	float3 dummmy_time;
+	float2 g_screen_size;	//スクリーンの大きさ
+	float2 dumme_size;
 }
 
 float4 main(PS_INPUT PSInput) : SV_TARGET
 {
-	float3 red = { 1.0f, 0.0f, 0.0f };
-	float2 uv = PSInput.uv;
+    // 画面中央のUV座標
+   float2 center = float2(0.5, 0.5);
 
-	// UV座標とテクスチャを参照して、最適な色を取得する
-	float4 srcCol = tex.Sample(texSampler, uv);
-	//そこの色の強さを赤の強さにする
-	red.r *= (srcCol.r + srcCol.g + srcCol.b) / 3.0f;
+   // 中心からの距離（正規化）
+   float2 delta = PSInput.uv - center;
+   float dist = length(delta);
 
+   // 時間と距離に応じた波形を作る（咆哮の波）
+   float wave = sin(dist * 50.0 - g_time * 10.0) * 0.02 / (dist * 10.0 + 1.0);
 
-	// 縦の大きさと時間で-1.0～1.0の値を作る
-	float area = sin(uv.y * 2.0f - g_time * 0.5f);
+   // UVをゆがませる
+   float2 distortedUV = PSInput.uv + normalize(delta) * wave;
 
-	// 縦に特定範囲を作る
-	// 1 or 0 …… 1 <= 2 = 1、2 <= 1 = 0 
-	float isArea = step(0.996f, area * area);
+   // 波紋の強さ（中心から広がる光のリング的なもの）
+   float ring = exp(-pow((dist - g_time * 0.2), 2.0) * 100.0);
 
-	red.r -= abs(sin(uv.y * 60.0f + g_time * 1.0f)) * 0.05f;
-	red.r -= abs(sin(uv.y * 100.0f - g_time * 2.0f)) * 0.15f;
+   // 元の色を取得
+   float4 col = tex.Sample(texSampler, distortedUV);
 
-	// 一定エリア処理
-	// ------------------------------------------------------------------------------
-	// 一定エリア以外、間隔を空けて、縞々模様(下地)を作る(色の減算で色を暗くする)
-	//srcCol.rgb -= (1.0f - isArea) * abs(sin(uv.y *  60.0f + g_time * 1.0f)) * 0.05f;
-	//srcCol.rgb -= (1.0f - isArea) * abs(sin(uv.y * 100.0f - g_time * 2.0f)) * 0.15f;
+   // 光のリングを加算
+   col.rgb += ring;
 
-	// 特定範囲だけ明るくする(色の加算で明るくする)
-	//srcCol.rgb += isArea * 0.5f;
-	// ------------------------------------------------------------------------------
-
-	// 下地だけ
-	//srcCol.rgb -= abs(sin(uv.y *  60.0f + g_time * 1.0f)) * 0.10f;
-	//srcCol.rgb -= abs(sin(uv.y * 100.0f - g_time * 2.0f)) * 0.15f;
-
-	return float4(red, 1.0f);
+   return col;
 
 }

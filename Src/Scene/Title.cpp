@@ -8,6 +8,10 @@
 #include "../Manager/Generic/Camera.h"
 #include "../Manager/Decoration/SoundManager.h"
 #include "../Manager/Decoration/UIManager2d.h"
+#include"../Renderer/PixelMaterial.h"
+#include"../Renderer/PixelRenderer.h"
+
+#include"../Object/Stage/Stage.h"
 #include "Title.h"
 
 
@@ -22,8 +26,8 @@ namespace {
 	int MARGIN_SIZE = 30;	//åÑä‘ÇÃëÂÇ´Ç≥
 	float EXTEND_IMG = 1.5f;//âÊëúägëÂó¶
 
-	float EXIT_EXTEND_MAX = 1.3f;	//ägëÂó¶(è„å¿)
-	float EXIT_EXTEND_MIN = 0.8f;	//ägëÂó¶(â∫å¿)
+	float EXIT_EXTEND_MAX = 1.5f;	//ägëÂó¶(è„å¿)
+	float EXIT_EXTEND_MIN = 0.6f;	//ägëÂó¶(â∫å¿)
 	float EXIT_EXTEND_ACC = 0.05f;	//ägëÂó¶(â¡éZ)
 
 	float JUMP_POW_MAX = 0;	//ìÆÇ´ïù(è„å¿)
@@ -33,6 +37,10 @@ namespace {
 	//äeéÌUIìoò^ñº
 	std::string UI_EXIT_STR = "exit";
 	std::string UI_ALLOW_STR = "allow";
+	std::string UI_LOGO_STR = "Logo";
+	std::string UI_SHADOWLOGO_STR = "shadowLogo";
+	std::string UI_START_STR = "startBtn";
+	std::string UI_CLICK_STR = "click";
 }
 
 Title::Title(void)
@@ -55,9 +63,11 @@ void Title::Init(void)
 	//SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
 
 	// É^ÉCÉgÉãÉçÉS
-	logoImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::START_LOGO).handleId_;
+	//logoImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::START_LOGO).handleId_;
 	deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;
 	deviceImgs_[static_cast<int>(DEVICE::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_IMG).handleId_;
+
+	backImg_= ResourceManager::GetInstance().Load(ResourceManager::SRC::TITLE_BACK).handleId_;
 
 	//UIèâä˙âª
 	InitUI();
@@ -67,8 +77,21 @@ void Title::Init(void)
 
 	update_ = &Title::NomalUpdate;
 
+	material_ = std::make_unique<PixelMaterial>("NomalTexPS.cso", 0);
+	material_->AddTextureBuf(backImg_);
+
+	render_ = std::make_unique<PixelRenderer>(*material_);
+	render_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
+
+	stage_ = std::make_unique<Stage>(true);
+	stage_->Init();
+
+
 	//âπä÷åWèâä˙âª
 	InitSound();
+
+	auto& camera = SceneManager::GetInstance().GetCamera();
+	camera.SetPos({ 0.0f,0.0f,0.0f });
 }
 
 void Title::InitUI(void)
@@ -107,6 +130,26 @@ void Title::InitUI(void)
 	uiM.SetUIDirectionPram(UI_EXIT_STR, UI_GROUP::ZOOM, EXIT_EXTEND_ACC, EXIT_EXTEND_MAX, EXIT_EXTEND_MIN);//è⁄ç◊ê›íË
 
 
+	//É^ÉCÉgÉãÉçÉS
+	uiM.Add(UI_LOGO_STR, rsM.Load(ResourceManager::SRC::TITLE_LOGO).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//í«â¡
+	uiM.SetUIInfo(UI_LOGO_STR, VECTOR(Application::SCREEN_SIZE_X / 2.0f-450.0f, Application::SCREEN_SIZE_Y / 2.0f- DEVICE_SIZE+20.0f, 0.0f), 0.8f);															//äÓëbê›íË
+	uiM.SetUIDirectionPram(UI_LOGO_STR, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//è⁄ç◊ê›íË
+
+	//É^ÉCÉgÉãÉçÉS(âeäG)
+	uiM.Add(UI_SHADOWLOGO_STR, rsM.Load(ResourceManager::SRC::SHADOW_LOGO).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//í«â¡
+	uiM.SetUIInfo(UI_SHADOWLOGO_STR, VECTOR(Application::SCREEN_SIZE_X / 2.0f+40.0f, Application::SCREEN_SIZE_Y / 2.0f - DEVICE_SIZE+50.0f, 0.0f), 0.4f);															//äÓëbê›íË
+	uiM.SetUIDirectionPram(UI_SHADOWLOGO_STR, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//è⁄ç◊ê›íË
+
+	//ÉXÉ^Å[ÉgÉ{É^Éì
+	uiM.Add(UI_START_STR, rsM.Load(ResourceManager::SRC::START_GAME_IMG).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//í«â¡
+	uiM.SetUIInfo(UI_START_STR, VECTOR(Application::SCREEN_SIZE_X / 2.0f, Application::SCREEN_SIZE_Y / 2.0f+50.0f, 0.0f), 0.6f);															//äÓëbê›íË
+	uiM.SetUIDirectionPram(UI_START_STR, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//è⁄ç◊ê›íË
+
+
+	//ÉNÉäÉbÉNÇµÇƒâ∫Ç≥
+	uiM.Add(UI_CLICK_STR, rsM.Load(ResourceManager::SRC::CLICK_STR_IMG).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);		//í«â¡
+	uiM.SetUIInfo(UI_CLICK_STR, VECTOR(Application::SCREEN_SIZE_X/2.0f, Application::SCREEN_SIZE_Y / 2.0f + DEVICE_SIZE, 0.0f), 0.2f);															//äÓëbê›íË
+	//uiM.SetUIDirectionPram(UI_CLICK_STR, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//è⁄ç◊ê›íË
 }
 
 void Title::InitSound(void)
@@ -147,8 +190,16 @@ void Title::Update(void)
 void Title::Draw(void)
 {
 
-	// ÉçÉSï`âÊ
-	DrawLogo();
+	auto& uiM = UIManager2d::GetInstance();
+
+	render_->Draw();
+	//stage_->Draw();
+	uiM.Draw(UI_SHADOWLOGO_STR);
+	uiM.Draw(UI_LOGO_STR);
+	uiM.Draw(UI_START_STR);
+	uiM.Draw(UI_CLICK_STR);
+
+	//ÉRÉìÉgÉçÅ[ÉâëIëíÜ
 	if (isSelectDevice_) {
 		DrawDevice();
 	}
@@ -169,6 +220,8 @@ void Title::NomalUpdate(void)
 		update_ = &Title::SelectDeviceUpdate;
 		SoundManager::GetInstance().Play("Enter");
 	}
+	//UIManager2d::GetInstance().Update(UI_LOGO_STR);
+	UIManager2d::GetInstance().Update(UI_START_STR);
 }
 
 void Title::SelectDeviceUpdate(void)
@@ -254,24 +307,6 @@ void Title::SelectDeviceUpdate(void)
 
 }
 
-void Title::DrawLogo(void)
-{
-
-	int screenHX = Application::SCREEN_SIZE_X / 2;
-	int screenHY = Application::SCREEN_SIZE_Y / 2;
-
-	// É^ÉCÉgÉãÉçÉS
-	DrawRotaGraph(
-		screenHX, screenHY - 200,
-		1.0f, 0.0f, logoImg_, true);
-
-	std::string msg = "Click Left or ÅuBÅvÉ{É^Éì";
-	int len = (int)strlen(msg.c_str());
-	int width = GetDrawStringWidthToHandle(msg.c_str(), len, font_);
-
-	DrawStringToHandle(screenHX - (width / 2), 500, "Click Left or ÅuBÅvÉ{É^Éì", 0x000000, font_);
-
-}
 
 void Title::DrawDevice(void)
 {

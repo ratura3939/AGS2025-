@@ -55,10 +55,17 @@ const bool PlayerChara::Init(const int _num)
 
 void PlayerChara::Update(void)
 {
+	prePos_ = pos_;
+	uiPos_ = pos_;
+	uiPos_.y += 200.0f;
+	allertTime_++;
 	//ほかにアクション行動していないときのみ
 	if (state_ == STATE::NOMAL || rState_ == ROCK_STATE::LOCKON) {
 		Move();
 		Rotation();
+		if (allertTime_ > ALLERT_TIME) {
+			uiCntl_->ChangeAllert(false);
+		}
 	}
 
 	UpdateRotQuat();
@@ -158,6 +165,13 @@ float PlayerChara::GetToLockDeg(void)
 	return atan2(diff.x, diff.z) - cameraRot.y;
 }
 
+void PlayerChara::SetAtkAllert(void)
+{
+	uiCntl_->ChangeAllert(true);
+	allertTime_ = 0;
+}
+
+
 void PlayerChara::InitAnim(void)
 {
 	animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);
@@ -190,8 +204,9 @@ void PlayerChara::InitAnim(void)
 void PlayerChara::InitUI(void)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
-	//HP
-	uiCntl_ = std::make_unique<PlayerUIController>(pos_, PALYER_HP);
+	uiPos_ = pos_;
+	uiPos_.y += 200.0f;
+	uiCntl_ = std::make_unique<PlayerUIController>(uiPos_, PALYER_HP);
 	uiCntl_->Init(speciesName_);
 }
 

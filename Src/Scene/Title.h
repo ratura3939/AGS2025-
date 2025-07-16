@@ -1,5 +1,11 @@
 #pragma once
 #include "SceneBase.h"
+#include<memory>
+
+class PixelMaterial;
+class PixelRenderer;
+class Stage;
+
 
 class Title : public SceneBase
 {
@@ -37,6 +43,7 @@ public:
 private:
 
 	int logoImg_;	//ロゴ
+	int backImg_;	//背景
 	int deviceImgs_[static_cast<int>(DEVICE::MAX)];	//コントローラー画像
 
 	bool isSelectDevice_;	//コントローラー選択中かどうか
@@ -52,8 +59,11 @@ private:
 	void SelectDeviceUpdate(void);
 	Update_f update_;
 
-	// ロゴ描画
-	void DrawLogo(void);
+	std::unique_ptr<PixelMaterial>material_;
+	std::unique_ptr<PixelRenderer>render_;
+
+	std::unique_ptr<Stage>stage_;					//ステージ
+
 	//デバイス選択
 	void DrawDevice(void);
 };

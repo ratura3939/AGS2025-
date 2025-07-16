@@ -153,7 +153,7 @@ int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
 
 		float disMag = Utility::MagnitudeF(distance);
 
-		if (!InsideScreen(myPos)|| disMag > TARGETTING_PERMISSION_DISTANCE)continue;
+		if (/*!InsideScreen(myPos)||*/ disMag > TARGETTING_PERMISSION_DISTANCE)continue;
 
 		//‹——£”äŠr
 		
