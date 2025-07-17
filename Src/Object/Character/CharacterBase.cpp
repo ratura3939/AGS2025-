@@ -156,6 +156,11 @@ const VECTOR CharacterBase::GetHeight(void) const
 	return VAdd(pos_, CHARACTER_HEIGHT);
 }
 
+const float CharacterBase::GetCollisionRadius(void) const
+{
+	return colRadius_;
+}
+
 void CharacterBase::SetPrePos(void)
 {
 	pos_ = prePos_;

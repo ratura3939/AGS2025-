@@ -91,6 +91,7 @@ void Title::Init(void)
 	InitSound();
 
 	auto& camera = SceneManager::GetInstance().GetCamera();
+	camera.ChangeMode(Camera::MODE::FIXED_POINT);
 	camera.SetPos({ 0.0f,0.0f,0.0f });
 }
 

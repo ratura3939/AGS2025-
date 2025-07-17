@@ -13,6 +13,8 @@ public:
     static constexpr int BOSS_DETH = 12;
 
     static constexpr float BOSS_HP = 300.0f;
+    static constexpr float BOSS_RADIUS = 400.0f;
+
     Boss(VECTOR& _pos);
     ~Boss(void);
 

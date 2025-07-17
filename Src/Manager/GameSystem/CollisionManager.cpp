@@ -58,7 +58,7 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 		
 
 		//攻撃(球)とキャラクター(カプセル)の当たり判定
-		if (Utility::IsHitSphereCapsule(atkPos, atkRadius, pPos, pHeadPos, CharacterBase::CHARACTER_RADIUS)) {
+		if (Utility::IsHitSphereCapsule(atkPos, atkRadius, pPos, pHeadPos, _player.lock()->GetCollisionRadius())) {
 			
 			//回避可能時間に当たっていたら
 			if (atkCol.info.IsPreGap()) {
@@ -135,7 +135,7 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 			const std::string name = enemy.lock()->GetSpeciesName();
 
 			//攻撃(球)とキャラクター(カプセル)の当たり判定
-			if (Utility::IsHitSphereCapsule(atkPos, atkRadius, ePos, eHeadPos, CharacterBase::CHARACTER_RADIUS)) {
+			if (Utility::IsHitSphereCapsule(atkPos, atkRadius, ePos, eHeadPos, enemy.lock()->GetCollisionRadius())) {
 				//当たっていたら
 				enemy.lock()->Damage(atkCol.attack.pow);
 				//ダメージエフェクト・SEの再生

@@ -56,6 +56,9 @@ void Boss::SetPram(void)
 	//‰Šú‰»—p‚Éˆê‰ñÀs
 	UpdateRotQuat();
 
+	//“–‚½‚è”»’è‘å‚«‚³
+	colRadius_ = BOSS_RADIUS;
+
 	//UŒ‚‰Â”\‹——£
 	atkDistance_ = 500.0f;
 

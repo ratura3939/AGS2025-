@@ -32,6 +32,9 @@ const bool PlayerChara::Init(const int _num)
 
 	rState_ = ROCK_STATE::NOMAL;
 
+	//“–‚½‚è”»’è‘å‚«‚³
+	colRadius_ = CHARACTER_RADIUS;
+
 	//ŒÂ‘Ì–¼“o˜^
 	speciesName_ += std::to_string(_num);
 

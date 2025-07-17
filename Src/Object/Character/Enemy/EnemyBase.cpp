@@ -115,6 +115,9 @@ void EnemyBase::SetPram(void)
 	//初期化用に一回実行
 	UpdateRotQuat();
 
+	//当たり判定大きさ
+	colRadius_ = CHARACTER_RADIUS;
+
 	//攻撃の発生位置(相対座標)
 	atkRelative_ = RELATIVE_ATTACK_POS;
 	//攻撃の大きさ

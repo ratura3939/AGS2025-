@@ -73,6 +73,7 @@ public:
 	//位置取得
 	const VECTOR GetPos(void)const;//座標(足元)
 	const VECTOR GetHeight(void)const;//座標(頭辺り)
+	const float GetCollisionRadius(void)const;//座標(頭辺り)
 
 	void SetPrePos(void);
 
@@ -131,5 +132,6 @@ protected:
 
 	//ステータスなど
 	float hp_;
+	float colRadius_;	//当たり判定の大きさ
 };
 

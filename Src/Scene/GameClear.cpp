@@ -47,7 +47,8 @@ void GameClear::Init(void)
 	InitSound();
 
 	auto& camera = SceneManager::GetInstance().GetCamera();
-	camera.SetPos({ 0.0f,0.0f,0.0f });
+	camera.ChangeMode(Camera::MODE::FIXED_POINT);
+	camera.SetPos(Camera::DEFAULT_CAMERA_POS);
 }
 
 void GameClear::InitSound(void)
