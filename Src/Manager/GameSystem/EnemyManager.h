@@ -5,6 +5,7 @@
 #include"../../Common/Quaternion.h"
 
 class EnemyBase;
+class EnemyCount;
 class Game;
 
 class EnemyManager
@@ -27,11 +28,12 @@ public:
 	static constexpr VECTOR INIT_3 = { 0.0f,0.0f,-1000.0f };
 	static constexpr VECTOR INIT_4 = { -500.0f,0.0f,-1000.0f };
 
-	EnemyManager(void);
+	EnemyManager(Game& _scene);
 	~EnemyManager(void);
 
 	void Init(void);
 	void Update(const VECTOR& _playerPos, AttackManager& _atkMng);
+	void UpdateAnim(void);
 	void Draw(void);
 	void Release(void);
 
@@ -77,9 +79,22 @@ public:
 	//ロックオンされた処理
 	void LokedOn(const int _num);
 
+	void CreateBoss(void);
+	void BossShout(void);
+
 	void DrawDebug(void);
 private:
 	std::vector<std::shared_ptr<EnemyBase>> characters_;
 	bool preBattle_;	//位置フレーム前が戦闘状態であるかどうか
+
+	int enemyCnt_;
+	int* numImg_;
+	VECTOR platePos_;	//敵数表示　プレート
+
+	bool createBoss_;	//ボスを生成した形跡
+
+	std::unique_ptr<EnemyCount>counterUI_;
+
+	Game& gameScene_;
 };
 

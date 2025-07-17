@@ -3,7 +3,17 @@
 #include"../Manager/Generic/InputManager.h"
 #include"../Manager/Generic/SceneManager.h"
 #include"../Manager/Generic/ResourceManager.h"
+#include"../Manager/Generic/Camera.h"
+#include"../Manager/Decoration/UIManager2d.h"
+#include"../Manager/Decoration/SoundManager.h"
+#include"../Object/Stage/Stage.h"
 #include "GameOver.h"
+
+
+namespace {
+	std::string GAME_OVER_LOGO = "OverLogo";
+	std::string BACK_TITLE_LOGO = "BackTitle";
+}
 
 GameOver::GameOver(void)
 {
@@ -15,11 +25,43 @@ GameOver::~GameOver(void)
 
 void GameOver::Init(void)
 {
-	logoImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::GAMEOVER_LOGO).handleId_;
+	auto& uiM = UIManager2d::GetInstance();
+	auto& rsM = ResourceManager::GetInstance();
+	using UI_DIREC = UIManager2d::UI_DIRECTION_2D;
+	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
+	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
+
+	//戻るアイコン
+	uiM.Add(GAME_OVER_LOGO, rsM.Load(ResourceManager::SRC::GAMEOVER_LOGO).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);		//追加
+	uiM.SetUIInfo(GAME_OVER_LOGO, VECTOR{ Application::SCREEN_SIZE_X / 2.0f,Application::SCREEN_SIZE_Y / 2.0f - 300.0f,0.0f }, 0.6f);			//基礎設定
+	//タイトル戻る
+	uiM.Add(BACK_TITLE_LOGO, rsM.Load(ResourceManager::SRC::STOP_GAME_IMG).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
+	uiM.SetUIInfo(BACK_TITLE_LOGO, VECTOR(Application::SCREEN_SIZE_X / 2.0f, Application::SCREEN_SIZE_Y / 2.0f + 50.0f, 0.0f), 0.6f);		//基礎設定														//基礎設定
+	uiM.SetUIDirectionPram(BACK_TITLE_LOGO, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//詳細設定
+
+
+	stage_ = std::make_unique<Stage>(true);
+	stage_->Init();
+
+	InitSound();
+
+	auto& camera = SceneManager::GetInstance().GetCamera();
+	camera.SetPos({ 0.0f,0.0f,0.0f });
 }
 
 void GameOver::InitSound(void)
 {
+	ResourceManager& rsM = ResourceManager::GetInstance();
+	SoundManager& sndM = SoundManager::GetInstance();
+	//BGM
+	sndM.Add(SoundManager::TYPE::BGM, "NomalBgm",
+		rsM.Load(ResourceManager::SRC::GAMEOVER_BGM).handleId_);
+	//BGM再生
+	sndM.Play("NomalBgm");
+
+	//決定
+	sndM.Add(SoundManager::TYPE::SE, "Enter",
+		rsM.Load(ResourceManager::SRC::ENTER_CNTL_SE).handleId_);
 }
 
 void GameOver::InitEffect(void)
@@ -30,23 +72,22 @@ void GameOver::Update(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrigerrDown("action")){
+		SoundManager::GetInstance().Stop("NomalBgm");
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
+
+	UIManager2d::GetInstance().Update(BACK_TITLE_LOGO);
 }
 
 void GameOver::Draw(void)
 {
-	DrawFormatString(0, 0, 0xffffff, "GameOverScene");
-
-	int cx = Application::SCREEN_SIZE_X / 2;
-	int cy = Application::SCREEN_SIZE_Y / 2;
-
-	// タイトルロゴ
-	DrawRotaGraph(
-		cx, cy - 200,
-		1.0f, 0.0f, logoImg_, true);
+	stage_->Draw();
+	auto& uiM = UIManager2d::GetInstance();
+	uiM.Draw(GAME_OVER_LOGO);
+	uiM.Draw(BACK_TITLE_LOGO);
 }
 
 void GameOver::Release(void)
 {
+	
 }

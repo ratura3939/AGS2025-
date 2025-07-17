@@ -31,6 +31,7 @@ void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type,
 	info.endAttack = _end;
 	info.counter = 0.0f;
 	info.isHit = false;
+	info.isAllert = false;
 
 	//UŒ‚î•ñ‚ğ’Ç‰Á
 	attackInfoes_.emplace(_name, info);
@@ -55,6 +56,7 @@ void AttackManager::Attack(const std::string _master, const std::string _name, c
 	//î•ñ•”
 	attackInfoes_[_name].scale = _scale;
 	attackInfoes_[_name].group = _group;
+	attackInfoes_[_name].isAllert = false;
 	//UŒ‚•”
 	AttackItself addAtk = { _pos,_pow };
 	//‡‚í‚¹‚½‚à‚Ì

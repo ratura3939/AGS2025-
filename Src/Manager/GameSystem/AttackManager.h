@@ -42,6 +42,7 @@ public:
 		float counter;		//カウンター
 		bool isFriendFire;	//FFアリかどうか
 		bool isHit;			//すでに判定されたかどうか
+		bool isAllert;
 
 		//以下の関数は敵用
 

@@ -111,7 +111,11 @@ public:
 	/// <param name="_min">最小値</param>
 	void SetUIDirectionPram(const std::string& _name, const UI_DIRECTION_GROUP _group, const float _acc, const float _max, const float _min);
 
+	//位置再設定
 	void SetPos(const std::string& _name,const VECTOR& _pos);
+
+	//画像の差し替え
+	void SetImage(const std::string& _name, const int _imageHndl);
 
 	//更新
 	void Update(const std::string _name);				//単体更新

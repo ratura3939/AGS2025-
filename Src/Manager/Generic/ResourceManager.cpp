@@ -29,31 +29,42 @@ void ResourceManager::InitTitle(void)
 {
 	Resource res;
 
-	// スタートロゴ
+	// タイトル
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
-	resourcesMap_.emplace(SRC::START_LOGO, res);
+	resourcesMap_.emplace(SRC::TITLE_LOGO, res);
+	// タイトル
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ShadowLogo.png");
+	resourcesMap_.emplace(SRC::SHADOW_LOGO, res);
+
+	// 背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleBack.png");
+	resourcesMap_.emplace(SRC::TITLE_BACK, res);
+
+	//ステージ
+	ResorceStage();
 
 	// デバイスアイコン
 	ResorceDeviceIcon();
 
+	//矢印
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_ArrowDown.png");
 	resourcesMap_.emplace(SRC::ARROW_DOWN_IMG, res);
+	//扉
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Exit.png");
 	resourcesMap_.emplace(SRC::EXIT_IMG, res);
+	//スタートボタン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "StartBtn.png");
+	resourcesMap_.emplace(SRC::START_GAME_IMG, res);
+
+	//クリックしてくださいっていう文章
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "ClickStr.png");
+	resourcesMap_.emplace(SRC::CLICK_STR_IMG, res);
 
 	//音
 	//BGM
-	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Title.mp3");
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Title3.mp3");
 	resourcesMap_.emplace(SRC::TITLE_BGM, res);
-	//キャンセル
-	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Cancel.mp3");
-	resourcesMap_.emplace(SRC::CANCEL_SE, res);
-	//カーソル動き
-	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "MoveCursur.mp3");
-	resourcesMap_.emplace(SRC::MOVE_CURSUR_SE, res);
-	//コントローラー選択
-	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "EnterController.mp3");
-	resourcesMap_.emplace(SRC::ENTER_CNTL_SE, res);
+	
 
 }
 
@@ -66,20 +77,26 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::PLAYER_MDL, res);
 
 	//敵
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Enemy_Axeman.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "EneAxe.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_MDL, res);
 
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Boss_Golem.mv1");
+	resourcesMap_.emplace(SRC::BOSS_MDL, res);
+
 	//ステージ
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage1.mv1");
-	resourcesMap_.emplace(SRC::OBJECTS_MDL, res);
-
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "SkyDome.mv1");
-	resourcesMap_.emplace(SRC::SKY_DOME, res);
-
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "deco1.mv1");
-	resourcesMap_.emplace(SRC::STAGE_MDL, res);
+	ResorceStage();
 
 	//UI
+	//メニューボタン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "MenuBtn.png");
+	resourcesMap_.emplace(SRC::MENU_IMG, res);
+	//ゲーム戻るボタン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "BackGameBtn.png");
+	resourcesMap_.emplace(SRC::BACK_GAME_IMG, res);
+	//ゲームやめるボタン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "StopGameBtn.png");
+	resourcesMap_.emplace(SRC::STOP_GAME_IMG, res);
+
 	//?マーク
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Question.png");
 	resourcesMap_.emplace(SRC::SUSPECT_IMG, res);
@@ -104,6 +121,32 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_RockOn.png");
 	resourcesMap_.emplace(SRC::LOCKON_IMG, res);
 
+	//プレート
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "PlateWood.png");
+	resourcesMap_.emplace(SRC::PLATE_IMG, res);
+	//スケルトン×
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "SkeltonCounter.png");
+	resourcesMap_.emplace(SRC::SKELTON_IMG, res);
+	//ゴーレム×
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "GolemCounter.png");
+	resourcesMap_.emplace(SRC::GOLEM_IMG, res);
+	
+	//数字
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + "PlateNumber.png", 4, 2, 240, 350);
+	resourcesMap_.emplace(SRC::NUMBER_IMGS, res);
+
+	//WARNING
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Warning.png");
+	resourcesMap_.emplace(SRC::WARNING_IMG, res);
+
+	//集中線
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FocusLine.png");
+	resourcesMap_.emplace(SRC::FOCUS_IMG, res);
+	//集中線
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "DudgeAllertp.png");
+	resourcesMap_.emplace(SRC::ATK_ALLERT_IMG, res);
+
+;
 	//音
 	//BGM
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game.mp3");
@@ -111,6 +154,13 @@ void ResourceManager::InitGame(void)
 	//バトルBGM
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Battle.mp3");
 	resourcesMap_.emplace(SRC::BATTLE_BGM, res);
+	//バトルBGM(ボス)
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Boss.mp3");
+	resourcesMap_.emplace(SRC::BOSS_BGM, res);
+
+	//警告音
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Warning.mp3");
+	resourcesMap_.emplace(SRC::WARNING_BGM, res);
 	//歩き
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Walk.mp3");
 	resourcesMap_.emplace(SRC::WALK_SE, res);
@@ -129,6 +179,17 @@ void ResourceManager::InitGame(void)
 	//ダメージ
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Damage.mp3");
 	resourcesMap_.emplace(SRC::DAMAGE_SE, res);
+	//ボス足音
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Impact.mp3");
+	resourcesMap_.emplace(SRC::BOSS_IMPACT_SE, res);
+	//ボス足音
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "BossShout.mp3");
+	resourcesMap_.emplace(SRC::BOSS_SHOUT_SE, res);
+	
+
+	//攻撃警告音
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Allert.mp3");
+	resourcesMap_.emplace(SRC::ATK_ALLERT_SE, res);
 
 	//エフェクト
 	//剣
@@ -143,17 +204,51 @@ void ResourceManager::InitClear(void)
 {
 	Resource res;
 
-	// スタートロゴ
+	//ロゴ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameClear.png");
 	resourcesMap_.emplace(SRC::GAMECLAR_LOGO, res);
+
+	//ステージ
+	ResorceStage();
+
+	//ゲームやめるボタン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "StopGameBtn.png");
+	resourcesMap_.emplace(SRC::STOP_GAME_IMG, res);
+
+	//音
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameClear.mp3");
+	resourcesMap_.emplace(SRC::GAMECLEAR_BGM, res);
+
+	//選択
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "EnterController.mp3");
+	resourcesMap_.emplace(SRC::ENTER_CNTL_SE, res);
+
+	
 }
 
 void ResourceManager::InitGameOver(void)
 {
 	Resource res;
-	// スタートロゴ
+	// ロゴ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameOver.png");
 	resourcesMap_.emplace(SRC::GAMEOVER_LOGO, res);
+
+	//ステージ
+	ResorceStage();
+
+	//ゲームやめるボタン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "StopGameBtn.png");
+	resourcesMap_.emplace(SRC::STOP_GAME_IMG, res);
+
+	//音
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameOver.mp3");
+	resourcesMap_.emplace(SRC::GAMEOVER_BGM, res);
+	//選択
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "EnterController.mp3");
+	resourcesMap_.emplace(SRC::ENTER_CNTL_SE, res);
+
 }
 
 void ResourceManager::ResorceDeviceIcon(void)
@@ -165,6 +260,31 @@ void ResourceManager::ResorceDeviceIcon(void)
 	//Key
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "IconKeyboard.png");
 	resourcesMap_.emplace(SRC::KEYBOARD_IMG, res);
+
+	//キャンセル
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Cancel.mp3");
+	resourcesMap_.emplace(SRC::CANCEL_SE, res);
+	//カーソル動き
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "MoveCursur.mp3");
+	resourcesMap_.emplace(SRC::MOVE_CURSUR_SE, res);
+	//選択
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "EnterController.mp3");
+	resourcesMap_.emplace(SRC::ENTER_CNTL_SE, res);
+}
+
+void ResourceManager::ResorceStage(void)
+{
+	Resource res;
+
+	//ステージ
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage1.mv1");
+	resourcesMap_.emplace(SRC::OBJECTS_MDL, res);
+
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "SkyDome.mv1");
+	resourcesMap_.emplace(SRC::SKY_DOME, res);
+
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "deco1.mv1");
+	resourcesMap_.emplace(SRC::STAGE_MDL, res);
 }
 
 void ResourceManager::Release(void)

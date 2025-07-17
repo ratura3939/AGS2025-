@@ -8,6 +8,8 @@
 #include"../../../Manager/GameSystem/EnemyManager.h"
 #include"../../../UI/EnemyUIController.h"
 #include"../../../Utility/Utility.h"
+#include"../../../Renderer/ModelMaterial.h"
+#include"../../../Renderer/ModelRenderer.h"
 #include "EnemyBase.h"
 
 namespace {
@@ -64,40 +66,24 @@ EnemyBase::~EnemyBase(void)
 
 const bool EnemyBase::Init(const int _num)
 {
+
+
 	//個体名登録
 	speciesName_ += std::to_string(_num);
 
-
 	SetPram();
-	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
-	if (modelId_ == -1) {
-		return false;
-	}
-	//パラメータ関係
-	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
-	preStayPos_ = pos_;
-	rot_ = { 0.0f,0.0f,-1.0f };
-	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
-	//初期化用に一回実行
-	UpdateRotQuat();
+
+	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
+
 	
-	//アニメーション初期化
-	animController_ = std::make_unique<AnimationController>(modelId_);
-	InitAnim();
-	animController_->Play("idle", SPEED_ANIM);
-
-
-	//UI初期化
-	InitUI();
-
-	//状態を通常に
-	ChangeState(ENEMY_STATE::NOMAL);
 	return true;
 }
 
 
 void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
 {
+	prePos_ = pos_;
+
 	(this->*update_)(_pPos,_atk);
 	//共通更新
 	Rotation();
@@ -107,7 +93,7 @@ void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
 	//位置設定
 	uiPos_ = pos_;
 	//頭位置
-	uiPos_.y = 250.0f;
+	uiPos_.y = uiDeviationY_;
 
 	uiCntl_->Update();
 }
@@ -116,6 +102,58 @@ void EnemyBase::SetPram(void)
 {
 	//各敵たち
 	//後々Jsonやったら楽になるかも？
+	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
+
+	if (modelId_ == -1) {
+		return;
+	}
+	//パラメータ関係
+	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
+	preStayPos_ = pos_;
+	rot_ = { 0.0f,0.0f,-1.0f };
+	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
+	//初期化用に一回実行
+	UpdateRotQuat();
+
+	//攻撃の発生位置(相対座標)
+	atkRelative_ = RELATIVE_ATTACK_POS;
+	//攻撃の大きさ
+	atkScale_ = SCALE_ATTACK_NOMAL;
+
+
+	//アニメーション初期化
+	animController_ = std::make_unique<AnimationController>(modelId_);
+	InitAnim();
+	animController_->Play("idle", SPEED_ANIM);
+
+	uiDeviationY_ = 250.0f;
+	maxHp_ = ENEMY_HP;
+
+	//位置設定
+	uiPos_ = pos_;
+	//頭位置
+	uiPos_.y += uiDeviationY_;
+
+	//UI初期化
+	InitUI();
+
+	//モデル描画クラス生成
+	material_ = std::make_unique<ModelMaterial>("BlurSkinVS.cso", 2, "BlurSkinPS.cso", 3);
+	//VS
+
+
+	//PS
+	//各色の強さ(拡散光)
+	material_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
+	//ブラーの強さ(最初の項目のみ関係する)
+	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+	//サンプル数(最初の項目のみ関係する)
+	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+
+	intervalCnt_ = 0.0f;
+
+	//状態を通常に
+	ChangeState(ENEMY_STATE::NOMAL);
 }
 
 void EnemyBase::InitAnim(void)
@@ -130,14 +168,11 @@ void EnemyBase::InitAnim(void)
 
 void EnemyBase::InitUI(void)
 {
-	//位置設定
-	uiPos_ = pos_;
-	//頭位置
-	uiPos_.y = 250.0f;
+	
 	//UIコントローラー初期化
 	uiCntl_ = std::make_unique<EnemyUIController>(uiPos_,state_);
 	uiCntl_->Init(speciesName_);
-	uiCntl_->CreateUI(speciesName_, hp_, ENEMY_HP);
+	uiCntl_->CreateUI(speciesName_, hp_, maxHp_);
 }
 
 
@@ -182,6 +217,7 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 		//一定時間いたら
 		if (searchCnt_ >= SEARCH_CNT_MAX) {
 			//戦闘状態に
+			SoundManager::GetInstance().Play("FindPlayer");
 			ChangeState(ENEMY_STATE::BATTLE);
 		}
 		else {
@@ -222,7 +258,7 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
 	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
 		//攻撃する
-		_atk.Attack(speciesName_,EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(RELATIVE_ATTACK_POS)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, SCALE_ATTACK_NOMAL, "SwingSword");
+		_atk.Attack(speciesName_,EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(atkRelative_)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, atkScale_, "SwingSword");
 		animController_->Play("attack", SPEED_ANIM);
 		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 		intervalCnt_ = 0.0f;
@@ -355,7 +391,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		update_ = &EnemyBase::UpdateBattle;
 		move_ = &EnemyBase::MoveBattle;
 		moveSped_ = MOVE_POW_FIND;
-		SoundManager::GetInstance().Play("FindPlayer");
+		
 
 		serchCol_ = alertDebugCol;
 		break;
@@ -372,6 +408,12 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 	default:
 		break;
 	}
+}
+
+void EnemyBase::Draw(void)
+{
+	renderer_->Draw();
+	DrawUI();
 }
 
 void EnemyBase::DrawUI(void)
@@ -447,6 +489,7 @@ void EnemyBase::Damage(const float _pow)
 	//戦闘状態ではなかったら
 	if (state_ != ENEMY_STATE::BATTLE) {
 		//戦闘状態に
+		SoundManager::GetInstance().Play("FindPlayer");
 		ChangeState(ENEMY_STATE::BATTLE);
 	}
 	//0以下のとき
@@ -459,4 +502,9 @@ void EnemyBase::Damage(const float _pow)
 void EnemyBase::Deth(void)
 {
 	ChangeState(ENEMY_STATE::DETH);
+}
+
+void EnemyBase::Shout(void)
+{
+	//ボス専用
 }

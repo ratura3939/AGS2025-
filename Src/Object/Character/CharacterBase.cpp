@@ -1,6 +1,8 @@
 #include"../../Utility/Utility.h"
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/Camera.h"
+#include"../../Renderer/ModelMaterial.h"
+#include"../../Renderer/ModelRenderer.h"
 #include "CharacterBase.h"
 
 CharacterBase::CharacterBase(void)
@@ -33,6 +35,11 @@ void CharacterBase::Update(void)
 
 void CharacterBase::Update(const VECTOR _pPos, AttackManager& _atk)
 {
+}
+
+void CharacterBase::UpdateAnimOnly(void)
+{
+	animController_->Update();
 }
 
 void CharacterBase::Draw(void)
@@ -147,6 +154,11 @@ const VECTOR CharacterBase::GetPos(void) const
 const VECTOR CharacterBase::GetHeight(void) const
 {
 	return VAdd(pos_, CHARACTER_HEIGHT);
+}
+
+void CharacterBase::SetPrePos(void)
+{
+	pos_ = prePos_;
 }
 
 const Quaternion CharacterBase::GetQua(void) const

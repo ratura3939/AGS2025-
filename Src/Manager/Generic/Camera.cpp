@@ -31,6 +31,7 @@ Camera::Camera(void)
 	angles_.z = 0.0f;
 
 	lerpSpeed_ = NO_LERP;
+	finishShake_ = false;
 }
 
 Camera::~Camera(void)
@@ -41,8 +42,6 @@ void Camera::Init(void)
 {
 	//カメラの初期設定
 	SetDefault();
-
-
 }
 
 void Camera::Update(void)
@@ -86,6 +85,9 @@ void Camera::SetBeforeDraw(void)
 
 	case MODE::RESET:
 		SetBeforeDrawReset();
+		break;
+	case MODE::AUTO_MOVE:
+		SetBeforeDrawAutoMove();
 		break;
 	}
 
@@ -216,12 +218,15 @@ void Camera::SetBeforeDrawLockOn(void)
 void Camera::SetBeforeDrawShake(void)
 {
 	// 一定時間カメラを揺らす
-	stepShake_ -= SceneManager::GetInstance().GetDeltaTime();
+	//stepShake_ -= SceneManager::GetInstance().GetDeltaTime();
+
+	stepShake_ -= 0.01f;
 
 	if (stepShake_ < 0.0f)
 	{
 		pos_ = defaultPos_;
-		ChangeMode(MODE::FOLLOW_SPRING);
+		ChangeMode(MODE::FOLLOW);
+		finishShake_ = true;
 		return;
 	}
 
@@ -289,6 +294,16 @@ void Camera::SetBeforeDrawReset(void)
 	cameraUp_ = rot_.GetUp();
 }
 
+void Camera::SetBeforeDrawAutoMove(void)
+{
+	//目標位置まで移動する
+	//終了の判定は呼び出した側で行う
+	pos_ = Utility::Lerp(pos_, goalPos_, 0.01f);
+
+	//カメラの上方向
+	cameraUp_ = rot_.GetUp();
+}
+
 void Camera::Draw(void)
 {
 }
@@ -339,9 +354,11 @@ void Camera::ChangeMode(MODE mode)
 	case MODE::FOLLOW_SPRING:
 		break;
 	case MODE::SHAKE:
+		finishShake_ = false;
 		stepShake_ = TIME_SHAKE;
 		shakeDir_ = VNorm({ 0.7f, 0.7f ,0.0f });
 		defaultPos_ = pos_;
+		break;
 	case MODE::RESET:
 		stepReset_ = 0.0f;
 		start_.pos = pos_;
@@ -365,6 +382,11 @@ void Camera::SetPos(const VECTOR& pos, const VECTOR& target)
 	focusPos_ = target;
 }
 
+void Camera::SetPos(const VECTOR& pos)
+{
+	pos_ = pos;
+}
+
 void Camera::SetFocusPos(const VECTOR& _focus)
 {
 	//focusPos_ = _focus;
@@ -374,6 +396,11 @@ void Camera::SetFocusPos(const VECTOR& _focus)
 void Camera::SetRockPos(const VECTOR& _rock)
 {
 	rockPos_ = _rock;
+}
+
+void Camera::SetGoalPos(const VECTOR& _goal)
+{
+	goalPos_ = _goal;
 }
 
 const VECTOR Camera::GetRockPos(void) const

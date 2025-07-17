@@ -20,6 +20,8 @@ public:
     static constexpr float CHARA_SCALE = 0.7f;  //サイズ
     static constexpr VECTOR FOCUS_NOMAL = { 0.0f,0.0f,50.0f };      //注視点(通常)
     //static constexpr VECTOR FOCUS_BOW = { 0.0f,20.0f,150.0f };    //注視点(弓矢)
+
+    static constexpr int ALLERT_TIME = 30;
 #pragma endregion
 
 
@@ -119,6 +121,8 @@ public:
 
     float GetToLockDeg(void);
 
+    void SetAtkAllert(void);    //攻撃危機察知
+
 private:
     ROCK_STATE rState_; //ロックオン状態
     STATE state_;       //状態
@@ -133,5 +137,6 @@ private:
 
     //UI関連
     int hpImg_;
+    int allertTime_;
 };
 

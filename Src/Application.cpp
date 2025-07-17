@@ -15,6 +15,7 @@ const std::string Application::PATH_STAGE = "Data/Model/Stage/";
 const std::string Application::PATH_EFFECT = "Data/Effect/";
 const std::string Application::PATH_BGM = "Data/Sound/BGM/";
 const std::string Application::PATH_SE = "Data/Sound/SE/";
+const std::string Application::PATH_SHADER = "Data/Shader/";
 
 void Application::CreateInstance(void)
 {

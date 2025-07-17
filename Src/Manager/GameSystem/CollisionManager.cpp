@@ -3,6 +3,7 @@
 #include"../../Object/Character/CharacterBase.h"
 #include"../../Utility/Utility.h"
 #include"../Decoration/SoundManager.h"
+#include"../Generic/ResourceManager.h"
 #include"../Decoration/EffectManager.h"
 
 #include "CollisionManager.h"
@@ -12,6 +13,7 @@ using atkM = AttackManager;
 CollisionManager::CollisionManager(void)
 {
 	isSlow_ = false;
+	SoundManager::GetInstance().Add(SoundManager::TYPE::SE, "Allert", ResourceManager::GetInstance().Load(ResourceManager::SRC::ATK_ALLERT_SE).handleId_);
 }
 
 CollisionManager::~CollisionManager(void)
@@ -51,7 +53,7 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 		const VECTOR atkPos = atkCol.attack.pos;
 		const float atkRadius = atkCol.info.scale;
 
-		const float DmgEfcScl = 15.0f;
+		const float DmgEfcScl = 25.0f;
 		const float DmgEfcSpeed = 2.5;
 		
 
@@ -62,6 +64,11 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 			if (atkCol.info.IsPreGap()) {
 
 				//ジャスト回避できるよ！！という予測を出すようにする。
+				if (!atkCol.info.isAllert) {
+					_player.lock()->SetAtkAllert();
+					SoundManager::GetInstance().Play("Allert");
+					atkCol.info.isAllert = true;
+				}
 
 				//回避していたら
 				if (_player.lock()->GetState() == PlayerChara::STATE::DODGE) {
@@ -87,6 +94,12 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 			}
 		}
 	}
+
+
+	//テキトーな移動制限
+	if (Utility::MagnitudeF(pPos) > 5000.0f) {
+		_player.lock()->SetPrePos();
+	}
 }
 
 void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _enemy, std::vector<AttackManager::AttackCollision> _atks)
@@ -105,7 +118,7 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 		const VECTOR atkPos = atkCol.attack.pos;
 		const float atkRadius = atkCol.info.scale;
 
-		const float DmgEfcScl = 15.0f;
+		const float DmgEfcScl = 25.0f;
 		const float DmgEfcSpeed = 2.5;
 		const float SwordEfcScl = 50.0f;
 		const float SwordEfcSpeed = 1.5;
@@ -132,6 +145,12 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 				//判定済みに
 				atkCol.info.isHit = true;
 			}
+			//テキトーな移動制限
+			if (Utility::MagnitudeF(ePos) > 5000.0f) {
+				enemy.lock()->SetPrePos();
+			}
 		}
 	}
+
+	
 }

@@ -36,6 +36,8 @@ void PlayerManager::Init(void)
 
 void PlayerManager::Update(AttackManager& _atk)
 {
+	
+
 	//ó‘ÔŠÇ—
 	//’Êí‚¶‚á‚È‚¢‚Æ‚«
 	if (character_->GetState() != PlayerChara::STATE::NOMAL) {

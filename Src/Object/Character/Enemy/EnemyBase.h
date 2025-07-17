@@ -68,7 +68,7 @@ public:
     static constexpr VECTOR RELATIVE_ATTACK_POS = { 0.0f, 75.0f, 100.0f };
     static constexpr float SCALE_ATTACK_NOMAL = 70.0f;
     static constexpr float POW_ATTACK_NOMAL = 1.0f;
-    static constexpr float INTERVAL_ATTACK_NOMAL = 500.0f;
+    static constexpr float INTERVAL_ATTACK_NOMAL = 150.0f;
 
     /// <summary>
     /// 敵の状態
@@ -95,27 +95,29 @@ public:
 
     const bool Init(const int _num)override;
     void Update(const VECTOR _pPos, AttackManager& _atk)override;
+    void Draw(void)override;
   
 protected:
     virtual void SetPram(void);     //各敵の固有情報(いずれか外部データ化したい)
-    void InitAnim(void)override;
+    virtual void InitAnim(void)override;
     void InitUI(void)override;
 #pragma region 各種状態更新
-private:    //各種更新処理
+protected:    //各種更新処理
     void UpdateNomal(const VECTOR& _pPos, AttackManager& _atk);  //通常
     void UpdateSearch(const VECTOR& _pPos, AttackManager& _atk); //索敵
-    void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk); //戦闘
+    virtual void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk); //戦闘
     void UpdateDeth(const VECTOR& _pPos, AttackManager& _atk); //戦闘
 
     //各種移動処理
     void MoveNomal(const VECTOR& _pPos);
     void MoveSearch(const VECTOR& _pPos);
-    void MoveBattle(const VECTOR& _pPos);
+    virtual void MoveBattle(const VECTOR& _pPos);
 
     void ChangeState(const ENEMY_STATE _state); //状態の遷移
 #pragma endregion
 
-    void DrawUI(void)override;
+    
+    virtual void DrawUI(void)override;
 
 public:
     //生存判定
@@ -135,21 +137,24 @@ public:
     //死亡させる
     void Deth(void)override;
 
+    virtual void Shout(void);//ボス専用
+
 public: //デバッグ用
     void SetColor(int _color);
     void SetPos(VECTOR _pos);
     void DrawDebug(void)override;
 
-private:
+protected:
     using Update_f = void(EnemyBase::*)(const VECTOR& _pPos, AttackManager& _atk);
     using Move_f = void(EnemyBase::*)(const VECTOR& _pPos);
     Update_f update_;   //更新関数
     Move_f move_;       //移動関数
 
     std::unique_ptr<EnemyUIController>uiCntl_;
+    float maxHp_;
 
     VECTOR preStayPos_; //前回停止位置
-    VECTOR uiPos_; //UI表示位置
+    float uiDeviationY_;
     float moveOneTime_; //一回の移動量
     float moveSped_;    //１フレームでの移動量
     bool isStay_;       //ステイかどうか
@@ -165,10 +170,15 @@ private:
 
     bool isLockTarget_;   //ロックオン対象になっているか(マネージャでのみ変更が可能)
 
+    VECTOR atkRelative_;
+    float atkScale_;
+
     //デバッグ用
     int color_;
     int serchCol_;
     int alertCol_;
     double debugRot_;
+
+
 };
 

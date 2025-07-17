@@ -22,12 +22,12 @@ public:
 
 	//カメラ座標関連の定数---------------------------------------------------------------------
 	
-	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -700.0f };			//カメラの初期座標
+	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 50.0f, -700.0f };			//カメラの初期座標
 
 	static constexpr VECTOR RELATIVE_C2T_POS = { 0.0f, -400.0f, 500.0f };			//カメラ位置から注視点までの相対座標
 
 	
-	static constexpr VECTOR RELATIVE_F2C_POS_FOLLOW = { 0.0f, 500.0f, -600.0f };	//追従対象からカメラ位置までの相対座標(完全追従)
+	static constexpr VECTOR RELATIVE_F2C_POS_FOLLOW = { 0.0f, 700.0f, -600.0f };	//追従対象からカメラ位置までの相対座標(完全追従)
 
 	//static constexpr VECTOR RELATIVE_F2C_POS_SPRING = { 0.0f, 40.0f, 150.0f };	//追従対象からカメラ位置までの相対座標(ばね付き)
 
@@ -73,7 +73,8 @@ public:
 		FOLLOW_SPRING,	//ばね付き追従モード
 		SHAKE,			//カメラ揺らし
 		LOCKON,			//ロックオン
-		RESET,			//リセット用
+		RESET,			//カメラ位置リセット用
+		AUTO_MOVE,		//目標位置まで自動的に移動
 	};
 
 	struct FOR_FOLLOW_INFO
@@ -103,6 +104,7 @@ public:
 	void SetBeforeDrawLockOn(void);			//ロックオンカメラ
 	void SetBeforeDrawShake(void);			//カメラシェイク
 	void SetBeforeDrawReset(void);			//カメラリセット
+	void SetBeforeDrawAutoMove(void);			//カメラリセット
 
 	//----------------------------------------
 	// 描画処理
@@ -114,6 +116,7 @@ public:
 	//座標取得
 	const VECTOR GetPos(void) const;
 	const VECTOR GetRockPos(void)const;
+	const VECTOR GetGoalPos(void)const { return goalPos_; }
 
 	//回転取得
 	const Quaternion GetRot(void)const;
@@ -128,11 +131,14 @@ public:
 
 	//座標設定
 	void SetPos(const VECTOR& pos,const VECTOR& focus);
+	void SetPos(const VECTOR& pos);
 	void SetFocusPos(const VECTOR& _focus);
 	void SetRockPos(const VECTOR& _rock);
+	void SetGoalPos(const VECTOR& _goal);
 	
 
 	const MODE GetMode(void);
+	const bool IsFinishShake(void) { return finishShake_; }
 
 	void DrawDebug(void);
 private:
@@ -158,6 +164,9 @@ private:
 	//カメラの注視点
 	VECTOR focusPos_;
 	VECTOR goalFocusPos_;
+	
+	//移動目標位置
+	VECTOR goalPos_;
 
 	//カメラの上方向
 	VECTOR cameraUp_;
@@ -176,18 +185,15 @@ private:
 	VECTOR defaultPos_;
 
 	VECTOR shakeDir_;
-
+	//補完スピード
 	float lerpSpeed_;
+
+	bool finishShake_;
 
 	
 	//カメラを初期位置に戻す
 	void SetDefault(void);
 
-	//カメラシェイク
-	void Shake(void);
-
-	//カメラシェイクさせるための準備
-	void SetShake(float intensity, float duration);
 
 	//回転
 	void Rotation(void);

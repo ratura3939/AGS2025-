@@ -1,12 +1,21 @@
 #include"../../Object/Character/Enemy/EnemyBase.h"
+#include"../../Object/Character/Enemy/Boss.h"
 #include"../../Utility/Utility.h"
 #include"../../Application.h"
+#include"../../UI/Enemy/EnemyCount.h"
+#include"../Generic/ResourceManager.h"
+#include"../../Scene/Game.h"
 #include "EnemyManager.h"
 
 const std::string EnemyManager::ATTACK_NOMAL = "EnemyAttack";
 
-EnemyManager::EnemyManager(void)
+EnemyManager::EnemyManager(Game& _scene):gameScene_(_scene)
 {
+	enemyCnt_ = -1;
+	numImg_ = nullptr;
+	platePos_ = Utility::VECTOR_INIT;
+	preBattle_ = false;
+	createBoss_ = false;
 }
 
 EnemyManager::~EnemyManager(void)
@@ -18,14 +27,20 @@ void EnemyManager::Init(void)
 	//デバッグ用
 	VECTOR initPos[4] = { INIT_1 ,INIT_2 ,INIT_3 ,INIT_4 };
 
+	enemyCnt_ = ENEMY_NUM;
+	numImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::NUMBER_IMGS).handleIds_;
+
 	for (int i = 0; i < ENEMY_NUM; i++) {
 		std::shared_ptr enemy = std::make_shared<EnemyBase>(initPos[i]);
 		enemy->Init(i);
 		characters_.push_back(std::move(enemy));
 	}
 
-	
-	
+	platePos_ = VECTOR{ Application::SCREEN_SIZE_X - 300.0f,150.0f,0.0f };
+	counterUI_ = std::make_unique<EnemyCount>(platePos_);
+	counterUI_->Init("Manager");
+	//残りカウントのの設定
+	counterUI_->SetNumImg(numImg_[enemyCnt_]);
 
 	preBattle_ = false;
 }
@@ -36,6 +51,8 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 
 	//いなかったら処理しない
 	if (characters_.empty())return;
+
+	counterUI_->Update();
 
 	//死亡したキャラクターの配列番号保存とそのカウンター
 	std::vector<int>dethEnemy = {};
@@ -59,7 +76,25 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 	for (auto& idx : dethEnemy) {
 		//該当の敵を消去
 		characters_.erase(characters_.begin()+(idx-dethCnt));
+		enemyCnt_--;
+
 		dethCnt++;
+	}
+	if (dethCnt != 0) {
+		//残りカウントのの設定
+		counterUI_->SetNumImg(numImg_[enemyCnt_]);
+		if (enemyCnt_ <= 0 && !createBoss_) {
+			//シーンにボス出現を伝える
+			gameScene_.StartBossFaze();
+		}
+	}
+}
+
+void EnemyManager::UpdateAnim(void)
+{
+	for (auto& chara : characters_) {
+		//更新をかける
+		chara->UpdateAnimOnly();
 	}
 }
 
@@ -71,6 +106,7 @@ void EnemyManager::Draw(void)
 	for (auto& chara : characters_) {
 		chara->Draw();
 	}
+	counterUI_->Draw();
 }
 
 void EnemyManager::Release(void)
@@ -117,7 +153,7 @@ int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
 
 		float disMag = Utility::MagnitudeF(distance);
 
-		if (!InsideScreen(myPos)|| disMag > TARGETTING_PERMISSION_DISTANCE)continue;
+		if (/*!InsideScreen(myPos)||*/ disMag > TARGETTING_PERMISSION_DISTANCE)continue;
 
 		//距離比較
 		
@@ -205,6 +241,27 @@ void EnemyManager::LokedOn(const int _num)
 		if (i == _num)setFlag = true;
 		//設定
 		characters_[i]->SetIsLocked(setFlag);
+	}
+}
+
+void EnemyManager::CreateBoss(void)
+{
+	VECTOR pos = INIT_1;
+	auto boss = std::make_shared<Boss>(pos);
+	boss->Init(0);
+	characters_.push_back(boss);
+	createBoss_ = true;
+
+	enemyCnt_++;
+
+	counterUI_->SetNumImg(numImg_[enemyCnt_]);
+	counterUI_->SetIconImg();
+}
+
+void EnemyManager::BossShout(void)
+{
+	for (auto& chara : characters_) {
+		chara->Shout();
 	}
 }
 

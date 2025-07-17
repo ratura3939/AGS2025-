@@ -1,10 +1,13 @@
 #pragma once
 #include<DxLib.h>
+#include<memory>
 #include "../../Common/Quaternion.h"
 #include"../../Manager/GameSystem/AnimationController.h"
 
 //class AnimationController;
 class AttackManager;
+class ModelMaterial;
+class ModelRenderer;
 class Game;
 
 class CharacterBase
@@ -36,6 +39,7 @@ public:
 	virtual const bool Init(const int _num) = 0;
 	virtual void Update(void);
 	virtual void Update(const VECTOR _pPos, AttackManager& _atk);	//敵用(敵はキャラクター自身が行動を決めるのでそれ用に分けている)
+	void UpdateAnimOnly(void);
 	virtual void Draw(void);
 	virtual const bool Release(void);
 
@@ -70,6 +74,8 @@ public:
 	const VECTOR GetPos(void)const;//座標(足元)
 	const VECTOR GetHeight(void)const;//座標(頭辺り)
 
+	void SetPrePos(void);
+
 	//回転情報の取得
 	const Quaternion GetQua(void)const;
 
@@ -90,7 +96,10 @@ public:
 
 protected:
 	int modelId_;	//モデルID
+
 	VECTOR pos_;	//座標
+	VECTOR prePos_;	//座標
+	VECTOR uiPos_; //UI表示位置
 	VECTOR scl_;	//モデル大きさ
 	VECTOR rot_;	//回転情報(XYZ)
 	Quaternion characterRotY_;	//Y軸回転用
@@ -115,6 +124,10 @@ protected:
 
 	//アニメーション
 	std::unique_ptr<AnimationController> animController_;
+
+	//描画関係
+	std::unique_ptr<ModelMaterial>material_;
+	std::unique_ptr<ModelRenderer>renderer_;
 
 	//ステータスなど
 	float hp_;
