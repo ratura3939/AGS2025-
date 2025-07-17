@@ -188,9 +188,9 @@ void UIManager2d::Draw(const std::string _name)
 {
 	auto info = infoes_[_name];
 	//Ç§Ç¡Ç∑ÇÁçïÇ≠Ç∑ÇÈ
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, info.alpha);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(info.alpha));
 	if (info.dimension == UI_DRAW_DIMENSION::DIMENSION_2) {
-		DrawRotaGraph(info.pos.x, info.pos.y, info.scl, info.deg / 180.0f, images_[_name], true);
+		DrawRotaGraph(static_cast<int>(info.pos.x), static_cast<int>(info.pos.y), info.scl, info.deg / 180.0f, images_[_name], true);
 	}
 	else {
 		DrawBillboard3D(info.pos, 0.5f, 0.5f, info.scl, info.deg*DX_PI_F / 180.0f,  images_[_name],  false);

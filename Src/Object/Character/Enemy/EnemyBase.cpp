@@ -119,7 +119,8 @@ void EnemyBase::SetPram(void)
 	atkRelative_ = RELATIVE_ATTACK_POS;
 	//攻撃の大きさ
 	atkScale_ = SCALE_ATTACK_NOMAL;
-
+	//攻撃可能距離
+	atkDistance_ = ATTACK_DISTANCE;
 
 	//アニメーション初期化
 	animController_ = std::make_unique<AnimationController>(modelId_);
@@ -240,23 +241,26 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 {
 	//この内容は初期キャラ用。攻撃時には止まって攻撃する
 	//強いキャラクターは移動攻撃も想定するのでここの処理とは少し違っていくる
-	
-	//移動処理
-	(this->*move_)(_pPos);
-	
+	//プレイヤーとの距離
+	float distance = Utility::MagnitudeF(VSub(_pPos, pos_));
 
+	//移動処理
+	if (distance >= ATTACK_DISTANCE) {
+		(this->*move_)(_pPos);
+	}
+	
 	//カウンタ増加(ゲーム更新スピード)
 	intervalCnt_+=SceneManager::GetInstance().GetUpdateSpeedRate_();	
 
 	//判定
 	//プレイヤーが戦闘状態範囲度外にでたら
-	if (Utility::MagnitudeF(VSub(_pPos, pos_)) > BATTLE_FINISH_DISTANCE) {
+	if (distance > BATTLE_FINISH_DISTANCE) {
 		//通常に戻る
 		ChangeState(ENEMY_STATE::NOMAL);
 	}
 
 	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
-	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
+	if (distance <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
 		//攻撃する
 		_atk.Attack(speciesName_,EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(atkRelative_)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, atkScale_, "SwingSword");
 		animController_->Play("attack", SPEED_ANIM);

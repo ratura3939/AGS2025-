@@ -176,7 +176,7 @@ void AttackManager::DrawDebug(void)
 				else color = 0xff00ff;
 			}
 			//デバッグ用の球体を描画
-			DrawSphere3D(atkData.second.attack.pos, static_cast<int>(info.scale), 8, color, color, false);
+			DrawSphere3D(atkData.second.attack.pos, info.scale, 8, color, color, false);
 		}
 	}
 	

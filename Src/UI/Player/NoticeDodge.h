@@ -19,8 +19,5 @@ public:
 
 private:
 	std::string noticeStr_;
-
-	//•\Ž¦‰Â”\‚©
-	bool isDraw_;
 };
 

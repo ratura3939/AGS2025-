@@ -118,9 +118,9 @@ VS_OUTPUT main(VS_INPUT VSInput)
 	// 法線をローカル空間からワールド空間へ変換
 	//ret.normal = normalize(
 	//mul(VSInput.norm, (float3x3)g_base.localWorldMatrix));
-	ret.normal.x = dot(VSInput.norm, lL_W_Mat[0]);
-	ret.normal.y = dot(VSInput.norm, lL_W_Mat[1]);
-	ret.normal.z = dot(VSInput.norm, lL_W_Mat[2]);
+	ret.normal.x = float(dot(VSInput.norm, lL_W_Mat[0]));
+	ret.normal.y = float(dot(VSInput.norm, lL_W_Mat[1]));
+	ret.normal.z = float(dot(VSInput.norm, lL_W_Mat[2]));
 
 	// ディフューズカラー
 	ret.diffuse = VSInput.diffuse;

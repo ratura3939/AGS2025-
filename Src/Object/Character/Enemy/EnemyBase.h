@@ -170,8 +170,9 @@ protected:
 
     bool isLockTarget_;   //ロックオン対象になっているか(マネージャでのみ変更が可能)
 
-    VECTOR atkRelative_;
-    float atkScale_;
+    VECTOR atkRelative_;    //攻撃の発生位置の相対座標
+    float atkScale_;    //攻撃の大きさ
+    float atkDistance_; //攻撃可能距離
 
     //デバッグ用
     int color_;

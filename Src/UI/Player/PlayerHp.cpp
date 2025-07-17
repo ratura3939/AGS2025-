@@ -110,7 +110,7 @@ void PlayerHp::Reset(void)
 
 void PlayerHp::Damage(void)
 {
-	for (int cnt = states_.size() - 1; cnt >= 0; cnt--) {
+	for (int cnt = static_cast<int>(states_.size()) - 1; cnt >= 0; cnt--) {
 		if (states_[cnt] == STATE::NOMAL) {
 			states_[cnt] = STATE::BROKEN;
 			break;

@@ -56,7 +56,7 @@ void Boss::SetPram(void)
 	//初期化用に一回実行
 	UpdateRotQuat();
 
-
+	//攻撃可能距離
 	atkDistance_ = 500.0f;
 
 	//攻撃の発生位置(相対座標)
@@ -103,9 +103,14 @@ void Boss::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 {
 	//この内容は初期キャラ用。攻撃時には止まって攻撃する
 	//強いキャラクターは移動攻撃も想定するのでここの処理とは少し違っていくる
+	//プレイヤーとの距離
+	float distance = Utility::MagnitudeF(VSub(_pPos, pos_));
 
 	//移動処理
-	(this->*move_)(_pPos);
+	//移動処理
+	if (distance >= atkDistance_) {
+		(this->*move_)(_pPos);
+	}
 
 
 	//カウンタ増加(ゲーム更新スピード)
@@ -113,7 +118,7 @@ void Boss::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 
 	//判定
 	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
-	if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= atkDistance_ && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
+	if (distance <= atkDistance_ && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
 		//攻撃の準備時間
 
 		//準備時間が終わったら攻撃する
