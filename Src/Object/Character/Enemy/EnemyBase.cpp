@@ -251,6 +251,9 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	if (distance >= ATTACK_DISTANCE) {
 		(this->*move_)(_pPos);
 	}
+	else {
+		OderGoalRot(_pPos);	//回転の設定だけは行う
+	}
 	
 	//カウンタ増加(ゲーム更新スピード)
 	intervalCnt_+=SceneManager::GetInstance().GetUpdateSpeedRate_();	
@@ -352,6 +355,11 @@ void EnemyBase::MoveBattle(const VECTOR& _pPos)
 	pos_=VAdd(pos_, VScale(GetForward(), moveSped_* SceneManager::GetInstance().GetUpdateSpeedRate_()));
 	animController_->Play("dush", SPEED_ANIM);
 
+	OderGoalRot(_pPos);
+}
+
+
+void EnemyBase::OderGoalRot(const VECTOR _pPos) {
 	//回転
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
 	//自分から対象へのベクトル

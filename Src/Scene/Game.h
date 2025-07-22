@@ -91,6 +91,9 @@ private:
 
 	void RockOn(void);
 	void RockOff(void);
+
+	void StartSlow(void);
+	void EndSlow(void);
 private:
 
 	std::unique_ptr<PlayerManager>player_;			//ÉvÉåÉCÉÑÅ[

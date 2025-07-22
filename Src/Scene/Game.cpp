@@ -151,6 +151,20 @@ void Game::InitSound(void)
 		rsM.Load(ResourceManager::SRC::BOSS_IMPACT_SE).handleId_);
 	sndM.AdjustVolume("Impact", 60);
 
+	//攻撃警告音
+	sndM.Add(SoundManager::TYPE::SE, "Allert",
+		rsM.Load(ResourceManager::SRC::ATK_ALLERT_SE).handleId_);
+
+	//回避音
+	sndM.Add(SoundManager::TYPE::SE, "Dodge",
+		rsM.Load(ResourceManager::SRC::DODGE_SE).handleId_);
+	sndM.AdjustVolume("Dodge", 45);
+
+	//ジャスト回避音
+	sndM.Add(SoundManager::TYPE::SE, "JustDodge",
+		rsM.Load(ResourceManager::SRC::JUST_DODGE_SE).handleId_);
+	sndM.AdjustVolume("JustDodge", 80);
+
 }
 
 void Game::InitEffect(void)
@@ -260,11 +274,7 @@ void Game::GameUpdate(void)
 		//スロー時の更新(このカウンタはスローの影響を受けない)
 		slowCnt_++;
 		if (slowCnt_ >= LIMIT_SLOW) {
-			isSlowEffect_ = false;
-			ChangeActionDirec(ACTION_DIRECTION::NOMAL);
-			//更新処理を100％にもどす
-			scM.SetUpdateSpeedRate_(NOMAL_SPEED_PERCENT);
-			enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
+			EndSlow();
 		}
 	}
 	//敵
@@ -274,15 +284,7 @@ void Game::GameUpdate(void)
 
 	//判定処理/その中でスロー演出が入るかどうか
 	if (collision_->Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks())) {
-		//スロー演出準備
-		slowCnt_ = 0;
-		ChangeActionDirec(ACTION_DIRECTION::JUST_DODGE);
-		isSlowEffect_ = true;
-		//更新スピードを50％に設定
-		scM.SetUpdateSpeedRate_(SLOW_SPEED_PERCENT);
-		//敵もそれに対応
-		enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
-
+		StartSlow();
 	}
 
 
@@ -643,8 +645,34 @@ void Game::RockOff(void)
 	player_->LockOff();
 	enemy_->NoTargetEnemy();
 	camera.ChangeMode(Camera::MODE::FOLLOW);
+	//ゾーンを続かせないために
+	ChangeActionDirec(ACTION_DIRECTION::NOMAL);
+	EndSlow();
 	//対象をキャンセルしたとみなし初期化する
 	nearEnemyNum_ = -1;
+}
+
+void Game::StartSlow(void)
+{
+	auto& scM = SceneManager::GetInstance();
+	//スロー演出準備
+	slowCnt_ = 0;
+	ChangeActionDirec(ACTION_DIRECTION::JUST_DODGE);
+	isSlowEffect_ = true;
+	//更新スピードを50％に設定
+	scM.SetUpdateSpeedRate_(SLOW_SPEED_PERCENT);
+	//敵もそれに対応
+	enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
+}
+
+void Game::EndSlow(void)
+{
+	auto& scM = SceneManager::GetInstance();
+	isSlowEffect_ = false;
+	ChangeActionDirec(ACTION_DIRECTION::NOMAL);
+	//更新処理を100％にもどす
+	scM.SetUpdateSpeedRate_(NOMAL_SPEED_PERCENT);
+	enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
 }
 
 

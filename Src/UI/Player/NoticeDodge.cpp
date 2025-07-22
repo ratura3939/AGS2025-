@@ -27,6 +27,8 @@ bool NoticeDodge::Init(const std::string& _master)
 
 bool NoticeDodge::Update(void)
 {
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	uiM.SetPos(noticeStr_, drawFollowPos_);
 	return false;
 }
 

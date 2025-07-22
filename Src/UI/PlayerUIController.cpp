@@ -23,6 +23,7 @@ void PlayerUIController::Init(const std::string& _master)
 void PlayerUIController::Update(void)
 {
 	hp_->Update();
+	dodge_->Update();
 }
 void PlayerUIController::Draw(void)
 {

@@ -119,6 +119,8 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	if (IsDudgeMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
 		//回避状態に
 		character_->SetState(PlayerChara::STATE::DODGE);
+		//回避音出す
+		SoundManager::GetInstance().Play("Dodge");
 
 		//カメラとキャラクターの前方同士の内積
 		auto cFor = SceneManager::GetInstance().GetCamera().GetRot().GetForward();

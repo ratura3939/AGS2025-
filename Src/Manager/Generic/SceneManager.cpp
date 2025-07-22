@@ -171,7 +171,7 @@ void SceneManager::Destroy(void)
 	scene_->Release();
 
 	DeleteGraph(mainScreen_);
-	delete scene_;
+	//delete scene_;
 
 	delete fader_;
 
@@ -192,6 +192,11 @@ void SceneManager::ChangeScene(SCENE_ID nextId)
 	fader_->SetFade(Fader::STATE::FADE_OUT);
 	isSceneChanging_ = true;
 
+}
+
+void SceneManager::ChangeScene(std::shared_ptr<SceneBase> _necxtScene)
+{
+	scene_ = _necxtScene;
 }
 
 SceneManager::SCENE_ID SceneManager::GetSceneID(void)
@@ -284,7 +289,7 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	if (scene_ != nullptr)
 	{
 		scene_->Release();
-		delete scene_;
+		//delete scene_;
 	}
 
 	switch (sceneId_)

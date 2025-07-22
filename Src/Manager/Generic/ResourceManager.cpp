@@ -80,7 +80,7 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "EneAxe.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_MDL, res);
 
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Boss_Golem.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "lightGolem.mv1");
 	resourcesMap_.emplace(SRC::BOSS_MDL, res);
 
 	//ステージ
@@ -182,7 +182,7 @@ void ResourceManager::InitGame(void)
 	//ボス足音
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Impact.mp3");
 	resourcesMap_.emplace(SRC::BOSS_IMPACT_SE, res);
-	//ボス足音
+	//ボス叫び
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "BossShout.mp3");
 	resourcesMap_.emplace(SRC::BOSS_SHOUT_SE, res);
 	
@@ -190,6 +190,14 @@ void ResourceManager::InitGame(void)
 	//攻撃警告音
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Allert.mp3");
 	resourcesMap_.emplace(SRC::ATK_ALLERT_SE, res);
+
+	//回避時
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Dodge_3.mp3");
+	resourcesMap_.emplace(SRC::DODGE_SE, res);
+
+	//ジャスト回避成功時
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Dodge_4.mp3");
+	resourcesMap_.emplace(SRC::JUST_DODGE_SE, res);
 
 	//エフェクト
 	//剣

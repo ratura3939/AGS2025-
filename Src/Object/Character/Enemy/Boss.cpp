@@ -114,6 +114,9 @@ void Boss::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	if (distance >= atkDistance_) {
 		(this->*move_)(_pPos);
 	}
+	else {
+		OderGoalRot(_pPos);	//回転の設定だけは行う
+	}
 
 
 	//カウンタ増加(ゲーム更新スピード)

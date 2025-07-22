@@ -45,6 +45,7 @@ public:
 
 	// 状態遷移
 	void ChangeScene(SCENE_ID nextId);
+	void ChangeScene(std::shared_ptr<SceneBase> _necxtScene);
 
 	// シーンIDの取得
 	SCENE_ID GetSceneID(void);
@@ -100,7 +101,7 @@ private:
 	Fader* fader_;
 
 	// 各種シーン
-	SceneBase* scene_;
+	std::shared_ptr<SceneBase> scene_;
 
 	// シーン遷移中判定
 	bool isSceneChanging_;

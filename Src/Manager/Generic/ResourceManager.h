@@ -75,6 +75,8 @@ public:
 		BOSS_SHOUT_SE,
 
 		ATK_ALLERT_SE,
+		DODGE_SE,
+		JUST_DODGE_SE,
 		
 
 		//エフェクト

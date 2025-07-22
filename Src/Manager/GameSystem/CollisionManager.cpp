@@ -13,7 +13,6 @@ using atkM = AttackManager;
 CollisionManager::CollisionManager(void)
 {
 	isSlow_ = false;
-	SoundManager::GetInstance().Add(SoundManager::TYPE::SE, "Allert", ResourceManager::GetInstance().Load(ResourceManager::SRC::ATK_ALLERT_SE).handleId_);
 }
 
 CollisionManager::~CollisionManager(void)
@@ -74,6 +73,8 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 				if (_player.lock()->GetState() == PlayerChara::STATE::DODGE) {
 					//スローに
 					isSlow_ = true;
+					//ジャスト回避の効果音流す
+					SoundManager::GetInstance().Play("JustDodge");
 					//判定済みに
 					atkCol.info.isHit = true;
 				}

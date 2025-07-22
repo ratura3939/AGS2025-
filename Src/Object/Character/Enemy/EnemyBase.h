@@ -113,6 +113,8 @@ protected:    //ŠeíXVˆ—
     void MoveSearch(const VECTOR& _pPos);
     virtual void MoveBattle(const VECTOR& _pPos);
 
+    void OderGoalRot(const VECTOR _pPos);
+
     void ChangeState(const ENEMY_STATE _state); //ó‘Ô‚Ì‘JˆÚ
 #pragma endregion
 

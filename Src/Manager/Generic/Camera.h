@@ -22,7 +22,7 @@ public:
 
 	//カメラ座標関連の定数---------------------------------------------------------------------
 	
-	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 50.0f, -700.0f };			//カメラの初期座標
+	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 700.0f, -700.0f };			//カメラの初期座標
 
 	static constexpr VECTOR RELATIVE_C2T_POS = { 0.0f, -400.0f, 500.0f };			//カメラ位置から注視点までの相対座標
 
@@ -135,7 +135,10 @@ public:
 	void SetFocusPos(const VECTOR& _focus);
 	void SetRockPos(const VECTOR& _rock);
 	void SetGoalPos(const VECTOR& _goal);
-	
+
+	//カメラを初期位置に戻す
+	void SetDefault(void);
+
 
 	const MODE GetMode(void);
 	const bool IsFinishShake(void) { return finishShake_; }
@@ -191,9 +194,7 @@ private:
 	bool finishShake_;
 
 	
-	//カメラを初期位置に戻す
-	void SetDefault(void);
-
+	
 
 	//回転
 	void Rotation(void);
