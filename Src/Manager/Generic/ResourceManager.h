@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include "Resource.h"
+#include"SceneManager.h"
 
 class ResourceManager
 {
@@ -93,14 +94,18 @@ public:
 	static ResourceManager& GetInstance(void);
 
 	// 初期化
-	void Init(void);
+	void Init(SceneManager::SCENE_ID _scene= SceneManager::SCENE_ID::NONE);
 
+	
+private:
 	//シーンごとにデータを読み込むことにする
 	void InitTitle(void);
 	void InitGame(void);
 	void InitClear(void);
 	void InitGameOver(void);
-private:
+	void InitPouse(void);
+
+	//大まかなリソースのまとまり
 	void ResorceDeviceIcon(void);
 	void ResorceStage(void);
 

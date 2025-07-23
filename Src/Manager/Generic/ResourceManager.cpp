@@ -20,8 +20,27 @@ ResourceManager& ResourceManager::GetInstance(void)
 	return *instance_;
 }
 
-void ResourceManager::Init(void)
+void ResourceManager::Init(SceneManager::SCENE_ID _scene)
 {
+	//シーンごとのリソースと生成する可能性がある追加シーンのリソース
+	switch (_scene)
+	{
+	case SceneManager::SCENE_ID::TITLE:
+		InitTitle();
+		break;
+	case SceneManager::SCENE_ID::GAME:
+		InitGame();
+		InitPouse();
+		break;
+	case SceneManager::SCENE_ID::GAMEOVER:
+		InitGameOver();
+		break;
+	case SceneManager::SCENE_ID::CLEAR:
+		InitClear();
+		break;
+	default:
+		break;
+	}
 }
 
 
@@ -257,6 +276,10 @@ void ResourceManager::InitGameOver(void)
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "EnterController.mp3");
 	resourcesMap_.emplace(SRC::ENTER_CNTL_SE, res);
 
+}
+
+void ResourceManager::InitPouse(void)
+{
 }
 
 void ResourceManager::ResorceDeviceIcon(void)

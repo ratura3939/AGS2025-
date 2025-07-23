@@ -1,5 +1,6 @@
 #pragma once
 #include <chrono>
+#include<vector>
 #include<memory>
 class SceneBase;
 class Fader;
@@ -12,6 +13,8 @@ public:
 
 	static constexpr float STICK_START_POW = 0.5f;
 
+	static constexpr int POP_SCENE_TYPE_NUM = 1;	//ポップ可能なシーンの種類数
+
 	// シーン管理用
 	enum class SCENE_ID
 	{
@@ -20,6 +23,9 @@ public:
 		GAME,
 		GAMEOVER,
 		CLEAR,
+
+		//ポップ可能シーン
+		POUSE,
 	};
 
 	enum class CNTL
@@ -45,7 +51,11 @@ public:
 
 	// 状態遷移
 	void ChangeScene(SCENE_ID nextId);
-	void ChangeScene(std::shared_ptr<SceneBase> _necxtScene);
+
+	//シーン追加
+	void PushScene(SCENE_ID _pushId);
+	//現在のシーン消去
+	void PopScene(void);
 
 	// シーンIDの取得
 	SCENE_ID GetSceneID(void);
@@ -89,6 +99,7 @@ private:
 	static SceneManager* instance_;
 
 	SCENE_ID sceneId_;
+	SCENE_ID popSceneList_[POP_SCENE_TYPE_NUM];
 	SCENE_ID waitSceneId_;
 	CNTL cntl_;
 
@@ -101,7 +112,7 @@ private:
 	Fader* fader_;
 
 	// 各種シーン
-	std::shared_ptr<SceneBase> scene_;
+	std::vector<std::unique_ptr<SceneBase>> scenes_;
 
 	// シーン遷移中判定
 	bool isSceneChanging_;
@@ -131,4 +142,5 @@ private:
 	// フェード
 	void Fade(void);
 
+	const bool IsPopScene(const SCENE_ID _id)const;
 };
