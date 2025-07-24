@@ -1,5 +1,4 @@
 #include <chrono>
-#include <DxLib.h>
 #include<EffekseerForDXLib.h>
 #include "../../Common/Fader.h"
 #include "../../Application.h"
@@ -91,7 +90,7 @@ void SceneManager::Init3D(void)
 	SetUseLighting(true);
 
 	// ê≥ñ Ç©ÇÁéŒÇﬂâ∫Ç…å¸Ç©Ç¡ÇΩÉâÉCÉg
-	ChangeLightTypeDir({ 0.00f, -1.00f, 1.00f });
+	ChangeLightTypeDir(LIGHT_DIR);
 
 }
 
@@ -274,8 +273,12 @@ SceneManager::SceneManager(void)
 
 	sceneId_ = SCENE_ID::NONE;
 	waitSceneId_ = SCENE_ID::NONE;
+	cntl_ = CNTL::NONE;
 
-	scenes_.clear();
+	mainScreen_ = -1;
+
+	scenes_ = {};
+	
 	fader_ = nullptr;
 
 	isSceneChanging_ = false;

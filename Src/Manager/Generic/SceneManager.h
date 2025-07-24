@@ -2,6 +2,7 @@
 #include <chrono>
 #include<vector>
 #include<memory>
+#include <DxLib.h>
 class SceneBase;
 class Fader;
 class Camera;
@@ -10,8 +11,8 @@ class SceneManager
 {
 
 public:
-
-	static constexpr float STICK_START_POW = 0.5f;
+	static constexpr VECTOR LIGHT_DIR = { 0.00f, -1.00f, 1.00f };
+	static constexpr float STICK_START_POW = 0.5f;	//コントローラーのスティック閾値
 
 	static constexpr int POP_SCENE_TYPE_NUM = 1;	//ポップ可能なシーンの種類数
 
