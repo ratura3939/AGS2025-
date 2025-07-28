@@ -15,6 +15,7 @@ Camera::Camera(void)
 	goalFocusPos_ = { 0.0f, 0.0f, 0.0f };
 	rockPos_ = { 0.0f, 0.0f, 0.0f };
 	rot_ = Quaternion::Identity();
+	rotSpeed_ = MAX_ROT_SPEED;
 
 	stepReset_ = 0.0f;
 	isReset_ = true;
@@ -327,6 +328,16 @@ const VECTOR Camera::GetAngle(void) const
 	return angles_;
 }
 
+const float Camera::GetRotSpeed(void) const
+{
+	return rotSpeed_;
+}
+
+void Camera::SetRotSpeed(const float _speed)
+{
+	rotSpeed_ = _speed;
+}
+
 void Camera::ChangeMode(MODE mode)
 {
 
@@ -445,23 +456,23 @@ void Camera::Rotation(void)
 
 	if (ins.IsPressed("subUp"))
 	{
-		angles_.x -= MAX_ROT_SPEED;
+		angles_.x -= rotSpeed_;
 		if (angles_.x <= LIMIT_X_DW_RAD)
 			angles_.x = LIMIT_X_DW_RAD;
 	}
 	if (ins.IsPressed("subDown"))
 	{
-		angles_.x += MAX_ROT_SPEED;
+		angles_.x += rotSpeed_;
 		if (angles_.x >= LIMIT_X_UP_RAD)
 			angles_.x = LIMIT_X_UP_RAD;
 	}
 	if (ins.IsPressed("subLeft"))
 	{
-		angles_.y -= MAX_ROT_SPEED;
+		angles_.y -= rotSpeed_;
 	}
 	if (ins.IsPressed("subRight"))
 	{
-		angles_.y += MAX_ROT_SPEED;
+		angles_.y += rotSpeed_;
 	}
 
 	//カメラ座標を中心として、注視点を回転させる

@@ -2,11 +2,11 @@
 #include<EffekseerForDXLib.h>
 #include "../../Common/Fader.h"
 #include "../../Application.h"
-#include "../../Scene/Title.h"
-#include "../../Scene/Game.h"
-#include "../../Scene/GameClear.h"
-#include "../../Scene/GameOver.h"
-#include "../../Scene/PouseScene.h"
+#include "../../Scene/Main/Title.h"
+#include "../../Scene/Main/Game.h"
+#include "../../Scene/Main/GameClear.h"
+#include "../../Scene/Main/GameOver.h"
+#include "../../Scene/Sub/PouseScene.h"
 #include"../Decoration/EffectManager.h"
 #include"../Decoration/SoundManager.h"
 #include"../Decoration/UIManager2d.h"
@@ -277,8 +277,6 @@ SceneManager::SceneManager(void)
 
 	mainScreen_ = -1;
 
-	scenes_ = {};
-	
 	fader_ = nullptr;
 
 	isSceneChanging_ = false;

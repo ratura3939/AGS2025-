@@ -4,7 +4,7 @@
 #include"../Generic/Camera.h"
 #include"../GameSystem/AttackManager.h"
 #include"../Decoration/SoundManager.h"
-#include"../../Scene/Game.h"
+#include"../../Scene/Main/Game.h"
 #include"../../Utility/Utility.h"
 #include "PlayerManager.h"
 

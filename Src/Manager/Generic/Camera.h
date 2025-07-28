@@ -38,7 +38,7 @@ public:
 	//カメラ移動関連の定数---------------------------------------------------------------------
 	
 	static constexpr float MAX_MOVE_SPEED = 5.0f;	//移動速度の最大値
-	static constexpr float MAX_ROT_SPEED = 0.01f;	//移動速度の最大値
+	static constexpr float MAX_ROT_SPEED = 0.025f;	//移動速度の最大値
 
 	//カメラ揺らし関連の定数--------------------------------------------------------------------
 
@@ -121,6 +121,9 @@ public:
 	//回転取得
 	const Quaternion GetRot(void)const;
 	const VECTOR GetAngle(void)const;
+	//回転スピード
+	const float GetRotSpeed(void)const;
+	void SetRotSpeed(const float _speed);
 
 	//カメラモードの変更
 	void ChangeMode(MODE mode);
@@ -177,6 +180,9 @@ private:
 	//カメラの回転
 	Quaternion rot_;
 
+	//回転スピード
+	float rotSpeed_;
+
 	// カメラ角度(rad)
 	VECTOR angles_;
 	// X軸回転が無い角度
@@ -185,15 +191,15 @@ private:
 	//画面揺らし用
 	float stepShake_;
 
+	//画面揺れが終わったか
+	bool finishShake_;
+	//演出前位置
 	VECTOR defaultPos_;
-
+	//揺れ方向
 	VECTOR shakeDir_;
 	//補完スピード
 	float lerpSpeed_;
 
-	bool finishShake_;
-
-	
 	
 
 	//回転

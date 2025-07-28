@@ -4,7 +4,7 @@
 #include"../../Application.h"
 #include"../../UI/Enemy/EnemyCount.h"
 #include"../Generic/ResourceManager.h"
-#include"../../Scene/Game.h"
+#include"../../Scene/Main/Game.h"
 #include "EnemyManager.h"
 
 const std::string EnemyManager::ATTACK_NOMAL = "EnemyAttack";

@@ -1,4 +1,5 @@
 #include <DxLib.h>
+#include"../../Application.h"
 #include "InputManager.h"
 
 InputManager* InputManager::instance_ = nullptr;
@@ -42,7 +43,7 @@ void InputManager::Update(void)
 	GetHitKeyStateAll(keystate);
 	//マウス
 	mouseState_ = GetMouseInput();
-	preMousePos_ = mousePos_;
+	//マウス位置
 	GetMousePoint(&mousePos_.x, &mousePos_.y);
 
 	//パッド
@@ -89,6 +90,10 @@ void InputManager::Update(void)
 		currentInput_[keyvalue.first] = pressed;*/
 		
 	}
+
+	//マウス位置初期化
+	mousePos_ = centerMousePos_;
+	SetMousePoint(mousePos_.x, mousePos_.y);
 }
 
 void InputManager::Destroy(void)
@@ -174,16 +179,16 @@ void InputManager::MouseInputFuncInit(void)
 		return mouseState_ & MOUSE_INPUT_MIDDLE;
 	};
 	mouseInputTable_[MOUSE_INPUT::UP] = [this]() {
-		return mousePos_.y < preMousePos_.y;
+		return mousePos_.y < centerMousePos_.y;
 	};
 	mouseInputTable_[MOUSE_INPUT::DOWN] = [this]() {
-		return mousePos_.y > preMousePos_.y;
+		return mousePos_.y > centerMousePos_.y;
 	};
 	mouseInputTable_[MOUSE_INPUT::LEFT] = [this]() {
-		return mousePos_.x < preMousePos_.x;
+		return mousePos_.x < centerMousePos_.x;
 	};
 	mouseInputTable_[MOUSE_INPUT::RIGHT] = [this]() {
-		return mousePos_.x > preMousePos_.x;
+		return mousePos_.x > centerMousePos_.x;
 	};
 }
 
@@ -266,6 +271,9 @@ bool InputManager::IsPressed(const std::string& _eventCode)
 
 InputManager::InputManager(void)
 {
+	centerMousePos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
+	mousePos_ = centerMousePos_;
+	mouseState_ = -1;
 }
 
 InputManager::~InputManager(void)

@@ -1,17 +1,17 @@
-#include <string>
-#include <DxLib.h>
-#include "../Application.h"
-#include "../Utility/Utility.h"
-#include "../Manager/Generic/ResourceManager.h"
-#include "../Manager/Generic/SceneManager.h"
-#include "../Manager/Generic/InputManager.h"
-#include "../Manager/Generic/Camera.h"
-#include "../Manager/Decoration/SoundManager.h"
-#include "../Manager/Decoration/UIManager2d.h"
-#include"../Renderer/PixelMaterial.h"
-#include"../Renderer/PixelRenderer.h"
+#include<string>
+#include<DxLib.h>
+#include"../../Application.h"
+#include"../../Utility/Utility.h"
+#include"../../Manager/Generic/ResourceManager.h"
+#include"../../Manager/Generic/SceneManager.h"
+#include"../../Manager/Generic/InputManager.h"
+#include"../../Manager/Generic/Camera.h"
+#include"../../Manager/Decoration/SoundManager.h"
+#include"../../Manager/Decoration/UIManager2d.h"
+#include"../../Renderer/PixelMaterial.h"
+#include"../../Renderer/PixelRenderer.h"
 
-#include"../Object/Stage/Stage.h"
+#include"../../Object/Stage/Stage.h"
 #include "Title.h"
 
 

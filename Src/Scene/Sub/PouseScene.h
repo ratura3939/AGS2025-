@@ -1,20 +1,15 @@
 #pragma once
-#include "SceneBase.h"
-#include<memory>
-
-class Stage;
-
-
-class GameClear :
+#include "../SceneBase.h"
+class PouseScene :
     public SceneBase
 {
 public:
 
 	// コンストラクタ
-	GameClear(void);
+	PouseScene(void);
 
 	// デストラクタ
-	~GameClear(void);
+	~PouseScene(void);
 
 	void Init(void) override;
 
@@ -26,9 +21,5 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 	void Release(void) override;
-
-private:
-
-	std::unique_ptr<Stage>stage_;					//ステージ
 };
 

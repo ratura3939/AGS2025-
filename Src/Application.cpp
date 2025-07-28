@@ -49,7 +49,6 @@ void Application::Init(void)
 		isInitFail_ = true;
 		return;
 	}
-
 	//エフェクシア初期化
 	if (Effekseer_Init(8000) == -1)
 	{
@@ -57,6 +56,9 @@ void Application::Init(void)
 	}
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
+
+	//マウスカーソル非表示
+	SetMouseDispFlag(FALSE);
 
 	// キー制御初期化
 	SetUseDirectInputFlag(true);
