@@ -46,6 +46,17 @@ public:
 		end
 	};
 
+	enum class MOUSE_INPUT {
+		L_CLICK,//左クリック
+		R_CLICK,//右クリック
+		M_CLICK,//ホイールクリック
+		UP,		//上移動
+		DOWN,	//下移動
+		LEFT,	//左移動
+		RIGHT,	//右移動
+		MAX
+	};
+
 	enum class INPUT_RECORD {
 		CURRENT,
 		LAST
@@ -83,6 +94,10 @@ private:
 	//アナログキーの入力判別の関数定義
 	void AnalogInputFuncInit(void);
 
+	//マウスホイールの入力判別の関数定義
+	void MouseInputFuncInit(void);
+
+	//コードの現在又は１フレーム前の入力を渡す
 	const bool IsInputRecord(const std::string& _eventCode,const INPUT_RECORD& _record);
 
 public:
@@ -136,6 +151,13 @@ private:
 	InputPeriTypeData_t lastInptuPeri_;
 
 
+	//マウスホイールに関して
+	int mouseState_;		//マウスの入力状態
+	Vector2 mousePos_;		//マウス位置
+	Vector2 preMousePos_;	//マウス位置(１フレーム前)
+
+	using MouseInputTable_t = std::unordered_map<MOUSE_INPUT, std::function<bool(void)>>;
+	MouseInputTable_t mouseInputTable_;
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

@@ -23,8 +23,9 @@ InputManager& InputManager::GetInstance(void)
 
 void InputManager::Init(void)
 {
-	ResetInput();
-	AnalogInputFuncInit();
+	ResetInput();			//入力紐づけ
+	AnalogInputFuncInit();	//アナログ入力関数定義
+	MouseInputFuncInit();	//マウス入力関数定義
 }
 
 void InputManager::Update(void)
@@ -40,7 +41,9 @@ void InputManager::Update(void)
 	char keystate[KEY_ALL] = {};
 	GetHitKeyStateAll(keystate);
 	//マウス
-	int mousestate = GetMouseInput();
+	mouseState_ = GetMouseInput();
+	preMousePos_ = mousePos_;
+	GetMousePoint(&mousePos_.x, &mousePos_.y);
 
 	//パッド
 	int padstate = GetJoypadInputState(DX_INPUT_KEY_PAD1);
@@ -69,8 +72,8 @@ void InputManager::Update(void)
 				if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::GAMEPAD);
 			}
 			else if (input.type == PERIPHERAL_TYPE::MOUSE) {
-				//パッドに何かしらの入力がありそれがコードだったとき
-				pressed = mousestate & input.code;
+				//マウスに何かしらの入力がありそれがコードだったとき
+				pressed = mouseInputTable_[static_cast<MOUSE_INPUT>(input.code)]();
 				if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::MOUSE);
 			}
 			else if (input.type == PERIPHERAL_TYPE::X_ANALOG) {
@@ -104,20 +107,20 @@ void InputManager::ResetInput(void)
 	inputTable_["left"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_A },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LS_LEFT) } };
 	inputTable_["right"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_D },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LS_RIGHT) } };
 	//移動入力(サブ)<Rスティック・方向キー>
-	inputTable_["subUp"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_UP },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_UP) } };
-	inputTable_["subDown"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_DOWN },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_DOWN) } };
-	inputTable_["subLeft"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LEFT },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_LEFT) } };
-	inputTable_["subRight"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_RIGHT },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_RIGHT) } };
+	inputTable_["subUp"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::UP)},{PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_UP)}};
+	inputTable_["subDown"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::DOWN) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_DOWN) } };
+	inputTable_["subLeft"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::LEFT) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_LEFT) } };
+	inputTable_["subRight"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::RIGHT) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_RIGHT) } };
 
 	//各コマンド<PADは複数個所で兼用あり>
-	inputTable_["action"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_RETURN } ,{ PERIPHERAL_TYPE::MOUSE,MOUSE_INPUT_LEFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_B } };//Bボタン(Aボタン：任天堂)
+	inputTable_["action"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_RETURN } ,{ PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::L_CLICK)},{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_B } };//Bボタン(Aボタン：任天堂)
 	inputTable_["dash"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LSHIFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };		//Aボタン(Bボタン：任天堂)
 	inputTable_["cancel"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_Q },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };			//Aボタン(Bボタン：任天堂)
-	inputTable_["attack"] = { { PERIPHERAL_TYPE::MOUSE,MOUSE_INPUT_LEFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_C } };		//Xボタン(Yボタン：任天堂)
+	inputTable_["attack"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::L_CLICK) },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_C } };		//Xボタン(Yボタン：任天堂)
 	inputTable_["jump"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_SPACE },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_X } };		//Yボタン(Xボタン：任天堂)
 	inputTable_["crouch"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LCONTROL },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_START } };//LS
 	inputTable_["rock"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_R },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LT) } };		//LT
-	inputTable_["arrow"] = { { PERIPHERAL_TYPE::MOUSE,MOUSE_INPUT_RIGHT },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RT) } };	//RT
+	inputTable_["arrow"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::R_CLICK) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RT) } };	//RT
 
 
 
@@ -156,6 +159,31 @@ void InputManager::AnalogInputFuncInit(void)
 	};
 	analpgInputTable_[ANALOG_INPUT_TYPE::RT] = [](const XINPUT_STATE& _state) {
 		return _state.RightTrigger > ANALOG_TRIGGER_THRESHOLD;
+	};
+}
+
+void InputManager::MouseInputFuncInit(void)
+{
+	mouseInputTable_[MOUSE_INPUT::L_CLICK] = [this]() {
+		return mouseState_ & MOUSE_INPUT_LEFT;
+	};
+	mouseInputTable_[MOUSE_INPUT::R_CLICK] = [this]() {
+		return mouseState_ & MOUSE_INPUT_RIGHT;
+	};
+	mouseInputTable_[MOUSE_INPUT::M_CLICK] = [this]() {
+		return mouseState_ & MOUSE_INPUT_MIDDLE;
+	};
+	mouseInputTable_[MOUSE_INPUT::UP] = [this]() {
+		return mousePos_.y < preMousePos_.y;
+	};
+	mouseInputTable_[MOUSE_INPUT::DOWN] = [this]() {
+		return mousePos_.y > preMousePos_.y;
+	};
+	mouseInputTable_[MOUSE_INPUT::LEFT] = [this]() {
+		return mousePos_.x < preMousePos_.x;
+	};
+	mouseInputTable_[MOUSE_INPUT::RIGHT] = [this]() {
+		return mousePos_.x > preMousePos_.x;
 	};
 }
 
