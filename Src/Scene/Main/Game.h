@@ -70,6 +70,7 @@ public:
 	void DrawDodgeEffect(void);
 
 	void Release(void) override;
+	void Reset(void)override;
 
 	void StartBossFaze(void);	//ボス出現最初の処理用に。。(力技です)
 	void ChangeActionDirec(const ACTION_DIRECTION _direc);	//ブラー入れるか入れないか(その他追加ポストエフェクトも可能)

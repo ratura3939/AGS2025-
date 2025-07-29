@@ -1,5 +1,9 @@
 #pragma once
 
+//定義
+//シーン遷移::メインシーンの切り換え
+//シーン移動::サブシーンとの移動のやり取り
+
 class SceneBase
 {
 
@@ -25,4 +29,6 @@ public:
 	// 解放処理
 	virtual void Release(void) = 0;
 
+	//状況回帰(シーン移動後の状況用)
+	virtual void Reset(void) = 0;
 };

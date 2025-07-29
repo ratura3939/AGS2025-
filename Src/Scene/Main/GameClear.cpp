@@ -96,3 +96,7 @@ void GameClear::Release(void)
 {
 	
 }
+
+void GameClear::Reset(void)
+{
+}

@@ -6,7 +6,7 @@
 #include "../../Scene/Main/Game.h"
 #include "../../Scene/Main/GameClear.h"
 #include "../../Scene/Main/GameOver.h"
-#include "../../Scene/Sub/PouseScene.h"
+#include "../../Scene/Sub/PauseScene.h"
 #include"../Decoration/EffectManager.h"
 #include"../Decoration/SoundManager.h"
 #include"../Decoration/UIManager2d.h"
@@ -36,7 +36,10 @@ void SceneManager::Init(void)
 	waitSceneId_ = SCENE_ID::NONE;
 	cntl_ = CNTL::NONE;
 
-	popSceneList_[0] = SCENE_ID::POUSE;
+	nowSceneCount_ = 0;
+	useSceneList_ = {};
+
+	subSceneList_[0] = SCENE_ID::PAUSE;
 
 	//エフェクト・サウンドの生成
 	SoundManager::CreateInstance();
@@ -122,7 +125,7 @@ void SceneManager::Update(void)
 	else
 	{
 		//最新のシーンだけを更新
-  		scenes_.back()->Update();
+  		scenes_[useSceneList_.back()]->Update();
 		SoundManager::GetInstance().Update();
 		EffectManager::GetInstance().Update();
 	}
@@ -149,8 +152,8 @@ void SceneManager::Draw(void)
 	UpdateEffekseer3D();
 
 	//シーンの下層から順に描画
-	for (auto& scene : scenes_) {
-		scene->Draw();
+	for (auto& sceneIdx : useSceneList_) {
+		scenes_[sceneIdx]->Draw();
 	}
 
 	//エフェクシア描画
@@ -198,16 +201,16 @@ void SceneManager::ChangeScene(SCENE_ID nextId)
 
 }
 
-void SceneManager::PushScene(SCENE_ID _pushId)
+void SceneManager::AddSubScene(SCENE_ID _pushId)
 {
 	//そもそもシーンがない場合・途中追加可能なシーンではない場合は行わない
-	if (scenes_.empty()|| !IsPopScene(_pushId))return;
+	if (scenes_.empty()|| !IsSubScene(_pushId))return;
 
 	std::unique_ptr<SceneBase> pushScene;
 	switch (_pushId)
 	{
-	case SCENE_ID::POUSE:
-		pushScene = std::make_unique<PouseScene>();
+	case SCENE_ID::PAUSE:
+		pushScene = std::make_unique<PauseScene>();
 		break;
 	default:
 		break;
@@ -215,11 +218,19 @@ void SceneManager::PushScene(SCENE_ID _pushId)
 
 	pushScene->Init();
 	scenes_.push_back(std::move(pushScene));
+	//現在の末尾を加算したものを新たな末尾として入れる
+	useSceneList_.push_back(useSceneList_.back()++);
 }
 
-void SceneManager::PopScene(void)
+void SceneManager::PushSubScene(int _nextAcc)
 {
-	scenes_.pop_back();
+	useSceneList_.push_back(useSceneList_.back() + _nextAcc);
+	scenes_[useSceneList_.back()]->Reset();
+}
+
+void SceneManager::PopSubScene(void)
+{
+	useSceneList_.pop_back();
 }
 
 SceneManager::SCENE_ID SceneManager::GetSceneID(void)
@@ -305,7 +316,7 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	resM.Release();
 	sndM.Release();
 	uiM.Relese();
-
+	useSceneList_.clear();
 
 	// シーンを変更する
 	sceneId_ = sceneId;
@@ -342,6 +353,9 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	nextScene->Init();
 	//追加
 	scenes_.push_back(std::move(nextScene));
+	useSceneList_.push_back(0);	//初期値設定
+
+	SetSubScene(sceneId);
 
 	ResetDeltaTime();
 
@@ -378,15 +392,35 @@ void SceneManager::Fade(void)
 
 }
 
-const bool SceneManager::IsPopScene(const SCENE_ID _id) const
+const bool SceneManager::IsSubScene(const SCENE_ID _id) const
 {
 	//ポップ可能シーンのリスト分回す
-	for (auto& canPopScene : popSceneList_) {
+	for (auto& canPopScene : subSceneList_) {
 		if (_id == canPopScene) {
 			return true;
 		}
 	}
 	return false;
+}
+
+void SceneManager::SetSubScene(SCENE_ID _id)
+{
+	switch (_id)
+	{
+	case SceneManager::SCENE_ID::NONE:
+		break;
+	case SceneManager::SCENE_ID::TITLE:
+		break;
+	case SceneManager::SCENE_ID::GAME:
+		AddSubScene(SCENE_ID::PAUSE);
+		break;
+	case SceneManager::SCENE_ID::GAMEOVER:
+		break;
+	case SceneManager::SCENE_ID::CLEAR:
+		break;
+	default:
+		break;
+	}
 }
 
 

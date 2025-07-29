@@ -210,6 +210,10 @@ void Title::Release(void)
 {
 }
 
+void Title::Reset(void)
+{
+}
+
 void Title::NomalUpdate(void)
 {
 	// ƒV[ƒ“‘JˆÚ

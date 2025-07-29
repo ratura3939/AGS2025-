@@ -25,6 +25,8 @@ public:
 		int playMode;	//音声データの再生タイプ
 	};
 
+	static constexpr int VOLUME_BASIC = 255 / 100;
+
 	// インスタンスの生成
 	static void CreateInstance(void);
 
@@ -64,6 +66,12 @@ public:
 	/// <param name="_name">登録名</param>
 	/// <param name="_persent">調整割合(0%～100%)</param>
 	void AdjustVolume(const std::string _name, const int _persent);
+	/// <summary>
+	/// 音量調節
+	/// </summary>
+	/// <param name="_playType">調節対象(BGMorSE)</param>
+	/// <param name="_persent">調整割合(0%～100%)</param>
+	void AdjustVolume(const TYPE _playType, const int _persent);
 
 	void Destroy(void);
 private:

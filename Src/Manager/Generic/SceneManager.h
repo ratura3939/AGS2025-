@@ -7,6 +7,10 @@ class SceneBase;
 class Fader;
 class Camera;
 
+//定義
+//シーン遷移::メインシーンの切り換え
+//シーン移動::サブシーンとの移動のやり取り
+
 class SceneManager
 {
 
@@ -26,7 +30,7 @@ public:
 		CLEAR,
 
 		//ポップ可能シーン
-		POUSE,
+		PAUSE,
 	};
 
 	enum class CNTL
@@ -50,13 +54,22 @@ public:
 	// リソースの破棄
 	void Destroy(void);
 
-	// 状態遷移
+	// シーン遷移(scenes_を初期化させMainから作り直す)
 	void ChangeScene(SCENE_ID nextId);
 
 	//シーン追加
-	void PushScene(SCENE_ID _pushId);
+	void AddSubScene(SCENE_ID _pushId);
+
+	/// <summary>
+	/// シーン移動(scenes_に格納されているサブシーンへ切り換える)
+	/// </summary>
+	/// <param name="_nextAcc">移動先は何個後にある物か</param>
+	///SceneManagerでの格納順とのすり合わせに注意
+	/// 基本形はつぎに移動なので１を初期設定
+	void PushSubScene(int _nextAcc = 1);
+	
 	//現在のシーン消去
-	void PopScene(void);
+	void PopSubScene(void);
 
 	// シーンIDの取得
 	SCENE_ID GetSceneID(void);
@@ -100,7 +113,7 @@ private:
 	static SceneManager* instance_;
 
 	SCENE_ID sceneId_;
-	SCENE_ID popSceneList_[POP_SCENE_TYPE_NUM];
+	SCENE_ID subSceneList_[POP_SCENE_TYPE_NUM];
 	SCENE_ID waitSceneId_;
 	CNTL cntl_;
 
@@ -113,7 +126,9 @@ private:
 	Fader* fader_;
 
 	// 各種シーン
-	std::vector<std::unique_ptr<SceneBase>> scenes_;
+	std::vector<std::unique_ptr<SceneBase>> scenes_;	//シーン格納
+	std::vector<int>useSceneList_;	//使用しているシーンのリスト
+	int nowSceneCount_;		//現在のシーンがscenes_で何番目に格納されているか(scenes_の指数用)
 
 	// シーン遷移中判定
 	bool isSceneChanging_;
@@ -142,6 +157,9 @@ private:
 
 	// フェード
 	void Fade(void);
+	//サブシーンか
+	const bool IsSubScene(const SCENE_ID _id)const;
 
-	const bool IsPopScene(const SCENE_ID _id)const;
+	//各メインシーンのサブシーン格納
+	void SetSubScene(SCENE_ID _id);
 };

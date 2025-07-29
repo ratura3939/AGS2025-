@@ -107,7 +107,16 @@ void SoundManager::AdjustVolume(const std::string _name, const int _persent)
 {
 	//元データがないときは警告
 	if (sounds_.find(_name) == sounds_.end())assert("設定していない音声を設定しようとしています。");
-	ChangeVolumeSoundMem(255 * _persent / 100, sounds_[_name].data);
+	ChangeVolumeSoundMem(VOLUME_BASIC * _persent, sounds_[_name].data);
+}
+
+void SoundManager::AdjustVolume(const TYPE _playType, const int _persent)
+{
+	for (auto& info : sounds_) {
+		if (info.second.type == _playType) {
+			ChangeVolumeSoundMem(VOLUME_BASIC * _persent, info.second.data);
+		}
+	}
 }
 
 void SoundManager::Destroy(void)

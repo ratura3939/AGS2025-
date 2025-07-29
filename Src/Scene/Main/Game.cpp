@@ -235,6 +235,9 @@ void Game::Update(void)
 	SceneManager& scM = SceneManager::GetInstance();
 	SoundManager& sndM = SoundManager::GetInstance();
 	Camera& camera = scM.GetCamera();
+	InputManager& inpM = InputManager::GetInstance();
+
+	
 
 #pragma region シーン遷移
 	//プレイヤーが死んでいたら
@@ -246,6 +249,12 @@ void Game::Update(void)
 		scM.ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
 	
+
+	//ポーズシーン遷移
+	if (inpM.IsTrigerrDown("pause")) {
+		//シーン追加(一つ次へ)
+		SceneManager::GetInstance().PushSubScene();
+	}
 #pragma endregion
 
 	//更新
@@ -257,6 +266,7 @@ void Game::GameUpdate(void)
 	SceneManager& scM = SceneManager::GetInstance();
 	SoundManager& sndM = SoundManager::GetInstance();
 	Camera& camera = scM.GetCamera();
+	
 
 	//敵がいなくなったら
 	if (enemy_->GetEnemys().size() <= 0) {
@@ -584,6 +594,10 @@ void Game::Release(void)
 {
 	player_->Release();
 	enemy_->Release();
+}
+
+void Game::Reset(void)
+{
 }
 
 void Game::StartBossFaze(void)

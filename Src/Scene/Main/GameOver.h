@@ -25,6 +25,7 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 	void Release(void) override;
+	void Reset(void)override;
 
 private:
 	std::unique_ptr<Stage>stage_;					//ステージ

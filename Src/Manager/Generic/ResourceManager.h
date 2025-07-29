@@ -43,6 +43,9 @@ public:
 		NUMBER_IMGS,
 		WARNING_IMG,
 		ATK_ALLERT_IMG,
+		RETRY_IMG,
+		CHECK_CONFIG_IMG,
+		SWITCH_OPERATOR_IMG,
 		
 
 		//ƒ‚ƒfƒ‹

@@ -92,3 +92,7 @@ void GameOver::Release(void)
 {
 	
 }
+
+void GameOver::Reset(void)
+{
+}
