@@ -270,6 +270,11 @@ const bool UIManager2d::IsLoopUpdate(const std::string _name, const UI_DIRECTION
 	return false;
 }
 
+const VECTOR UIManager2d::GetDrawPos(const std::string _name) const
+{
+	return infoes_.at(_name).pos;
+}
+
 const UIManager2d::UI_DIRECTION_GROUP UIManager2d::GetDirectionGroup(const std::string _name)
 {
 	return GetDirectionGroup(direcInfoes_[_name][0].type);
@@ -348,6 +353,7 @@ void UIManager2d::Move(const std::string& _name, DirectionInfo& _direcInfo)
 
 		//ˆÚ“®—Ê‰ÁŽZ
 		afterPos.x += _direcInfo.acc;
+		_direcInfo.pow += _direcInfo.acc;
 
 		//ˆÚ“®ãŒÀE‰ºŒÀ‚ÌÝ’è
 		if (_direcInfo.pow > _direcInfo.max ||

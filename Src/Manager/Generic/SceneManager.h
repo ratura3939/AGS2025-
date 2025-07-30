@@ -83,6 +83,7 @@ public:
 	//操作種別の取得・設定
 	const CNTL GetController(void)const;
 	void SetController(const CNTL _cntl);
+	void SwitchController(void);	//切り換え
 
 	//更新処理のスピード倍率
 	void SetUpdateSpeedRate_(const float _percent);	//設定

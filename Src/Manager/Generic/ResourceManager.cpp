@@ -294,6 +294,10 @@ void ResourceManager::InitPouse(void)
 	//‘€ìØ‚èŠ·‚¦ƒ{ƒ^ƒ“
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "SwitchOperationBtn.png");
 	resourcesMap_.emplace(SRC::SWITCH_OPERATOR_IMG, res);
+
+	//–îˆó
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_ArrowDown.png");
+	resourcesMap_.emplace(SRC::ARROW_DOWN_IMG, res);
 }
 
 void ResourceManager::ResorceDeviceIcon(void)

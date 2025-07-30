@@ -143,6 +143,8 @@ public:
 	const bool IsFinishDirection(const std::string _name,const UI_DIRECTION_GROUP _group);
 
 	const bool IsLoopUpdate(const std::string _name, const UI_DIRECTION_GROUP _group);
+
+	const VECTOR GetDrawPos(const std::string _name)const;
 private:
 	//インスタンス用
 	static UIManager2d* instance_;

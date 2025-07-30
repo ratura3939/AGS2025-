@@ -253,7 +253,7 @@ void Game::Update(void)
 	//ポーズシーン遷移
 	if (inpM.IsTrigerrDown("pause")) {
 		//シーン追加(一つ次へ)
-		SceneManager::GetInstance().PushSubScene();
+		scM.PushSubScene();
 	}
 #pragma endregion
 
@@ -598,6 +598,11 @@ void Game::Release(void)
 
 void Game::Reset(void)
 {
+	SoundManager& sndM = SoundManager::GetInstance();
+	sndM.AdjustVolume(SoundManager::TYPE::BGM, 80);	//前シーンに戻るのでBGMの音量を復活
+	//とりあえずメニューからの復帰時は追従に
+	//メニュー開く直前に変える可能性大
+	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
 }
 
 void Game::StartBossFaze(void)

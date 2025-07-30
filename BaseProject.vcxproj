@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Scene\Sub\KeyConfig.cpp" />
     <ClCompile Include="Src\Scene\Sub\PauseScene.cpp" />
     <ClCompile Include="Src\Object\Character\Player\ResultPlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\Boss.cpp" />
@@ -67,8 +68,10 @@
     <ClCompile Include="Src\Utility\Utility.cpp" />
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
     <ClCompile Include="Src\Manager\Decoration\UIManager2d.cpp" />
+    <ClCompile Include="Src\Scene\Sub\SwitchControllerScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Scene\Sub\KeyConfig.h" />
     <ClInclude Include="Src\Scene\Sub\PauseScene.h" />
     <ClInclude Include="Src\Object\Character\Player\ResultPlayer.h" />
     <ClInclude Include="Src\Object\Character\Enemy\Boss.h" />
@@ -117,6 +120,7 @@
     <ClInclude Include="Src\Utility\Utility.h" />
     <ClInclude Include="Src\Object\Stage\Stage.h" />
     <ClInclude Include="Src\Manager\Decoration\UIManager2d.h" />
+    <ClInclude Include="Src\Scene\Sub\SwitchControllerScene.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\Model\BlurSkinPS.hlsl">

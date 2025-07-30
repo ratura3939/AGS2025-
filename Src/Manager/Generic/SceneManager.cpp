@@ -34,7 +34,6 @@ void SceneManager::Init(void)
 {
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
-	cntl_ = CNTL::NONE;
 
 	nowSceneCount_ = 0;
 	useSceneList_ = {};
@@ -218,19 +217,21 @@ void SceneManager::AddSubScene(SCENE_ID _pushId)
 
 	pushScene->Init();
 	scenes_.push_back(std::move(pushScene));
-	//Œ»Ý‚Ì––”ö‚ð‰ÁŽZ‚µ‚½‚à‚Ì‚ðV‚½‚È––”ö‚Æ‚µ‚Ä“ü‚ê‚é
-	useSceneList_.push_back(useSceneList_.back()++);
 }
 
 void SceneManager::PushSubScene(int _nextAcc)
 {
-	useSceneList_.push_back(useSceneList_.back() + _nextAcc);
-	scenes_[useSceneList_.back()]->Reset();
+	int backNum = useSceneList_.back();
+	backNum += _nextAcc;
+
+	useSceneList_.push_back(backNum);
+	scenes_[backNum]->Reset();
 }
 
 void SceneManager::PopSubScene(void)
 {
 	useSceneList_.pop_back();
+	scenes_[useSceneList_.back()]->Reset();
 }
 
 SceneManager::SCENE_ID SceneManager::GetSceneID(void)
@@ -257,6 +258,16 @@ const SceneManager::CNTL SceneManager::GetController(void) const
 void SceneManager::SetController(const CNTL _cntl)
 {
 	cntl_ = _cntl;
+}
+
+void SceneManager::SwitchController(void)
+{
+	if (cntl_ == CNTL::KEY) {
+		SetController(CNTL::PAD);
+	}
+	else if(cntl_==CNTL::PAD) {
+		SetController(CNTL::KEY);
+	}
 }
 
 void SceneManager::SetUpdateSpeedRate_(const float _percent)

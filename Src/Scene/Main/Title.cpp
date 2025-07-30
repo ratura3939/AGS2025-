@@ -61,6 +61,9 @@ void Title::Init(void)
 {
 	// カメラモード：定点カメラ
 	//SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
+	
+	//コントローラー両対応
+	SceneManager::GetInstance().SetController(SceneManager::CNTL::NONE);
 
 	// タイトルロゴ
 	//logoImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::START_LOGO).handleId_;
