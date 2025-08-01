@@ -4,6 +4,7 @@ class Boss :
     public EnemyBase
 {
 public:
+    //各種アニメーション番号
     static constexpr int BOSS_IDLE = 1;
     static constexpr int BOSS_WALK = 2;
     static constexpr int BOSS_PRE_PUNCH = 5;
@@ -16,7 +17,7 @@ public:
     static constexpr float BOSS_RADIUS = 400.0f;
 
     Boss(VECTOR& _pos);
-    ~Boss(void);
+    ~Boss(void)override;
 
     void Shout(void)override;
 

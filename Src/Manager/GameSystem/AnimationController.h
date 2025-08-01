@@ -73,7 +73,6 @@ private:
 	void FinishAnimLoop(void);
 	void FinishAnimReturn(void);
 
-private:
 	int& modelId_;	//モデルID
 	std::unordered_map<std::string, AnimationInfo>animDatas_;	//アニメーションデータ総まとめ
 	AnimationInfo activeAnim_;	//再生中のアニメーション情報

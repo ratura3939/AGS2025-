@@ -1,6 +1,6 @@
 #pragma once
 #include "../SceneBase.h"
-class KeyConfig :
+class KeyConfigScene :
     public SceneBase
 {
 };

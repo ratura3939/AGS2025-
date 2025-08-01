@@ -12,14 +12,17 @@ class EnemyBase :
 {
 public:
 #pragma region ステータス関連
+
     //その他パラメータ類
     static constexpr float MOVE_POW = 3.0f;     //移動量
     static constexpr float MOVE_POW_FIND = 5.0f;//移動量(発見時)
     static constexpr float CHARA_SCALE = 0.7f;  //サイズ
     static constexpr float ENEMY_HP = 70.0f;
+
 #pragma endregion
 
 #pragma region 状態ごと関連
+
       //状態遷移に関わるもの
     static constexpr float FIELD_VISION_DEG_HALF = 40.0f;	//視界の角度(両方向に展開するので全体の半分の角度を明記)
     static constexpr float FIELD_VISION_DISTANCE = 1000.0f;	//視界の距離
@@ -37,10 +40,12 @@ public:
 
     static constexpr float STAY_TIME = 200.0f;   //ステイの時間
     static constexpr VECTOR SCALE_DOWN = { 0.01f,0.01f,0.01f };
+
 #pragma endregion
 
 
 #pragma region アニメーション関連
+
     static constexpr float SPEED_ANIM = 1.0f;
     static constexpr int ANIM_IDLE = 42;    //待機
 
@@ -54,15 +59,8 @@ public:
     //演出
     static constexpr int ANIM_DETH_START = 29;      //死亡開始
     static constexpr int ANIM_DETH_SUSTANABLE = 28; //死亡持続
-#pragma endregion
-
-#pragma region UI関連
- 
-
-   
 
 #pragma endregion
-
 
     //攻撃関連(外部ファイル化させる)
     static constexpr VECTOR RELATIVE_ATTACK_POS = { 0.0f, 75.0f, 100.0f };
@@ -91,37 +89,12 @@ public:
     };
 
     EnemyBase(VECTOR& _pos);
-    ~EnemyBase(void);
+    ~EnemyBase(void)override;
 
     const bool Init(const int _num)override;
     void Update(const VECTOR _pPos, AttackManager& _atk)override;
     void Draw(void)override;
-  
-protected:
-    virtual void SetPram(void);     //各敵の固有情報(いずれか外部データ化したい)
-    virtual void InitAnim(void)override;
-    void InitUI(void)override;
-#pragma region 各種状態更新
-protected:    //各種更新処理
-    void UpdateNomal(const VECTOR& _pPos, AttackManager& _atk);  //通常
-    void UpdateSearch(const VECTOR& _pPos, AttackManager& _atk); //索敵
-    virtual void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk); //戦闘
-    void UpdateDeth(const VECTOR& _pPos, AttackManager& _atk); //戦闘
 
-    //各種移動処理
-    void MoveNomal(const VECTOR& _pPos);
-    void MoveSearch(const VECTOR& _pPos);
-    virtual void MoveBattle(const VECTOR& _pPos);
-
-    void OderGoalRot(const VECTOR _pPos);
-
-    void ChangeState(const ENEMY_STATE _state); //状態の遷移
-#pragma endregion
-
-    
-    virtual void DrawUI(void)override;
-
-public:
     //生存判定
     const bool IsAlive(void)const override;
     const ENEMY_STATE GetNowState(void)const { return state_; }
@@ -141,12 +114,36 @@ public:
 
     virtual void Shout(void);//ボス専用
 
-public: //デバッグ用
+     //デバッグ用
     void SetColor(int _color);
     void SetPos(VECTOR _pos);
     void DrawDebug(void)override;
-
+  
 protected:
+    virtual void SetPram(void);     //各敵の固有情報(いずれか外部データ化したい)
+    virtual void InitAnim(void)override;
+    void InitUI(void)override;
+
+#pragma region 各種状態更新
+
+    void UpdateNomal(const VECTOR& _pPos, AttackManager& _atk);  //通常
+    void UpdateSearch(const VECTOR& _pPos, AttackManager& _atk); //索敵
+    virtual void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk); //戦闘
+    void UpdateDeth(const VECTOR& _pPos, AttackManager& _atk); //戦闘
+
+    //各種移動処理
+    void MoveNomal(const VECTOR& _pPos);
+    void MoveSearch(const VECTOR& _pPos);
+    virtual void MoveBattle(const VECTOR& _pPos);
+
+    void OderGoalRot(const VECTOR _pPos);
+
+    void ChangeState(const ENEMY_STATE _state); //状態の遷移
+
+#pragma endregion
+
+    virtual void DrawUI(void)override;
+
     using Update_f = void(EnemyBase::*)(const VECTOR& _pPos, AttackManager& _atk);
     using Move_f = void(EnemyBase::*)(const VECTOR& _pPos);
     Update_f update_;   //更新関数
@@ -181,7 +178,5 @@ protected:
     int serchCol_;
     int alertCol_;
     double debugRot_;
-
-
 };
 

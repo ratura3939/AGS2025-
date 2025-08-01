@@ -31,6 +31,8 @@ public:
 
 		//ポップ可能シーン
 		PAUSE,
+		KEY_CONFIG,
+		SWITCH_CNTL,
 	};
 
 	enum class CNTL

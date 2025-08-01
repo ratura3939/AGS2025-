@@ -25,6 +25,12 @@ namespace {
 	const float ARROW_ACC = -3.0f;	//矢印の移動量
 	const float ARROW_MOVE_MAX = 0;	//移動量(上限)
 	const float ARROW_MOVE_MIN = -60;	//移動量(下限)
+
+	const int MENU_LIST_NONE_DIFFER = 1;	//列挙にNONEが入っているのでそれの差分用
+
+	//シーン移動の際に何シーン跨ぐか。(SceneManagerのAddSubScene内の物と照らし合わせること)
+	const int CONFIG_SCENE_JUMP_CNT = 1;	//操作確認シーンの場合
+	const int SWITCH_CNTL_SCENE_JUMP_CNT = 2;	//操作切り換えシーンの場合
 }
 
 PauseScene::PauseScene(void)
@@ -66,7 +72,7 @@ void PauseScene::Init(void)
 
 	//矢印
 	uiM.Add(RIGHT_ARROW, resM.Load(ResourceManager::SRC::ARROW_DOWN_IMG).handleId_, UI_DIREC::LEFT_RIGHT, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(RIGHT_ARROW, GetArrowDrawPos(), BTN_DRAW_SIZE, ARROW_LOCAL_ROT);
+	uiM.SetUIInfo(RIGHT_ARROW, GetDrawPosOfArrow(), BTN_DRAW_SIZE, ARROW_LOCAL_ROT);
 	uiM.SetUIDirectionPram(RIGHT_ARROW, UI_GROUP::MOVE, ARROW_ACC, ARROW_MOVE_MAX, ARROW_MOVE_MIN);
 	
 
@@ -86,40 +92,57 @@ void PauseScene::InitEffect(void)
 void PauseScene::Update(void)
 {
 	//入力受付
-	UserInput();
+	InputUser();
 
 	//UI更新
 	UIManager2d::GetInstance().Update(RIGHT_ARROW);
 }
 
-void PauseScene::UserInput(void)
+void PauseScene::InputUser(void)
 {
 	SceneManager& scM = SceneManager::GetInstance();
 	InputManager& inpM = InputManager::GetInstance();
 	//ポーズボタンを押されたら
 	if (inpM.IsTrigerrDown("pause")) {
-		//シーン移動
+		//シーン移動(1つ前のシーン＝ゲームシーンに戻る)
 		scM.PopSubScene();
+	}
+
+	//決定入力
+	if (inpM.IsTrigerrDown("action")) {
+		switch (static_cast<MENU_ITEM>(selectIdx_ + MENU_LIST_NONE_DIFFER)) {
+		case MENU_ITEM::BACK_GAME:
+			//シーン移動(1つ前のシーン＝ゲームシーンに戻る)
+			scM.PopSubScene();
+			break;
+		case MENU_ITEM::CONFIG:
+			//操作方法シーンへ移動。(飛ぶシーンが１なので本来引数は必要ないけどChangeOpeと合わせるため入れる。)
+			scM.PushSubScene(CONFIG_SCENE_JUMP_CNT);
+			break;
+		case MENU_ITEM::SWITCH_CNTL:
+			scM.PushSubScene(SWITCH_CNTL_SCENE_JUMP_CNT);
+			break;
+		case MENU_ITEM::BACK_TITLE:
+			scM.ChangeScene(SceneManager::SCENE_ID::TITLE);
+			break;
+		}
 	}
 
 	//上入力
 	if (inpM.IsTrigerrDown("up")) {
-		//一つ減らす
 		selectIdx_--;
 		//０以下にならないよう減らす時のみボタンの種類分一度足す。
 		selectIdx_ = (selectIdx_ + drawBtnList_.size()) % drawBtnList_.size();
-
 		//矢印の描画位置設定
-		UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetArrowDrawPos());
+		UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetDrawPosOfArrow());
 	}
 	//下入力
 	else if (inpM.IsTrigerrDown("down")) {
-		//加算
 		selectIdx_++;
 		//一周したら０に戻るよう余りで求める
 		selectIdx_ = selectIdx_ % drawBtnList_.size();
 		//矢印の描画位置設定
-		UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetArrowDrawPos());
+		UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetDrawPosOfArrow());
 	}
 }
 
@@ -154,7 +177,7 @@ void PauseScene::Reset(void)
 	selectIdx_ = 0;
 }
 
-const VECTOR PauseScene::GetArrowDrawPos(void) const
+const VECTOR PauseScene::GetDrawPosOfArrow(void) const
 {
 	VECTOR arrowPos = UIManager2d::GetInstance().GetDrawPos(drawBtnList_[selectIdx_]);
 	arrowPos.x += ARRW_DRAW_DIFF_X;

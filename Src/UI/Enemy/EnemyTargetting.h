@@ -9,7 +9,7 @@ public:
 	static constexpr float LOCK_UI_DRAW_SIZE = 50.0f;	//描画サイズ
 
 	EnemyTargetting(VECTOR& _followPos);
-	~EnemyTargetting(void);
+	~EnemyTargetting(void)override;
 
 	bool Init(const std::string& _master)override;
 	bool Update(void)override;
@@ -24,6 +24,5 @@ private:
 	std::string lockStr_;
 
 	bool isLocked_;     //ロックオンされているか
-
 };
 

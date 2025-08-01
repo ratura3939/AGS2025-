@@ -22,7 +22,7 @@ public:
 	static constexpr float FIND_UI_DRAW_SIZE = 50.0f;	//ï`âÊÉTÉCÉY
 
 	EnemyFind(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state);
-	~EnemyFind(void);
+	~EnemyFind(void)override;
 
 	bool Init(const std::string& _master)override;
 	bool Update(void)override;

@@ -6,7 +6,7 @@ class EnemyHp :
 {
 public:
 	EnemyHp(VECTOR& _followPos,float& _now, float _max);
-	~EnemyHp(void);
+	~EnemyHp(void)override;
 
 	bool Init(const std::string& _master)override;
 	bool Update(void)override;

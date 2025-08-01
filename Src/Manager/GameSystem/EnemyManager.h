@@ -83,6 +83,7 @@ public:
 	void BossShout(void);
 
 	void DrawDebug(void);
+
 private:
 	std::vector<std::shared_ptr<EnemyBase>> characters_;
 	bool preBattle_;	//位置フレーム前が戦闘状態であるかどうか

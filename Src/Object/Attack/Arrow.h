@@ -8,7 +8,6 @@ class Quaternion;
 class Arrow
 {
 public:
-
 	//定数
 	static constexpr VECTOR ARROW_LOCAL_POS = { 15.0f,30.0f,50.0f };	//打ち始めに違和感がないように調整
 	static constexpr float GRAVITY = 0.5f;			//重力
@@ -39,14 +38,6 @@ public:
 	void Release();
 	void Destroy(void);
 
-private:
-	void UpdateRotQuat(void);
-	//移動処理
-	void Move(void);
-	//生存フラグ設定
-	void SetIsAlive(const bool _flag) { isAlive_ = _flag; }
-
-public:
 	const VECTOR GetPos(void)const { return pos_; }
 	const bool GetIsAlive(void)const { return isAlive_; }
 	const STATE GetState(void)const { return state_; }
@@ -55,6 +46,12 @@ public:
 	void ChangeState(const STATE _state) { state_ = _state; }
 
 private:
+	void UpdateRotQuat(void);
+	//移動処理
+	void Move(void);
+	//生存フラグ設定
+	void SetIsAlive(const bool _flag) { isAlive_ = _flag; }
+
 	// 各種方向を取得
 	VECTOR GetForward(void) const;
 	VECTOR GetDown(void) const;
@@ -62,7 +59,6 @@ private:
 	// 対象方向を取得
 	VECTOR GetDir(const VECTOR& _vec) const;
 
-private:
 	//位置情報
 	int modelId_;	//モデルID
 	VECTOR pos_;	//座標
@@ -89,7 +85,5 @@ private:
 	float atkPow_;
 	//生存判定
 	bool isAlive_;
-
-	
 };
 

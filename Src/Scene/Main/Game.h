@@ -46,24 +46,7 @@ public:
 	~Game(void);
 
 	void Init(void) override;
-
-private:
-	void InitSound(void)override;
-	void InitEffect(void)override;
-	void InitShader(void);
-
-public:
 	void Update(void) override;
-
-private:
-	void GameUpdate(void);		//通常のゲームアップデート
-	void DirectionUpdate(void);	//演出アップデート
-	bool DirectionPostEffect(void);	//ポストエフェクト
-	bool DirectionShakeScreen(void);//画面揺れ
-	void DoShake(void);
-	bool DirectionCameraMove(void);	//カメラ移動
-
-public:
 	void Draw(void) override;
 	void DrawScanLine(void);
 	void DrawBlur(void);
@@ -76,6 +59,18 @@ public:
 	void ChangeActionDirec(const ACTION_DIRECTION _direc);	//ブラー入れるか入れないか(その他追加ポストエフェクトも可能)
 
 private:
+	//各初期化
+	void InitSound(void)override;
+	void InitEffect(void)override;
+	void InitShader(void);
+
+	void GameUpdate(void);			//通常のゲームアップデート
+	void DirectionUpdate(void);		//演出アップデート
+	bool DirectionPostEffect(void);	//ポストエフェクト
+	bool DirectionShakeScreen(void);//画面揺れ演出
+	void DoShake(void);				//揺らす
+	bool DirectionCameraMove(void);	//カメラ移動
+
 	/// <summary>
 	/// 攻撃の基礎情報登録(ゆくゆくは外部データにしたい)
 	/// </summary>
@@ -90,12 +85,13 @@ private:
 	//切り換え終了時の処理
 	void FinishSwitchBgm(void);
 
-	void RockOn(void);
+	void RockOn(void);		
 	void RockOff(void);
 
-	void StartSlow(void);
-	void EndSlow(void);
-private:
+	void StartSlow(void);	//スロー演出開始
+	void EndSlow(void);		//スロー終了
+
+	void DrawDebug(void);
 
 	std::unique_ptr<PlayerManager>player_;			//プレイヤー
 	std::unique_ptr<EnemyManager>enemy_;			//敵
@@ -146,8 +142,5 @@ private:
 	std::unique_ptr<PixelMaterial>dodgeMaterial_;
 	std::unique_ptr<PixelRenderer>dodgeRender_;
 	int dodgeScreen_;
-
-
-	void DrawDebug(void);
 };
 

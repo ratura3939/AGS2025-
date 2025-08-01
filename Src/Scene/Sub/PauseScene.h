@@ -8,13 +8,12 @@ class PauseScene :
     public SceneBase
 {
 public:
-
-	enum class TYPE_STEP {
+	enum class MENU_ITEM {
 		NONE,
 		BACK_GAME,	//ゲームに戻る
-		BACK_TITLE,	//ゲームやめる(タイトルに戻る)
 		CONFIG,		//操作方法
-		CHANGE_OPE,	//操作切り換え
+		SWITCH_CNTL,	//操作切り換え
+		BACK_TITLE,	//ゲームやめる(タイトルに戻る)
 	};
 
 	// コンストラクタ
@@ -24,26 +23,21 @@ public:
 	~PauseScene(void);
 
 	void Init(void) override;
-
-private:
-	void InitSound(void)override;
-	void InitEffect(void)override;
-
-public:
 	void Update(void) override;
-
-private:
-	void UserInput(void);
-
-public:
 	void Draw(void) override;
 	void Release(void) override;
 	void Reset(void)override;
 
 private:
-	const VECTOR GetArrowDrawPos(void)const;
+	void InitSound(void)override;
+	void InitEffect(void)override;
 
-private:
+	//入力受付
+	void InputUser(void);
+
+	//矢印を描画すべき位置を取得
+	const VECTOR GetDrawPosOfArrow(void)const;
+
 	std::vector<std::string>drawBtnList_;	//描画されるボタンを上から順に
 	int selectIdx_;	//カーソル位置
 };

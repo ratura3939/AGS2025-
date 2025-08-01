@@ -6,7 +6,7 @@ class UIBase
 {
 public:
 	UIBase(VECTOR& _followPos);
-	~UIBase(void);
+	virtual ~UIBase(void);
 
 	virtual bool Init(const std::string& _master) = 0;
 	virtual bool Update(void) = 0;

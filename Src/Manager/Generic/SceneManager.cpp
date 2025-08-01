@@ -7,6 +7,8 @@
 #include "../../Scene/Main/GameClear.h"
 #include "../../Scene/Main/GameOver.h"
 #include "../../Scene/Sub/PauseScene.h"
+#include "../../Scene/Sub/KeyConfigScene.h"
+#include "../../Scene/Sub/SwitchControllerScene.h"
 #include"../Decoration/EffectManager.h"
 #include"../Decoration/SoundManager.h"
 #include"../Decoration/UIManager2d.h"
@@ -210,6 +212,12 @@ void SceneManager::AddSubScene(SCENE_ID _pushId)
 	{
 	case SCENE_ID::PAUSE:
 		pushScene = std::make_unique<PauseScene>();
+		break;
+	case SCENE_ID::KEY_CONFIG:
+		pushScene = std::make_unique<KeyConfigScene>();
+		break;
+	case SCENE_ID::SWITCH_CNTL:
+		pushScene = std::make_unique<SwitchControllerScene>();
 		break;
 	default:
 		break;
@@ -424,6 +432,8 @@ void SceneManager::SetSubScene(SCENE_ID _id)
 		break;
 	case SceneManager::SCENE_ID::GAME:
 		AddSubScene(SCENE_ID::PAUSE);
+		AddSubScene(SCENE_ID::KEY_CONFIG);
+		AddSubScene(SCENE_ID::SWITCH_CNTL);
 		break;
 	case SceneManager::SCENE_ID::GAMEOVER:
 		break;

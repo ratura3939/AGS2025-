@@ -20,7 +20,7 @@ public:
     };
 
     EnemyUIController(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state);
-    ~EnemyUIController(void);
+    ~EnemyUIController(void)override;
 
     void Init(const std::string& _master)override;
     void CreateUI(const std::string& _master,float& hp, float hpMax);

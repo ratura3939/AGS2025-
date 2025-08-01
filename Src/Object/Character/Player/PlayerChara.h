@@ -85,19 +85,11 @@ public:
     };
 
     PlayerChara(void);
-    ~PlayerChara(void);
+    ~PlayerChara(void)override;
 
     const bool Init(const int _num)override;
     void Update(void)override;
 
-private:
-    void InitAnim(void)override;
-    void InitUI(void)override;
-    void DrawUI(void)override;
-    void Move(void);    //移動処理
-    const std::string DecideAnim(const MOVE_DIR _dir)const;
-
-public:
     //注視点の取得
     const VECTOR GetFocusPoint(void)const;
     /// <summary>
@@ -124,6 +116,12 @@ public:
     void SetAtkAllert(void);    //攻撃危機察知
 
 private:
+    void InitAnim(void)override;
+    void InitUI(void)override;
+    void DrawUI(void)override;
+    void Move(void);    //移動処理
+    const std::string DecideAnim(const MOVE_DIR _dir)const;
+
     ROCK_STATE rState_; //ロックオン状態
     STATE state_;       //状態
 

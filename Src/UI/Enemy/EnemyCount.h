@@ -12,7 +12,7 @@ public:
 	};
 
 	EnemyCount(VECTOR& _followPos);
-	~EnemyCount(void);
+	~EnemyCount(void)override;
 
 	bool Init(const std::string& _master)override;
 	bool Update(void)override;

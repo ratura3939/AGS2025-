@@ -145,18 +145,8 @@ public:
 	const bool IsLoopUpdate(const std::string _name, const UI_DIRECTION_GROUP _group);
 
 	const VECTOR GetDrawPos(const std::string _name)const;
+
 private:
-	//インスタンス用
-	static UIManager2d* instance_;
-
-	std::map<std::string, int>images_;				//描画画像格納
-	std::map<std::string, UIInfo>infoes_;			//UIの描画に関わる情報
-	std::map<std::string, std::vector<DirectionInfo>>direcInfoes_;	//UIの演出に関わる情報
-
-
-	using Update_UI = void(UIManager2d::*)(const std::string&, DirectionInfo& _direcInfo);
-	std::map<std::string, std::vector<Update_UI>>updates_;	//UI更新処理
-
 	/// <summary>
 	/// 演出の大まかな種類を取得
 	/// </summary>
@@ -185,5 +175,16 @@ private:
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	void AlphaAcc(const std::string& _name, DirectionInfo& _direcInfo);
+
+	//インスタンス用
+	static UIManager2d* instance_;
+
+	std::map<std::string, int>images_;				//描画画像格納
+	std::map<std::string, UIInfo>infoes_;			//UIの描画に関わる情報
+	std::map<std::string, std::vector<DirectionInfo>>direcInfoes_;	//UIの演出に関わる情報
+
+
+	using Update_UI = void(UIManager2d::*)(const std::string&, DirectionInfo& _direcInfo);
+	std::map<std::string, std::vector<Update_UI>>updates_;	//UI更新処理
 };
 

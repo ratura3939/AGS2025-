@@ -30,18 +30,20 @@ public:
 
 	void Init(void) override;
 	void InitUI(void);
-
-private:
-	void InitSound(void)override;
-	void InitEffect(void)override;
-
-public:
 	void Update(void) override;
 	void Draw(void) override;
 	void Release(void) override;
 	void Reset(void)override;
 
 private:
+	void InitSound(void)override;
+	void InitEffect(void)override;
+
+	void NomalUpdate(void);
+	void SelectDeviceUpdate(void);
+
+	//デバイス選択
+	void DrawDevice(void);
 
 	int logoImg_;	//ロゴ
 	int backImg_;	//背景
@@ -56,15 +58,10 @@ private:
 	int font_;			//フォント
 
 	using Update_f = void(Title::*)(void);
-	void NomalUpdate(void);
-	void SelectDeviceUpdate(void);
 	Update_f update_;
 
 	std::unique_ptr<PixelMaterial>material_;
 	std::unique_ptr<PixelRenderer>render_;
 
 	std::unique_ptr<Stage>stage_;					//ステージ
-
-	//デバイス選択
-	void DrawDevice(void);
 };

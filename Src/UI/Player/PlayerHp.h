@@ -7,7 +7,6 @@ class PlayerHp :
 	public UIBase
 {
 public:
-
 	static constexpr float SCALE_DOWN = 1.0f / 8.0f;
 
 	static constexpr float SIZE_X = 500.0f * SCALE_DOWN;
@@ -26,7 +25,7 @@ public:
 	};
 
 	PlayerHp(VECTOR& _followPos,const int _hp);
-	~PlayerHp(void);
+	~PlayerHp(void)override;
 
 	bool Init(const std::string& _master)override;
 	bool Update(void)override;

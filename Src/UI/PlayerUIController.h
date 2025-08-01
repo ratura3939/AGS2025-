@@ -16,7 +16,7 @@ public:
     };
 
     PlayerUIController(VECTOR& _followPos,const int _hp);
-    ~PlayerUIController(void);
+    ~PlayerUIController(void)override;
 
     void Init(const std::string& _master)override;
     void Update(void)override;

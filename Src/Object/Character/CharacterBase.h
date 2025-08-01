@@ -34,7 +34,7 @@ public:
 	static constexpr int COLOR = 0xffffff;
 
 	CharacterBase(void);
-	~CharacterBase(void);
+	virtual ~CharacterBase(void);
 
 	virtual const bool Init(const int _num) = 0;
 	virtual void Update(void);
@@ -43,22 +43,6 @@ public:
 	virtual void Draw(void);
 	virtual const bool Release(void);
 
-protected:
-	//必ず更新・初期化処理に入れること
-	//************************************************
-	virtual void InitAnim(void) = 0;
-	virtual void InitUI(void) = 0;
-	void UpdateRotQuat(void);
-	//**********************************************
-	//UI描画
-	virtual void DrawUI(void) = 0;
-
-	//回転目標角度
-	void SetGoalRot(const float _rad);
-	//回転
-	void Rotation(void);
-
-public:
 	// 各種方向を取得
 	VECTOR GetForward(void) const;
 	VECTOR GetBack(void) const;
@@ -70,10 +54,12 @@ public:
 	// 対象方向を取得
 	VECTOR GetDir(const VECTOR& _vec) const;
 
-	//位置取得
-	const VECTOR GetPos(void)const;//座標(足元)
-	const VECTOR GetHeight(void)const;//座標(頭辺り)
-	const float GetCollisionRadius(void)const;//座標(頭辺り)
+	//座標取得
+	const VECTOR GetPos(void)const;				//足元
+	const VECTOR GetHeight(void)const;			//頭辺り
+
+	//当たり判定の半径
+	const float GetCollisionRadius(void)const;
 
 	void SetPrePos(void);
 
@@ -96,6 +82,20 @@ public:
 	void DrawCupcel(void);
 
 protected:
+	//必ず更新・初期化処理に入れること
+	//************************************************
+	virtual void InitAnim(void) = 0;
+	virtual void InitUI(void) = 0;
+	void UpdateRotQuat(void);
+	//**********************************************
+	//UI描画
+	virtual void DrawUI(void) = 0;
+
+	//回転目標角度
+	void SetGoalRot(const float _rad);
+	//回転
+	void Rotation(void);
+
 	int modelId_;	//モデルID
 
 	VECTOR pos_;	//座標

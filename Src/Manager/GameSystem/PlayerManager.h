@@ -41,6 +41,8 @@ public:
 	void LockOn(void);
 	void LockOff(void);
 
+	void DrawDebug(void);
+
 private:
 	/// <summary>
 	/// プレイヤーからの入力受付関係
@@ -54,9 +56,6 @@ private:
 
 	void RedyStateCount(const int _limit);
 
-public:
-	void DrawDebug(void);
-private:
 	Game& scene_;	//ゲームクラス参照
 	std::shared_ptr<PlayerChara> character_;	//キャラクター
 	int stateCnt_;	//キャラクター状態管理用カウンター
