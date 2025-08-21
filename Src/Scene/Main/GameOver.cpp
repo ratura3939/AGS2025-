@@ -6,6 +6,7 @@
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Decoration/UIManager2d.h"
 #include"../../Manager/Decoration/SoundManager.h"
+#include"Title.h"
 #include"../../Object/Stage/Stage.h"
 #include "GameOver.h"
 
@@ -31,6 +32,9 @@ void GameOver::Init(void)
 	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
 	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
 
+	//リソース準備
+	rsM.GetInstance().Init(SceneManager::SCENE_ID::GAMEOVER);
+
 	//戻るアイコン
 	uiM.Add(GAME_OVER_LOGO, rsM.Load(ResourceManager::SRC::GAMEOVER_LOGO).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);		//追加
 	uiM.SetUIInfo(GAME_OVER_LOGO, VECTOR{ Application::SCREEN_SIZE_X / 2.0f,Application::SCREEN_SIZE_Y / 2.0f - 300.0f,0.0f }, 0.6f);			//基礎設定
@@ -54,6 +58,7 @@ void GameOver::InitSound(void)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	SoundManager& sndM = SoundManager::GetInstance();
+
 	//BGM
 	sndM.Add(SoundManager::TYPE::BGM, "NomalBgm",
 		rsM.Load(ResourceManager::SRC::GAMEOVER_BGM).handleId_);
@@ -74,7 +79,7 @@ void GameOver::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrigerrDown("action")){
 		SoundManager::GetInstance().Stop("NomalBgm");
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
 	}
 
 	UIManager2d::GetInstance().Update(BACK_TITLE_LOGO);

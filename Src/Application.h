@@ -47,6 +47,10 @@ public:
 	// 解放成功／失敗の判定
 	bool IsReleaseFail(void) const;
 
+	//スクリーンサイズ取得
+	const int GetWindowWidth(void) { return width_; }
+	const int GetWindowHeight(void) { return height_; }
+
 private:
 
 	//フレーム固定用
@@ -61,6 +65,9 @@ private:
 
 	// 解放失敗
 	bool isReleaseFail_;
+
+	int width_;
+	int height_;
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

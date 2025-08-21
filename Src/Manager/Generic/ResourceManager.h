@@ -26,6 +26,9 @@ public:
 		STOP_GAME_IMG,
 		CLICK_STR_IMG,
 
+		DESCRIPTION_PAD,
+		DESCRIPTION_KEY,
+
 		FOCUS_IMG,
 		//UI
 		ARROW_DOWN_IMG,
@@ -107,6 +110,8 @@ private:
 	void InitClear(void);
 	void InitGameOver(void);
 	void InitPouse(void);
+	void InitKeyConfig(void);
+	void InitSwitchCntl(void);
 
 	//ëÂÇ‹Ç©Ç»ÉäÉ\Å[ÉXÇÃÇ‹Ç∆Ç‹ÇË
 	void ResorceDeviceIcon(void);

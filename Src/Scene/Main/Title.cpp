@@ -1,5 +1,6 @@
-#include<string>
 #include<DxLib.h>
+#include<string>
+#include<memory>
 #include"../../Application.h"
 #include"../../Utility/Utility.h"
 #include"../../Manager/Generic/ResourceManager.h"
@@ -10,6 +11,7 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include"../../Renderer/PixelMaterial.h"
 #include"../../Renderer/PixelRenderer.h"
+#include"Game.h"
 
 #include"../../Object/Stage/Stage.h"
 #include "Title.h"
@@ -62,6 +64,10 @@ void Title::Init(void)
 	// カメラモード：定点カメラ
 	//SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
 	
+	//リソース準備
+	ResourceManager& rsM = ResourceManager::GetInstance();
+	rsM.GetInstance().Init(SceneManager::SCENE_ID::TITLE);
+
 	//コントローラー両対応
 	SceneManager::GetInstance().SetController(SceneManager::CNTL::NONE);
 
@@ -259,9 +265,9 @@ void Title::SelectDeviceUpdate(void)
 				SceneManager::GetInstance().SetController(SceneManager::CNTL::PAD);
 			}
 			//シーン遷移
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 			SoundManager::GetInstance().Stop("NomalBgm");
 			SoundManager::GetInstance().Play("Enter");
+			SceneManager::GetInstance().ChangeScene(std::make_shared<Game>());
 		}
 		
 	}

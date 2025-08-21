@@ -31,6 +31,8 @@ void ResourceManager::Init(SceneManager::SCENE_ID _scene)
 	case SceneManager::SCENE_ID::GAME:
 		InitGame();
 		InitPouse();
+		InitKeyConfig();
+		InitSwitchCntl();
 		break;
 	case SceneManager::SCENE_ID::GAMEOVER:
 		InitGameOver();
@@ -298,6 +300,21 @@ void ResourceManager::InitPouse(void)
 	//–îˆó
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_ArrowDown.png");
 	resourcesMap_.emplace(SRC::ARROW_DOWN_IMG, res);
+}
+
+void ResourceManager::InitKeyConfig(void)
+{
+	Resource res;
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Description_Pad.png");
+	resourcesMap_.emplace(SRC::DESCRIPTION_PAD, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Description_Key.png");
+	resourcesMap_.emplace(SRC::DESCRIPTION_KEY, res);
+}
+
+void ResourceManager::InitSwitchCntl(void)
+{
+	Resource res;
 }
 
 void ResourceManager::ResorceDeviceIcon(void)

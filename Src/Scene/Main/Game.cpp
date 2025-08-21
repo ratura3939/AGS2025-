@@ -10,6 +10,9 @@
 #include"../../Manager/Decoration/SoundManager.h"
 #include"../../Manager/Decoration/EffectManager.h"
 #include"../../Manager/Decoration/UIManager2d.h"
+#include "../../Scene/Main/GameOver.h"
+#include "../../Scene/Main/GameClear.h"
+#include "../../Scene/Sub/PauseScene.h"
 #include"../../Object/Stage/Stage.h"
 #include"../../Utility/Utility.h"
 #include"../../Renderer/PixelMaterial.h"
@@ -52,6 +55,10 @@ Game::~Game(void)
 
 void Game::Init(void)
 {
+	//リソース準備
+	ResourceManager& rsM = ResourceManager::GetInstance();
+	rsM.GetInstance().Init(SceneManager::SCENE_ID::GAME);
+
 	update_ = &Game::GameUpdate;
 
 	//生成
@@ -90,7 +97,7 @@ void Game::Init(void)
 	
 
 	//「WARNING」画像
-	ResourceManager& rsM = ResourceManager::GetInstance();
+	
 	auto& uiM = UIManager2d::GetInstance();
 	uiM.Add(warningStr_, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(warningStr_, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
@@ -246,14 +253,14 @@ void Game::Update(void)
 		sndM.Stop(nowBgmStr_);
 		sndM.Stop(switchBgmStr_);
 		//シーン遷移
-		scM.ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		scM.ChangeScene(std::make_shared<GameOver>());
 	}
 	
 
 	//ポーズシーン遷移
 	if (inpM.IsTrigerrDown("pause")) {
 		//シーン追加(一つ次へ)
-		scM.PushSubScene();
+		scM.PushScene(std::make_shared<PauseScene>());
 	}
 #pragma endregion
 
@@ -273,7 +280,7 @@ void Game::GameUpdate(void)
 		sndM.Stop(nowBgmStr_);
 		sndM.Stop(switchBgmStr_);
 		//シーン遷移
-		scM.ChangeScene(SceneManager::SCENE_ID::CLEAR);
+		scM.ChangeScene(std::make_shared<GameClear>());
 	}
 
 

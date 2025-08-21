@@ -1,5 +1,6 @@
 #include<DxLib.h>
 #include<string>
+#include<memory>
 #include"../../Application.h"
 #include"../../Manager/Generic/InputManager.h"
 #include"../../Manager/Generic/SceneManager.h"
@@ -7,6 +8,7 @@
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Decoration/UIManager2d.h"
 #include"../../Manager/Decoration/SoundManager.h"
+#include"Title.h"
 #include"../../Object/Stage/Stage.h"
 #include "GameClear.h"
 
@@ -31,6 +33,9 @@ void GameClear::Init(void)
 	using UI_DIREC = UIManager2d::UI_DIRECTION_2D;
 	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
 	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
+
+	//リソース準備
+	rsM.GetInstance().Init(SceneManager::SCENE_ID::CLEAR);
 
 	//アイコン
 	uiM.Add(GAME_CLEAR_LOGO, rsM.Load(ResourceManager::SRC::GAMECLAR_LOGO).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);		//追加
@@ -77,7 +82,7 @@ void GameClear::Update(void)
 	if (ins.IsTrigerrDown("action"))
 	{
 		SoundManager::GetInstance().Stop("NomalBgm");
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
 	}
 
 	UIManager2d::GetInstance().Update(BACK_TITLE_LOGO);

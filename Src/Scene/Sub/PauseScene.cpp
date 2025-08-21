@@ -5,6 +5,9 @@
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Decoration/SoundManager.h"
 #include"../../Manager/Decoration/UIManager2d.h"
+#include"../../Scene/Main/Title.h"
+#include "../../Scene/Sub/KeyConfigScene.h"
+#include "../../Scene/Sub/SwitchControllerScene.h"
 #include"../../Utility/Utility.h"
 #include "PauseScene.h"
 
@@ -105,7 +108,7 @@ void PauseScene::InputUser(void)
 	//ポーズボタンを押されたら
 	if (inpM.IsTrigerrDown("pause")) {
 		//シーン移動(1つ前のシーン＝ゲームシーンに戻る)
-		scM.PopSubScene();
+		scM.PopScene();
 	}
 
 	//決定入力
@@ -113,17 +116,17 @@ void PauseScene::InputUser(void)
 		switch (static_cast<MENU_ITEM>(selectIdx_ + MENU_LIST_NONE_DIFFER)) {
 		case MENU_ITEM::BACK_GAME:
 			//シーン移動(1つ前のシーン＝ゲームシーンに戻る)
-			scM.PopSubScene();
+			scM.PopScene();
 			break;
 		case MENU_ITEM::CONFIG:
 			//操作方法シーンへ移動。(飛ぶシーンが１なので本来引数は必要ないけどChangeOpeと合わせるため入れる。)
-			scM.PushSubScene(CONFIG_SCENE_JUMP_CNT);
+			scM.PushScene(std::make_shared<KeyConfigScene>());
 			break;
 		case MENU_ITEM::SWITCH_CNTL:
-			scM.PushSubScene(SWITCH_CNTL_SCENE_JUMP_CNT);
+			scM.PushScene(std::make_shared<SwitchControllerScene>());
 			break;
 		case MENU_ITEM::BACK_TITLE:
-			scM.ChangeScene(SceneManager::SCENE_ID::TITLE);
+			scM.ChangeScene(std::make_shared<Title>());
 			break;
 		}
 	}
