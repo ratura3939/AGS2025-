@@ -49,6 +49,15 @@ void UIManager2d::Add(const std::string& _name, const int _imgHndl, const UI_DIR
 	
 }
 
+void UIManager2d::DeleteUI(const std::string& _name)
+{
+	images_.erase(_name);
+	infoes_.erase(_name);
+	if (direcInfoes_.contains(_name)) {
+		direcInfoes_.erase(_name);
+	}
+}
+
 void UIManager2d::PushUIDirection(const std::string& _name, UI_DIRECTION_2D _type)
 {
 	//‰‰oî•ñ‰Šú‰»

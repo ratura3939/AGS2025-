@@ -20,7 +20,7 @@ public:
 	PauseScene(void);
 
 	// デストラクタ
-	~PauseScene(void);
+	~PauseScene(void)override;
 
 	void Init(void) override;
 	void Update(void) override;

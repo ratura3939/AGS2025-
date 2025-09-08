@@ -18,7 +18,7 @@ public:
 	static constexpr VECTOR LIGHT_DIR = { 0.00f, -1.00f, 1.00f };
 	static constexpr float STICK_START_POW = 0.5f;	//コントローラーのスティック閾値
 
-	static constexpr int POP_SCENE_TYPE_NUM = 1;	//ポップ可能なシーンの種類数
+	static constexpr int POP_SCENE_TYPE_NUM = 3;	//ポップ可能なシーンの種類数
 
 	// シーン管理用
 	enum class SCENE_ID
@@ -56,25 +56,11 @@ public:
 	// リソースの破棄
 	void Destroy(void);
 
-	// シーン遷移(scenes_を初期化させMainから作り直す)
-	void ChangeScene(SCENE_ID nextId);
-
-	//シーン追加
-	void AddSubScene(SCENE_ID _pushId);
-
-	/// <summary>
-	/// シーン移動(scenes_に格納されているサブシーンへ切り換える)
-	/// </summary>
-	/// <param name="_nextAcc">移動先は何個後にある物か</param>
-	///SceneManagerでの格納順とのすり合わせに注意
-	/// 基本形はつぎに移動なので１を初期設定
-	void PushSubScene(int _nextAcc = 1);
-	
-	//現在のシーン消去
-	void PopSubScene(void);
-
-	// シーンIDの取得
-	SCENE_ID GetSceneID(void);
+	//シーン遷移
+	void SetInitScene(std::shared_ptr<SceneBase>_scene);	//初期化時のみ使用
+	void ChangeScene(std::shared_ptr<SceneBase>_scene);
+	void PushScene(std::shared_ptr<SceneBase>_scene);
+	void PopScene(void);
 
 	// デルタタイムの取得
 	float GetDeltaTime(void) const;
@@ -115,9 +101,7 @@ private:
 	// 静的インスタンス
 	static SceneManager* instance_;
 
-	SCENE_ID sceneId_;
-	SCENE_ID subSceneList_[POP_SCENE_TYPE_NUM];
-	SCENE_ID waitSceneId_;
+	//コントローラ識別
 	CNTL cntl_;
 
 	std::shared_ptr<Camera> camera_;
@@ -129,9 +113,8 @@ private:
 	Fader* fader_;
 
 	// 各種シーン
-	std::vector<std::unique_ptr<SceneBase>> scenes_;	//シーン格納
-	std::vector<int>useSceneList_;	//使用しているシーンのリスト
-	int nowSceneCount_;		//現在のシーンがscenes_で何番目に格納されているか(scenes_の指数用)
+	std::vector<std::shared_ptr<SceneBase>> scenes_;	//シーン格納
+	std::shared_ptr<SceneBase>nextScene_;
 
 	// シーン遷移中判定
 	bool isSceneChanging_;
@@ -156,13 +139,8 @@ private:
 	void ResetDeltaTime(void);
 
 	// シーン遷移
-	void DoChangeScene(SCENE_ID sceneId);
+	void DoChangeScene(void);
 
 	// フェード
 	void Fade(void);
-	//サブシーンか
-	const bool IsSubScene(const SCENE_ID _id)const;
-
-	//各メインシーンのサブシーン格納
-	void SetSubScene(SCENE_ID _id);
 };

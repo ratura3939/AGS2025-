@@ -1,5 +1,6 @@
 #include<DxLib.h>
 #include<string>
+#include<memory>
 #include"../../Application.h"
 #include"../../Manager/Generic/InputManager.h"
 #include"../../Manager/Generic/SceneManager.h"
@@ -7,6 +8,7 @@
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Decoration/UIManager2d.h"
 #include"../../Manager/Decoration/SoundManager.h"
+#include"Title.h"
 #include"../../Object/Stage/Stage.h"
 #include "GameClear.h"
 
@@ -32,12 +34,15 @@ void GameClear::Init(void)
 	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
 	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
 
+	//リソース準備
+	rsM.GetInstance().Init(SceneManager::SCENE_ID::CLEAR);
+
 	//アイコン
 	uiM.Add(GAME_CLEAR_LOGO, rsM.Load(ResourceManager::SRC::GAMECLAR_LOGO).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);		//追加
 	uiM.SetUIInfo(GAME_CLEAR_LOGO, VECTOR{ Application::SCREEN_SIZE_X / 2.0f,Application::SCREEN_SIZE_Y / 2.0f-300.0f,0.0f }, 0.6f);	
 	
 	//タイトル戻る
-	uiM.Add(BACK_TITLE_LOGO, rsM.Load(ResourceManager::SRC::STOP_GAME_IMG).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
+	uiM.Add(BACK_TITLE_LOGO, rsM.Load(ResourceManager::SRC::STOP_GAME_BTN).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
 	uiM.SetUIInfo(BACK_TITLE_LOGO, VECTOR(Application::SCREEN_SIZE_X / 2.0f, Application::SCREEN_SIZE_Y / 2.0f + 50.0f, 0.0f), 0.6f);		//基礎設定														//基礎設定
 	uiM.SetUIDirectionPram(BACK_TITLE_LOGO, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//詳細設定
 
@@ -77,7 +82,7 @@ void GameClear::Update(void)
 	if (ins.IsTrigerrDown("action"))
 	{
 		SoundManager::GetInstance().Stop("NomalBgm");
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
 	}
 
 	UIManager2d::GetInstance().Update(BACK_TITLE_LOGO);

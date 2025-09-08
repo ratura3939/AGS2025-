@@ -98,7 +98,7 @@ private:
 	void MouseInputFuncInit(void);
 
 	//コードの現在又は１フレーム前の入力を渡す
-	const bool IsInputRecord(const std::string& _eventCode,const INPUT_RECORD& _record);
+	const bool IsInputRecord(const std::string& _eventCode,const INPUT_RECORD& _record, const bool _isDistinguish);
 
 public:
 	/// <summary>
@@ -106,16 +106,16 @@ public:
 	/// </summary>
 	/// <param name="_eventCode">登録名</param>
 	/// <returns></returns>
-	bool IsTrigerrDown(const std::string& _eventCode);
+	bool IsTrigerrDown(const std::string& _eventCode, bool _isDistinguish = true);
 
 	/// <summary>
 	/// キーのアップトリガ
 	/// </summary>
 	/// <param name="_eventCode">登録名</param>
 	/// <returns></returns>
-	bool IsTrigerrUp(const std::string& _eventCode);
+	bool IsTrigerrUp(const std::string& _eventCode, bool _isDistinguish = true);
 
-	bool IsPressed(const std::string& _eventCode);
+	bool IsPressed(const std::string& _eventCode, bool _isDistinguish = true);
 
 private:
 	static InputManager* instance_;

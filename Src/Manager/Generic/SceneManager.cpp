@@ -3,12 +3,6 @@
 #include "../../Common/Fader.h"
 #include "../../Application.h"
 #include "../../Scene/Main/Title.h"
-#include "../../Scene/Main/Game.h"
-#include "../../Scene/Main/GameClear.h"
-#include "../../Scene/Main/GameOver.h"
-#include "../../Scene/Sub/PauseScene.h"
-#include "../../Scene/Sub/KeyConfigScene.h"
-#include "../../Scene/Sub/SwitchControllerScene.h"
 #include"../Decoration/EffectManager.h"
 #include"../Decoration/SoundManager.h"
 #include"../Decoration/UIManager2d.h"
@@ -34,14 +28,6 @@ SceneManager& SceneManager::GetInstance(void)
 
 void SceneManager::Init(void)
 {
-	sceneId_ = SCENE_ID::TITLE;
-	waitSceneId_ = SCENE_ID::NONE;
-
-	nowSceneCount_ = 0;
-	useSceneList_ = {};
-
-	subSceneList_[0] = SCENE_ID::PAUSE;
-
 	//エフェクト・サウンドの生成
 	SoundManager::CreateInstance();
 	EffectManager::CreateInstance();
@@ -56,10 +42,8 @@ void SceneManager::Init(void)
 	camera_ = std::make_shared<Camera>();
 	camera_->Init();
 
-	/*scene_ = new Title();
-	scene_->Init();*/
-
 	isSceneChanging_ = false;
+	nextScene_ = nullptr;
 
 	// デルタタイム
 	preTime_ = std::chrono::system_clock::now();
@@ -68,7 +52,7 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::TITLE);
+	SetInitScene(std::make_shared<Title>());
 
 	// メインスクリーン
 	mainScreen_ = MakeScreen(
@@ -126,7 +110,7 @@ void SceneManager::Update(void)
 	else
 	{
 		//最新のシーンだけを更新
-  		scenes_[useSceneList_.back()]->Update();
+  		scenes_.back()->Update();
 		SoundManager::GetInstance().Update();
 		EffectManager::GetInstance().Update();
 	}
@@ -153,8 +137,8 @@ void SceneManager::Draw(void)
 	UpdateEffekseer3D();
 
 	//シーンの下層から順に描画
-	for (auto& sceneIdx : useSceneList_) {
-		scenes_[sceneIdx]->Draw();
+	for (auto& scene : scenes_) {
+		scene->Draw();
 	}
 
 	//エフェクシア描画
@@ -189,63 +173,34 @@ void SceneManager::Destroy(void)
 
 }
 
-void SceneManager::ChangeScene(SCENE_ID nextId)
-{
 
-	// フェード処理が終わってからシーンを変える場合もあるため、
-	// 遷移先シーンをメンバ変数に保持
-	waitSceneId_ = nextId;
+void SceneManager::SetInitScene(std::shared_ptr<SceneBase> _scene)
+{
+	nextScene_ = _scene;
+	DoChangeScene();
+}
+
+void SceneManager::ChangeScene(std::shared_ptr<SceneBase> _scene)
+{
+	nextScene_ = _scene;
 
 	// フェードアウト(暗転)を開始する
 	fader_->SetFade(Fader::STATE::FADE_OUT);
 	isSceneChanging_ = true;
-
 }
 
-void SceneManager::AddSubScene(SCENE_ID _pushId)
+void SceneManager::PushScene(std::shared_ptr<SceneBase> _scene)
 {
-	//そもそもシーンがない場合・途中追加可能なシーンではない場合は行わない
-	if (scenes_.empty()|| !IsSubScene(_pushId))return;
-
-	std::unique_ptr<SceneBase> pushScene;
-	switch (_pushId)
-	{
-	case SCENE_ID::PAUSE:
-		pushScene = std::make_unique<PauseScene>();
-		break;
-	case SCENE_ID::KEY_CONFIG:
-		pushScene = std::make_unique<KeyConfigScene>();
-		break;
-	case SCENE_ID::SWITCH_CNTL:
-		pushScene = std::make_unique<SwitchControllerScene>();
-		break;
-	default:
-		break;
-	}
-
-	pushScene->Init();
-	scenes_.push_back(std::move(pushScene));
+	_scene->Init();
+	scenes_.push_back(_scene);
 }
 
-void SceneManager::PushSubScene(int _nextAcc)
+void SceneManager::PopScene(void)
 {
-	int backNum = useSceneList_.back();
-	backNum += _nextAcc;
-
-	useSceneList_.push_back(backNum);
-	scenes_[backNum]->Reset();
+	scenes_.back()->Release();
+	scenes_.pop_back();
 }
 
-void SceneManager::PopSubScene(void)
-{
-	useSceneList_.pop_back();
-	scenes_[useSceneList_.back()]->Reset();
-}
-
-SceneManager::SCENE_ID SceneManager::GetSceneID(void)
-{
-	return sceneId_;
-}
 
 float SceneManager::GetDeltaTime(void) const
 {
@@ -300,9 +255,6 @@ const float SceneManager::GetScaleUpdateSpeedRate(const float _target) const
 
 SceneManager::SceneManager(void)
 {
-
-	sceneId_ = SCENE_ID::NONE;
-	waitSceneId_ = SCENE_ID::NONE;
 	cntl_ = CNTL::NONE;
 
 	mainScreen_ = -1;
@@ -325,61 +277,38 @@ void SceneManager::ResetDeltaTime(void)
 	preTime_ = std::chrono::system_clock::now();
 }
 
-void SceneManager::DoChangeScene(SCENE_ID sceneId)
-{
+void SceneManager::DoChangeScene(void)
+{	
+
+
+	//解放
 	auto& resM = ResourceManager::GetInstance();
 	auto& sndM = SoundManager::GetInstance();
 	auto& uiM = UIManager2d::GetInstance();
+
+	//解放
+	for (auto& scene : scenes_) {
+		scene->Release();
+	}
 
 	// リソースの全解放
 	resM.Release();
 	sndM.Release();
 	uiM.Relese();
-	useSceneList_.clear();
 
-	// シーンを変更する
-	sceneId_ = sceneId;
 
-	// 存在するすべてのシーンの解放
-	if (!scenes_.empty())
-	{
-		scenes_.clear();
-	}
+	//次のシーン初期化
+	nextScene_->Init();
 
-	std::unique_ptr<SceneBase>nextScene;
-
-	//各基礎シーン
-	switch (sceneId_)
-	{
-	case SCENE_ID::TITLE:
-		nextScene = std::make_unique<Title>();
-		break;
-
-	case SCENE_ID::GAME:
-		nextScene = std::make_unique<Game>();
-		break;
-
-	case SCENE_ID::CLEAR:
-		nextScene = std::make_unique<GameClear>();
-		break;
-
-	case SCENE_ID::GAMEOVER:
-		nextScene = std::make_unique<GameOver>();
-		break;
-	}
 	
-	resM.Init(sceneId);
-	nextScene->Init();
-	//追加
-	scenes_.push_back(std::move(nextScene));
-	useSceneList_.push_back(0);	//初期値設定
+	scenes_.clear();
 
-	SetSubScene(sceneId);
+	//次のシーンを入れる
+	scenes_.push_back(nextScene_);
 
 	ResetDeltaTime();
 
-	waitSceneId_ = SCENE_ID::NONE;
-
+	nextScene_ = nullptr;
 }
 
 void SceneManager::Fade(void)
@@ -402,7 +331,7 @@ void SceneManager::Fade(void)
 		if (fader_->IsEnd())
 		{
 			// 完全に暗転してからシーン遷移
-			DoChangeScene(waitSceneId_);
+			DoChangeScene();
 			// 暗転から明転へ
 			fader_->SetFade(Fader::STATE::FADE_IN);
 		}
@@ -410,38 +339,3 @@ void SceneManager::Fade(void)
 	}
 
 }
-
-const bool SceneManager::IsSubScene(const SCENE_ID _id) const
-{
-	//ポップ可能シーンのリスト分回す
-	for (auto& canPopScene : subSceneList_) {
-		if (_id == canPopScene) {
-			return true;
-		}
-	}
-	return false;
-}
-
-void SceneManager::SetSubScene(SCENE_ID _id)
-{
-	switch (_id)
-	{
-	case SceneManager::SCENE_ID::NONE:
-		break;
-	case SceneManager::SCENE_ID::TITLE:
-		break;
-	case SceneManager::SCENE_ID::GAME:
-		AddSubScene(SCENE_ID::PAUSE);
-		AddSubScene(SCENE_ID::KEY_CONFIG);
-		AddSubScene(SCENE_ID::SWITCH_CNTL);
-		break;
-	case SceneManager::SCENE_ID::GAMEOVER:
-		break;
-	case SceneManager::SCENE_ID::CLEAR:
-		break;
-	default:
-		break;
-	}
-}
-
-

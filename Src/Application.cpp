@@ -1,5 +1,6 @@
 #include <DxLib.h>
 #include<EffekseerForDXLib.h>
+#include<Windows.h>
 #include "Manager/Generic/ResourceManager.h"
 #include "Manager/Generic/InputManager.h"
 #include "Manager/Generic/SceneManager.h"
@@ -37,8 +38,20 @@ void Application::Init(void)
 	// アプリケーションの初期設定
 	SetWindowText("Wildea");
 
+
+	// 実行中ウィンドウがあるモニターを取得
+	HMONITOR hMonitor = MonitorFromWindow(GetMainWindowHandle(), MONITOR_DEFAULTTONEAREST);
+
+	MONITORINFO mi;
+	mi.cbSize = sizeof(mi);
+	GetMonitorInfo(hMonitor, &mi);
+
+	// モニターの幅・高さ
+	width_ = mi.rcMonitor.right - mi.rcMonitor.left;
+	height_ = mi.rcMonitor.bottom - mi.rcMonitor.top;
+
 	// ウィンドウサイズ
-	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
+	SetGraphMode(width_, height_, 32);
 	ChangeWindowMode(true);
 
 	// DxLibの初期化
