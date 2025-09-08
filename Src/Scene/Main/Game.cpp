@@ -26,6 +26,11 @@ namespace {
 	constexpr VECTOR CAMERA_GOAL_2 = { 0.0f,800.0f,600.0f };	//カメラ演出目標位置その②
 	constexpr float ALLOWABLE_DISTANCE = 10.0f;		//カメラの移動完了判定をがば目にするために
 	constexpr int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
+
+	const std::string MENU_BTN = "menuBtn";
+	const float BTN_EX = 0.6f;
+	const int BTN_DIFF_X = 300;
+	const int BTN_DIFF_Y = 100;
 }
 
 Game::Game(void)
@@ -35,6 +40,7 @@ Game::Game(void)
 	isSlowEffect_ = false;
 	slowCnt_ = -1;
 	nextBgmVol_ = 0;
+	switchBgm_ = false;
 
 	directionCnt_ = 0;
 	directionStartPos_ = CAMERA_START_1;
@@ -94,14 +100,17 @@ void Game::Init(void)
 	//シェーダー初期化
 	InitShader();
 
-	
+
+	auto& uiM = UIManager2d::GetInstance();
+
+	warningStr_ = "WarningImg";
 
 	//「WARNING」画像
-	
-	auto& uiM = UIManager2d::GetInstance();
 	uiM.Add(warningStr_, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(warningStr_, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
 	uiM.SetUIDirectionPram(warningStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 10.0f, 255.0f, 0.0f);
+	uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(MENU_BTN, VECTOR{ static_cast<float>(Application::SCREEN_SIZE_X - BTN_DIFF_X),static_cast<float>(Application::SCREEN_SIZE_Y - BTN_DIFF_Y),0.0f }, BTN_EX);
 }
 
 void Game::InitSound(void)
@@ -529,6 +538,9 @@ void Game::Draw(void)
 	enemy_->Draw();
 	player_->Draw();
 
+	//メニューボタンの表示
+	UIManager2d::GetInstance().Draw(MENU_BTN);
+
 	//DrawDebug();
 
 	if (direcState_ == BOSS_DIRECTION::POST_EFFECT) {
@@ -601,6 +613,9 @@ void Game::Release(void)
 {
 	player_->Release();
 	enemy_->Release();
+	SoundManager& sndM = SoundManager::GetInstance();
+	sndM.Stop("NomalBgm");	//今まで流していたものを停止
+	sndM.Stop("BattleBgm");	//今まで流していたものを停止
 }
 
 void Game::Reset(void)

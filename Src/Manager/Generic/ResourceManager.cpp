@@ -59,7 +59,7 @@ void ResourceManager::InitTitle(void)
 
 	// 背景
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleBack.png");
-	resourcesMap_.emplace(SRC::TITLE_BACK, res);
+	resourcesMap_.emplace(SRC::TITLE_BACK_BTN, res);
 
 	//ステージ
 	ResorceStage();
@@ -75,7 +75,7 @@ void ResourceManager::InitTitle(void)
 	resourcesMap_.emplace(SRC::EXIT_IMG, res);
 	//スタートボタン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "StartBtn.png");
-	resourcesMap_.emplace(SRC::START_GAME_IMG, res);
+	resourcesMap_.emplace(SRC::START_GAME_BTN, res);
 
 	//クリックしてくださいっていう文章
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "ClickStr.png");
@@ -110,7 +110,7 @@ void ResourceManager::InitGame(void)
 	//UI
 	//メニューボタン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "MenuBtn.png");
-	resourcesMap_.emplace(SRC::MENU_IMG, res);
+	resourcesMap_.emplace(SRC::MENU_BTN, res);
 
 	//?マーク
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Question.png");
@@ -236,7 +236,7 @@ void ResourceManager::InitClear(void)
 
 	//ゲームやめるボタン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "StopGameBtn.png");
-	resourcesMap_.emplace(SRC::STOP_GAME_IMG, res);
+	resourcesMap_.emplace(SRC::STOP_GAME_BTN, res);
 
 	//音
 	//BGM
@@ -262,7 +262,7 @@ void ResourceManager::InitGameOver(void)
 
 	//ゲームやめるボタン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "StopGameBtn.png");
-	resourcesMap_.emplace(SRC::STOP_GAME_IMG, res);
+	resourcesMap_.emplace(SRC::STOP_GAME_BTN, res);
 
 	//音
 	//BGM
@@ -279,7 +279,7 @@ void ResourceManager::InitPouse(void)
 	Resource res;
 	//ゲームやめるボタン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "StopGameBtn.png");
-	resourcesMap_.emplace(SRC::STOP_GAME_IMG, res);
+	resourcesMap_.emplace(SRC::STOP_GAME_BTN, res);
 
 	//リトライボタン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "RetryBtn.png");
@@ -287,7 +287,7 @@ void ResourceManager::InitPouse(void)
 
 	//ゲーム戻るボタン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "BackGameBtn.png");
-	resourcesMap_.emplace(SRC::BACK_GAME_IMG, res);
+	resourcesMap_.emplace(SRC::BACK_GAME_BTN, res);
 
 	//操作方法ボタン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "CheckConfigBtn.png");
@@ -300,6 +300,10 @@ void ResourceManager::InitPouse(void)
 	//矢印
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_ArrowDown.png");
 	resourcesMap_.emplace(SRC::ARROW_DOWN_IMG, res);
+
+	//戻るボタン
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "BackBtn.png");
+	resourcesMap_.emplace(SRC::BACK_BTN, res);
 }
 
 void ResourceManager::InitKeyConfig(void)
@@ -315,6 +319,15 @@ void ResourceManager::InitKeyConfig(void)
 void ResourceManager::InitSwitchCntl(void)
 {
 	Resource res;
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ConfirmSwitch.png");
+	resourcesMap_.emplace(SRC::CONFIRM_SWITCH, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FinishSwitch.png");
+	resourcesMap_.emplace(SRC::FINISH_SWITCH, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "SwitchBtn.png");
+	resourcesMap_.emplace(SRC::SWITCH_BTN, res);
 }
 
 void ResourceManager::ResorceDeviceIcon(void)

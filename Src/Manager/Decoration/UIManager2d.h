@@ -81,6 +81,12 @@ public:
 	void Add(const std::string& _name, const int _imgHndl, const UI_DIRECTION_2D _type,const UI_DRAW_DIMENSION _dimension);
 
 	/// <summary>
+	/// óvëfÇÃè¡ãé
+	/// </summary>
+	/// <param name="_name">ìoò^ñº</param>
+	void DeleteUI(const std::string& _name);
+
+	/// <summary>
 	/// ââèoí«â¡
 	/// </summary>
 	/// <param name="_name">ìoò^ñº</param>

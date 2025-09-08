@@ -48,6 +48,8 @@ PauseScene::~PauseScene(void)
 
 void PauseScene::Init(void)
 {
+	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FIXED_POINT);
+
 	UIManager2d& uiM = UIManager2d::GetInstance();
 	ResourceManager& resM = ResourceManager::GetInstance();
 	using UI_DIREC = UIManager2d::UI_DIRECTION_2D;
@@ -55,7 +57,7 @@ void PauseScene::Init(void)
 	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
 
 	//ゲームに戻る
-	uiM.Add(BACK_GAME_BTN, resM.Load(ResourceManager::SRC::BACK_GAME_IMG).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(BACK_GAME_BTN, resM.Load(ResourceManager::SRC::BACK_GAME_BTN).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(BACK_GAME_BTN, { Application::SCREEN_SIZE_X / 2,(Application::SCREEN_SIZE_Y / 2) - BTN_SIZE,0.0f }, BTN_DRAW_SIZE);
 
 	//操作方法
@@ -67,7 +69,7 @@ void PauseScene::Init(void)
 	uiM.SetUIInfo(SWITCH_OPE_BTN, { Application::SCREEN_SIZE_X / 2,(Application::SCREEN_SIZE_Y / 2) + BTN_SIZE / 3.0f,0.0f }, BIG_BTN_DRAW_SIZE);
 
 	//タイトルに戻る
-	uiM.Add(BACK_TITLE_BTN, resM.Load(ResourceManager::SRC::STOP_GAME_IMG).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(BACK_TITLE_BTN, resM.Load(ResourceManager::SRC::STOP_GAME_BTN).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(BACK_TITLE_BTN, { Application::SCREEN_SIZE_X / 2,(Application::SCREEN_SIZE_Y / 2) + BTN_SIZE,0.0f }, BTN_DRAW_SIZE);
 
 	//リスト制作
@@ -112,7 +114,7 @@ void PauseScene::InputUser(void)
 	}
 
 	//決定入力
-	if (inpM.IsTrigerrDown("action")) {
+	if (inpM.IsTrigerrDown("action",false)) {
 		switch (static_cast<MENU_ITEM>(selectIdx_ + MENU_LIST_NONE_DIFFER)) {
 		case MENU_ITEM::BACK_GAME:
 			//シーン移動(1つ前のシーン＝ゲームシーンに戻る)
@@ -132,7 +134,7 @@ void PauseScene::InputUser(void)
 	}
 
 	//上入力
-	if (inpM.IsTrigerrDown("up")) {
+	if (inpM.IsTrigerrDown("up",false)) {
 		selectIdx_--;
 		//０以下にならないよう減らす時のみボタンの種類分一度足す。
 		selectIdx_ = (selectIdx_ + drawBtnList_.size()) % drawBtnList_.size();
@@ -140,7 +142,7 @@ void PauseScene::InputUser(void)
 		UIManager2d::GetInstance().SetPos(RIGHT_ARROW, GetDrawPosOfArrow());
 	}
 	//下入力
-	else if (inpM.IsTrigerrDown("down")) {
+	else if (inpM.IsTrigerrDown("down",false)) {
 		selectIdx_++;
 		//一周したら０に戻るよう余りで求める
 		selectIdx_ = selectIdx_ % drawBtnList_.size();
@@ -167,6 +169,7 @@ void PauseScene::Draw(void)
 
 void PauseScene::Release(void)
 {
+	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
 }
 
 void PauseScene::Reset(void)
@@ -176,8 +179,7 @@ void PauseScene::Reset(void)
 	sndM.AdjustVolume(SoundManager::TYPE::BGM, 0);	//前シーンで流れているBGMの音量を０に
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FIXED_POINT);
 
-	//選択項目を一番うえに
-	selectIdx_ = 0;
+	
 }
 
 const VECTOR PauseScene::GetDrawPosOfArrow(void) const

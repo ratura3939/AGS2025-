@@ -39,7 +39,7 @@ void GameOver::Init(void)
 	uiM.Add(GAME_OVER_LOGO, rsM.Load(ResourceManager::SRC::GAMEOVER_LOGO).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);		//í«â¡
 	uiM.SetUIInfo(GAME_OVER_LOGO, VECTOR{ Application::SCREEN_SIZE_X / 2.0f,Application::SCREEN_SIZE_Y / 2.0f - 300.0f,0.0f }, 0.6f);			//äÓëbê›íË
 	//É^ÉCÉgÉãñﬂÇÈ
-	uiM.Add(BACK_TITLE_LOGO, rsM.Load(ResourceManager::SRC::STOP_GAME_IMG).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//í«â¡
+	uiM.Add(BACK_TITLE_LOGO, rsM.Load(ResourceManager::SRC::STOP_GAME_BTN).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//í«â¡
 	uiM.SetUIInfo(BACK_TITLE_LOGO, VECTOR(Application::SCREEN_SIZE_X / 2.0f, Application::SCREEN_SIZE_Y / 2.0f + 50.0f, 0.0f), 0.6f);		//äÓëbê›íË														//äÓëbê›íË
 	uiM.SetUIDirectionPram(BACK_TITLE_LOGO, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//è⁄ç◊ê›íË
 

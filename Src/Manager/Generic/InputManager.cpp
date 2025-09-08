@@ -192,7 +192,7 @@ void InputManager::MouseInputFuncInit(void)
 	};
 }
 
-const bool InputManager::IsInputRecord(const std::string& _eventCode, const INPUT_RECORD& _record)
+const bool InputManager::IsInputRecord(const std::string& _eventCode, const INPUT_RECORD& _record,const bool _isDistinguish)
 {
 	//シーンマネージャが管理するコントローラ設定で
 	//対応する入力方法のみ受け付ける
@@ -214,6 +214,8 @@ const bool InputManager::IsInputRecord(const std::string& _eventCode, const INPU
 
 	//指定のコードで入力があった機種の経歴分回す
 	for (auto& periType : inputRecord) {
+
+
 		//キーボード操作の時
 		if (cntl == SceneManager::CNTL::KEY) {
 			//キーボードとマウスを受け付ける
@@ -229,12 +231,17 @@ const bool InputManager::IsInputRecord(const std::string& _eventCode, const INPU
 			//このルーぷに入っている時点で入力があったということ
 			currentFlag = true;
 		}
+
+		//識別が必要ないなら問答無用でOK
+		if (!_isDistinguish) {
+			currentFlag = true;
+		}
 	}
 	return currentFlag;
 }
 
 
-bool InputManager::IsTrigerrDown(const std::string& _eventCode)
+bool InputManager::IsTrigerrDown(const std::string& _eventCode, bool _isDistinguish)
 {
 	//先に要素がない場合の予防線をはる
 // 反応しないだけという状態を作りたいから
@@ -246,10 +253,10 @@ bool InputManager::IsTrigerrDown(const std::string& _eventCode)
 
 	//[]の形で中身を見ようとすると勝手に中身が空のキーの場所が生成されてしまう
 	//なのでmap型のat()関数はキー検索であり読み取り専用を使用することで中身を変えずに参照が可能になるｂ
-	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT) && !IsInputRecord(_eventCode, INPUT_RECORD::LAST);
+	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT, _isDistinguish) && !IsInputRecord(_eventCode, INPUT_RECORD::LAST, _isDistinguish);
 }
 
-bool InputManager::IsTrigerrUp(const std::string& _eventCode)
+bool InputManager::IsTrigerrUp(const std::string& _eventCode, bool _isDistinguish)
 {
 	//先に要素がない場合の予防線をはる
 	// 反応しないだけという状態を作りたいから
@@ -261,12 +268,12 @@ bool InputManager::IsTrigerrUp(const std::string& _eventCode)
 
 	//[]の形で中身を見ようとすると勝手に中身が空のキーの場所が生成されてしまう
 	//なのでmap型のat()関数はキー検索であり読み取り専用を使用することで中身を変えずに参照が可能になるｂ
-	return !IsInputRecord(_eventCode, INPUT_RECORD::CURRENT) && IsInputRecord(_eventCode, INPUT_RECORD::LAST);
+	return !IsInputRecord(_eventCode, INPUT_RECORD::CURRENT, _isDistinguish) && IsInputRecord(_eventCode, INPUT_RECORD::LAST, _isDistinguish);
 }
 
-bool InputManager::IsPressed(const std::string& _eventCode)
+bool InputManager::IsPressed(const std::string& _eventCode, bool _isDistinguish)
 {
-	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT);
+	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT,_isDistinguish);
 }
 
 InputManager::InputManager(void)

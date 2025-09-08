@@ -76,7 +76,7 @@ void Title::Init(void)
 	deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;
 	deviceImgs_[static_cast<int>(DEVICE::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_IMG).handleId_;
 
-	backImg_= ResourceManager::GetInstance().Load(ResourceManager::SRC::TITLE_BACK).handleId_;
+	backImg_= ResourceManager::GetInstance().Load(ResourceManager::SRC::TITLE_BACK_BTN).handleId_;
 
 	//UI初期化
 	InitUI();
@@ -151,7 +151,7 @@ void Title::InitUI(void)
 	uiM.SetUIDirectionPram(UI_SHADOWLOGO_STR, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//詳細設定
 
 	//スタートボタン
-	uiM.Add(UI_START_STR, rsM.Load(ResourceManager::SRC::START_GAME_IMG).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
+	uiM.Add(UI_START_STR, rsM.Load(ResourceManager::SRC::START_GAME_BTN).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
 	uiM.SetUIInfo(UI_START_STR, VECTOR(Application::SCREEN_SIZE_X / 2.0f, Application::SCREEN_SIZE_Y / 2.0f+50.0f, 0.0f), 0.6f);															//基礎設定
 	uiM.SetUIDirectionPram(UI_START_STR, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//詳細設定
 

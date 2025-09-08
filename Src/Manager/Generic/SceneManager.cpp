@@ -182,16 +182,6 @@ void SceneManager::SetInitScene(std::shared_ptr<SceneBase> _scene)
 
 void SceneManager::ChangeScene(std::shared_ptr<SceneBase> _scene)
 {
-	//解放
-	auto& resM = ResourceManager::GetInstance();
-	auto& sndM = SoundManager::GetInstance();
-	auto& uiM = UIManager2d::GetInstance();
-
-	// リソースの全解放
-	resM.Release();
-	sndM.Release();
-	uiM.Relese();
-
 	nextScene_ = _scene;
 
 	// フェードアウト(暗転)を開始する
@@ -207,6 +197,7 @@ void SceneManager::PushScene(std::shared_ptr<SceneBase> _scene)
 
 void SceneManager::PopScene(void)
 {
+	scenes_.back()->Release();
 	scenes_.pop_back();
 }
 
@@ -287,11 +278,29 @@ void SceneManager::ResetDeltaTime(void)
 }
 
 void SceneManager::DoChangeScene(void)
-{
+{	
+
+
+	//解放
+	auto& resM = ResourceManager::GetInstance();
+	auto& sndM = SoundManager::GetInstance();
+	auto& uiM = UIManager2d::GetInstance();
+
+	//解放
+	for (auto& scene : scenes_) {
+		scene->Release();
+	}
+
+	// リソースの全解放
+	resM.Release();
+	sndM.Release();
+	uiM.Relese();
+
+
 	//次のシーン初期化
 	nextScene_->Init();
 
-	//解放
+	
 	scenes_.clear();
 
 	//次のシーンを入れる

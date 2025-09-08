@@ -14,6 +14,8 @@ private:
 	void InitSound(void)override;
 	void InitEffect(void)override;
 
-	int switchImg_;
+	int switchAfterCnt_;
+	bool switchTrg_;
+	bool isSwBtn_;	//Ø‚è‘Ö‚¦ƒ{ƒ^ƒ“‚É‚¢‚é‚©‚Ç‚¤‚©
 };
 
