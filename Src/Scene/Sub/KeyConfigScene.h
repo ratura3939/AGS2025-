@@ -3,5 +3,6 @@
 class KeyConfigScene :
     public SceneBase
 {
+
 };
 

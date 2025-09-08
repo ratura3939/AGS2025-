@@ -3,6 +3,7 @@
 #include"../Generic/SceneManager.h"
 #include"../Generic/Camera.h"
 #include"../GameSystem/AttackManager.h"
+#include"../GameSystem/LockOnManager.h"
 #include"../Decoration/SoundManager.h"
 #include"../../Scene/Main/Game.h"
 #include"../../Utility/Utility.h"
@@ -17,8 +18,9 @@ namespace {
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 }
 
-PlayerManager::PlayerManager(Game& _gameScene):scene_(_gameScene)
+PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy):scene_(_gameScene)
 {
+	lockOn_ = std::make_unique<LockOnManager>(_gameScene, this, _enemy);
 	stateCnt_ = 0;
 	stateLimit_ = 0;
 }
@@ -53,6 +55,8 @@ void PlayerManager::Update(AttackManager& _atk)
 	UserInput(_atk);
 	//キャラクター更新
 	character_->Update();
+	//ロックオン更新
+	lockOn_->Update();
 }
 
 void PlayerManager::Draw(void)
@@ -86,12 +90,12 @@ const VECTOR PlayerManager::GetFocusPoint(void)
 }
 
 
-void PlayerManager::LockOn(void)
+void PlayerManager::RedyLockOn(void)
 {
 	character_->ChangeRockState(true);
 }
 
-void PlayerManager::LockOff(void)
+void PlayerManager::RedyLockOff(void)
 {
 	character_->ChangeRockState(false);
 }
@@ -117,57 +121,8 @@ void PlayerManager::UserInput(AttackManager& _atk)
 
 	//回避入力があったとき(ロックオン状態でしか作動しない)
 	if (IsDudgeMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
-		//回避状態に
-		character_->SetState(PlayerChara::STATE::DODGE);
-		//回避音出す
-		SoundManager::GetInstance().Play("Dodge");
-
-		//カメラとキャラクターの前方同士の内積
-		auto cFor = SceneManager::GetInstance().GetCamera().GetRot().GetForward();
-		auto pFor = character_->GetForward();
-		bool isReverse = false;
-
-		float CtoP = Utility::DotF(cFor,pFor);
-		if (CtoP < 0.0f) {
-			//キャラクターの向きが反転している。
-			isReverse = true;
-		}
-
-		if (!isReverse) {
-			//反転していない場合
-			if (ins.IsPressed("left")) {
-				//対応するアニメーション
-				character_->PlayAnim("dodL");
-			}
-			else if (ins.IsPressed("right")) {
-				//対応するアニメーション
-				character_->PlayAnim("dodR");
-			}
-			else if (ins.IsPressed("down")) {
-				//対応するアニメーション
-				character_->PlayAnim("dodB");
-			}
-		}
-		else {
-			if (ins.IsPressed("left")) {
-				//対応するアニメーション
-				character_->PlayAnim("dodR");
-			}
-			else if (ins.IsPressed("right")) {
-				//対応するアニメーション
-				character_->PlayAnim("dodL");
-			}
-			else if (ins.IsPressed("up")) {
-				//対応するアニメーション
-				character_->PlayAnim("dodB");
-			}
-		}
-
-		
-
-
-		//時間の設定
-		RedyStateCount(LIMIT_AVOID_STATE);
+		//回避処理
+		DoDudge();
 	}
 
 	//移動
@@ -191,6 +146,15 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	}
 	//ダッシュ
 	character_->InputDash(ins.IsPressed("dash"));
+
+	//ロックオン
+	if (ins.IsPressed("rock") && lockOn_->CanLockOn()) {
+		lockOn_->LockOn();
+	}
+
+	if (ins.IsTrigerrUp("rock")) {
+		lockOn_->LockOff();
+	}
 }
 
 
@@ -206,6 +170,62 @@ const bool PlayerManager::IsDudgeMove(void) const
 {
 	InputManager& ins = InputManager::GetInstance();
 	return ins.IsPressed("right") || ins.IsPressed("left") || ins.IsPressed("down")|| ins.IsPressed("up");
+}
+
+void PlayerManager::DoDudge(void)
+{
+	//回避状態に
+	character_->SetState(PlayerChara::STATE::DODGE);
+	//回避音出す
+	SoundManager::GetInstance().Play("Dodge");
+
+	//カメラとキャラクターの前方同士の内積
+	auto cFor = SceneManager::GetInstance().GetCamera().GetRot().GetForward();
+	auto pFor = character_->GetForward();
+	bool isReverse = false;
+
+	float CtoP = Utility::DotF(cFor, pFor);
+	if (CtoP < 0.0f) {
+		//キャラクターの向きが反転している。
+		isReverse = true;
+	}
+
+	//プレイヤーからの入力総まとめ
+	InputManager& ins = InputManager::GetInstance();
+
+
+	if (!isReverse) {
+		//反転していない場合
+		if (ins.IsPressed("left")) {
+			//対応するアニメーション
+			character_->PlayAnim("dodL");
+		}
+		else if (ins.IsPressed("right")) {
+			//対応するアニメーション
+			character_->PlayAnim("dodR");
+		}
+		else if (ins.IsPressed("down")) {
+			//対応するアニメーション
+			character_->PlayAnim("dodB");
+		}
+	}
+	else {
+		if (ins.IsPressed("left")) {
+			//対応するアニメーション
+			character_->PlayAnim("dodR");
+		}
+		else if (ins.IsPressed("right")) {
+			//対応するアニメーション
+			character_->PlayAnim("dodL");
+		}
+		else if (ins.IsPressed("up")) {
+			//対応するアニメーション
+			character_->PlayAnim("dodB");
+		}
+	}
+
+	//時間の設定
+	RedyStateCount(LIMIT_AVOID_STATE);
 }
 
 const bool PlayerManager::IsAlive(void) const

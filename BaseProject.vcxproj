@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\GameSystem\LockOnManager.cpp" />
     <ClCompile Include="Src\Scene\Sub\KeyConfigScene.cpp" />
     <ClCompile Include="Src\Scene\Sub\PauseScene.cpp" />
     <ClCompile Include="Src\Object\Character\Player\ResultPlayer.cpp" />
@@ -71,6 +72,7 @@
     <ClCompile Include="Src\Scene\Sub\SwitchControllerScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\GameSystem\LockOnManager.h" />
     <ClInclude Include="Src\Scene\Sub\KeyConfigScene.h" />
     <ClInclude Include="Src\Scene\Sub\PauseScene.h" />
     <ClInclude Include="Src\Object\Character\Player\ResultPlayer.h" />

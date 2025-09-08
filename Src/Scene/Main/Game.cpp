@@ -55,13 +55,14 @@ void Game::Init(void)
 	update_ = &Game::GameUpdate;
 
 	//生成
-	//プレイヤー
-	player_ = std::make_unique<PlayerManager>(*this);
-	player_->Init();
-
+	
 	//敵
 	enemy_ = std::make_unique<EnemyManager>(*this);
 	enemy_->Init();
+
+	//プレイヤー
+	player_ = std::make_unique<PlayerManager>(*this,*enemy_);
+	player_->Init();
 
 	//攻撃
 	atkMng_ = std::make_unique<AttackManager>();
@@ -339,63 +340,63 @@ void Game::GameUpdate(void)
 
 	//下準備
 	//対象の検索
-	preNearEnemyNum_ = nearEnemyNum_;	//保存
-	nearEnemyNum_ = DecideRockEnemy();	//新規検索
+	//preNearEnemyNum_ = nearEnemyNum_;	//保存
+	//nearEnemyNum_ = DecideRockEnemy();	//新規検索
 
 	//カメラ非ロックオン時
-	if (camera.GetMode() != Camera::MODE::LOCKON) {
-		//ロックオン対象が変わったとき
-		if (preNearEnemyNum_ != nearEnemyNum_) {
-			//更新処理
-			enemy_->SetTargetEnemy(nearEnemyNum_);
-		}
-		//対象となる敵がいないとき
-		if (nearEnemyNum_ < 0) {
-			enemy_->NoTargetEnemy();
-		}
-	}
-	else {
-		//ロックオン中
-		//押下終了時
-		if (InputManager::GetInstance().IsTrigerrUp("rock")) {
-			//各種状態の変化
-			RockOff();
-		}
+	//if (camera.GetMode() != Camera::MODE::LOCKON) {
+	//	////ロックオン対象が変わったとき
+	//	//if (preNearEnemyNum_ != nearEnemyNum_) {
+	//	//	//更新処理
+	//	//	enemy_->SetTargetEnemy(nearEnemyNum_);
+	//	//}
+	//	////対象となる敵がいないとき
+	//	//if (nearEnemyNum_ < 0) {
+	//	//	enemy_->NoTargetEnemy();
+	//	//}
+	//}
+	//else {
+	//	//ロックオン中
+	//	//押下終了時
+	//	if (InputManager::GetInstance().IsTrigerrUp("rock")) {
+	//		//各種状態の変化
+	//		RockOff();
+	//	}
 
-		//対象となる敵がいなかったら
-		if (nearEnemyNum_ < 0) {
-			//各種状態の変化
-			RockOff();
-		}
-	}
+	//	//対象となる敵がいなかったら
+	//	if (nearEnemyNum_ < 0) {
+	//		//各種状態の変化
+	//		RockOff();
+	//	}
+	//}
 
-	//ロックオン処理
-	//押下時
-	if (InputManager::GetInstance().IsTrigerrDown("rock")) {
-		//敵が存在するとき
-		if (enemy_->GetEnemys().size() > 0) {
-			//近くに敵がいるとき
-			if (nearEnemyNum_ >= 0) {
-				SoundManager::GetInstance().Play("RockOn");
-				RockOn();
-			}
-		}
-	}
+	////ロックオン処理
+	////押下時
+	//if (InputManager::GetInstance().IsTrigerrDown("rock")) {
+	//	//敵が存在するとき
+	//	if (enemy_->GetEnemys().size() > 0) {
+	//		//近くに敵がいるとき
+	//		if (nearEnemyNum_ >= 0) {
+	//			SoundManager::GetInstance().Play("RockOn");
+	//			RockOn();
+	//		}
+	//	}
+	//}
 
 #pragma region カメラ更新
 	//カメラの設定
 	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象の更新
 
-	Camera::MODE mode = camera.GetMode();
-	//追従時
-	if (mode == Camera::MODE::FOLLOW) {
-		//camera.SetFocusPos(player_->GetFocusPoint());//注視点の更新
-		camera.SetFocusPos(player_->GetPos());//注視点の更新
-	}
-	//ロックオン時
-	else if (mode == Camera::MODE::LOCKON) {
-		camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));	//ロックオン対象の設定
-	}
+	//Camera::MODE mode = camera.GetMode();
+	////追従時
+	//if (mode == Camera::MODE::FOLLOW) {
+	//	//camera.SetFocusPos(player_->GetFocusPoint());//注視点の更新
+	//	camera.SetFocusPos(player_->GetPos());//注視点の更新
+	//}
+	////ロックオン時
+	//else if (mode == Camera::MODE::LOCKON) {
+	//	camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));	//ロックオン対象の設定
+	//}
 #pragma endregion
 }
 
@@ -651,24 +652,24 @@ void Game::FinishSwitchBgm(void)
 
 void Game::RockOn(void)
 {
-	Camera& camera = SceneManager::GetInstance().GetCamera();
-	camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));	//ロックオン対象の設定
-	player_->LockOn();
-	enemy_->LokedOn(nearEnemyNum_);
-	camera.ChangeMode(Camera::MODE::LOCKON);
+	//Camera& camera = SceneManager::GetInstance().GetCamera();
+	//camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));	//ロックオン対象の設定
+	//player_->RedyLockOn();
+	//enemy_->LokedOn(nearEnemyNum_);
+	//camera.ChangeMode(Camera::MODE::LOCKON);
 }
 
 void Game::RockOff(void)
 {
-	Camera& camera = SceneManager::GetInstance().GetCamera();
-	player_->LockOff();
-	enemy_->NoTargetEnemy();
-	camera.ChangeMode(Camera::MODE::FOLLOW);
-	//ゾーンを続かせないために
-	ChangeActionDirec(ACTION_DIRECTION::NOMAL);
-	EndSlow();
-	//対象をキャンセルしたとみなし初期化する
-	nearEnemyNum_ = -1;
+	//Camera& camera = SceneManager::GetInstance().GetCamera();
+	//player_->RedyLockOff();
+	//enemy_->NoTargetEnemy();
+	//camera.ChangeMode(Camera::MODE::FOLLOW);
+	////ゾーンを続かせないために
+	//ChangeActionDirec(ACTION_DIRECTION::NOMAL);
+	//EndSlow();
+	////対象をキャンセルしたとみなし初期化する
+	//nearEnemyNum_ = -1;
 }
 
 void Game::StartSlow(void)

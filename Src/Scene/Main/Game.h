@@ -58,6 +58,8 @@ public:
 	void StartBossFaze(void);	//ボス出現最初の処理用に。。(力技です)
 	void ChangeActionDirec(const ACTION_DIRECTION _direc);	//ブラー入れるか入れないか(その他追加ポストエフェクトも可能)
 
+	void EndSlow(void);		//スロー終了
+
 private:
 	//各初期化
 	void InitSound(void)override;
@@ -89,7 +91,7 @@ private:
 	void RockOff(void);
 
 	void StartSlow(void);	//スロー演出開始
-	void EndSlow(void);		//スロー終了
+	
 
 	void DrawDebug(void);
 

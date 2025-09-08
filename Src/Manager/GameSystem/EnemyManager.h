@@ -7,6 +7,7 @@
 class EnemyBase;
 class EnemyCount;
 class Game;
+class AttackManager;
 
 class EnemyManager
 {

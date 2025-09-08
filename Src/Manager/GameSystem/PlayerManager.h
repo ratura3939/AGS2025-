@@ -5,8 +5,10 @@
 #include"../../Common/Quaternion.h"
 
 class Game;
+class EnemyManager;
 class PlayerChara;
 class AttackManager;
+class LockOnManager;
 
 class PlayerManager
 {
@@ -19,7 +21,7 @@ public:
 	//状態上限時間
 	static constexpr int LIMIT_AVOID_STATE = 30;	//回避
 
-	PlayerManager(Game& _gameScene);
+	PlayerManager(Game& _gameScene, EnemyManager& _enemy);
 	~PlayerManager(void);
 
 	void Init(void);
@@ -38,8 +40,8 @@ public:
 	const bool IsAlive(void)const;
 
 	//ロックオン・オフ時に必要な処理
-	void LockOn(void);
-	void LockOff(void);
+	void RedyLockOn(void);
+	void RedyLockOff(void);
 
 	void DrawDebug(void);
 
@@ -53,12 +55,15 @@ private:
 	/// 回避可能方向に移動入力があるか
 	/// </summary>
 	const bool IsDudgeMove(void)const;
+	void DoDudge(void);
 
 	void RedyStateCount(const int _limit);
 
 	Game& scene_;	//ゲームクラス参照
-	std::shared_ptr<PlayerChara> character_;	//キャラクター
-	int stateCnt_;	//キャラクター状態管理用カウンター
+	std::shared_ptr<PlayerChara> character_;//キャラクター
+	std::unique_ptr<LockOnManager>lockOn_;	//ロックオン関係
+
+	int stateCnt_;		//キャラクター状態管理用カウンター
 	int stateLimit_;	//状態をの時間上限
 };
 
