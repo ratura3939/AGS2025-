@@ -20,7 +20,7 @@ namespace {
 
 PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy):scene_(_gameScene)
 {
-	lockOn_ = std::make_unique<LockOnManager>(_gameScene, this, _enemy);
+	lockOn_ = std::make_unique<LockOnManager>(_gameScene, *this, _enemy);
 	stateCnt_ = 0;
 	stateLimit_ = 0;
 }
