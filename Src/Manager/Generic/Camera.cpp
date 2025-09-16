@@ -282,11 +282,15 @@ void Camera::SetBeforeDrawReset(void)
 
 	//球面補間
 	rot_ = Quaternion::Slerp(start_.quaRot, goal_.quaRot, stepReset_);
-	//pos_ = Utility::Lerp(start_.pos, goal_.pos, stepReset_);
+
+	//球面補完の進行を考慮した位置に更新
 	pos_ = VAdd(followObject_.pos, rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW));
 
+	//注視点の線形補完
 	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.8f);
 
+
+	//アングルにも手を加える
 	VECTOR axY = { 0.0f,1.0f,0.0f };
 
 	rot_.ToAngleAxis(&angles_.y, &axY);

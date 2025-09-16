@@ -12,14 +12,14 @@ public:
 	void Update(void);
 
 	//ロックオンが可能かどうかを返す
-	inline const bool CanLockOn(void);
+	const bool CanLockOn(void);
 
 	//ロックオン・解除処理
 	void LockOn(void);
 	void LockOff(void);
 	
 private:
-	void SetTaergetPos4Camera(void);
+	void SetTaergetPos4Camera(void);	//カメラの追従対象を設定
 
 	/// <summary>
 	/// ロックオンの対象決め

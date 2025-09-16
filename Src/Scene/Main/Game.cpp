@@ -42,13 +42,15 @@ Game::Game(void)
 	nextBgmVol_ = 0;
 	switchBgm_ = false;
 
-	directionCnt_ = 0;
+	cameraDirecCnt_ = 0;
 	directionStartPos_ = CAMERA_START_1;
 	directionGoalPos_[0] = CAMERA_GOAL_1;
 	directionGoalPos_[1] = CAMERA_GOAL_2;
 	direcState_ = BOSS_DIRECTION::NONE;
-	directionCollTimeCnt_ = 0;
+	cameraDirecCollTimeCnt_ = 0;
 	stayCameraShake_ = false;
+
+	direcCnt_ = 0;
 
 	actionDirec_ = ACTION_DIRECTION::NOMAL;
 }
@@ -456,7 +458,7 @@ void Game::DirectionUpdate(void)
 			//場所の設定
 			auto bossPos = enemy_->GetPos(BOSS_IDX);
 			camera.SetPos(VAdd(bossPos,directionStartPos_), bossPos);
-			camera.SetGoalPos(VAdd(bossPos, directionGoalPos_[directionCnt_]));
+			camera.SetGoalPos(VAdd(bossPos, directionGoalPos_[cameraDirecCnt_]));
 			direcUpdate_ = &Game::DirectionCameraMove;
 		}
 
@@ -481,8 +483,8 @@ bool Game::DirectionShakeScreen(void)
 {
 	//カメラノーシェイク時
 	if (stayCameraShake_) {
-		directionCollTimeCnt_++;
-		if (directionCollTimeCnt_ >= CAMERA_SHAKE_COOL_TIME) {
+		cameraDirecCollTimeCnt_++;
+		if (cameraDirecCollTimeCnt_ >= CAMERA_SHAKE_COOL_TIME) {
 			DoShake();
 			stayCameraShake_ = false;
 		}
@@ -496,7 +498,7 @@ bool Game::DirectionShakeScreen(void)
 		if (direcCnt_ >= CAMERA_SHAKE_NUM) {
 			return true;
 		}
-		directionCollTimeCnt_ = 0;
+		cameraDirecCollTimeCnt_ = 0;
 		stayCameraShake_ = true;
 	}
 	return false;
@@ -518,14 +520,14 @@ bool Game::DirectionCameraMove(void)
 	//ゴール位置についたら次のスタート位置へ
 	auto cameraPos = camera.GetPos();
 	if (Utility::MagnitudeF(VSub(camera.GetGoalPos(), cameraPos)) <= ALLOWABLE_DISTANCE) {
-		directionCnt_++;
+		cameraDirecCnt_++;
 		//移動演出回数の上限に到達していたら
-		if (directionCnt_ >= CAMERA_DIRECTION_NUM) {
+		if (cameraDirecCnt_ >= CAMERA_DIRECTION_NUM) {
 			return true;
 		}
 		else {
 			//次の目標地点への設定
-			camera.SetGoalPos(VAdd(enemy_->GetPos(BOSS_IDX), directionGoalPos_[directionCnt_]));
+			camera.SetGoalPos(VAdd(enemy_->GetPos(BOSS_IDX), directionGoalPos_[cameraDirecCnt_]));
 			enemy_->BossShout();
 			ChangeActionDirec(ACTION_DIRECTION::BLUR);
 		}

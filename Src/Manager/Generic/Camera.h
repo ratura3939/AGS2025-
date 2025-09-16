@@ -183,7 +183,7 @@ private:
 	//回転スピード
 	float rotSpeed_;
 
-	// カメラ角度(rad)
+	// カメラ角度(rad)プレイヤーが手を加えた回転量
 	VECTOR angles_;
 	// X軸回転が無い角度
 	Quaternion rotOutX_;

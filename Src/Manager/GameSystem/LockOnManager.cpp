@@ -2,6 +2,7 @@
 #include"../Generic/Camera.h"
 #include"../GameSystem/EnemyManager.h"
 #include"../GameSystem/PlayerManager.h"
+#include"../Decoration/SoundManager.h"
 #include"../../Scene/Main/Game.h"
 #include "LockOnManager.h"
 
@@ -45,7 +46,7 @@ void LockOnManager::Update(void)
 	SetTaergetPos4Camera();
 }
 
-inline const bool LockOnManager::CanLockOn(void)
+const bool LockOnManager::CanLockOn(void)
 {
 	return targets_.GetNearEnemyNum(master_.GetPos()) >= 0;
 }
@@ -54,6 +55,8 @@ void LockOnManager::LockOn(void)
 {
 	//無駄な処理をしないため
 	if (isLockOn_)return;
+
+	SoundManager::GetInstance().Play("RockOn");
 
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	camera.SetRockPos(targets_.GetPos(nearTargetNum_));	//ロックオン対象の設定
@@ -89,10 +92,11 @@ void LockOnManager::SetTaergetPos4Camera(void)
 	//ロックオンをしていたら
 	if (isLockOn_) {
 		//ロックオン対象に敵を設定
-
+		camera.SetRockPos(targets_.GetPos(nearTargetNum_));
 	}
 	else {
 		//追従対象にプレイヤーを設定
+		camera.SetFocusPos(master_.GetPos());
 	}
 
 }

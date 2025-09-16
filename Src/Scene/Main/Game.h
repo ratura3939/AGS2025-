@@ -124,8 +124,8 @@ private:
 	BOSS_DIRECTION direcState_;
 	VECTOR directionStartPos_;
 	VECTOR directionGoalPos_[CAMERA_DIRECTION_NUM];
-	int directionCnt_;
-	int directionCollTimeCnt_;
+	int cameraDirecCnt_;
+	int cameraDirecCollTimeCnt_;
 	
 	//ëñç∏ê¸
 	std::unique_ptr<PixelMaterial>scanLineMaterial_;
