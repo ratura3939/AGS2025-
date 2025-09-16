@@ -12,7 +12,7 @@ public:
 		NONE,
 		BACK_GAME,	//ゲームに戻る
 		CONFIG,		//操作方法
-		SWITCH_CNTL,	//操作切り換え
+		SWITCH_CNTL,//操作切り換え
 		BACK_TITLE,	//ゲームやめる(タイトルに戻る)
 	};
 

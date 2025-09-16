@@ -58,8 +58,19 @@ public:
 
 	//シーン遷移
 	void SetInitScene(std::shared_ptr<SceneBase>_scene);	//初期化時のみ使用
+	/// <summary>
+	/// シーンの変更
+	/// </summary>
+	/// <param name="_scene">メインシーン(Scene/Main/)</param>
 	void ChangeScene(std::shared_ptr<SceneBase>_scene);
+	/// <summary>
+	/// 追加シーンの生成
+	/// </summary>
+	/// <param name="_scene">追加シーン</param>
 	void PushScene(std::shared_ptr<SceneBase>_scene);
+	/// <summary>
+	/// 追加されているシーンを一つ削除（最新のシーン）
+	/// </summary>
 	void PopScene(void);
 
 	// デルタタイムの取得
