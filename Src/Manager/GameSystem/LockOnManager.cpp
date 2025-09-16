@@ -45,7 +45,7 @@ void LockOnManager::Update(void)
 	SetTaergetPos4Camera();
 }
 
-inline const bool LockOnManager::CanLockOn(void)
+const bool LockOnManager::CanLockOn(void)
 {
 	return targets_.GetNearEnemyNum(master_.GetPos()) >= 0;
 }

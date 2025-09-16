@@ -19,23 +19,6 @@
 
 //ここでしか使わない物たち用
 namespace {
-	int DEVICE_SIZE = 300;	//コントローラ画像サイズ
-	int ALLOW_ICON_SIZE_X = 199;	//アイコン縦サイズ
-	int ALLOW_ICON_SIZE_Y = 288;	//アイコン縦サイズ
-	int EXIT_ICON_SIZE_X = 180;
-	int EXIT_ICON_SIZE_Y = 243;
-
-	int MARGIN_SIZE = 30;	//隙間の大きさ
-	float EXTEND_IMG = 1.5f;//画像拡大率
-
-	float EXIT_EXTEND_MAX = 1.5f;	//拡大率(上限)
-	float EXIT_EXTEND_MIN = 0.6f;	//拡大率(下限)
-	float EXIT_EXTEND_ACC = 0.05f;	//拡大率(加算)
-
-	float JUMP_POW_MAX = 0;	//動き幅(上限)
-	float JUMP_POW_MIN = -60;//動き幅(下限)
-	float JUMP_ACC = -5;	//矢印動き用
-
 	//各種UI登録名
 	std::string UI_EXIT_STR = "exit";
 	std::string UI_ALLOW_STR = "allow";
@@ -131,35 +114,32 @@ void Title::InitUI(void)
 	allowPos_[static_cast<int>(DEVICE::PAD)] = alPos;
 
 	//矢印アイコン
-	uiM.Add(UI_ALLOW_STR, rsM.Load(ResourceManager::SRC::ARROW_DOWN_IMG).handleId_, UI_DIREC::UP_DOWN, UI_DIMENSION::DIMENSION_2);	//追加
-	uiM.SetUIInfo(UI_ALLOW_STR, allowPos_[static_cast<int>(DEVICE::KEY)], 1.0f);						//基礎設定
-	uiM.SetUIDirectionPram(UI_ALLOW_STR, UI_GROUP::MOVE, JUMP_ACC, JUMP_POW_MAX, JUMP_POW_MIN);			//詳細設定
-	//戻るアイコン
-	uiM.Add(UI_EXIT_STR, rsM.Load(ResourceManager::SRC::EXIT_IMG).handleId_,UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
-	uiM.SetUIInfo(UI_EXIT_STR, exitPos, 1.0f);															//基礎設定
-	uiM.SetUIDirectionPram(UI_EXIT_STR, UI_GROUP::ZOOM, EXIT_EXTEND_ACC, EXIT_EXTEND_MAX, EXIT_EXTEND_MIN);//詳細設定
+	uiM.Add(UI_ALLOW_STR, rsM.Load(ResourceManager::SRC::ARROW_DOWN_IMG).handleId_, UI_DIREC::UP_DOWN, UI_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(UI_ALLOW_STR, allowPos_[static_cast<int>(DEVICE::KEY)]);
+	uiM.SetUIDirectionPram(UI_ALLOW_STR, UI_GROUP::MOVE, JUMP_ACC, JUMP_POW_MAX, JUMP_POW_MIN);
 
+	//戻るアイコン
+	uiM.Add(UI_EXIT_STR, rsM.Load(ResourceManager::SRC::EXIT_IMG).handleId_,UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(UI_EXIT_STR, exitPos);	
+	uiM.SetUIDirectionPram(UI_EXIT_STR, UI_GROUP::ZOOM, EXIT_EXTEND_ACC, EXIT_EXTEND_MAX, EXIT_EXTEND_MIN);
 
 	//タイトルロゴ
-	uiM.Add(UI_LOGO_STR, rsM.Load(ResourceManager::SRC::TITLE_LOGO).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
-	uiM.SetUIInfo(UI_LOGO_STR, VECTOR(Application::SCREEN_SIZE_X / 2.0f-450.0f, Application::SCREEN_SIZE_Y / 2.0f- DEVICE_SIZE+20.0f, 0.0f), 0.8f);															//基礎設定
-	uiM.SetUIDirectionPram(UI_LOGO_STR, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//詳細設定
+	uiM.Add(UI_LOGO_STR, rsM.Load(ResourceManager::SRC::TITLE_LOGO).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(UI_LOGO_STR, VECTOR(screenHX - LOGO_ALL_DIFF, screenHY - LOGO_ALL_DIFF + LOGO__ALL_MARGIN_Y, 0.0f), LOGO_NOMAL_EXTEND);	
 
 	//タイトルロゴ(影絵)
-	uiM.Add(UI_SHADOWLOGO_STR, rsM.Load(ResourceManager::SRC::SHADOW_LOGO).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
-	uiM.SetUIInfo(UI_SHADOWLOGO_STR, VECTOR(Application::SCREEN_SIZE_X / 2.0f+40.0f, Application::SCREEN_SIZE_Y / 2.0f - DEVICE_SIZE+50.0f, 0.0f), 0.4f);															//基礎設定
-	uiM.SetUIDirectionPram(UI_SHADOWLOGO_STR, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//詳細設定
+	uiM.Add(UI_SHADOWLOGO_STR, rsM.Load(ResourceManager::SRC::SHADOW_LOGO).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(UI_SHADOWLOGO_STR, VECTOR(screenHX + LOGO_SHADOW_MARGIN_X, screenHY - LOGO_ALL_DIFF + LOGO__ALL_MARGIN_Y, 0.0f), LOGO_SHADOW_EXTEND);
 
 	//スタートボタン
-	uiM.Add(UI_START_STR, rsM.Load(ResourceManager::SRC::START_GAME_BTN).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);		//追加
-	uiM.SetUIInfo(UI_START_STR, VECTOR(Application::SCREEN_SIZE_X / 2.0f, Application::SCREEN_SIZE_Y / 2.0f+50.0f, 0.0f), 0.6f);															//基礎設定
-	uiM.SetUIDirectionPram(UI_START_STR, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//詳細設定
+	uiM.Add(UI_START_STR, rsM.Load(ResourceManager::SRC::START_GAME_BTN).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(UI_START_STR, VECTOR(screenHX, screenHY + START_BTN_MARGIN_Y, 0.0f), START_BTN_EXTEND_MAX);
+	uiM.SetUIDirectionPram(UI_START_STR, UI_GROUP::ZOOM, START_BTN_EXTEND_ACC, START_BTN_EXTEND_MAX, START_BTN_EXTEND_MIN);
 
 
-	//クリックして下さ
-	uiM.Add(UI_CLICK_STR, rsM.Load(ResourceManager::SRC::CLICK_STR_IMG).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);		//追加
-	uiM.SetUIInfo(UI_CLICK_STR, VECTOR(Application::SCREEN_SIZE_X/2.0f, Application::SCREEN_SIZE_Y / 2.0f + DEVICE_SIZE, 0.0f), 0.2f);															//基礎設定
-	//uiM.SetUIDirectionPram(UI_CLICK_STR, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//詳細設定
+	//クリックして下さい
+	uiM.Add(UI_CLICK_STR, rsM.Load(ResourceManager::SRC::CLICK_STR_IMG).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(UI_CLICK_STR, VECTOR(screenHX, screenHY + DEVICE_SIZE, 0.0f), ENTER_STR_EXTEND);
 }
 
 void Title::InitSound(void)
@@ -203,11 +183,8 @@ void Title::Draw(void)
 	auto& uiM = UIManager2d::GetInstance();
 
 	render_->Draw();
-	//stage_->Draw();
-	uiM.Draw(UI_SHADOWLOGO_STR);
-	uiM.Draw(UI_LOGO_STR);
-	uiM.Draw(UI_START_STR);
-	uiM.Draw(UI_CLICK_STR);
+	//UI描画
+	uiM.Draw({ UI_SHADOWLOGO_STR,UI_LOGO_STR,UI_START_STR,UI_CLICK_STR });
 
 	//コントローラ選択中
 	if (isSelectDevice_) {
@@ -243,6 +220,7 @@ void Title::SelectDeviceUpdate(void)
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
 	UIManager2d& uiM = UIManager2d::GetInstance();
+
 	//決定
 	if (ins.IsTrigerrDown("action"))
 	{
@@ -271,42 +249,20 @@ void Title::SelectDeviceUpdate(void)
 		}
 		
 	}
+
 	//選択関係
-	if (ins.IsTrigerrDown("right") && !selectExit_) {
-		//右はPADなのでそれを選択に
-		selectDevice_[static_cast<int>(DEVICE::KEY)] = false;
-		selectDevice_[static_cast<int>(DEVICE::PAD)] = true;
-		//UI位置設定
-		uiM.SetPos(UI_ALLOW_STR, allowPos_[static_cast<int>(DEVICE::PAD)]);
-		//カーソル移動音
-		SoundManager::GetInstance().Play("Cursur");
+	if (ins.IsTrigerrDown("right")) {
+		SetSelectDevice(DEVICE::PAD);
 	}
 	else if(ins.IsTrigerrDown("left")) {
-		//左ははKEYなのでそれを選択に
-		selectDevice_[static_cast<int>(DEVICE::KEY)] = true;
-		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
-		//UI位置設定
-		uiM.SetPos(UI_ALLOW_STR, allowPos_[static_cast<int>(DEVICE::KEY)]);
-		//カーソル移動音
-		SoundManager::GetInstance().Play("Cursur");
+		SetSelectDevice(DEVICE::KEY);
 	}
-	if (ins.IsTrigerrDown("down") && !selectExit_) {
-		//下は戻るなのでそれを選択に
-		selectDevice_[static_cast<int>(DEVICE::KEY)] = false;
-		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
-		selectExit_ = true;
-		//カーソル移動音
-		SoundManager::GetInstance().Play("Cursur");
+	else if (ins.IsTrigerrDown("down")) {
+		SetSelectDevice(DEVICE::MAX);
 	}
+
 	if(ins.IsTrigerrDown("up") && selectExit_) {
-		//戻るから選択の方へ
-		selectDevice_[static_cast<int>(DEVICE::KEY)] = true;
-		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
-		selectExit_ = false;
-		//UI位置設定
-		uiM.SetPos(UI_ALLOW_STR, allowPos_[static_cast<int>(DEVICE::KEY)]);
-		//カーソル移動音
-		SoundManager::GetInstance().Play("Cursur");
+		SetSelectDevice(DEVICE::KEY);
 	}
 
 	//「戻る」選択中
@@ -319,6 +275,31 @@ void Title::SelectDeviceUpdate(void)
 		uiM.Update(UI_ALLOW_STR);
 	}
 
+}
+
+void Title::SetSelectDevice(const DEVICE _device)
+{
+	if (_device != DEVICE::MAX) {
+		int selectDeviceIdx = static_cast<int>(_device);
+		int notSelectDeviceIdx = fabs(selectDeviceIdx - 1);
+
+		selectDevice_[selectDeviceIdx] = true;
+		selectDevice_[notSelectDeviceIdx] = false;
+
+		//UI位置設定
+		UIManager2d::GetInstance().SetPos(UI_ALLOW_STR, allowPos_[selectDeviceIdx]);
+
+		selectExit_ = false;
+	}
+	else {
+		//全解除
+		selectDevice_[static_cast<int>(DEVICE::KEY)] = false;
+		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
+		selectExit_ = true;
+	}
+	//カーソル移動音
+	SoundManager::GetInstance().Play("Cursur");
+	
 }
 
 

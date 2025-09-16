@@ -84,7 +84,8 @@ public:
 	/// 要素の消去
 	/// </summary>
 	/// <param name="_name">登録名</param>
-	void DeleteUI(const std::string& _name);
+	void DeleteUI(const std::string& _name);				//単体
+	void DeleteUI(const std::vector<std::string> _names);	//複数
 
 	/// <summary>
 	/// 演出追加
@@ -124,12 +125,12 @@ public:
 	void SetImage(const std::string& _name, const int _imageHndl);
 
 	//更新
-	void Update(const std::string _name);				//単体更新
-	void Update(const std::vector<std::string> _names);	//複数更新
+	void Update(const std::string _name);				//単体
+	void Update(const std::vector<std::string> _names);	//複数
 
 	//描画
-	void Draw(const std::string _name);					//単体描画
-	void Draw(const std::vector<std::string> _names);	//複数描画
+	void Draw(const std::string _name);					//単体
+	void Draw(const std::vector<std::string> _names);	//複数
 
 	//解放
 	void Relese(void);

@@ -8,6 +8,19 @@ class SceneBase
 {
 
 public:
+#pragma region サブシーン共通定数
+	//一枚絵
+	static constexpr float IMG_EX_SB_SCENE = 0.8f;			//画像拡大率
+
+	//ボタン
+	//拡大縮小
+	static constexpr float BTN_EX_MAX_SB_SCENE = 0.3f;		//上限
+	static constexpr float BTN_EX_MIN_SB_SCENE = 0.2f;		//下限
+	static constexpr float BTN_EX_ACC_SB_SCENE = 0.01f;	//スピード
+	//位置調整
+	static constexpr float BTN_DIFF_X_SB_SCENE = 250.0f;		//X
+	static constexpr float BTN_DIFF_Y_SB_SCENE = 100.0f;		//Y
+#pragma endregion
 
 	// コンストラクタ
 	SceneBase(void);

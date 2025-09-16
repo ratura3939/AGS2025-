@@ -13,27 +13,23 @@
 
 namespace {
 	//各種登録名
-	std::string BACK_TITLE_BTN = "PauseBackTitle";
-	std::string BACK_GAME_BTN = "PauseBackGame";
-	std::string CHECK_CONFIG_BTN = "PauseConfig";
-	std::string SWITCH_OPE_BTN = "PauseSwitchCntl";
-	std::string RIGHT_ARROW = "PauseArrow";
+	std::string BACK_TITLE_BTN = "BackTitle_PauseScene";
+	std::string BACK_GAME_BTN = "BackGame_PauseScene";
+	std::string CHECK_CONFIG_BTN = "Config_PauseScene";
+	std::string SWITCH_OPE_BTN = "SwitchCntl_PauseScene";
+	std::string RIGHT_ARROW = "Arrow_PauseScene";
 
 	const float BTN_SIZE = 256.0f;			//元画像大きさ
 	const float BTN_DRAW_SIZE = 0.6f;		//ボタン(ゲームに戻る・タイトルに戻る)を描画するときの大きさ倍率
 	const float BIG_BTN_DRAW_SIZE = 0.5f;	//ボタン(操作方法・操作切り替え)を描画するときの大きさ倍率
 
-	const float ARRW_DRAW_DIFF_X = -300.0f;	//矢印の中央描画位置からの差分（X軸）
+	const float ARRW_DIFF_X = -300.0f;		//矢印の中央描画位置からの差分（X軸）
 	const float ARROW_LOCAL_ROT = -270.0f;	//矢印の画像回転用
 	const float ARROW_ACC = -3.0f;			//矢印の移動量
 	const float ARROW_MOVE_MAX = 0;			//移動量(上限)
 	const float ARROW_MOVE_MIN = -60;		//移動量(下限)
 
 	const int MENU_LIST_NONE_DIFFER = 1;	//列挙にNONEが入っているのでそれの差分用
-
-	//シーン移動の際に何シーン跨ぐか。(SceneManagerのAddSubScene内の物と照らし合わせること)
-	const int CONFIG_SCENE_JUMP_CNT = 1;	//操作確認シーンの場合
-	const int SWITCH_CNTL_SCENE_JUMP_CNT = 2;	//操作切り換えシーンの場合
 }
 
 PauseScene::PauseScene(void)
@@ -56,21 +52,23 @@ void PauseScene::Init(void)
 	using UI_GROUP = UIManager2d::UI_DIRECTION_GROUP;
 	using UI_DIMENSION = UIManager2d::UI_DRAW_DIMENSION;
 
+	VECTOR screenSize = { static_cast<float>(Application::SCREEN_SIZE_X),static_cast<float>(Application::SCREEN_SIZE_Y),0.0f };
+
 	//ゲームに戻る
 	uiM.Add(BACK_GAME_BTN, resM.Load(ResourceManager::SRC::BACK_GAME_BTN).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(BACK_GAME_BTN, { Application::SCREEN_SIZE_X / 2,(Application::SCREEN_SIZE_Y / 2) - BTN_SIZE,0.0f }, BTN_DRAW_SIZE);
+	uiM.SetUIInfo(BACK_GAME_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) - BTN_SIZE,0.0f }, BTN_DRAW_SIZE);
 
 	//操作方法
 	uiM.Add(CHECK_CONFIG_BTN, resM.Load(ResourceManager::SRC::CHECK_CONFIG_IMG).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(CHECK_CONFIG_BTN, { Application::SCREEN_SIZE_X / 2,(Application::SCREEN_SIZE_Y / 2) - BTN_SIZE / 3.0f,0.0f }, BIG_BTN_DRAW_SIZE);
+	uiM.SetUIInfo(CHECK_CONFIG_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) - BTN_SIZE / 3.0f,0.0f }, BIG_BTN_DRAW_SIZE);
 
 	//操作切り替え
 	uiM.Add(SWITCH_OPE_BTN, resM.Load(ResourceManager::SRC::SWITCH_OPERATOR_IMG).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(SWITCH_OPE_BTN, { Application::SCREEN_SIZE_X / 2,(Application::SCREEN_SIZE_Y / 2) + BTN_SIZE / 3.0f,0.0f }, BIG_BTN_DRAW_SIZE);
+	uiM.SetUIInfo(SWITCH_OPE_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) + BTN_SIZE / 3.0f,0.0f }, BIG_BTN_DRAW_SIZE);
 
 	//タイトルに戻る
 	uiM.Add(BACK_TITLE_BTN, resM.Load(ResourceManager::SRC::STOP_GAME_BTN).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(BACK_TITLE_BTN, { Application::SCREEN_SIZE_X / 2,(Application::SCREEN_SIZE_Y / 2) + BTN_SIZE,0.0f }, BTN_DRAW_SIZE);
+	uiM.SetUIInfo(BACK_TITLE_BTN, { screenSize.x / 2.0f,(screenSize.y / 2.0f) + BTN_SIZE,0.0f }, BTN_DRAW_SIZE);
 
 	//リスト制作
 	drawBtnList_ = { BACK_GAME_BTN, CHECK_CONFIG_BTN, SWITCH_OPE_BTN, BACK_TITLE_BTN };
@@ -196,6 +194,6 @@ const VECTOR PauseScene::GetDrawPosOfArrow(void) const
 	//選択されているボタンの位置
 	VECTOR arrowPos = UIManager2d::GetInstance().GetDrawPos(drawBtnList_[selectIdx_]);
 	//描画位置はボタンの左側(差分を足す)
-	arrowPos.x += ARRW_DRAW_DIFF_X;
+	arrowPos.x += ARRW_DIFF_X;
 	return arrowPos;
 }

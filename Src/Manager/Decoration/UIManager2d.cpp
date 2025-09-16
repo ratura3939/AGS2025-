@@ -58,6 +58,17 @@ void UIManager2d::DeleteUI(const std::string& _name)
 	}
 }
 
+void UIManager2d::DeleteUI(const std::vector<std::string> _names)
+{
+	for (auto& name : _names) {
+		images_.erase(name);
+		infoes_.erase(name);
+		if (direcInfoes_.contains(name)) {
+			direcInfoes_.erase(name);
+		}
+	}
+}
+
 void UIManager2d::PushUIDirection(const std::string& _name, UI_DIRECTION_2D _type)
 {
 	//‰‰oî•ñ‰Šú‰»

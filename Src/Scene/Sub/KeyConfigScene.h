@@ -16,7 +16,5 @@ public:
 private:
 	void InitSound(void)override;
 	void InitEffect(void)override;
-
-	int configImg_;	//‘€ìà–¾‚Ì‰æ‘œŠi”[
 };
 

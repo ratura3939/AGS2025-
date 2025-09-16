@@ -12,7 +12,7 @@ public:
 	void Update(void);
 
 	//ロックオンが可能かどうかを返す
-	inline const bool CanLockOn(void);
+	const bool CanLockOn(void);
 
 	//ロックオン・解除処理
 	void LockOn(void);
