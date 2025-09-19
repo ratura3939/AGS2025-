@@ -233,19 +233,23 @@ void Title::SelectDeviceUpdate(void)
 		}
 		else {
 			//ここを通るときは必ずどちらか選択されているとき
+			
+			SoundManager& sndM = SoundManager::GetInstance();
+			SceneManager& scM = SceneManager::GetInstance();
+
 			//キーボードが選択されていたら
 			if (selectDevice_[static_cast<int>(DEVICE::KEY)]) {
 				//キーボード操作に設定
-				SceneManager::GetInstance().SetController(SceneManager::CNTL::KEY);
+				scM.SetController(SceneManager::CNTL::KEY);
 			}
 			else {
 				//PAD操作に設定
-				SceneManager::GetInstance().SetController(SceneManager::CNTL::PAD);
+				scM.SetController(SceneManager::CNTL::PAD);
 			}
 			//シーン遷移
-			SoundManager::GetInstance().Stop("NomalBgm");
-			SoundManager::GetInstance().Play("Enter");
-			SceneManager::GetInstance().ChangeScene(std::make_shared<Game>());
+			sndM.Stop("NomalBgm");
+			sndM.Play("Enter");
+			scM.ChangeScene(std::make_shared<Game>());
 		}
 		
 	}
@@ -338,7 +342,4 @@ void Title::DrawDevice(void)
 
 	//戻るアイコン
 	uiM.Draw(UI_EXIT_STR);
-
-	//戻るアイコン
-	//DrawRotaGraph(screenHX, screenHY+ ((DEVICE_SIZE * EXTEND_IMG / 2)+ (ICON_SIZE_Y / 2)), exitExtend_, 0.0f, exitImg_, true);
 }
