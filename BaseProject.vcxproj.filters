@@ -195,7 +195,10 @@
     <ClCompile Include="Src\Scene\Sub\SwitchControllerScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Manager\GameSystem\LockOnManager.cpp">
+    <ClCompile Include="Src\PlayerSystem\LockOnManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Gimmick\GimmickObjBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -350,7 +353,10 @@
     <ClInclude Include="Src\Scene\Sub\SwitchControllerScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Manager\GameSystem\LockOnManager.h">
+    <ClInclude Include="Src\PlayerSystem\LockOnManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Gimmick\GimmickObjBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

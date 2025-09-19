@@ -1,8 +1,8 @@
-#include"../Generic/SceneManager.h"
-#include"../Generic/Camera.h"
-#include"../GameSystem/EnemyManager.h"
-#include"../GameSystem/PlayerManager.h"
-#include"../../Scene/Main/Game.h"
+#include"../Manager/Generic/SceneManager.h"
+#include"../Manager/Generic/Camera.h"
+#include"../Manager/GameSystem/EnemyManager.h"
+#include"../Manager/GameSystem/PlayerManager.h"
+#include"../Scene/Main/Game.h"
 #include "LockOnManager.h"
 
 LockOnManager::LockOnManager(Game& _gameScene, PlayerManager& _player, EnemyManager& _enemyInfo) :scene_(_gameScene), master_(_player), targets_(_enemyInfo)

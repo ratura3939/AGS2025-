@@ -3,7 +3,7 @@
 #include"../Generic/SceneManager.h"
 #include"../Generic/Camera.h"
 #include"../GameSystem/AttackManager.h"
-#include"../GameSystem/LockOnManager.h"
+#include"../../PlayerSystem/LockOnManager.h"
 #include"../Decoration/SoundManager.h"
 #include"../../Scene/Main/Game.h"
 #include"../../Utility/Utility.h"
