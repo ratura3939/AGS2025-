@@ -46,11 +46,13 @@ void GameClear::Init(void)
 	uiM.SetUIInfo(BACK_TITLE_LOGO, VECTOR(Application::SCREEN_SIZE_X / 2.0f, Application::SCREEN_SIZE_Y / 2.0f + 50.0f, 0.0f), 0.6f);		//基礎設定														//基礎設定
 	uiM.SetUIDirectionPram(BACK_TITLE_LOGO, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//詳細設定
 
+	//ステージ
 	stage_ = std::make_unique<Stage>(true);
 	stage_->Init();
 
 	InitSound();
 
+	//カメラを固定に
 	auto& camera = SceneManager::GetInstance().GetCamera();
 	camera.ChangeMode(Camera::MODE::FIXED_POINT);
 	camera.SetDefault();
@@ -60,6 +62,7 @@ void GameClear::InitSound(void)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	SoundManager& sndM = SoundManager::GetInstance();
+
 	//BGM
 	sndM.Add(SoundManager::TYPE::BGM, "NomalBgm",
 		rsM.Load(ResourceManager::SRC::GAMECLEAR_BGM).handleId_);
@@ -77,10 +80,12 @@ void GameClear::InitEffect(void)
 
 void GameClear::Update(void)
 {
-	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
+
+	//決定を押されたら
 	if (ins.IsTrigerrDown("action"))
 	{
+		// シーン遷移
 		SoundManager::GetInstance().Stop("NomalBgm");
 		SceneManager::GetInstance().ChangeScene(std::make_shared<Title>());
 	}
@@ -90,11 +95,10 @@ void GameClear::Update(void)
 
 void GameClear::Draw(void)
 {
-	stage_->Draw();
-
 	auto& uiM = UIManager2d::GetInstance();
-	uiM.Draw(GAME_CLEAR_LOGO);
-	uiM.Draw(BACK_TITLE_LOGO);
+
+	stage_->Draw();
+	uiM.Draw({ GAME_CLEAR_LOGO,BACK_TITLE_LOGO });
 }
 
 void GameClear::Release(void)

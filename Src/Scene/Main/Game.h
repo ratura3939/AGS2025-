@@ -16,29 +16,36 @@ class Game :
     public SceneBase
 {
 public:
-
-	static constexpr int LIMIT_SLOW = 200;
-	static constexpr int BGM_VOL_ACC = 1;
+	static constexpr int LIMIT_SLOW = 200;					//スロー演出時間
+	static constexpr int BGM_VOL_MAX = 100;					//BGM音量最大値
+	static constexpr int BGM_VOL_ACC = 1;					//BGM切り換えスピード
 	static constexpr float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
-	static constexpr float SLOW_SPEED_PERCENT = 25.0f;	//スローの割合(通常時から半分の速度にする)
+	static constexpr float SLOW_SPEED_PERCENT = 25.0f;		//スローの割合(通常時から半分の速度にする)
 
-	static constexpr int WARNING_DIRECTION_TIME = 150;	//WARNING警告時間
-	static constexpr int CAMERA_SHAKE_NUM = 3;	//カメラ演出における振動回数
-	static constexpr int CAMERA_SHAKE_COOL_TIME = 40;	//振動のクールタイム
-	static constexpr int CAMERA_DIRECTION_NUM = 2;	//カメラ演出における移動回数
+	static constexpr int WARNING_DIRECTION_TIME = 150;		//WARNING警告時間
+	static constexpr int CAMERA_SHAKE_NUM = 3;				//カメラ演出における振動回数
+	static constexpr int CAMERA_SHAKE_COOL_TIME = 40;		//振動のクールタイム
+	static constexpr int CAMERA_DIRECTION_NUM = 2;			//カメラ演出における移動回数
 
+	/// <summary>
+	/// ボスの演出
+	/// </summary>
 	enum class BOSS_DIRECTION {
 		NONE,
-		POST_EFFECT,
-		SHAKE_SCREEN,
-		CAMERA_MOVE,
+		POST_EFFECT,	//ポストエフェクト
+		SHAKE_SCREEN,	//画面揺れ
+		CAMERA_MOVE,	//カメラ移動
 		END
 	};
 
+	/// <summary>
+	/// ポストエフェクトの種類
+	/// </summary>
 	enum class ACTION_DIRECTION {
 		NOMAL,
 		BLUR,
 		JUST_DODGE,
+		SCAN_LINE,
 		END
 	};
 
@@ -48,17 +55,18 @@ public:
 	void Init(void) override;
 	void Update(void) override;
 	void Draw(void) override;
-	void DrawScanLine(void);
-	void DrawBlur(void);
-	void DrawDodgeEffect(void);
 
 	void Release(void) override;
 	void Reset(void)override;
 
-	void StartBossFaze(void);	//ボス出現最初の処理用に。。(力技です)
-	void ChangeActionDirec(const ACTION_DIRECTION _direc);	//ブラー入れるか入れないか(その他追加ポストエフェクトも可能)
+	//ボス出現最初の処理用
+	void StartBossFaze(void);
 
-	void EndSlow(void);		//スロー終了
+	//ブラー入れるか入れないか
+	void ChangeActionDirec(const ACTION_DIRECTION _direc);	
+
+	//スロー終了
+	void EndSlow(void);		
 
 private:
 	//各初期化
@@ -66,12 +74,18 @@ private:
 	void InitEffect(void)override;
 	void InitShader(void);
 
-	void GameUpdate(void);			//通常のゲームアップデート
+	//各種更新
+	void GameUpdate(void);			//ゲーム通常
 	void DirectionUpdate(void);		//演出アップデート
 	bool DirectionPostEffect(void);	//ポストエフェクト
 	bool DirectionShakeScreen(void);//画面揺れ演出
 	void DoShake(void);				//揺らす
 	bool DirectionCameraMove(void);	//カメラ移動
+
+	//各種描画処理(ポストエフェクト)
+	void DrawScanLine(void);	//走査線
+	void DrawBlur(void);		//ブラー
+	void DrawDodgeEffect(void);	//ジャスト回避時
 
 	/// <summary>
 	/// 攻撃の基礎情報登録(ゆくゆくは外部データにしたい)
@@ -87,56 +101,65 @@ private:
 	//切り換え終了時の処理
 	void FinishSwitchBgm(void);
 
-	void RockOn(void);		
-	void RockOff(void);
-
-	void StartSlow(void);	//スロー演出開始
+	//スロー演出開始
+	void StartSlow(void);	
 	
-
+	//デバッグ描画
 	void DrawDebug(void);
 
+
+	//変数
+#pragma region インスタンス
 	std::unique_ptr<PlayerManager>player_;			//プレイヤー
 	std::unique_ptr<EnemyManager>enemy_;			//敵
 	std::unique_ptr<AttackManager>atkMng_;			//攻撃関連
 	std::unique_ptr<CollisionManager>collision_;	//判定関連
 	std::unique_ptr<Stage>stage_;					//ステージ
 
-	int nearEnemyNum_;		//ロックオン対象の配列番号
-	int preNearEnemyNum_;	//ロックオン対象の配列番号(１フレーム前)
-	bool isSlowEffect_;	//スロー演出フラグ
-	int slowCnt_;		//スロー演出カウンタ
+#pragma endregion
 
+#pragma region 関数ポインタ
+	//更新関数
 	using Update_f = void(Game::*)(void);
 	using DirecUpdate_f = bool(Game::*)(void);
-	Update_f update_;
-	DirecUpdate_f direcUpdate_;
+	Update_f update_;			//通常・演出の二つを管理
+	DirecUpdate_f direcUpdate_;	//演出のポストエフェクト・画面揺れ・カメラ移動の三つを管理
 
+	//描画関数
+	using DrawPostEffect_f = void(Game::*)(void);
+	DrawPostEffect_f drawPostEffect_;	//ポストエフェクト管理
 
-	//下二つの変数はBGMが二つの場合で製作している
-	//ボス個体を製作したら要調整]
-	//ボスフェーズになったらswitchBgmStrを変えるだけでいいかも？
-	std::string nowBgmStr_;	//現在のBGM
+#pragma endregion
+
+#pragma region その他変数
+	//スロー演出
+	bool isSlowEffect_;	//ON/OFFフラグ
+	int slowCnt_;		//カウンタ
+
+	//BGM
+	std::string nowBgmStr_;		//現在のBGM
 	std::string switchBgmStr_;	//切り替え後のBGM
-	int nextBgmVol_;	//BGMの音量調整用(BGM切り替え時に使用)
-	bool switchBgm_;	//切り換え開始
+	int nextBgmVol_;			//音量調整用(BGM切り替え時に使用)
+	bool switchBgm_;			//切り換え開始フラグ
+
+	BOSS_DIRECTION direcState_;		//ボス演出管理
+	int direcCnt_;	//演出に関わるカウンタ
 
 	//カメラの演出用
-	BOSS_DIRECTION direcState_;
-	VECTOR directionStartPos_;
-	VECTOR directionGoalPos_[CAMERA_DIRECTION_NUM];
-	int directionCnt_;
-	int directionCollTimeCnt_;
-	
+	VECTOR cameraDirecStartPos_;
+	VECTOR cameraDirecGoalPos_[CAMERA_DIRECTION_NUM];
+	int cameraDirecCnt_;
+	int cameraDirecCollTimeCnt_;
+	bool stayCameraShake_;
+
 	//走査線
 	std::unique_ptr<PixelMaterial>scanLineMaterial_;
 	std::unique_ptr<PixelRenderer>scanLineRender_;
 	int scanLineScreen_;
 	std::string warningStr_;
-	int direcCnt_;	//演出に関わるカウンタ
-	bool stayCameraShake_;
+
 
 	//ブラー関連
-	ACTION_DIRECTION actionDirec_;
 	std::unique_ptr<PixelMaterial>blurMaterial_;
 	std::unique_ptr<PixelRenderer>blurRender_;
 	int blurScreen_;
@@ -144,5 +167,9 @@ private:
 	std::unique_ptr<PixelMaterial>dodgeMaterial_;
 	std::unique_ptr<PixelRenderer>dodgeRender_;
 	int dodgeScreen_;
+
+	bool isDrawPostEffect_;	//ポストエフェクトをかけるか
+
+#pragma endregion
 };
 

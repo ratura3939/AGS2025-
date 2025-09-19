@@ -9,11 +9,7 @@ class GameClear :
     public SceneBase
 {
 public:
-
-	// コンストラクタ
 	GameClear(void);
-
-	// デストラクタ
 	~GameClear(void);
 
 	void Init(void) override;
@@ -29,7 +25,6 @@ public:
 	void Reset(void)override;
 
 private:
-
-	std::unique_ptr<Stage>stage_;					//ステージ
+	std::unique_ptr<Stage>stage_;	//ステージ
 };
 

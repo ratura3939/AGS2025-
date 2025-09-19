@@ -35,22 +35,23 @@ namespace {
 
 Game::Game(void)
 {
-	nearEnemyNum_ = -1;
-	preNearEnemyNum_ = -1;
 	isSlowEffect_ = false;
 	slowCnt_ = -1;
 	nextBgmVol_ = 0;
 	switchBgm_ = false;
 
-	directionCnt_ = 0;
-	directionStartPos_ = CAMERA_START_1;
-	directionGoalPos_[0] = CAMERA_GOAL_1;
-	directionGoalPos_[1] = CAMERA_GOAL_2;
+	cameraDirecCnt_ = 0;
+	cameraDirecStartPos_ = CAMERA_START_1;
+	cameraDirecGoalPos_[0] = CAMERA_GOAL_1;
+	cameraDirecGoalPos_[1] = CAMERA_GOAL_2;
 	direcState_ = BOSS_DIRECTION::NONE;
-	directionCollTimeCnt_ = 0;
+	cameraDirecCollTimeCnt_ = 0;
 	stayCameraShake_ = false;
 
-	actionDirec_ = ACTION_DIRECTION::NOMAL;
+	isDrawPostEffect_ = false;
+
+	update_ = &Game::GameUpdate;
+	drawPostEffect_ = &Game::DrawScanLine;
 }
 
 Game::~Game(void)
@@ -65,11 +66,7 @@ void Game::Init(void)
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	rsM.GetInstance().Init(SceneManager::SCENE_ID::GAME);
 
-	update_ = &Game::GameUpdate;
-
-	//生成
-	
-	//敵
+	//生成	//敵
 	enemy_ = std::make_unique<EnemyManager>(*this);
 	enemy_->Init();
 
@@ -85,6 +82,7 @@ void Game::Init(void)
 	//判定
 	collision_ = std::make_unique<CollisionManager>();
 
+	//ステージ
 	stage_ = std::make_unique<Stage>(false);
 	stage_->Init();
 
@@ -114,8 +112,6 @@ void Game::Init(void)
 	//メニューボタン
 	uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(MENU_BTN, VECTOR{ static_cast<float>(Application::SCREEN_SIZE_X - BTN_DIFF_X),static_cast<float>(Application::SCREEN_SIZE_Y - BTN_DIFF_Y),0.0f }, BTN_EX);
-
-	//メニューボタン対応キー
 }
 
 void Game::InitSound(void)
@@ -217,7 +213,7 @@ void Game::InitShader(void)
 	blurScreen_ = MakeScreen(
 		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 
-	//ブラー
+	//ブラー(回避用)
 	//PS
 	dodgeMaterial_ = std::make_unique<PixelMaterial>("JustDodgePS.cso", 3);
 	//拡散光
@@ -258,8 +254,6 @@ void Game::Update(void)
 	Camera& camera = scM.GetCamera();
 	InputManager& inpM = InputManager::GetInstance();
 
-	
-
 #pragma region シーン遷移
 	//プレイヤーが死んでいたら
 	if (!player_->IsAlive()) {
@@ -270,7 +264,6 @@ void Game::Update(void)
 		scM.ChangeScene(std::make_shared<GameOver>());
 	}
 	
-
 	//ポーズシーン遷移
 	if (inpM.IsTrigerrDown("pause")) {
 		//シーン追加(一つ次へ)
@@ -342,81 +335,21 @@ void Game::GameUpdate(void)
 		//音量調整に加算
 		nextBgmVol_ += BGM_VOL_ACC;
 		sndM.AdjustVolume(switchBgmStr_, nextBgmVol_);			//次のBGMは音量をあげる
-		sndM.AdjustVolume(nowBgmStr_, (100 - nextBgmVol_));	//現在のBGMは音量を下げる
+		sndM.AdjustVolume(nowBgmStr_, (BGM_VOL_MAX - nextBgmVol_));	//現在のBGMは音量を下げる
 
-		//もしボリュームが100以上なら
-		if (nextBgmVol_ >= 100) {
-			nextBgmVol_ = 100;	//音量を100％に
+		//もしボリュームが最大値以上なら
+		if (nextBgmVol_ >= BGM_VOL_MAX) {
+			//音量を最大値に
+			nextBgmVol_ = BGM_VOL_MAX;	
 			//終了処理
 			FinishSwitchBgm();
 		}
 	}
 #pragma endregion
 
-
-	//TODO
-	// カメラのロックオンの処理の最適化
-	//ロックオン関係
-
-	//下準備
-	//対象の検索
-	//preNearEnemyNum_ = nearEnemyNum_;	//保存
-	//nearEnemyNum_ = DecideRockEnemy();	//新規検索
-
-	//カメラ非ロックオン時
-	//if (camera.GetMode() != Camera::MODE::LOCKON) {
-	//	////ロックオン対象が変わったとき
-	//	//if (preNearEnemyNum_ != nearEnemyNum_) {
-	//	//	//更新処理
-	//	//	enemy_->SetTargetEnemy(nearEnemyNum_);
-	//	//}
-	//	////対象となる敵がいないとき
-	//	//if (nearEnemyNum_ < 0) {
-	//	//	enemy_->NoTargetEnemy();
-	//	//}
-	//}
-	//else {
-	//	//ロックオン中
-	//	//押下終了時
-	//	if (InputManager::GetInstance().IsTrigerrUp("rock")) {
-	//		//各種状態の変化
-	//		RockOff();
-	//	}
-
-	//	//対象となる敵がいなかったら
-	//	if (nearEnemyNum_ < 0) {
-	//		//各種状態の変化
-	//		RockOff();
-	//	}
-	//}
-
-	////ロックオン処理
-	////押下時
-	//if (InputManager::GetInstance().IsTrigerrDown("rock")) {
-	//	//敵が存在するとき
-	//	if (enemy_->GetEnemys().size() > 0) {
-	//		//近くに敵がいるとき
-	//		if (nearEnemyNum_ >= 0) {
-	//			SoundManager::GetInstance().Play("RockOn");
-	//			RockOn();
-	//		}
-	//	}
-	//}
-
-#pragma region カメラ更新
+#pragma region カメラ
 	//カメラの設定
 	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象の更新
-
-	//Camera::MODE mode = camera.GetMode();
-	////追従時
-	//if (mode == Camera::MODE::FOLLOW) {
-	//	//camera.SetFocusPos(player_->GetFocusPoint());//注視点の更新
-	//	camera.SetFocusPos(player_->GetPos());//注視点の更新
-	//}
-	////ロックオン時
-	//else if (mode == Camera::MODE::LOCKON) {
-	//	camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));	//ロックオン対象の設定
-	//}
 #pragma endregion
 }
 
@@ -427,6 +360,7 @@ void Game::DirectionUpdate(void)
 		//次の演出に
 		direcState_ = static_cast<BOSS_DIRECTION>(static_cast<int>(direcState_) + 1);
 		direcCnt_ = 0;
+
 		//もし終了したら
 		if (direcState_ == BOSS_DIRECTION::END) {
 			//カメラの追従対象を戻す
@@ -448,19 +382,26 @@ void Game::DirectionUpdate(void)
 		}
 		//画面揺れ
 		else if (direcState_ == BOSS_DIRECTION::SHAKE_SCREEN) {
+			//実行
 			DoShake();
+			//演出の更新を「画面揺れ」に
 			direcUpdate_ = &Game::DirectionShakeScreen;
 		}
 		//カメラ移動
 		else if (direcState_ == BOSS_DIRECTION::CAMERA_MOVE) {
+			//ボスの生成
 			enemy_->CreateBoss();
-			auto& camera = SceneManager::GetInstance().GetCamera();
+
 			//カメラを自動移動に設定
+			auto& camera = SceneManager::GetInstance().GetCamera();
 			camera.ChangeMode(Camera::MODE::AUTO_MOVE);
-			//場所の設定
+
+			//場所の設定(ボスの横ぐらい)
 			auto bossPos = enemy_->GetPos(BOSS_IDX);
-			camera.SetPos(VAdd(bossPos,directionStartPos_), bossPos);
-			camera.SetGoalPos(VAdd(bossPos, directionGoalPos_[directionCnt_]));
+			camera.SetPos(VAdd(bossPos,cameraDirecStartPos_), bossPos);
+			camera.SetGoalPos(VAdd(bossPos, cameraDirecGoalPos_[cameraDirecCnt_]));
+
+			//演出を「カメラ移動に変更
 			direcUpdate_ = &Game::DirectionCameraMove;
 		}
 
@@ -471,13 +412,19 @@ bool Game::DirectionPostEffect(void)
 {
 	//WARNING更新
 	UIManager2d::GetInstance().Update(warningStr_);
+
 	//ポストエフェクト更新
-	scanLineMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
+	scanLineMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });	//横ライン移動用
+
+	//演出カウンタ更新
 	direcCnt_++;
+	//一定時間過ぎたら
 	if (direcCnt_ > WARNING_DIRECTION_TIME) {
+		//演出終了
 		SoundManager::GetInstance().Stop("WarningBgm");	//警告音止める
 		return true;
 	}
+	//演出が続く
 	return false;
 }
 
@@ -485,8 +432,12 @@ bool Game::DirectionShakeScreen(void)
 {
 	//カメラノーシェイク時
 	if (stayCameraShake_) {
-		directionCollTimeCnt_++;
-		if (directionCollTimeCnt_ >= CAMERA_SHAKE_COOL_TIME) {
+		//クールタイム増加
+		cameraDirecCollTimeCnt_++;
+
+		//一定時間経過後
+		if (cameraDirecCollTimeCnt_ >= CAMERA_SHAKE_COOL_TIME) {
+			//再度揺らす
 			DoShake();
 			stayCameraShake_ = false;
 		}
@@ -496,20 +447,26 @@ bool Game::DirectionShakeScreen(void)
 
 	//カメラシェイク終了時
 	if (SceneManager::GetInstance().GetCamera().IsFinishShake()) {
+		//演出カウンタ増加
 		direcCnt_++;
+
+		//一定数行ったら
 		if (direcCnt_ >= CAMERA_SHAKE_NUM) {
+			//演出終了
 			return true;
 		}
-		directionCollTimeCnt_ = 0;
+		//クールタイム関係リセット
+		cameraDirecCollTimeCnt_ = 0;
 		stayCameraShake_ = true;
 	}
+	//演出が続く
 	return false;
 }
 
 void Game::DoShake(void)
 {
-	SoundManager::GetInstance().Play("Impact");
-	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);
+	SoundManager::GetInstance().Play("Impact");	//効果音再生
+	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);	//揺らす
 }
 
 bool Game::DirectionCameraMove(void)
@@ -519,21 +476,29 @@ bool Game::DirectionCameraMove(void)
 
 	//カメラ演出用
 	auto& camera = SceneManager::GetInstance().GetCamera();
+
 	//ゴール位置についたら次のスタート位置へ
 	auto cameraPos = camera.GetPos();
 	if (Utility::MagnitudeF(VSub(camera.GetGoalPos(), cameraPos)) <= ALLOWABLE_DISTANCE) {
-		directionCnt_++;
+		//演出カウンタ増加
+		cameraDirecCnt_++;
+
 		//移動演出回数の上限に到達していたら
-		if (directionCnt_ >= CAMERA_DIRECTION_NUM) {
+		if (cameraDirecCnt_ >= CAMERA_DIRECTION_NUM) {
+			//演出終了
 			return true;
 		}
 		else {
 			//次の目標地点への設定
-			camera.SetGoalPos(VAdd(enemy_->GetPos(BOSS_IDX), directionGoalPos_[directionCnt_]));
+			camera.SetGoalPos(VAdd(enemy_->GetPos(BOSS_IDX), cameraDirecGoalPos_[cameraDirecCnt_]));
+
+			//二回目の移動はボスの「叫び」も入れる
 			enemy_->BossShout();
+			//「叫び」演出用のブラーへ
 			ChangeActionDirec(ACTION_DIRECTION::BLUR);
 		}
 	}
+	//演出が続く
 	return false;
 }
 
@@ -548,14 +513,10 @@ void Game::Draw(void)
 
 	//DrawDebug();
 
-	if (direcState_ == BOSS_DIRECTION::POST_EFFECT) {
-		DrawScanLine();
-	}
-	if (actionDirec_ == ACTION_DIRECTION::BLUR) {
-		DrawBlur();
-	}
-	else if (actionDirec_ == ACTION_DIRECTION::JUST_DODGE) {
-		DrawDodgeEffect();
+	//ポストエフェクトをかけるとき
+	if (isDrawPostEffect_) {
+		//描画
+		(this->*drawPostEffect_)();
 	}
 }
 
@@ -646,7 +607,22 @@ void Game::StartBossFaze(void)
 
 void Game::ChangeActionDirec(const ACTION_DIRECTION _direc)
 {
-	actionDirec_ = _direc;
+	//とりあえずポストエフェクトを描画するように
+	isDrawPostEffect_ = true;
+	//各ポストエフェクトの描画設定
+	if (_direc == ACTION_DIRECTION::SCAN_LINE) {
+		drawPostEffect_ = &DrawScanLine;
+	}
+	else if (_direc == ACTION_DIRECTION::BLUR) {
+		drawPostEffect_ = &DrawBlur;
+	}
+	else if (_direc == ACTION_DIRECTION::JUST_DODGE) {
+		drawPostEffect_ = &DrawDodgeEffect;
+	}
+	else {
+		//上記三つ以外の場合はポストエフェクトをかけない
+		isDrawPostEffect_ = false;
+	}
 }
 
 void Game::AttackDataInit(void)
@@ -676,34 +652,12 @@ void Game::FinishSwitchBgm(void)
 	nextBgmVol_ = 0;
 }
 
-void Game::RockOn(void)
-{
-	//Camera& camera = SceneManager::GetInstance().GetCamera();
-	//camera.SetRockPos(enemy_->GetPos(nearEnemyNum_));	//ロックオン対象の設定
-	//player_->RedyLockOn();
-	//enemy_->LokedOn(nearEnemyNum_);
-	//camera.ChangeMode(Camera::MODE::LOCKON);
-}
-
-void Game::RockOff(void)
-{
-	//Camera& camera = SceneManager::GetInstance().GetCamera();
-	//player_->RedyLockOff();
-	//enemy_->NoTargetEnemy();
-	//camera.ChangeMode(Camera::MODE::FOLLOW);
-	////ゾーンを続かせないために
-	//ChangeActionDirec(ACTION_DIRECTION::NOMAL);
-	//EndSlow();
-	////対象をキャンセルしたとみなし初期化する
-	//nearEnemyNum_ = -1;
-}
-
 void Game::StartSlow(void)
 {
 	auto& scM = SceneManager::GetInstance();
 	//スロー演出準備
 	slowCnt_ = 0;
-	ChangeActionDirec(ACTION_DIRECTION::JUST_DODGE);
+	ChangeActionDirec(ACTION_DIRECTION::JUST_DODGE);	//演出
 	isSlowEffect_ = true;
 	//更新スピードを50％に設定
 	scM.SetUpdateSpeedRate_(SLOW_SPEED_PERCENT);

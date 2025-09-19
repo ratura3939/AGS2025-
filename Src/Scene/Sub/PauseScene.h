@@ -8,6 +8,9 @@ class PauseScene :
     public SceneBase
 {
 public:
+	/// <summary>
+	/// メニュー時の項目
+	/// </summary>
 	enum class MENU_ITEM {
 		NONE,
 		BACK_GAME,	//ゲームに戻る
@@ -16,10 +19,7 @@ public:
 		BACK_TITLE,	//ゲームやめる(タイトルに戻る)
 	};
 
-	// コンストラクタ
 	PauseScene(void);
-
-	// デストラクタ
 	~PauseScene(void)override;
 
 	void Init(void) override;

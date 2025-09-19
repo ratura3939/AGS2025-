@@ -13,7 +13,6 @@
 #include"../../Renderer/PixelRenderer.h"
 #include"Game.h"
 
-#include"../../Object/Stage/Stage.h"
 #include "Title.h"
 
 
@@ -30,8 +29,6 @@ namespace {
 
 Title::Title(void)
 {
-	logoImg_ = -1;
-	font_ = -1;
 	isSelectDevice_ = false;
 	selectDevice_[static_cast<int>(DEVICE::KEY)] = true;
 	selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
@@ -55,29 +52,23 @@ void Title::Init(void)
 	SceneManager::GetInstance().SetController(SceneManager::CNTL::NONE);
 
 	// タイトルロゴ
-	//logoImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::START_LOGO).handleId_;
 	deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;
 	deviceImgs_[static_cast<int>(DEVICE::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_IMG).handleId_;
 
+	//背景
 	backImg_= ResourceManager::GetInstance().Load(ResourceManager::SRC::TITLE_BACK_BTN).handleId_;
 
 	//UI初期化
 	InitUI();
 
-	
-	font_ = CreateFontToHandle(NULL, SIZE_FONT, THICK_FONT, DX_FONTTYPE_EDGE);
-
 	update_ = &Title::NomalUpdate;
 
+	//レンダーとマテリアル(背景の引き伸ばし用)
 	material_ = std::make_unique<PixelMaterial>("NomalTexPS.cso", 0);
 	material_->AddTextureBuf(backImg_);
 
 	render_ = std::make_unique<PixelRenderer>(*material_);
 	render_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-
-	stage_ = std::make_unique<Stage>(true);
-	stage_->Init();
-
 
 	//音関係初期化
 	InitSound();
@@ -179,15 +170,17 @@ void Title::Update(void)
 
 void Title::Draw(void)
 {
-
 	auto& uiM = UIManager2d::GetInstance();
 
+	//背景描画
 	render_->Draw();
+
 	//UI描画
 	uiM.Draw({ UI_SHADOWLOGO_STR,UI_LOGO_STR,UI_START_STR,UI_CLICK_STR });
 
 	//コントローラ選択中
 	if (isSelectDevice_) {
+		//重ねてデバイスの描画
 		DrawDevice();
 	}
 }
@@ -211,7 +204,7 @@ void Title::NomalUpdate(void)
 		update_ = &Title::SelectDeviceUpdate;
 		SoundManager::GetInstance().Play("Enter");
 	}
-	//UIManager2d::GetInstance().Update(UI_LOGO_STR);
+	//動きのあるUIの更新
 	UIManager2d::GetInstance().Update(UI_START_STR);
 }
 
@@ -233,7 +226,7 @@ void Title::SelectDeviceUpdate(void)
 		}
 		else {
 			//ここを通るときは必ずどちらか選択されているとき
-			
+		
 			SoundManager& sndM = SoundManager::GetInstance();
 			SceneManager& scM = SceneManager::GetInstance();
 
@@ -246,25 +239,29 @@ void Title::SelectDeviceUpdate(void)
 				//PAD操作に設定
 				scM.SetController(SceneManager::CNTL::PAD);
 			}
+
 			//シーン遷移
 			sndM.Stop("NomalBgm");
 			sndM.Play("Enter");
 			scM.ChangeScene(std::make_shared<Game>());
 		}
-		
 	}
 
 	//選択関係
 	if (ins.IsTrigerrDown("right")) {
+		//カーソルをパッドに
 		SetSelectDevice(DEVICE::PAD);
 	}
 	else if(ins.IsTrigerrDown("left")) {
+		//カーソルをキーに
 		SetSelectDevice(DEVICE::KEY);
 	}
 	else if (ins.IsTrigerrDown("down")) {
+		//カーソルを「戻る」に
 		SetSelectDevice(DEVICE::MAX);
 	}
 
+	//上入力は「戻るアイコン」にカーソルがあるときしか判定しない
 	if(ins.IsTrigerrDown("up") && selectExit_) {
 		SetSelectDevice(DEVICE::KEY);
 	}
@@ -283,22 +280,27 @@ void Title::SelectDeviceUpdate(void)
 
 void Title::SetSelectDevice(const DEVICE _device)
 {
+	//KEYかPADのとき
 	if (_device != DEVICE::MAX) {
-		int selectDeviceIdx = static_cast<int>(_device);
-		int notSelectDeviceIdx = fabs(selectDeviceIdx - 1);
+		int selectDeviceIdx = static_cast<int>(_device);	//選択しているもの(配列の指数用)
+		int notSelectDeviceIdx = fabs(selectDeviceIdx - 1);	//選択していないもの(配列の指数用)/要素が二つのみなので必ず0・１が出力されるように
 
+		//設定
 		selectDevice_[selectDeviceIdx] = true;
 		selectDevice_[notSelectDeviceIdx] = false;
 
 		//UI位置設定
 		UIManager2d::GetInstance().SetPos(UI_ALLOW_STR, allowPos_[selectDeviceIdx]);
 
+		//「戻る」ではない
 		selectExit_ = false;
 	}
 	else {
 		//全解除
 		selectDevice_[static_cast<int>(DEVICE::KEY)] = false;
 		selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
+
+		//「戻る」である
 		selectExit_ = true;
 	}
 	//カーソル移動音
@@ -314,31 +316,28 @@ void Title::DrawDevice(void)
 	int screenHX = Application::SCREEN_SIZE_X / 2;
 	int screenHY = Application::SCREEN_SIZE_Y / 2;
 
-	//うっすら黒くする
+	//うっすら背景黒くする
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
 	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	int drawX = 0, drawY = 0;
 	//高さは中央統一
+	int drawX = 0, drawY = 0;
 	drawY = screenHY;
 
 	//キーボード
 	drawX = screenHX - (DEVICE_SIZE * EXTEND_IMG / 2) - (MARGIN_SIZE * EXTEND_IMG);
-	//選ばれていたら矢印を描画
-	if (selectDevice_[static_cast<int>(DEVICE::KEY)]) {
-		uiM.Draw(UI_ALLOW_STR);
-	}
-
 	DrawRotaGraph(drawX, drawY, EXTEND_IMG, 0.0f, deviceImgs_[static_cast<int>(DEVICE::KEY)], true);
 
 	//PAD
 	drawX = screenHX + (DEVICE_SIZE * EXTEND_IMG / 2) + (MARGIN_SIZE * EXTEND_IMG);
-	//選ばれていたら矢印を描画
-	if (selectDevice_[static_cast<int>(DEVICE::PAD)]) {
+	DrawRotaGraph(drawX, drawY, EXTEND_IMG, 0.0f, deviceImgs_[static_cast<int>(DEVICE::PAD)], true);
+
+	//「戻る」が選ばれていないとき
+	if (!selectExit_) {
+		//矢印の描画
 		uiM.Draw(UI_ALLOW_STR);
 	}
-	DrawRotaGraph(drawX, drawY, EXTEND_IMG, 0.0f, deviceImgs_[static_cast<int>(DEVICE::PAD)], true);
 
 	//戻るアイコン
 	uiM.Draw(UI_EXIT_STR);

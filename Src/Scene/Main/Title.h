@@ -4,14 +4,12 @@
 
 class PixelMaterial;
 class PixelRenderer;
-class Stage;
 
 
 class Title : public SceneBase
 {
 
 public:
-
 	enum class DEVICE {
 		KEY,
 		PAD,
@@ -62,11 +60,7 @@ public:
 
 #pragma endregion
 	
-
-	// コンストラクタ
 	Title(void);
-
-	// デストラクタ
 	~Title(void);
 
 	void Init(void) override;
@@ -83,12 +77,16 @@ private:
 	void NomalUpdate(void);
 	void SelectDeviceUpdate(void);
 
+	/// <summary>
+	/// 使用するデバイスの選択設定
+	/// </summary>
+	/// <param name="_device">使用しようとしているデバイス</param>
 	void SetSelectDevice(const DEVICE _device);
 
 	//デバイス選択
 	void DrawDevice(void);
 
-	int logoImg_;	//ロゴ
+	
 	int backImg_;	//背景
 	int deviceImgs_[static_cast<int>(DEVICE::MAX)];	//コントローラー画像
 
@@ -98,13 +96,9 @@ private:
 
 	VECTOR allowPos_[static_cast<int>(DEVICE::MAX)];
 
-	int font_;			//フォント
-
 	using Update_f = void(Title::*)(void);
 	Update_f update_;
 
 	std::unique_ptr<PixelMaterial>material_;
 	std::unique_ptr<PixelRenderer>render_;
-
-	std::unique_ptr<Stage>stage_;					//ステージ
 };

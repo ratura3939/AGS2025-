@@ -8,11 +8,7 @@ class GameOver :
     public SceneBase
 {
 public:
-
-	// コンストラクタ
 	GameOver(void);
-
-	// デストラクタ
 	~GameOver(void);
 
 	void Init(void) override;
@@ -28,6 +24,6 @@ public:
 	void Reset(void)override;
 
 private:
-	std::unique_ptr<Stage>stage_;					//ステージ
+	std::unique_ptr<Stage>stage_;	//ステージ
 };
 
