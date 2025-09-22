@@ -1,7 +1,11 @@
 #pragma once
 
 #include<DxLib.h>
+#include<memory>
 #include"../../Common/Quaternion.h"
+
+class ModelMaterial;
+class ModelRenderer;
 
 class GimmickObjBase
 {
@@ -13,6 +17,8 @@ public:
 	void Update(void);
 	void Draw(void);
 	void Release(void);
+
+	void SetObjectRenderColor(const FLOAT4 _color);
 
 protected:
 	virtual void SetPram(void) = 0;
@@ -37,6 +43,13 @@ protected:
 	Quaternion quaRotLocal_;
 
 	float gravity_;	//èdóÕ
+
+#pragma region shaderä÷òA
+	std::unique_ptr<ModelMaterial> material_;
+	std::unique_ptr<ModelRenderer> render_;
+
+	FLOAT4 objColor_;
+#pragma endregion
 
 private:
 
