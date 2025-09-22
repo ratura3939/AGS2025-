@@ -111,7 +111,6 @@ void Camera::SetBeforeDrawFixedPoint(void)
 void Camera::SetBeforeDrawFree(void)
 {
 	Rotation();
-
 }
 
 void Camera::SetBeforeDrawFollow(void)
@@ -226,7 +225,7 @@ void Camera::SetBeforeDrawShake(void)
 	if (stepShake_ < 0.0f)
 	{
 		pos_ = defaultPos_;
-		ChangeMode(MODE::FOLLOW);
+		ChangeMode(MODE::FIXED_POINT);
 		finishShake_ = true;
 		return;
 	}

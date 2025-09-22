@@ -6,10 +6,12 @@
 
 #include "KeyConfigScene.h"
 
+//ƒ[ƒJƒ‹’è”
 namespace {
-	//ŠeíUI“o˜^–¼
+#pragma region UI“o˜^–¼
 	const std::string BACK_BTN = "BackBtn_KeyScene";
 	const std::string CONFIG_IMG = "Config_img";
+#pragma endregion
 }
 
 KeyConfigScene::KeyConfigScene(void)

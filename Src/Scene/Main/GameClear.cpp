@@ -12,10 +12,10 @@
 #include"../../Object/Stage/Stage.h"
 #include "GameClear.h"
 
+//ƒ[ƒJƒ‹’è”
 namespace {
 	std::string GAME_CLEAR_LOGO = "ClearLogo";
 	std::string BACK_TITLE_LOGO = "BackTitle";
-
 }
 
 GameClear::GameClear(void)

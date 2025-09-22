@@ -162,12 +162,7 @@ void EnemyBase::SetPram(void)
 
 void EnemyBase::InitAnim(void)
 {
-	animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);
-	animController_->Add("attack", ANIM_ATTACK_NOMAL, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("walk", ANIM_WALK, AnimationController::PLAY_TYPE::LOOP);
-	animController_->Add("dush", ANIM_DUSH_FORWARD, AnimationController::PLAY_TYPE::LOOP);
-	animController_->Add("dethStart", ANIM_DETH_START, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("dethSus", ANIM_DETH_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
+	
 }
 
 void EnemyBase::InitUI(void)

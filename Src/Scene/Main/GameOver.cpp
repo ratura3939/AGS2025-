@@ -10,7 +10,7 @@
 #include"../../Object/Stage/Stage.h"
 #include "GameOver.h"
 
-
+//ƒ[ƒJƒ‹’è”
 namespace {
 	std::string GAME_OVER_LOGO = "OverLogo";
 	std::string BACK_TITLE_LOGO = "BackTitle";

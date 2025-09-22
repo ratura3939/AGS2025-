@@ -16,15 +16,6 @@ class Game :
     public SceneBase
 {
 public:
-	static constexpr int LIMIT_SLOW = 200;					//スロー演出時間
-	static constexpr int BGM_VOL_MAX = 100;					//BGM音量最大値
-	static constexpr int BGM_VOL_ACC = 1;					//BGM切り換えスピード
-	static constexpr float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
-	static constexpr float SLOW_SPEED_PERCENT = 25.0f;		//スローの割合(通常時から半分の速度にする)
-
-	static constexpr int WARNING_DIRECTION_TIME = 150;		//WARNING警告時間
-	static constexpr int CAMERA_SHAKE_NUM = 3;				//カメラ演出における振動回数
-	static constexpr int CAMERA_SHAKE_COOL_TIME = 40;		//振動のクールタイム
 	static constexpr int CAMERA_DIRECTION_NUM = 2;			//カメラ演出における移動回数
 
 	/// <summary>
@@ -115,7 +106,6 @@ private:
 	std::unique_ptr<AttackManager>atkMng_;			//攻撃関連
 	std::unique_ptr<CollisionManager>collision_;	//判定関連
 	std::unique_ptr<Stage>stage_;					//ステージ
-
 #pragma endregion
 
 #pragma region 関数ポインタ
@@ -128,8 +118,26 @@ private:
 	//描画関数
 	using DrawPostEffect_f = void(Game::*)(void);
 	DrawPostEffect_f drawPostEffect_;	//ポストエフェクト管理
-
 #pragma endregion
+
+#pragma region shader関連
+	//走査線
+	std::unique_ptr<PixelMaterial>scanLineMaterial_;
+	std::unique_ptr<PixelRenderer>scanLineRender_;
+	int scanLineScreen_;
+
+	//ブラー関連
+	std::unique_ptr<PixelMaterial>blurMaterial_;
+	std::unique_ptr<PixelRenderer>blurRender_;
+	int blurScreen_;
+	//ジャスト回避
+	std::unique_ptr<PixelMaterial>dodgeMaterial_;
+	std::unique_ptr<PixelRenderer>dodgeRender_;
+	int dodgeScreen_;
+
+	bool isDrawPostEffect_;	//ポストエフェクトをかけるか
+#pragma endregion
+
 
 #pragma region その他変数
 	//スロー演出
@@ -143,33 +151,13 @@ private:
 	bool switchBgm_;			//切り換え開始フラグ
 
 	BOSS_DIRECTION direcState_;		//ボス演出管理
-	int direcCnt_;	//演出に関わるカウンタ
+	int direcCnt_;					//演出に関わるカウンタ
 
 	//カメラの演出用
-	VECTOR cameraDirecStartPos_;
-	VECTOR cameraDirecGoalPos_[CAMERA_DIRECTION_NUM];
-	int cameraDirecCnt_;
-	int cameraDirecCollTimeCnt_;
-	bool stayCameraShake_;
-
-	//走査線
-	std::unique_ptr<PixelMaterial>scanLineMaterial_;
-	std::unique_ptr<PixelRenderer>scanLineRender_;
-	int scanLineScreen_;
-	std::string warningStr_;
-
-
-	//ブラー関連
-	std::unique_ptr<PixelMaterial>blurMaterial_;
-	std::unique_ptr<PixelRenderer>blurRender_;
-	int blurScreen_;
-	//ジャスト回避
-	std::unique_ptr<PixelMaterial>dodgeMaterial_;
-	std::unique_ptr<PixelRenderer>dodgeRender_;
-	int dodgeScreen_;
-
-	bool isDrawPostEffect_;	//ポストエフェクトをかけるか
-
+	VECTOR cameraMoveStartPos_;						//初期位置
+	VECTOR cameraMoveGoalPos_[CAMERA_DIRECTION_NUM];	//目標位置
+	int cameraShakeCollTimeCnt_;	//画面揺れクールタイム
+	bool stayCameraShake_;			//画面揺れ待機フラグ true=待機
 #pragma endregion
 };
 

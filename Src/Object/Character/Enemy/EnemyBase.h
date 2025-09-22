@@ -43,24 +43,7 @@ public:
 
 #pragma endregion
 
-
-#pragma region アニメーション関連
-
-    static constexpr float SPEED_ANIM = 1.0f;
-    static constexpr int ANIM_IDLE = 42;    //待機
-
-    //攻撃(継承先ごとで違うので最終的にはここではない)
-    static constexpr int ANIM_ATTACK_NOMAL = 9;     //攻撃
-
-      //その他アクション
-    static constexpr int ANIM_WALK = 94;            //歩き
-    static constexpr int ANIM_DUSH_FORWARD = 55;    //ダッシュ(前方)
-
-    //演出
-    static constexpr int ANIM_DETH_START = 29;      //死亡開始
-    static constexpr int ANIM_DETH_SUSTANABLE = 28; //死亡持続
-
-#pragma endregion
+    static constexpr float SPEED_ANIM = 1.0f;  //アニメーションスピード
 
     //攻撃関連(外部ファイル化させる)
     static constexpr VECTOR RELATIVE_ATTACK_POS = { 0.0f, 75.0f, 100.0f };
@@ -126,10 +109,10 @@ protected:
 
 #pragma region 各種状態更新
 
-    void UpdateNomal(const VECTOR& _pPos, AttackManager& _atk);  //通常
-    void UpdateSearch(const VECTOR& _pPos, AttackManager& _atk); //索敵
+    virtual void UpdateNomal(const VECTOR& _pPos, AttackManager& _atk);  //通常
+    virtual void UpdateSearch(const VECTOR& _pPos, AttackManager& _atk); //索敵
     virtual void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk); //戦闘
-    void UpdateDeth(const VECTOR& _pPos, AttackManager& _atk); //戦闘
+    void UpdateDeth(const VECTOR& _pPos, AttackManager& _atk); //死亡
 
     //各種移動処理
     void MoveNomal(const VECTOR& _pPos);
@@ -153,7 +136,7 @@ protected:
     float maxHp_;
 
     VECTOR preStayPos_; //前回停止位置
-    float uiDeviationY_;
+    float uiDeviationY_;//UI位置調整
     float moveOneTime_; //一回の移動量
     float moveSped_;    //１フレームでの移動量
     bool isStay_;       //ステイかどうか

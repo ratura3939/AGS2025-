@@ -16,15 +16,58 @@
 #include "Title.h"
 
 
-//ここでしか使わない物たち用
+//ローカル定数
 namespace {
-	//各種UI登録名
+#pragma region UI登録名
 	std::string UI_EXIT_STR = "exit";
 	std::string UI_ALLOW_STR = "allow";
 	std::string UI_LOGO_STR = "Logo";
 	std::string UI_SHADOWLOGO_STR = "shadowLogo";
 	std::string UI_START_STR = "startBtn";
 	std::string UI_CLICK_STR = "click";
+#pragma endregion
+	
+#pragma region 画像調整用
+	//タイトルロゴ	
+	const float LOGO_ALL_DIFF = 450.0f;			//位置調整
+	const float LOGO__ALL_MARGIN_Y = 200.0f;	//上方の隙間調整
+	const float LOGO_NOMAL_EXTEND = 0.8f;		//拡大率
+	const float LOGO_SHADOW_EXTEND = 0.4f;		//拡大率(影絵)
+	const float LOGO_SHADOW_MARGIN_X = 40.0f;	//拡大率(影絵)
+
+	//スタートボタン
+	const float START_BTN_MARGIN_Y = 50.0f;		//位置調整
+	const float START_BTN_EXTEND_MAX = 0.7f;	//拡大率(上限)
+	const float START_BTN_EXTEND_MIN = 0.55f;	//拡大率(下限)
+	const float START_BTN_EXTEND_ACC = 0.01f;	//拡大率(加算)
+
+	//「決定してください」
+	const float ENTER_STR_EXTEND = 0.2f;		//拡大率
+#pragma endregion
+
+#pragma region コントローラー選択時
+	//コントローラーアイコン
+	const int DEVICE_SIZE = 300;			//サイズ(正方形)
+
+	//矢印
+	const int ALLOW_ICON_SIZE_X = 199;	//Xサイズ
+	const int ALLOW_ICON_SIZE_Y = 288;	//Yサイズ
+	//矢印の演出
+	const float JUMP_POW_MAX = 0;	//動き幅(上限)
+	const float JUMP_POW_MIN = -60;	//動き幅(下限)
+	const float JUMP_ACC = -5;		//矢印動き用
+
+	//Exit
+	const int EXIT_ICON_SIZE_X = 180;		//Xサイズ
+	const int EXIT_ICON_SIZE_Y = 243;		//Yサイズ
+	const float EXIT_EXTEND_MAX = 1.5f;		//拡大率(上限)
+	const float EXIT_EXTEND_MIN = 0.6f;		//拡大率(下限)
+	const float EXIT_EXTEND_ACC = 0.05f;	//拡大率(加算)
+
+	//隙間調整用
+	const int MARGIN_SIZE = 30;			//隙間の大きさ
+	const float EXTEND_IMG = 1.5f;		//画像拡大率
+#pragma endregion
 }
 
 Title::Title(void)
@@ -41,9 +84,6 @@ Title::~Title(void)
 
 void Title::Init(void)
 {
-	// カメラモード：定点カメラ
-	//SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
-	
 	//リソース準備
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	rsM.GetInstance().Init(SceneManager::SCENE_ID::TITLE);
@@ -55,9 +95,6 @@ void Title::Init(void)
 	deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;
 	deviceImgs_[static_cast<int>(DEVICE::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_IMG).handleId_;
 
-	//背景
-	backImg_= ResourceManager::GetInstance().Load(ResourceManager::SRC::TITLE_BACK_BTN).handleId_;
-
 	//UI初期化
 	InitUI();
 
@@ -65,7 +102,7 @@ void Title::Init(void)
 
 	//レンダーとマテリアル(背景の引き伸ばし用)
 	material_ = std::make_unique<PixelMaterial>("NomalTexPS.cso", 0);
-	material_->AddTextureBuf(backImg_);
+	material_->AddTextureBuf(rsM.Load(ResourceManager::SRC::TITLE_BACK_BTN).handleId_);
 
 	render_ = std::make_unique<PixelRenderer>(*material_);
 	render_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });

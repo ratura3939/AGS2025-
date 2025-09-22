@@ -7,14 +7,20 @@
 
 #include "SwitchControllerScene.h"
 
+//ローカル定数
 namespace {
+#pragma region UI登録名
 	const std::string SWITCH_IMG = "switchImg";
 	const std::string SWITCH_BTN = "switchBtn";
 	const std::string BACK_BTN = "BackBtn_swScene";
 	const std::string FINISH_SW = "Finish_swScene";
+#pragma endregion
 
-	const float STRING_EX = 1.4f;
-	const int IMG_SW_DIFF_Y = 100;	//切り換え画像Y位置調整用
+#pragma region 画像調整用
+	//「切り換え完了」
+	const float STRING_EX = 1.4f;	//サイズ
+	const int IMG_SW_DIFF_Y = 100;	//Y位置調整用
+#pragma endregion
 
 	const int COOL_TIME_MAX = 100;	//クールタイム上限
 }

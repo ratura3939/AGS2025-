@@ -17,18 +17,17 @@ public:
 	static constexpr float INIT_MODEL_ROT = 180.0f;	//Unity形式のモデルの形を合わせる用
 
 	//回転作業
-	static constexpr float TIME_ROT = 5.0f;
 	static constexpr float PER_ROT = 0.1f;			//フレームごとの回転(球面補間における時間の増加量を表す)
 	static constexpr float THRESHOLD_ROT = 0.1f;	//回転のしきい値を表す
 
 	//回転量
-	static constexpr float DEG_FORWARD = 0.0f;
-	static constexpr float DEG_BACK = 180.0f;
-	static constexpr float DEG_LEFT = 270.0f;
-	static constexpr float DEG_RIGHT = 90.0f;
+	static constexpr float DEG_FORWARD = 0.0f;	//前方
+	static constexpr float DEG_BACK = 180.0f;	//後方
+	static constexpr float DEG_LEFT = 270.0f;	//左方
+	static constexpr float DEG_RIGHT = 90.0f;	//右方
 
-	static constexpr VECTOR CHARACTER_HEIGHT = { 0.0f,150.0f,0.0f };
-	static constexpr float CHARACTER_RADIUS = 80.0f;
+	static constexpr VECTOR CHARACTER_HEIGHT = { 0.0f,150.0f,0.0f };	//キャラクターの身長
+	static constexpr float CHARACTER_RADIUS = 80.0f;					//キャラクターの判定の大きさ
 
 	//デバッグ用
 	static constexpr int COLOR = 0xffffff;
@@ -78,6 +77,7 @@ public:
 	//死亡させる
 	virtual void Deth(void);
 
+	//デバッグ
 	virtual void DrawDebug(void);
 	void DrawCupcel(void);
 

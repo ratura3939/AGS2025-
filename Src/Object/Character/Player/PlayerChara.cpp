@@ -5,8 +5,53 @@
 #include"../../../Manager/GameSystem/AnimationController.h"
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Utility/Utility.h"
-
 #include "PlayerChara.h"
+
+//ローカル定数
+namespace {
+#pragma region ステータス定数
+	const int PALYER_HP = 5;		//HP
+	const float MOVE_POW = 5.0f;	//移動量
+	const float DUSH_POW = 20.0f;	//移動量(ダッシュ)
+	const float CHARA_SCALE = 0.7f;	//サイズ
+	const VECTOR FOCUS_NOMAL = { 0.0f,0.0f,50.0f };      //注視点(通常)
+	//static constexpr VECTOR FOCUS_BOW = { 0.0f,20.0f,150.0f };    //注視点(弓矢)
+
+	const int ALLERT_TIME = 30;  //警戒UI描画時間    
+#pragma endregion
+
+#pragma region アニメーション関連定数
+	const float SPEED_ANIM = 1.0f;
+	const int ANIM_IDLE = 36;            //待機
+	//攻撃
+	const int ANIM_ATTACK_FIRST = 8;     //攻撃一段目
+	const int ANIM_ATTACK_SECOND = 9;    //攻撃二段目
+	const int ANIM_ATTACK_SPIN = 10;     //回転切り
+	//防御
+	const int ANIM_GUARD_START = 18;     //防御開始
+	const int ANIM_GUARD_ATTACK = 19;    //ガードアタック
+	const int ANIM_GUARD_HIT = 20;       //ガードヒット
+	const int ANIM_GUARD_SUSTANABLE = 21;//ガード持続
+
+	//その他アクション
+	const int ANIM_WALK = 72;            //歩き
+	const int ANIM_DUSH_FORWARD = 48;    //ダッシュ(前方)
+	const int ANIM_DUSH_LEFT = 50;       //ダッシュ(左)<ロックオン時のみ>
+	const int ANIM_DUSH_RIGHT = 51;      //ダッシュ(右)<ロックオン時のみ>
+
+	const int ANIM_JUMP = 39;            //ジャンプ
+	const int ANIM_DODGE_LEFT = 29;      //回避(左)
+	const int ANIM_DODGE_RIGHT = 30;     //回避(右)
+	const int ANIM_DODGE_BACK = 27;      //回避(後)
+
+	const int ANIM_PICK_UP = 47;         //拾う
+
+	//演出
+	const int ANIM_DAMAGE = 35;          //被ダメ
+	const int ANIM_DETH_START = 25;      //死亡開始
+	const int ANIM_DETH_SUSTANABLE = 26; //死亡持続
+#pragma endregion
+}
 
 
 PlayerChara::PlayerChara(void)

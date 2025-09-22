@@ -20,6 +20,7 @@
 #include"../../Application.h"
 #include "Game.h"
 
+//ローカル定数
 namespace {
 	constexpr VECTOR CAMERA_START_1 = { 600.0f,200.0f,0.0f };	//カメラ演出開始位置
 	constexpr VECTOR CAMERA_GOAL_1 = { 600.0f,1000.0f,0.0f };	//カメラ演出目標位置その①
@@ -27,7 +28,20 @@ namespace {
 	constexpr float ALLOWABLE_DISTANCE = 10.0f;		//カメラの移動完了判定をがば目にするために
 	constexpr int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
 
+
+	const int LIMIT_SLOW = 200;					//スロー演出時間
+	const int BGM_VOL_MAX = 100;					//BGM音量最大値
+	const int BGM_VOL_ACC = 1;					//BGM切り換えスピード
+	const float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
+	const float SLOW_SPEED_PERCENT = 25.0f;		//スローの割合(通常時から半分の速度にする)
+		  
+	const int WARNING_DIRECTION_TIME = 150;		//WARNING警告時間
+	const int CAMERA_SHAKE_NUM = 3;				//カメラ演出における振動回数
+	const int CAMERA_SHAKE_COOL_TIME = 40;		//振動のクールタイム
+	
+
 	const std::string MENU_BTN = "menuBtn";
+	const std::string WARNING_STR_IMG = "WarningImg";
 	const float BTN_EX = 0.6f;
 	const int BTN_DIFF_X = 300;
 	const int BTN_DIFF_Y = 100;
@@ -40,15 +54,15 @@ Game::Game(void)
 	nextBgmVol_ = 0;
 	switchBgm_ = false;
 
-	cameraDirecCnt_ = 0;
-	cameraDirecStartPos_ = CAMERA_START_1;
-	cameraDirecGoalPos_[0] = CAMERA_GOAL_1;
-	cameraDirecGoalPos_[1] = CAMERA_GOAL_2;
+	cameraMoveStartPos_ = CAMERA_START_1;
+	cameraMoveGoalPos_[0] = CAMERA_GOAL_1;
+	cameraMoveGoalPos_[1] = CAMERA_GOAL_2;
 	direcState_ = BOSS_DIRECTION::NONE;
-	cameraDirecCollTimeCnt_ = 0;
+	cameraShakeCollTimeCnt_ = 0;
 	stayCameraShake_ = false;
 
 	isDrawPostEffect_ = false;
+	direcCnt_ = 0;
 
 	update_ = &Game::GameUpdate;
 	drawPostEffect_ = &Game::DrawScanLine;
@@ -99,15 +113,12 @@ void Game::Init(void)
 	//シェーダー初期化
 	InitShader();
 
-
 	auto& uiM = UIManager2d::GetInstance();
 
-	warningStr_ = "WarningImg";
-
 	//「WARNING」画像
-	uiM.Add(warningStr_, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(warningStr_, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
-	uiM.SetUIDirectionPram(warningStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 10.0f, 255.0f, 0.0f);
+	uiM.Add(WARNING_STR_IMG, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(WARNING_STR_IMG, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
+	uiM.SetUIDirectionPram(WARNING_STR_IMG, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 10.0f, 255.0f, 0.0f);
 
 	//メニューボタン
 	uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
@@ -254,7 +265,7 @@ void Game::Update(void)
 	Camera& camera = scM.GetCamera();
 	InputManager& inpM = InputManager::GetInstance();
 
-#pragma region シーン遷移
+#pragma region シーン遷移(ルール)
 	//プレイヤーが死んでいたら
 	if (!player_->IsAlive()) {
 		//BGM念のため両方停止
@@ -262,12 +273,6 @@ void Game::Update(void)
 		sndM.Stop(switchBgmStr_);
 		//シーン遷移
 		scM.ChangeScene(std::make_shared<GameOver>());
-	}
-	
-	//ポーズシーン遷移
-	if (inpM.IsTrigerrDown("pause")) {
-		//シーン追加(一つ次へ)
-		scM.PushScene(std::make_shared<PauseScene>());
 	}
 #pragma endregion
 
@@ -279,9 +284,9 @@ void Game::GameUpdate(void)
 {
 	SceneManager& scM = SceneManager::GetInstance();
 	SoundManager& sndM = SoundManager::GetInstance();
+	InputManager& inpM = InputManager::GetInstance();
 	Camera& camera = scM.GetCamera();
 	
-
 	//敵がいなくなったら
 	if (enemy_->GetEnemys().size() <= 0) {
 		sndM.Stop(nowBgmStr_);
@@ -290,6 +295,11 @@ void Game::GameUpdate(void)
 		scM.ChangeScene(std::make_shared<GameClear>());
 	}
 
+	//ポーズシーン遷移
+	if (inpM.IsTrigerrDown("pause")) {
+		//シーン追加(一つ次へ)
+		scM.PushScene(std::make_shared<PauseScene>());
+	}
 
 #pragma region 基礎アプデ
 	player_->Update(*atkMng_);
@@ -301,6 +311,7 @@ void Game::GameUpdate(void)
 			EndSlow();
 		}
 	}
+
 	//敵
 	enemy_->Update(player_->GetPos(), *atkMng_);
 	//攻撃
@@ -310,13 +321,9 @@ void Game::GameUpdate(void)
 	if (collision_->Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks())) {
 		StartSlow();
 	}
-
-
 #pragma endregion
 
 #pragma region BGM
-
-
 	//敵の状態(戦闘・それ以外)のトリガ
 	if (enemy_->IsSwitchBattleOrNomalEnemyTrg()) {
 		//もともと切り換え中だったら
@@ -330,6 +337,7 @@ void Game::GameUpdate(void)
 		//切り替え後の再生
 		sndM.Play(switchBgmStr_);
 	}
+
 	//BGM切り換え実行中
 	if (switchBgm_) {
 		//音量調整に加算
@@ -398,20 +406,19 @@ void Game::DirectionUpdate(void)
 
 			//場所の設定(ボスの横ぐらい)
 			auto bossPos = enemy_->GetPos(BOSS_IDX);
-			camera.SetPos(VAdd(bossPos,cameraDirecStartPos_), bossPos);
-			camera.SetGoalPos(VAdd(bossPos, cameraDirecGoalPos_[cameraDirecCnt_]));
+			camera.SetPos(VAdd(bossPos,cameraMoveStartPos_), bossPos);
+			camera.SetGoalPos(VAdd(bossPos, cameraMoveGoalPos_[direcCnt_]));
 
 			//演出を「カメラ移動に変更
 			direcUpdate_ = &Game::DirectionCameraMove;
 		}
-
 	}
 }
 
 bool Game::DirectionPostEffect(void)
 {
 	//WARNING更新
-	UIManager2d::GetInstance().Update(warningStr_);
+	UIManager2d::GetInstance().Update(WARNING_STR_IMG);
 
 	//ポストエフェクト更新
 	scanLineMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });	//横ライン移動用
@@ -422,6 +429,7 @@ bool Game::DirectionPostEffect(void)
 	if (direcCnt_ > WARNING_DIRECTION_TIME) {
 		//演出終了
 		SoundManager::GetInstance().Stop("WarningBgm");	//警告音止める
+		ChangeActionDirec(ACTION_DIRECTION::NOMAL);		//ポストエフェクト終了
 		return true;
 	}
 	//演出が続く
@@ -433,17 +441,16 @@ bool Game::DirectionShakeScreen(void)
 	//カメラノーシェイク時
 	if (stayCameraShake_) {
 		//クールタイム増加
-		cameraDirecCollTimeCnt_++;
+		cameraShakeCollTimeCnt_++;
 
 		//一定時間経過後
-		if (cameraDirecCollTimeCnt_ >= CAMERA_SHAKE_COOL_TIME) {
+		if (cameraShakeCollTimeCnt_ >= CAMERA_SHAKE_COOL_TIME) {
 			//再度揺らす
 			DoShake();
 			stayCameraShake_ = false;
 		}
 		return false;
 	}
-
 
 	//カメラシェイク終了時
 	if (SceneManager::GetInstance().GetCamera().IsFinishShake()) {
@@ -456,7 +463,7 @@ bool Game::DirectionShakeScreen(void)
 			return true;
 		}
 		//クールタイム関係リセット
-		cameraDirecCollTimeCnt_ = 0;
+		cameraShakeCollTimeCnt_ = 0;
 		stayCameraShake_ = true;
 	}
 	//演出が続く
@@ -481,16 +488,16 @@ bool Game::DirectionCameraMove(void)
 	auto cameraPos = camera.GetPos();
 	if (Utility::MagnitudeF(VSub(camera.GetGoalPos(), cameraPos)) <= ALLOWABLE_DISTANCE) {
 		//演出カウンタ増加
-		cameraDirecCnt_++;
+		direcCnt_++;
 
 		//移動演出回数の上限に到達していたら
-		if (cameraDirecCnt_ >= CAMERA_DIRECTION_NUM) {
+		if (direcCnt_ >= CAMERA_DIRECTION_NUM) {
 			//演出終了
 			return true;
 		}
 		else {
 			//次の目標地点への設定
-			camera.SetGoalPos(VAdd(enemy_->GetPos(BOSS_IDX), cameraDirecGoalPos_[cameraDirecCnt_]));
+			camera.SetGoalPos(VAdd(enemy_->GetPos(BOSS_IDX), cameraMoveGoalPos_[direcCnt_]));
 
 			//二回目の移動はボスの「叫び」も入れる
 			enemy_->BossShout();
@@ -536,7 +543,7 @@ void Game::DrawScanLine(void)
 	SetDrawScreen(mainScreen);
 	DrawGraph(0, 0, scanLineScreen_, false);
 	//ポストエフェクトの上から鮮明な文字を出す
-	UIManager2d::GetInstance().Draw(warningStr_);
+	UIManager2d::GetInstance().Draw(WARNING_STR_IMG);
 }
 
 void Game::DrawBlur(void)
@@ -596,28 +603,33 @@ void Game::Reset(void)
 void Game::StartBossFaze(void)
 {
 	SoundManager& sndM = SoundManager::GetInstance();
-	ChangeActionDirec(ACTION_DIRECTION::NOMAL);
+	ChangeActionDirec(ACTION_DIRECTION::SCAN_LINE);
+
 	sndM.Stop("NomalBgm");	//今まで流していたものを停止
 	sndM.Stop("BattleBgm");	//今まで流していたものを停止
-	sndM.Play("WarningBgm");	//警告音流す
+	sndM.Play("WarningBgm");//警告音流す
+
+	//演出初期設定
 	direcState_ = BOSS_DIRECTION::POST_EFFECT;
 	update_ = &Game::DirectionUpdate;
 	direcUpdate_ = &Game::DirectionPostEffect;
+	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FIXED_POINT);	//演出中はカメラ操作を受け付けない
 }
 
 void Game::ChangeActionDirec(const ACTION_DIRECTION _direc)
 {
 	//とりあえずポストエフェクトを描画するように
 	isDrawPostEffect_ = true;
+
 	//各ポストエフェクトの描画設定
 	if (_direc == ACTION_DIRECTION::SCAN_LINE) {
-		drawPostEffect_ = &DrawScanLine;
+		drawPostEffect_ = &Game::DrawScanLine;
 	}
 	else if (_direc == ACTION_DIRECTION::BLUR) {
-		drawPostEffect_ = &DrawBlur;
+		drawPostEffect_ = &Game::DrawBlur;
 	}
 	else if (_direc == ACTION_DIRECTION::JUST_DODGE) {
-		drawPostEffect_ = &DrawDodgeEffect;
+		drawPostEffect_ = &Game::DrawDodgeEffect;
 	}
 	else {
 		//上記三つ以外の場合はポストエフェクトをかけない
@@ -627,6 +639,7 @@ void Game::ChangeActionDirec(const ACTION_DIRECTION _direc)
 
 void Game::AttackDataInit(void)
 {
+	//攻撃の情報入れ
 	atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD,false, false, PlayerManager::ATTACK_TIME);
 	atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, true,false, EnemyManager::ATTACK_TIME, EnemyManager::ATTACK_TIME_START, EnemyManager::ATTACK_TIME_END);
 }
@@ -642,9 +655,9 @@ void Game::FinishSwitchBgm(void)
 	//切り換え終了
 	switchBgm_ = false;
 	sndM.AdjustVolume(switchBgmStr_, nextBgmVol_);
-	sndM.Stop(nowBgmStr_);	//今まで流していたものを停止
+	//今まで流していたものを停止
+	sndM.Stop(nowBgmStr_);	
 	//現在のBGM名と切り替え後のBGM名の切り換え
-	//後々ボス個体の物も用意するのでそこで要調整
 	auto ret = nowBgmStr_;
 	nowBgmStr_ = switchBgmStr_;
 	switchBgmStr_ = ret;
@@ -686,5 +699,4 @@ void Game::DrawDebug(void)
 	////player_->DrawDebug();
 	//enemy_->DrawDebug();
 	atkMng_->DrawDebug();
-
 }

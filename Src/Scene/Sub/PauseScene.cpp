@@ -11,14 +11,17 @@
 #include"../../Utility/Utility.h"
 #include "PauseScene.h"
 
+//ローカル定数
 namespace {
-	//各種登録名
+#pragma region UI登録名
 	std::string BACK_TITLE_BTN = "BackTitle_PauseScene";
 	std::string BACK_GAME_BTN = "BackGame_PauseScene";
 	std::string CHECK_CONFIG_BTN = "Config_PauseScene";
 	std::string SWITCH_OPE_BTN = "SwitchCntl_PauseScene";
 	std::string RIGHT_ARROW = "Arrow_PauseScene";
+#pragma endregion
 
+#pragma region 画像調整用
 	const float BTN_SIZE = 256.0f;			//元画像大きさ
 	const float BTN_DRAW_SIZE = 0.6f;		//ボタン(ゲームに戻る・タイトルに戻る)を描画するときの大きさ倍率
 	const float BIG_BTN_DRAW_SIZE = 0.5f;	//ボタン(操作方法・操作切り替え)を描画するときの大きさ倍率
@@ -28,6 +31,7 @@ namespace {
 	const float ARROW_ACC = -3.0f;			//矢印の移動量
 	const float ARROW_MOVE_MAX = 0;			//移動量(上限)
 	const float ARROW_MOVE_MIN = -60;		//移動量(下限)
+#pragma endregion
 
 	const int MENU_LIST_NONE_DIFFER = 1;	//列挙にNONEが入っているのでそれの差分用
 }
