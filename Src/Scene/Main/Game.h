@@ -144,5 +144,7 @@ private:
 	std::unique_ptr<PixelMaterial>dodgeMaterial_;
 	std::unique_ptr<PixelRenderer>dodgeRender_;
 	int dodgeScreen_;
+
+	int test_;
 };
 

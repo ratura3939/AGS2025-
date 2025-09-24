@@ -14,13 +14,12 @@ Stage::~Stage(void)
 void Stage::Draw(void)
 {
 	//render_->Draw();
-	MV1DrawModel(drawObj_);
+	MV1DrawModel(modelId_);
 }
 
 void Stage::SetPram(void)
 {
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::STAGE_MDL).handleId_;
-	drawObj_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::STAGE_MDL).handleId_;
 	pos_ = { 0.0f,-50.0f,0.0f };
 	scl_ = { 100.0f,100.0f,100.0f };
 
@@ -28,7 +27,4 @@ void Stage::SetPram(void)
 	material_ = std::make_unique<ModelMaterial>("StdModel.cso", 0, "StdModel.cso", 1);
 	objColor_ = { 1.0f,0.0f,0.0f };
 	material_->AddConstBufPS(objColor_);
-
-	MV1SetPosition(drawObj_, pos_);
-	MV1SetScale(drawObj_, scl_);
 }
