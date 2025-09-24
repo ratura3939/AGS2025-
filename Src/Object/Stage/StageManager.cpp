@@ -5,9 +5,10 @@
 
 void StageManager::Init(void)
 {
-	gmkObjs_.push_back(std::make_unique<GimmickTestObj>());
-	gmkObjs_.push_back(std::make_unique<TestObj2>());
 	gmkObjs_.push_back(std::make_unique<Stage>());
+	//gmkObjs_.push_back(std::make_unique<GimmickTestObj>());
+	//gmkObjs_.push_back(std::make_unique<TestObj2>());
+	
 
 	for (auto& obj : gmkObjs_) {
 		obj->Init();

@@ -11,7 +11,7 @@ namespace {
 
 AbilityManager::AbilityManager(StageManager& _stage):stage_(_stage)
 {
-	useAbility_ = ABILITY_TYPE::TIME_LOCK;
+	useAbility_ = ABILITY_TYPE::MAGNET;
 	isUsingAbility_ = false;
 }
 
