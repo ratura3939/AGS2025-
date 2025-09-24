@@ -105,6 +105,4 @@ private:
 
 	std::unique_ptr<PixelMaterial>material_;
 	std::unique_ptr<PixelRenderer>render_;
-
-	std::unique_ptr<Stage>stage_;					//ステージ
 };

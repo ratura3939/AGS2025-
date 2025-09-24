@@ -1,4 +1,4 @@
-//シンプルな光の計算も行うPS
+//色だけの描画
 
 // VS/PS共通
 #include "../Common/VertexToPixelHeader.hlsli"
@@ -13,18 +13,9 @@
 cbuffer cbParam : register(b4)
 {
 	float4 g_color;
-	float g_time;
-	float3 dmy_time;
 }
 
 float4 main(PS_INPUT PSInput) : SV_TARGET0
 {
-	//return g_color;
-	float4 color;
-
-	//テクスチャーの色を取得
-	color = diffuseMapTexture.Sample(diffuseMapSampler,PSInput.uv);
-
-	//関数の戻り値がラスタライザに渡される
-	return color + g_color;
+	return g_color;
 }

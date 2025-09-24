@@ -4,6 +4,7 @@
 #include"../Generic/Camera.h"
 #include"../GameSystem/AttackManager.h"
 #include"../../PlayerSystem/LockOnManager.h"
+#include"../../PlayerSystem/AbilityManager.h"
 #include"../Decoration/SoundManager.h"
 #include"../../Scene/Main/Game.h"
 #include"../../Utility/Utility.h"
@@ -18,9 +19,10 @@ namespace {
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 }
 
-PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy):scene_(_gameScene)
+PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, StageManager& _stage):scene_(_gameScene)
 {
 	lockOn_ = std::make_unique<LockOnManager>(_gameScene, *this, _enemy);
+	ability_ = std::make_unique<AbilityManager>(_stage);
 	stateCnt_ = 0;
 	stateLimit_ = 0;
 }
@@ -154,6 +156,19 @@ void PlayerManager::UserInput(AttackManager& _atk)
 
 	if (ins.IsTrigerrUp("rock")) {
 		lockOn_->LockOff();
+	}
+
+	//能力
+	if (ins.IsTrigerrDown("ability")) {
+		//使用中なら
+		if (ability_->IsUsingAbility()) {
+			//終了
+			ability_->EndUsingAbility();
+		}
+		else {
+			//開始
+			ability_->RedyAbility();
+		}
 	}
 }
 

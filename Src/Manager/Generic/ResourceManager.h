@@ -96,6 +96,7 @@ public:
 		DAMAGE_EFC,
 
 		TEST_MDL,
+		TEST_MDL_2,
 	};
 
 	// 明示的にインステンスを生成する

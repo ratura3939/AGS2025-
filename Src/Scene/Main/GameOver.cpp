@@ -7,7 +7,7 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include"../../Manager/Decoration/SoundManager.h"
 #include"Title.h"
-#include"../../Object/Stage/Stage.h"
+#include"../../Object/Stage/StageManager.h"
 #include "GameOver.h"
 
 
@@ -44,7 +44,7 @@ void GameOver::Init(void)
 	uiM.SetUIDirectionPram(BACK_TITLE_LOGO, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//Ú×İ’è
 
 
-	stage_ = std::make_unique<Stage>(true);
+	stage_ = std::make_unique<StageManager>();
 	stage_->Init();
 
 	InitSound();

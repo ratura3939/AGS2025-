@@ -9,7 +9,7 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include"../../Manager/Decoration/SoundManager.h"
 #include"Title.h"
-#include"../../Object/Stage/Stage.h"
+#include"../../Object/Stage/StageManager.h"
 #include "GameClear.h"
 
 namespace {
@@ -46,7 +46,7 @@ void GameClear::Init(void)
 	uiM.SetUIInfo(BACK_TITLE_LOGO, VECTOR(Application::SCREEN_SIZE_X / 2.0f, Application::SCREEN_SIZE_Y / 2.0f + 50.0f, 0.0f), 0.6f);		//Šî‘bİ’è														//Šî‘bİ’è
 	uiM.SetUIDirectionPram(BACK_TITLE_LOGO, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//Ú×İ’è
 
-	stage_ = std::make_unique<Stage>(true);
+	stage_ = std::make_unique<StageManager>();
 	stage_->Init();
 
 	InitSound();

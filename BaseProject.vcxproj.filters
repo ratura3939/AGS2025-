@@ -123,7 +123,7 @@
     <ClCompile Include="Src\Manager\GameSystem\AnimationController.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Stage\Stage.cpp">
+    <ClCompile Include="Src\Object\Stage\StageObj\Stage.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp">
@@ -157,9 +157,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\UI\UIBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\Stage\SkyDome.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\UI\Player\NoticeDodge.cpp">
@@ -198,7 +195,19 @@
     <ClCompile Include="Src\PlayerSystem\LockOnManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Gimmick\GimmickObjBase.cpp">
+    <ClCompile Include="Src\Object\Stage\StageObj\GimmickObjBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Stage\StageObj\GimmickTestObj.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PlayerSystem\AbilityManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Stage\StageObj\TestObj2.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Stage\StageManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -281,7 +290,7 @@
     <ClInclude Include="Src\Manager\GameSystem\AnimationController.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Stage\Stage.h">
+    <ClInclude Include="Src\Object\Stage\StageObj\Stage.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h">
@@ -315,9 +324,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\UI\UIBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Stage\SkyDome.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\UI\Player\NoticeDodge.h">
@@ -356,7 +362,19 @@
     <ClInclude Include="Src\PlayerSystem\LockOnManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Gimmick\GimmickObjBase.h">
+    <ClInclude Include="Src\Object\Stage\StageObj\GimmickObjBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Stage\StageObj\GimmickTestObj.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PlayerSystem\AbilityManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Stage\StageObj\TestObj2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Stage\StageManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -370,6 +388,8 @@
     <FxCompile Include="Src\Shader\PostEffect\Blur.hlsl" />
     <FxCompile Include="Src\Shader\PostEffect\JustDodgePS.hlsl" />
     <FxCompile Include="Src\Shader\PostEffect\NomalTexPS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\NoneTexPS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\NoneTexVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />

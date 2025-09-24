@@ -2,7 +2,7 @@
 
 #include<DxLib.h>
 #include<memory>
-#include"../../Common/Quaternion.h"
+#include"../../../Common/Quaternion.h"
 
 class ModelMaterial;
 class ModelRenderer;
@@ -15,15 +15,22 @@ public:
 
 	void Init(void);
 	void Update(void);
-	void Draw(void);
+	virtual void Draw(void);
 	void Release(void);
 
+	/// <summary>
+	/// 付与色の設定
+	/// </summary>
+	/// <param name="_color"></param>
 	void SetObjectRenderColor(const FLOAT4 _color);
+
+	void SetPos(const VECTOR _pos);
 
 protected:
 	virtual void SetPram(void) = 0;
 	void UpdateRotQuat(void);
 
+#pragma region モデル基礎
 	int modelId_;	//モデルID
 
 	VECTOR pos_;	//座標
@@ -41,6 +48,7 @@ protected:
 
 	// ローカル回転
 	Quaternion quaRotLocal_;
+#pragma endregion
 
 	float gravity_;	//重力
 

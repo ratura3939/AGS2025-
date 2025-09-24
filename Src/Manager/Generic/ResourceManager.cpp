@@ -355,6 +355,14 @@ void ResourceManager::ResorceStage(void)
 {
 	Resource res;
 
+	//テストモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Moon.mv1");
+	resourcesMap_.emplace(SRC::TEST_MDL, res);
+
+	//テストモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Axe.mv1");
+	resourcesMap_.emplace(SRC::TEST_MDL_2, res);
+
 	//ステージ
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage1.mv1");
 	resourcesMap_.emplace(SRC::OBJECTS_MDL, res);

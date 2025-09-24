@@ -13,7 +13,7 @@
 #include "../../Scene/Main/GameOver.h"
 #include "../../Scene/Main/GameClear.h"
 #include "../../Scene/Sub/PauseScene.h"
-#include"../../Object/Stage/Stage.h"
+#include"../../Object/Stage/StageManager.h"
 #include"../../Utility/Utility.h"
 #include"../../Renderer/PixelMaterial.h"
 #include"../../Renderer/PixelRenderer.h"
@@ -68,13 +68,16 @@ void Game::Init(void)
 	update_ = &Game::GameUpdate;
 
 	//生成
-	
+	//ステージ
+	stage_ = std::make_unique<StageManager>();
+	stage_->Init();
+
 	//敵
 	enemy_ = std::make_unique<EnemyManager>(*this);
 	enemy_->Init();
 
 	//プレイヤー
-	player_ = std::make_unique<PlayerManager>(*this,*enemy_);
+	player_ = std::make_unique<PlayerManager>(*this,*enemy_,*stage_);
 	player_->Init();
 
 	//攻撃
@@ -84,9 +87,6 @@ void Game::Init(void)
 
 	//判定
 	collision_ = std::make_unique<CollisionManager>();
-
-	stage_ = std::make_unique<Stage>(false);
-	stage_->Init();
 
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
@@ -299,6 +299,7 @@ void Game::GameUpdate(void)
 
 
 #pragma region 基礎アプデ
+	//プレイヤー
 	player_->Update(*atkMng_);
 	//敵はスローの効果を受ける
 	if (isSlowEffect_) {
@@ -309,7 +310,8 @@ void Game::GameUpdate(void)
 		}
 	}
 	//敵
-	enemy_->Update(player_->GetPos(), *atkMng_);
+	//enemy_->Update(player_->GetPos(), *atkMng_);
+
 	//攻撃
 	atkMng_->Update();
 
@@ -318,6 +320,8 @@ void Game::GameUpdate(void)
 		StartSlow();
 	}
 
+	//ステージ
+	stage_->Update();
 
 #pragma endregion
 

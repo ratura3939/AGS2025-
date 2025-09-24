@@ -7,7 +7,7 @@ class PlayerManager;
 class EnemyManager;
 class AttackManager;
 class CollisionManager;
-class Stage;
+class StageManager;
 
 class PixelMaterial;
 class PixelRenderer;
@@ -99,7 +99,7 @@ private:
 	std::unique_ptr<EnemyManager>enemy_;			//敵
 	std::unique_ptr<AttackManager>atkMng_;			//攻撃関連
 	std::unique_ptr<CollisionManager>collision_;	//判定関連
-	std::unique_ptr<Stage>stage_;					//ステージ
+	std::unique_ptr<StageManager>stage_;					//ステージ
 
 	int nearEnemyNum_;		//ロックオン対象の配列番号
 	int preNearEnemyNum_;	//ロックオン対象の配列番号(１フレーム前)

@@ -13,7 +13,6 @@
 #include"../../Renderer/PixelRenderer.h"
 #include"Game.h"
 
-#include"../../Object/Stage/Stage.h"
 #include "Title.h"
 
 
@@ -75,8 +74,6 @@ void Title::Init(void)
 	render_ = std::make_unique<PixelRenderer>(*material_);
 	render_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
 
-	stage_ = std::make_unique<Stage>(true);
-	stage_->Init();
 
 
 	//‰¹ŠÖŒW‰Šú‰»

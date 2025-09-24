@@ -200,8 +200,6 @@ private:
 	//補完スピード
 	float lerpSpeed_;
 
-	
-
 	//回転
 	void Rotation(void);
 
