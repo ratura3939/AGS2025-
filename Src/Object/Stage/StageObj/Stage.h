@@ -13,6 +13,6 @@ public:
 private:
 	void SetPram(void)override;
 
-	int drawObj_;
+	int noiseTex_;;
 };
 

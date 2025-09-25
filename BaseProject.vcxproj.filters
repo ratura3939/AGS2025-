@@ -388,8 +388,7 @@
     <FxCompile Include="Src\Shader\PostEffect\Blur.hlsl" />
     <FxCompile Include="Src\Shader\PostEffect\JustDodgePS.hlsl" />
     <FxCompile Include="Src\Shader\PostEffect\NomalTexPS.hlsl" />
-    <FxCompile Include="Src\Shader\Model\NoneTexPS.hlsl" />
-    <FxCompile Include="Src\Shader\Model\NoneTexVS.hlsl" />
+    <FxCompile Include="Src\Shader\Model\NoiseWavePS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />

@@ -6,12 +6,12 @@
 namespace {
 	const VECTOR NONE_COLOR = { 0.0f,0.0f,0.0f };
 	const VECTOR MAGNET_COLOR = { 1.0f,0.0f,0.0f };
-	const VECTOR LOCK_TIME_COLOR = { 0.5f,1.0f,0.0f };
+	const VECTOR LOCK_TIME_COLOR = { 1.0f,1.0f,0.0f };
 }
 
 AbilityManager::AbilityManager(StageManager& _stage):stage_(_stage)
 {
-	useAbility_ = ABILITY_TYPE::MAGNET;
+	useAbility_ = ABILITY_TYPE::TIME_LOCK;
 	isUsingAbility_ = false;
 }
 
