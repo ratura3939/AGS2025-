@@ -8,11 +8,13 @@
 //ローカル定数
 namespace {
 	const VECTOR SELECT_ABILITY_POS = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 ,0.0f };	//選ばれている能力アイコン位置
-	const float NOT_SELECT_ABILITY_DIFF_X = 200.0f;	//選ばれていない能力の描画位置(X軸差分)
+	const float NOT_SELECT_ABILITY_DIFF_X = 170.0f;	//選ばれていない能力の描画位置(X軸差分)
 
+	const float FINISH_CHANGE_TIME = 10.0f;	//切り換え完了までにかかる時間
 	const float SELECT_ABILITY_EX = 0.4f;	//拡大率(選ばれている)
 	const float NOT_SELECT_ABILITY_EX = 0.1f;	//拡大率(選ばれていない)
-	const float FINISH_CHANGE_TIME = 10.0f;	//切り換え完了までにかかる時間
+	const float SELECT_ABILITY_ALPHA = 255.0f;
+	const float NOT_SELECT_ABILITY_ALPHA = 255.0f / 2.0f;
 }
 
 SelectAbility::SelectAbility(AbilityManager& _ability):ability_(_ability)
@@ -53,7 +55,7 @@ void SelectAbility::Init(void)
 		else {
 			drawPos.x += NOT_SELECT_ABILITY_DIFF_X;
 		}
-		uiM.SetUIInfo(iconNames_[i], drawPos,NOT_SELECT_ABILITY_EX);
+		uiM.SetUIInfo(iconNames_[i], drawPos,NOT_SELECT_ABILITY_EX,0.0f,NOT_SELECT_ABILITY_ALPHA);
 	}
 
 	//カメラを固定に
@@ -97,6 +99,9 @@ void SelectAbility::Update(void)
 			if (uiM.IsFinishDirection(iconNames_[i], UIManager2d::UI_DIRECTION_GROUP::ZOOM)) {
 				uiM.PopUIDirection(iconNames_[i], UIManager2d::UI_DIRECTION_GROUP::ZOOM);
 			}
+			if (uiM.IsFinishDirection(iconNames_[i], UIManager2d::UI_DIRECTION_GROUP::GRADUALLY)) {
+				uiM.PopUIDirection(iconNames_[i], UIManager2d::UI_DIRECTION_GROUP::GRADUALLY);
+			}
 		}
 	}
 }
@@ -126,10 +131,6 @@ void SelectAbility::InitSound(void)
 }
 
 void SelectAbility::InitEffect(void)
-{
-}
-
-void SelectAbility::LerpSelect(void)
 {
 }
 
@@ -164,6 +165,7 @@ void SelectAbility::ChangeSelectAbility(const int _prev, const int _next)
 		uiM.PushUIDirection(nextSelect_, UIManager2d::UI_DIRECTION_2D::MOVE_LEFT);
 		//左側への移動量算出
 		drawPosMovePowLeft = fabs(selectAbilityPos.x- uiM.GetDrawPos(nextSelect_).x);
+
 		nAccMove = drawPosMovePowLeft / FINISH_CHANGE_TIME;
 	}
 	else {
@@ -174,8 +176,12 @@ void SelectAbility::ChangeSelectAbility(const int _prev, const int _next)
 		nAccMove = drawPosMovePowRight / FINISH_CHANGE_TIME;
 	}
 	
-	uiM.SetUIDirectionPram(nextSelect_, UIManager2d::UI_DIRECTION_GROUP::MOVE, nAccMove, drawPosMovePowRight, drawPosMovePowLeft);
+	uiM.SetUIDirectionPram(nextSelect_, UIManager2d::UI_DIRECTION_GROUP::MOVE, nAccMove, drawPosMovePowRight, -drawPosMovePowLeft);
 
+	//透明度
+	float nAccAlpha = fabs(uiM.GetDrawAlpha(nextSelect_) - SELECT_ABILITY_ALPHA);
+	uiM.PushUIDirection(nextSelect_, UIManager2d::UI_DIRECTION_2D::GRAD_AP);
+	uiM.SetUIDirectionPram(nextSelect_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, nAccAlpha, SELECT_ABILITY_ALPHA, NOT_SELECT_ABILITY_ALPHA);
 
 	//選択→非選択の更新設定
 	//縮小設定
@@ -199,7 +205,7 @@ void SelectAbility::ChangeSelectAbility(const int _prev, const int _next)
 		//左方向の移動なので目標は左の座標に
 		drawGoalPos.x -= NOT_SELECT_ABILITY_DIFF_X;
 		//左側への移動量算出
-		drawPosMovePowLeft = fabs(drawGoalPos.x - uiM.GetDrawPos(nextSelect_).x);
+		drawPosMovePowLeft = fabs(drawGoalPos.x - uiM.GetDrawPos(prevSelect_).x);
 		pAccMove = drawPosMovePowLeft / FINISH_CHANGE_TIME;
 	}
 	else {
@@ -208,11 +214,15 @@ void SelectAbility::ChangeSelectAbility(const int _prev, const int _next)
 		//右方向の移動なので目標は右の座標に
 		drawGoalPos.x += NOT_SELECT_ABILITY_DIFF_X;
 		//右側へ移動量算出
-		drawPosMovePowRight = fabs(drawGoalPos.x - uiM.GetDrawPos(nextSelect_).x);
+		drawPosMovePowRight = fabs(drawGoalPos.x - uiM.GetDrawPos(prevSelect_).x);
 		pAccMove = drawPosMovePowRight / FINISH_CHANGE_TIME;
 	}
 	
-	uiM.SetUIDirectionPram(prevSelect_, UIManager2d::UI_DIRECTION_GROUP::MOVE, pAccMove, drawPosMovePowRight, drawPosMovePowLeft);
+	uiM.SetUIDirectionPram(prevSelect_, UIManager2d::UI_DIRECTION_GROUP::MOVE, pAccMove, drawPosMovePowRight, -drawPosMovePowLeft);
+
+	float pAccAlpha = fabs(uiM.GetDrawAlpha(prevSelect_) - NOT_SELECT_ABILITY_ALPHA);
+	uiM.PushUIDirection(prevSelect_, UIManager2d::UI_DIRECTION_2D::GRAD_DISAP);
+	uiM.SetUIDirectionPram(prevSelect_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, pAccAlpha, SELECT_ABILITY_ALPHA, NOT_SELECT_ABILITY_ALPHA);
 }
 
 void SelectAbility::ResetUiInfo(void)
@@ -220,6 +230,6 @@ void SelectAbility::ResetUiInfo(void)
 	UIManager2d& uiM = UIManager2d::GetInstance();
 
 	for (int i = 0; i < static_cast<int>(AbilityManager::ABILITY_TYPE::MAX); i++) {
-		uiM.SetPos(iconNames_[i], AbilityManager::ABILITY_ICON_POS);
+		uiM.SetUIInfo(iconNames_[i], AbilityManager::ABILITY_ICON_POS,AbilityManager::UI_EX);
 	}
 }
