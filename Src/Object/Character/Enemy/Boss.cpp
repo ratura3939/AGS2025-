@@ -9,6 +9,22 @@
 #include"../../../Renderer/ModelMaterial.h"
 #include "Boss.h"
 
+//ローカル定数
+namespace {
+#pragma region アニメーション関連
+	static constexpr int BOSS_IDLE = 1;
+	static constexpr int BOSS_WALK = 2;
+	static constexpr int BOSS_PRE_PUNCH = 5;
+	static constexpr int BOSS_PUNCH = 6;
+	static constexpr int BOSS_PRE_SHOUT = 9;
+	static constexpr int BOSS_SHOUT = 10;
+	static constexpr int BOSS_DETH = 12;
+
+	static constexpr float BOSS_HP = 300.0f;
+	static constexpr float BOSS_RADIUS = 400.0f;
+#pragma endregion
+}
+
 Boss::Boss(VECTOR& _pos):EnemyBase(_pos)
 {
 }

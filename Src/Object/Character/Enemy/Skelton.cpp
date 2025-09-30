@@ -1,3 +1,6 @@
+#include"../../../Manager/Generic/ResourceManager.h"
+#include"../../../Utility/Utility.h"
+#include"../../../Renderer/ModelMaterial.h"
 #include "Skelton.h"
 
 namespace {
@@ -17,6 +20,14 @@ namespace {
 #pragma endregion
 }
 
+Skelton::Skelton(VECTOR& _pos) :EnemyBase(_pos)
+{
+}
+
+Skelton::~Skelton(void)
+{
+}
+
 void Skelton::InitAnim(void)
 {
     animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);
@@ -29,16 +40,62 @@ void Skelton::InitAnim(void)
 
 void Skelton::SetPram(void)
 {
-}
+	//各敵たち
+	//後々Jsonやったら楽になるかも？
+	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
 
-void Skelton::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
-{
-}
+	if (modelId_ == -1) {
+		return;
+	}
+	//パラメータ関係
+	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
+	preStayPos_ = pos_;
+	rot_ = { 0.0f,0.0f,-1.0f };
+	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
+	//初期化用に一回実行
+	UpdateRotQuat();
 
-void Skelton::MoveBattle(const VECTOR& _pPos)
-{
-}
+	//当たり判定大きさ
+	colRadius_ = CHARACTER_RADIUS;
 
-void Skelton::DrawUI(void)
-{
+	//攻撃の発生位置(相対座標)
+	atkRelative_ = RELATIVE_ATTACK_POS;
+	//攻撃の大きさ
+	atkScale_ = SCALE_ATTACK_NOMAL;
+	//攻撃可能距離
+	atkDistance_ = ATTACK_DISTANCE;
+
+	//アニメーション初期化
+	animController_ = std::make_unique<AnimationController>(modelId_);
+	InitAnim();
+	animController_->Play("idle", SPEED_ANIM);
+
+	uiDeviationY_ = 250.0f;
+	maxHp_ = ENEMY_HP;
+
+	//位置設定
+	uiPos_ = pos_;
+	//頭位置
+	uiPos_.y += uiDeviationY_;
+
+	//UI初期化
+	InitUI();
+
+	//モデル描画クラス生成
+	material_ = std::make_unique<ModelMaterial>("BlurSkinVS.cso", 2, "BlurSkinPS.cso", 3);
+	//VS
+
+
+	//PS
+	//各色の強さ(拡散光)
+	material_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
+	//ブラーの強さ(最初の項目のみ関係する)
+	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+	//サンプル数(最初の項目のみ関係する)
+	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+
+	intervalCnt_ = 0.0f;
+
+	//状態を通常に
+	ChangeState(ENEMY_STATE::NOMAL);
 }

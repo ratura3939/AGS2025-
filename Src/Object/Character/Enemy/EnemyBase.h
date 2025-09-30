@@ -103,12 +103,14 @@ public:
     void DrawDebug(void)override;
   
 protected:
-    virtual void SetPram(void);     //各敵の固有情報(いずれか外部データ化したい)
+    virtual void SetPram(void) = 0;    //各敵の固有情報
     virtual void InitAnim(void)override;
     void InitUI(void)override;
 
 #pragma region 各種状態更新
 
+    //共通の基礎処理
+    //特有の処理がある場合overrideする
     virtual void UpdateNomal(const VECTOR& _pPos, AttackManager& _atk);  //通常
     virtual void UpdateSearch(const VECTOR& _pPos, AttackManager& _atk); //索敵
     virtual void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk); //戦闘
@@ -119,7 +121,7 @@ protected:
     void MoveSearch(const VECTOR& _pPos);
     virtual void MoveBattle(const VECTOR& _pPos);
 
-    void OderGoalRot(const VECTOR _pPos);
+    void OderGoalRot(const VECTOR _pPos);   //プレイヤーまでの角度
 
     void ChangeState(const ENEMY_STATE _state); //状態の遷移
 

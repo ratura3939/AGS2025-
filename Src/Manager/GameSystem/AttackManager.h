@@ -120,12 +120,10 @@ public:
 	void DrawDebug(void);
 
 private:
-	std::unordered_map<std::string, AttackInfo>attackInfoes_;
+	std::unordered_map<std::string, AttackInfo>attackInfoes_;	//UŒ‚î•ñ
 	/// <summary>
 	/// Š—LÒAUŒ‚–¼AUŒ‚î•ñ
 	/// </summary>
-	std::map<std::string,std::map<std::string, AttackCollision>>activeAttacks_;
-
-	//std::vector<std::unique_ptr<Arrow>>arrows_;
+	std::map<std::string,std::map<std::string, AttackCollision>>activeAttacks_;	//—LŒø‚ÈUŒ‚
 };
 

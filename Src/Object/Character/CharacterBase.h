@@ -96,6 +96,7 @@ protected:
 	//回転
 	void Rotation(void);
 
+#pragma region モデル基礎制御
 	int modelId_;	//モデルID
 
 	VECTOR pos_;	//座標
@@ -119,19 +120,23 @@ protected:
 
 	// ローカル回転
 	Quaternion quaRotLocal_;
+#pragma endregion
+
+	
+
+#pragma region 描画関連
+	std::unique_ptr<ModelMaterial>material_;
+	std::unique_ptr<ModelRenderer>renderer_;
+#pragma endregion
 
 	//個体名
-	std::string speciesName_;   
+	std::string speciesName_;
 
 	//アニメーション
 	std::unique_ptr<AnimationController> animController_;
 
-	//描画関係
-	std::unique_ptr<ModelMaterial>material_;
-	std::unique_ptr<ModelRenderer>renderer_;
-
 	//ステータスなど
-	float hp_;
+	float hp_;		
 	float colRadius_;	//当たり判定の大きさ
 };
 

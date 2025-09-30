@@ -89,13 +89,13 @@ private:
 	std::vector<std::shared_ptr<EnemyBase>> characters_;
 	bool preBattle_;	//位置フレーム前が戦闘状態であるかどうか
 
-	int enemyCnt_;
-	int* numImg_;
+	int enemyCnt_;		//敵カウント
+	int* numImg_;		//番号
 	VECTOR platePos_;	//敵数表示　プレート
 
 	bool createBoss_;	//ボスを生成した形跡
 
-	std::unique_ptr<EnemyCount>counterUI_;
+	std::unique_ptr<EnemyCount>counterUI_;	//敵残数カウンター
 
 	Game& gameScene_;
 };

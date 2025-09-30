@@ -66,8 +66,6 @@ EnemyBase::~EnemyBase(void)
 
 const bool EnemyBase::Init(const int _num)
 {
-
-
 	//個体名登録
 	speciesName_ += std::to_string(_num);
 
@@ -84,6 +82,7 @@ void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
 {
 	prePos_ = pos_;
 
+	//行動更新
 	(this->*update_)(_pPos,_atk);
 	//共通更新
 	Rotation();
@@ -98,68 +97,6 @@ void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
 	uiCntl_->Update();
 }
 
-void EnemyBase::SetPram(void)
-{
-	//各敵たち
-	//後々Jsonやったら楽になるかも？
-	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
-
-	if (modelId_ == -1) {
-		return;
-	}
-	//パラメータ関係
-	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
-	preStayPos_ = pos_;
-	rot_ = { 0.0f,0.0f,-1.0f };
-	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
-	//初期化用に一回実行
-	UpdateRotQuat();
-
-	//当たり判定大きさ
-	colRadius_ = CHARACTER_RADIUS;
-
-	//攻撃の発生位置(相対座標)
-	atkRelative_ = RELATIVE_ATTACK_POS;
-	//攻撃の大きさ
-	atkScale_ = SCALE_ATTACK_NOMAL;
-	//攻撃可能距離
-	atkDistance_ = ATTACK_DISTANCE;
-
-	//アニメーション初期化
-	animController_ = std::make_unique<AnimationController>(modelId_);
-	InitAnim();
-	animController_->Play("idle", SPEED_ANIM);
-
-	uiDeviationY_ = 250.0f;
-	maxHp_ = ENEMY_HP;
-
-	//位置設定
-	uiPos_ = pos_;
-	//頭位置
-	uiPos_.y += uiDeviationY_;
-
-	//UI初期化
-	InitUI();
-
-	//モデル描画クラス生成
-	material_ = std::make_unique<ModelMaterial>("BlurSkinVS.cso", 2, "BlurSkinPS.cso", 3);
-	//VS
-
-
-	//PS
-	//各色の強さ(拡散光)
-	material_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
-	//ブラーの強さ(最初の項目のみ関係する)
-	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
-	//サンプル数(最初の項目のみ関係する)
-	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
-
-	intervalCnt_ = 0.0f;
-
-	//状態を通常に
-	ChangeState(ENEMY_STATE::NOMAL);
-}
-
 void EnemyBase::InitAnim(void)
 {
 	
@@ -167,7 +104,6 @@ void EnemyBase::InitAnim(void)
 
 void EnemyBase::InitUI(void)
 {
-	
 	//UIコントローラー初期化
 	uiCntl_ = std::make_unique<EnemyUIController>(uiPos_,state_);
 	uiCntl_->Init(speciesName_);
@@ -205,7 +141,6 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 	//移動処理
 	(this->*move_)(_pPos);
 	
-
 	//判定
 	auto deg = Utility::AngleDeg(GetForward(), VSub(_pPos, pos_));
 	auto distance = Utility::MagnitudeF(VSub(_pPos, pos_));

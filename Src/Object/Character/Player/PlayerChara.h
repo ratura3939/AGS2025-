@@ -72,7 +72,7 @@ public:
     void InputDash(const bool _flag) { isDush_ = _flag; }
     void InputMoveDir(const MOVE_DIR _dir) { moveDir_ = _dir; }
 
-    float GetToLockDeg(void);
+    float GetToLockDeg(void);   //ロックオン角度
 
     void SetAtkAllert(void);    //攻撃危機察知
 

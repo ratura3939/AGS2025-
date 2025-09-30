@@ -37,6 +37,6 @@ private:
 	/// <param name="_atk">UŒ‚î•ñ</param>
 	void CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _enemys, std::vector<AttackManager::AttackCollision> _atks);
 
-	bool isSlow_;
+	bool isSlow_;	//ƒXƒ[‰‰o‚·‚é‚©
 };
 

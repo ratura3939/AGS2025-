@@ -1,5 +1,6 @@
 #include"../../Object/Character/Enemy/EnemyBase.h"
 #include"../../Object/Character/Enemy/Boss.h"
+#include"../../Object/Character/Enemy/Skelton.h"
 #include"../../Utility/Utility.h"
 #include"../../Application.h"
 #include"../../UI/Enemy/EnemyCount.h"
@@ -31,7 +32,7 @@ void EnemyManager::Init(void)
 	numImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::NUMBER_IMGS).handleIds_;
 
 	for (int i = 0; i < ENEMY_NUM; i++) {
-		std::shared_ptr enemy = std::make_shared<EnemyBase>(initPos[i]);
+		std::shared_ptr enemy = std::make_shared<Skelton>(initPos[i]);
 		enemy->Init(i);
 		characters_.push_back(std::move(enemy));
 	}
