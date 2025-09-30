@@ -98,6 +98,7 @@ public:
 	/// </summary>
 	/// <param name="_name"></param>
 	void PopUIDirection(const std::string& _name);
+	void PopUIDirection(const std::string& _name, UI_DIRECTION_GROUP _group);
 
 	/// <summary>
 	/// 描画基礎情報設定
@@ -114,12 +115,14 @@ public:
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	/// <param name="_acc">加速度</param>
-	/// <param name="_max">最大値</param>
-	/// <param name="_min">最小値</param>
+	/// <param name="_max">最大値(詳細は各項目の更新処理参照)</param>
+	/// <param name="_min">最小値(詳細は各項目の更新処理参照)</param>
 	void SetUIDirectionPram(const std::string& _name, const UI_DIRECTION_GROUP _group, const float _acc, const float _max, const float _min);
 
-	//位置再設定
-	void SetPos(const std::string& _name,const VECTOR& _pos);
+	//パラメータ再設定
+	void SetPos(const std::string& _name,const VECTOR& _pos);	//位置
+	void SetScale(const std::string& _name,const float& _scl);//拡大率
+	void SetAlpha(const std::string& _name,const float& _alpha);	//透明度
 
 	//画像の差し替え
 	void SetImage(const std::string& _name, const int _imageHndl);
@@ -152,6 +155,8 @@ public:
 	const bool IsLoopUpdate(const std::string _name, const UI_DIRECTION_GROUP _group);
 
 	const VECTOR GetDrawPos(const std::string _name)const;
+	const float GetDrawScale(const std::string _name)const;
+	const float GetDrawAlpha(const std::string _name)const;
 
 private:
 	/// <summary>
@@ -164,7 +169,7 @@ private:
 	const UI_DIRECTION_GROUP GetDirectionGroup(const UI_DIRECTION_2D _type);
 
 	/// <summary>
-	/// 移動処理
+	/// 移動処理(maxは現在地点から右・下への移動量、minは現在地点から左・上への移動量)
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	void Move(const std::string& _name, DirectionInfo& _direcInfo);
@@ -172,13 +177,13 @@ private:
 	void Zoom(const std::string& _name, DirectionInfo& _direcInfo);
 
 	/// <summary>
-	/// 回転処理
+	/// 回転処理(maxは右回転の限度、minは左回転の限度)
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	void Rotation(const std::string& _name, DirectionInfo& _direcInfo);
 
 	/// <summary>
-	/// アルファ値調整
+	/// アルファ値調整(maxは不透明度、minは透明度)
 	/// </summary>
 	/// <param name="_name">登録名</param>
 	void AlphaAcc(const std::string& _name, DirectionInfo& _direcInfo);

@@ -2,11 +2,12 @@
 #include"../Generic/InputManager.h"
 #include"../Generic/SceneManager.h"
 #include"../Generic/Camera.h"
+#include"../Decoration/SoundManager.h"
 #include"../GameSystem/AttackManager.h"
 #include"../../PlayerSystem/LockOnManager.h"
 #include"../../PlayerSystem/AbilityManager.h"
-#include"../Decoration/SoundManager.h"
 #include"../../Scene/Main/Game.h"
+#include"../../Scene/Sub/SelectAbility.h"
 #include"../../Utility/Utility.h"
 #include "PlayerManager.h"
 
@@ -25,6 +26,7 @@ PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, StageManage
 	ability_ = std::make_unique<AbilityManager>(_stage);
 	stateCnt_ = 0;
 	stateLimit_ = 0;
+	abilityBtnCnt_ = 0;
 }
 
 PlayerManager::~PlayerManager(void)
@@ -59,11 +61,14 @@ void PlayerManager::Update(AttackManager& _atk)
 	character_->Update();
 	//ロックオン更新
 	lockOn_->Update();
+	//能力更新
+	ability_->Update();
 }
 
 void PlayerManager::Draw(void)
 {
 	character_->Draw();
+	ability_->Draw();
 }
 
 void PlayerManager::Release(void)
@@ -107,26 +112,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	//プレイヤーからの入力総まとめ
 	InputManager& ins = InputManager::GetInstance();
 
-	//攻撃中は入力を受け付けない
-	if (character_->GetState() == PlayerChara::STATE::ATTACK)return;
-
-	//攻撃の生成
-	if (ins.IsTrigerrDown("attack")) {
-		//攻撃の生成および状態の設定
-		_atk.Attack("Player",ATTACK_NOMAL, AtkPow, VAdd(character_->GetPos(), character_->GetQua().PosAxis(ATK_LOCAL_POS)), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, AtkScl, "SwingSword");
-		character_->SetState(PlayerChara::STATE::ATTACK);
-		//対応するアニメーション
-		character_->PlayAnim("atkFirst");
-		//時間の設定
-		RedyStateCount(static_cast<int>(_atk.GetTotalTime(ATTACK_NOMAL)));
-	}
-
-	//回避入力があったとき(ロックオン状態でしか作動しない)
-	if (IsDudgeMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
-		//回避処理
-		DoDudge();
-	}
-
+#pragma region 移動
 	//移動
 	//入力
 	//入力があったら対応した移動方向をセット
@@ -148,7 +134,28 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	}
 	//ダッシュ
 	character_->InputDash(ins.IsPressed("dash"));
+#pragma endregion
 
+#pragma region 戦闘関連
+	//攻撃中は入力を受け付けない
+	if (character_->GetState() == PlayerChara::STATE::ATTACK)return;
+
+	//攻撃の生成
+	if (ins.IsTrigerrDown("attack")) {
+		//攻撃の生成および状態の設定
+		_atk.Attack("Player", ATTACK_NOMAL, AtkPow, VAdd(character_->GetPos(), character_->GetQua().PosAxis(ATK_LOCAL_POS)), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, AtkScl, "SwingSword");
+		character_->SetState(PlayerChara::STATE::ATTACK);
+		//対応するアニメーション
+		character_->PlayAnim("atkFirst");
+		//時間の設定
+		RedyStateCount(static_cast<int>(_atk.GetTotalTime(ATTACK_NOMAL)));
+	}
+
+	//回避入力があったとき(ロックオン状態でしか作動しない)
+	if (IsDudgeMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
+		//回避処理
+		DoDudge();
+	}
 	//ロックオン
 	if (ins.IsPressed("rock") && lockOn_->CanLockOn()) {
 		lockOn_->LockOn();
@@ -157,19 +164,30 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	if (ins.IsTrigerrUp("rock")) {
 		lockOn_->LockOff();
 	}
+#pragma endregion
 
-	//能力
-	if (ins.IsTrigerrDown("ability")) {
-		//使用中なら
-		if (ability_->IsUsingAbility()) {
-			//終了
-			ability_->EndUsingAbility();
-		}
-		else {
-			//開始
-			ability_->RedyAbility();
+#pragma region 能力
+	if (ins.IsPressed("ability")) {
+		abilityBtnCnt_++;
+		//ボタンが一定時間押されていたら
+		if (abilityBtnCnt_ > AbilityManager::PRESSED_TIME_4_CHANGE_ABILITY) {
+			//能力切り換えフェーズに
+			SceneManager::GetInstance().PushScene(std::make_shared<SelectAbility>(*ability_));
+			abilityBtnCnt_ = 0;
 		}
 	}
+	else if (ins.IsTrigerrUp("ability")) {
+		//能力がまだ使用されていないとき
+		if (!ability_->IsUsingAbility()) {
+			//能力開始
+			ability_->RedyAbility();
+		}
+		else {
+			//能力終了
+			ability_->EndUsingAbility();
+		}
+	}
+#pragma endregion
 }
 
 

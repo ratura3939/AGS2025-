@@ -68,5 +68,6 @@ private:
 
 	int stateCnt_;		//キャラクター状態管理用カウンター
 	int stateLimit_;	//状態をの時間上限
+	int abilityBtnCnt_;	//能力使用ボタンの押下時間
 };
 
