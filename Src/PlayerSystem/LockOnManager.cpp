@@ -86,15 +86,16 @@ void LockOnManager::SetTaergetPos4Camera(void)
 {
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 
-	//ロックオンをしていたら
-	if (isLockOn_) {
-		//ロックオン対象に敵を設定
-
-	}
-	else {
-		//追従対象にプレイヤーを設定
-	}
-
+	////ロックオンをしていたら
+	//if (isLockOn_) {
+	//	//ロックオン対象に敵を設定
+	//	camera.SetFocusPos(master_.GetFocusPoint());//注視点の更新
+	//	camera.SetFocusPos(master_.GetPos());//注視点の更新
+	//}
+	//else {
+	//	//追従対象にプレイヤーを設定
+	//	camera.SetRockPos(targets_.GetPos(nearTargetNum_));	//ロックオン対象の設定
+	//}
 }
 
 const int LockOnManager::DecideRockEnemy(void)

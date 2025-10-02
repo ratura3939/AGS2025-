@@ -40,6 +40,7 @@ public:
 	const VECTOR GetFocusPoint(void);	//注視点
 
 	const bool IsAlive(void)const;
+	const bool IsUseAbility(void)const;
 
 	//ロックオン・オフ時に必要な処理
 	void RedyLockOn(void);

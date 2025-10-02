@@ -1,13 +1,13 @@
-#include"StageObj/GimmickTestObj.h"
+#include"StageObj/TestObj.h"
 #include"StageObj/TestObj2.h"
 #include"StageObj/Stage.h"
 #include "StageManager.h"
 
 void StageManager::Init(void)
 {
-	gmkObjs_.push_back(std::make_unique<Stage>());
-	gmkObjs_.push_back(std::make_unique<GimmickTestObj>());
-	gmkObjs_.push_back(std::make_unique<TestObj2>());
+	gmkObjs_.push_back(std::make_shared<Stage>());
+	gmkObjs_.push_back(std::make_shared<TestObj>());
+	gmkObjs_.push_back(std::make_shared<TestObj2>());
 	
 
 	for (auto& obj : gmkObjs_) {
@@ -29,9 +29,21 @@ void StageManager::Draw(void)
 	}
 }
 
-void StageManager::SetAbility(const FLOAT4 _color)
+void StageManager::SetAbilityColor(const FLOAT4 _color)
 {
 	for (auto& obj : gmkObjs_) {
 		obj->SetObjectRenderColor(_color);
 	}
 }
+
+std::vector<std::weak_ptr<GimmickObjBase>> StageManager::GetAffectAbilityObjectes(void)const
+{
+	std::vector<std::weak_ptr<GimmickObjBase>> ret;
+	for (auto& obj : gmkObjs_) {
+		if (obj->IsAffectAbility()) {
+			ret.push_back(obj);
+		}
+	}
+	return ret;
+}
+

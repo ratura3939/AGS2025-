@@ -40,7 +40,8 @@ public:
 	std::string& GetAbilityUiList(void) { return *iconNames_; }
 
 private:
-	VECTOR GetAbilityColor(const ABILITY_TYPE _type);
+	FLOAT4 GetAbilityColor(const ABILITY_TYPE _type);
+	bool IsHitReticle(VECTOR _screenPos);
 
 	StageManager& stage_;	//ステージ(参照)
 	ABILITY_TYPE useAbility_;	//使用している能力

@@ -31,6 +31,8 @@ namespace {
 	const float BTN_EX = 0.6f;
 	const int BTN_DIFF_X = 300;
 	const int BTN_DIFF_Y = 100;
+
+	const float CAMERA_FOLLOW_DIFF_Y_ABILITY = 200.0f;	//能力使用時の注視点差分
 }
 
 Game::Game(void)
@@ -409,7 +411,15 @@ void Game::GameUpdate(void)
 
 #pragma region カメラ更新
 	//カメラの設定
-	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象の更新
+	if (!player_->IsUseAbility()) {
+		camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象の更新
+	}
+	else {
+		VECTOR abilityFollow = player_->GetPos();
+		abilityFollow.y += CAMERA_FOLLOW_DIFF_Y_ABILITY;
+		camera.SetFollow(abilityFollow, player_->GetQua());		//追従対象の更新
+	}
+	
 
 	//Camera::MODE mode = camera.GetMode();
 	////追従時

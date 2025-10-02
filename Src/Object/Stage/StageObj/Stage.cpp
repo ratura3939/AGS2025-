@@ -11,7 +11,7 @@ namespace {
 
 Stage::Stage(void)
 {
-
+	isAffectAbilyty_ = false;
 }
 Stage::~Stage(void)
 {

@@ -22,11 +22,14 @@ void GimmickObjBase::Init(void)
 	MV1SetScale(modelId_, scl_);
 
 	render_ = std::make_unique<ModelRenderer>(modelId_, *material_);
+
+	MV1SetupCollInfo(modelId_);
 }
 
 void GimmickObjBase::Update(void)
 {
 	UpdateRotQuat();
+	MV1SetupCollInfo(modelId_);
 	material_->SetConstBufPS(0, objColor_);
 }
 
@@ -40,6 +43,11 @@ void GimmickObjBase::Release(void)
 {
 }
 
+const bool GimmickObjBase::IsHitCameraRay(const VECTOR _start, const VECTOR _end)const
+{
+	return MV1CollCheck_Line(modelId_,-1,_start,_end).HitFlag;
+}
+
 void GimmickObjBase::SetObjectRenderColor(const FLOAT4 _color)
 {
 	objColor_ = _color;
@@ -48,6 +56,16 @@ void GimmickObjBase::SetObjectRenderColor(const FLOAT4 _color)
 void GimmickObjBase::SetPos(const VECTOR _pos)
 {
 	pos_ = _pos;
+}
+
+VECTOR GimmickObjBase::GetPos(void)
+{
+	return pos_;
+}
+
+const bool GimmickObjBase::IsAffectAbility(void) const
+{
+	return isAffectAbilyty_;
 }
 
 void GimmickObjBase::UpdateRotQuat(void)

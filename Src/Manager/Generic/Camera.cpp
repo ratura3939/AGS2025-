@@ -76,10 +76,6 @@ void Camera::SetBeforeDraw(void)
 	case MODE::LOCKON:
 		SetBeforeDrawLockOn();
 		break;
-
-	case MODE::FOLLOW_SPRING:
-		break;
-
 	case MODE::SHAKE:
 		SetBeforeDrawShake();
 		break;
@@ -362,8 +358,7 @@ void Camera::ChangeMode(MODE mode)
 	case MODE::FOLLOW:
 		lerpSpeed_ = LERP_SPEED;
 		break;
-	case MODE::FOLLOW_SPRING:
-		break;
+
 	case MODE::SHAKE:
 		finishShake_ = false;
 		stepShake_ = TIME_SHAKE;
@@ -478,7 +473,6 @@ void Camera::Rotation(void)
 	//カメラ座標を中心として、注視点を回転させる
 	if (!Utility::EqualsVZero(angles_))
 	{
-
 		// 正面から設定されたY軸分、回転させる
 		rotOutX_ = Quaternion::AngleAxis(angles_.y, Utility::AXIS_Y);
 

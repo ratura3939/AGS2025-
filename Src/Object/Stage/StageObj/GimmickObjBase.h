@@ -18,13 +18,19 @@ public:
 	virtual void Draw(void);
 	void Release(void);
 
+	const bool IsHitCameraRay(const VECTOR _start, const VECTOR _end)const;
+
 	/// <summary>
 	/// 付与色の設定
 	/// </summary>
 	/// <param name="_color"></param>
 	void SetObjectRenderColor(const FLOAT4 _color);
 
-	void SetPos(const VECTOR _pos);
+	//位置設定
+	void SetPos(const VECTOR _pos);	
+	VECTOR GetPos(void);
+	//能力の影響を受けるか
+	const bool IsAffectAbility(void)const;	
 
 protected:
 	virtual void SetPram(void) = 0;
@@ -50,8 +56,6 @@ protected:
 	Quaternion quaRotLocal_;
 #pragma endregion
 
-	float gravity_;	//重力
-
 #pragma region shader関連
 	std::unique_ptr<ModelMaterial> material_;
 	std::unique_ptr<ModelRenderer> render_;
@@ -59,7 +63,7 @@ protected:
 	FLOAT4 objColor_;
 #pragma endregion
 
-private:
-
+	float gravity_;	//重力
+	bool isAffectAbilyty_;	//能力の影響を受けるか
 };
 

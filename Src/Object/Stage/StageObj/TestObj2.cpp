@@ -12,6 +12,7 @@ TestObj2::~TestObj2(void)
 
 void TestObj2::SetPram(void)
 {
+	isAffectAbilyty_ = true;
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TEST_MDL_2).handleId_;
 	pos_ = { -200.0f,100.0f,500.0f };
 	scl_ = { 15.0f,15.0f ,15.0f };

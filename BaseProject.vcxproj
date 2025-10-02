@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Src\Scene\Sub\SelectAbility.cpp" />
     <ClCompile Include="Src\PlayerSystem\AbilityManager.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageObj\GimmickTestObj.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\TestObj.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\GimmickObjBase.cpp" />
     <ClCompile Include="Src\PlayerSystem\LockOnManager.cpp" />
     <ClCompile Include="Src\Scene\Sub\KeyConfigScene.cpp" />
@@ -79,7 +79,7 @@
   <ItemGroup>
     <ClInclude Include="Src\Scene\Sub\SelectAbility.h" />
     <ClInclude Include="Src\PlayerSystem\AbilityManager.h" />
-    <ClInclude Include="Src\Object\Stage\StageObj\GimmickTestObj.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\TestObj.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\GimmickObjBase.h" />
     <ClInclude Include="Src\PlayerSystem\LockOnManager.h" />
     <ClInclude Include="Src\Scene\Sub\KeyConfigScene.h" />

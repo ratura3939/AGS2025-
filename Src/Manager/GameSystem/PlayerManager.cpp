@@ -42,8 +42,6 @@ void PlayerManager::Init(void)
 
 void PlayerManager::Update(AttackManager& _atk)
 {
-	
-
 	//ó‘ÔŠÇ—
 	//’Êí‚¶‚á‚È‚¢‚Æ‚«
 	if (character_->GetState() != PlayerChara::STATE::NOMAL) {
@@ -267,6 +265,11 @@ void PlayerManager::DoDudge(void)
 const bool PlayerManager::IsAlive(void) const
 {
 	return character_->IsAlive();
+}
+
+const bool PlayerManager::IsUseAbility(void) const
+{
+	return ability_->IsUsingAbility();
 }
 
 

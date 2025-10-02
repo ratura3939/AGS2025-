@@ -1,6 +1,6 @@
 #pragma once
 #include "GimmickObjBase.h"
-class GimmickTestObj :
+class TestObj :
     public GimmickObjBase
 {
 private:

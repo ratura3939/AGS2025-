@@ -70,7 +70,6 @@ public:
 		FIXED_POINT,	//定点カメラ
 		FREE,			//フリーモード
 		FOLLOW,			//追従モード
-		FOLLOW_SPRING,	//ばね付き追従モード
 		SHAKE,			//カメラ揺らし
 		LOCKON,			//ロックオン
 		RESET,			//カメラ位置リセット用
@@ -104,7 +103,7 @@ public:
 	void SetBeforeDrawLockOn(void);			//ロックオンカメラ
 	void SetBeforeDrawShake(void);			//カメラシェイク
 	void SetBeforeDrawReset(void);			//カメラリセット
-	void SetBeforeDrawAutoMove(void);			//カメラリセット
+	void SetBeforeDrawAutoMove(void);		//カメラ自動移動
 
 	//----------------------------------------
 	// 描画処理

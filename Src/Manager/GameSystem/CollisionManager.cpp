@@ -95,8 +95,6 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 			}
 		}
 	}
-
-
 	//テキトーな移動制限
 	if (Utility::MagnitudeF(pPos) > 5000.0f) {
 		_player.lock()->SetPrePos();
@@ -123,7 +121,6 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 		const float DmgEfcSpeed = 2.5;
 		const float SwordEfcScl = 50.0f;
 		const float SwordEfcSpeed = 1.5;
-
 
 		//敵の数だけ回す
 		for (auto& enemy : _enemy) {
@@ -152,6 +149,4 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 			}
 		}
 	}
-
-	
 }
