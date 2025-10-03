@@ -1,6 +1,7 @@
 #pragma once
 #include<DxLib.h>
 #include<string>
+#include"../Object/Stage/StageObj/GimmickObjBase.h"
 
 class StageManager;
 
@@ -42,11 +43,13 @@ public:
 private:
 	FLOAT4 GetAbilityColor(const ABILITY_TYPE _type);
 	bool IsHitReticle(VECTOR _screenPos);
+	bool IsNearObject2Camera(const VECTOR _pos1, const VECTOR _pos2);
 
 	StageManager& stage_;	//ステージ(参照)
 	ABILITY_TYPE useAbility_;	//使用している能力
 
 	std::string iconNames_[static_cast<int>(ABILITY_TYPE::MAX)];
 	bool isUsingAbility_;	//能力使用中か
+	std::weak_ptr<GimmickObjBase> selectObj_;	//選択中の物
 };
 

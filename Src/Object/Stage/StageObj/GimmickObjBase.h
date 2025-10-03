@@ -29,8 +29,13 @@ public:
 	//位置設定
 	void SetPos(const VECTOR _pos);	
 	VECTOR GetPos(void);
+	VECTOR GetScreenPos(void);
 	//能力の影響を受けるか
 	const bool IsAffectAbility(void)const;	
+
+	//影響を受けているか
+	void SetIsAffecting(const bool _flag);
+	const bool IsAffecting(void)const;
 
 protected:
 	virtual void SetPram(void) = 0;
@@ -65,5 +70,13 @@ protected:
 
 	float gravity_;	//重力
 	bool isAffectAbilyty_;	//能力の影響を受けるか
+	bool isAffectingNow_;	//現在影響を受けているか
+	bool isTargeting_;	//対象として選択されているか
+
+	VECTOR screenPos_;		//スクリーン上での位置
+
+	//デバッグ
+	bool isDrawScreenPosCircle_;
+	int screenPosColor_;
 };
 

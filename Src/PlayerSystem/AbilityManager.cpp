@@ -19,7 +19,7 @@ namespace {
 	const FLOAT4 SELECT_COLOR = { 0.0,1.0f,0.0f ,1.0f};
 	const VECTOR RETICLE_POS = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2 ,0.0f };
 	const float CAMERA_RAY_POW = 1000.0f;
-	const float HIT_RETICLE_DIFF = 200.0f;
+	const float HIT_RETICLE_DIFF = 80.0f;
 }
 
 AbilityManager::AbilityManager(StageManager& _stage) :stage_(_stage)
@@ -53,14 +53,32 @@ void AbilityManager::Update(void)
 		auto& camera = SceneManager::GetInstance().GetCamera();
 		VECTOR cameraPos = camera.GetPos();
 		VECTOR cameraRayEnd = VAdd(cameraPos, VScale(camera.GetRot().GetForward(), CAMERA_RAY_POW));
-
+	
 		//レティクルとの当たり判定
 		for (auto& obj : stage_.GetAffectAbilityObjectes()) {
-			VECTOR objScreenPos = ConvWorldPosToScreenPos(obj.lock()->GetPos());
 			//衝突していたら
-			if (IsHitReticle(objScreenPos)) {
-				obj.lock()->SetObjectRenderColor(SELECT_COLOR);
-				break;
+			if (IsHitReticle(obj.lock()->GetScreenPos())) {
+				//まだ参照するものがない場合
+				if (selectObj_.expired()) {
+					selectObj_ = obj;
+				}
+				else {
+					//既に何かしら入っている場合
+					//新しいオブジェクトの方が近い時
+					if (!IsNearObject2Camera(selectObj_.lock()->GetPos(), obj.lock()->GetPos())) {
+						//近いほうを採用
+						selectObj_ = obj;
+					}
+				}
+				//選択色の設定
+				selectObj_.lock()->SetObjectRenderColor(SELECT_COLOR);
+			}
+			else {
+				//当たり判定には判定していないがセレクトがあったとき
+				if (!selectObj_.expired()) {
+					//通常色の設定
+					selectObj_.lock()->SetObjectRenderColor(NONE_COLOR);
+				}
 			}
 		}
 	}
@@ -86,9 +104,6 @@ void AbilityManager::RedyAbility(void)
 
 	//色の設定
 	stage_.SetAbilityColor(GetAbilityColor(useAbility_));
-
-	//カメラを角度回転限定に
-	//SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::ANGLE_ONL);
 }
 
 void AbilityManager::UseAbility(void)
@@ -102,8 +117,6 @@ void AbilityManager::EndUsingAbility(void)
 
 	//付与色をなくす
 	stage_.SetAbilityColor(NONE_COLOR);
-	//カメラを角度回転限定に
-	//SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
 }
 
 void AbilityManager::ChangeAbility(const ABILITY_TYPE _type)
@@ -127,6 +140,18 @@ FLOAT4 AbilityManager::GetAbilityColor(const ABILITY_TYPE _type)
 
 bool AbilityManager::IsHitReticle(VECTOR _screenPos)
 {
-	float diff = Utility::MagnitudeF(VSub(RETICLE_POS, _screenPos));
-	return diff<= HIT_RETICLE_DIFF;
+	float diff = fabs(Utility::MagnitudeF(VSub(_screenPos, RETICLE_POS)));
+	bool ret = false;
+	if (diff <= HIT_RETICLE_DIFF) {
+		ret = true;
+	}
+	return ret;
+}
+
+bool AbilityManager::IsNearObject2Camera(const VECTOR _pos1, const VECTOR _pos2)
+{
+	VECTOR cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
+	float diff1 = Utility::MagnitudeF(VSub(_pos1, cameraPos));
+	float diff2 = Utility::MagnitudeF(VSub(_pos2, cameraPos));
+	return diff1 <= diff2;
 }

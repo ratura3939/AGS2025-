@@ -42,4 +42,8 @@ void Stage::SetPram(void)
 	material_->AddConstBufPS({ 0.0f,0.0f,0.0f,0.0f });
 	//UV拡大率
 	material_->AddConstBufPS({ UV_SCALING_NOISE,0.0f,0.0f,0.0f });
+
+	//デバッグ
+	isDrawScreenPosCircle_ = false;
+	screenPosColor_ = 0x000000;
 }

@@ -7,6 +7,8 @@
 GimmickObjBase::GimmickObjBase(void)
 {
 	objColor_ = { 0.0f,0.0f,0.0f,1.0f };
+	screenPos_ = { 0.0f,0.0f,0.0f };
+	isAffectingNow_ = false;
 }
 
 GimmickObjBase::~GimmickObjBase(void)
@@ -37,6 +39,11 @@ void GimmickObjBase::Draw(void)
 {
 	//MV1DrawModel(modelId_);
 	render_->Draw();
+
+	if (isDrawScreenPosCircle_) {
+		screenPos_ = ConvWorldPosToScreenPos(pos_);
+		DrawCircle(screenPos_.x, screenPos_.y, 10, screenPosColor_);
+	}
 }
 
 void GimmickObjBase::Release(void)
@@ -63,9 +70,24 @@ VECTOR GimmickObjBase::GetPos(void)
 	return pos_;
 }
 
+VECTOR GimmickObjBase::GetScreenPos(void)
+{
+	return screenPos_;
+}
+
 const bool GimmickObjBase::IsAffectAbility(void) const
 {
 	return isAffectAbilyty_;
+}
+
+void GimmickObjBase::SetIsAffecting(const bool _flag)
+{
+	isAffectingNow_ = _flag;
+}
+
+const bool GimmickObjBase::IsAffecting(void) const
+{
+	return isAffectingNow_;
 }
 
 void GimmickObjBase::UpdateRotQuat(void)
