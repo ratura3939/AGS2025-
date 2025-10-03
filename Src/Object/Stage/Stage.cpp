@@ -25,9 +25,6 @@ void Stage::Init(void)
 
 	MV1SetPosition(modelId_,pos_);
 	MV1SetPosition(objModelId_,pos_);
-
-	sky_ = std::make_unique<SkyDome>();
-	sky_->Init();
 }
 
 void Stage::Update(void)
@@ -38,8 +35,6 @@ void Stage::Update(void)
 
 void Stage::Draw(void)
 {
-	//DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y,0x0055ff,false);
-	//sky_->Draw();
 	MV1DrawModel(modelId_);
 	if (isDrawObj_) {
 		MV1DrawModel(objModelId_);

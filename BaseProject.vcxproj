@@ -42,7 +42,6 @@
     <ClCompile Include="Src\Manager\GameSystem\EnemyManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
-    <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Scene\Main\GameOver.cpp" />
     <ClCompile Include="Src\Scene\Main\GameClear.cpp" />
     <ClCompile Include="Src\Scene\Main\Game.cpp" />
@@ -96,7 +95,6 @@
     <ClInclude Include="Src\Manager\GameSystem\EnemyManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\PlayerManager.h" />
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
-    <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Scene\Main\GameOver.h" />
     <ClInclude Include="Src\Scene\Main\GameClear.h" />
     <ClInclude Include="Src\Scene\Main\Game.h" />

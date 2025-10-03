@@ -2,7 +2,6 @@
 #include<DxLib.h>
 #include "../../Common/Quaternion.h"
 #include<memory>
-#include"SkyDome.h"
 
 class Stage
 {
@@ -25,7 +24,5 @@ private:
 
 	// ‰ñ“]
 	Quaternion quaRot_;
-
-	std::unique_ptr<SkyDome>sky_;
 };
 
