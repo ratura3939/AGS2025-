@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\PlayerSystem\Ability\LockTime.cpp" />
+    <ClCompile Include="Src\PlayerSystem\Ability\MagnetCatch.cpp" />
+    <ClCompile Include="Src\PlayerSystem\Ability\AbilityBase.cpp" />
     <ClCompile Include="Src\Scene\Sub\SelectAbility.cpp" />
     <ClCompile Include="Src\PlayerSystem\AbilityManager.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\TestObj.cpp" />
@@ -77,6 +80,9 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\PlayerSystem\Ability\LockTime.h" />
+    <ClInclude Include="Src\PlayerSystem\Ability\MagnetCatch.h" />
+    <ClInclude Include="Src\PlayerSystem\Ability\AbilityBase.h" />
     <ClInclude Include="Src\Scene\Sub\SelectAbility.h" />
     <ClInclude Include="Src\PlayerSystem\AbilityManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\TestObj.h" />

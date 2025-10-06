@@ -4,6 +4,7 @@
 #include"../Object/Stage/StageObj/GimmickObjBase.h"
 
 class StageManager;
+class AbilityBase;
 
 class AbilityManager
 {
@@ -36,6 +37,7 @@ public:
 
 	void ChangeAbility(const ABILITY_TYPE _type);	//能力切り換え
 
+	const bool IsRedyAbility(void)const { return isRedyAbility_; }
 	const bool IsUsingAbility(void)const { return isUsingAbility_; }
 	const ABILITY_TYPE GetNowAbility(void)const { return useAbility_; }
 	std::string& GetAbilityUiList(void) { return *iconNames_; }
@@ -45,11 +47,20 @@ private:
 	bool IsHitReticle(VECTOR _screenPos);
 	bool IsNearObject2Camera(const VECTOR _pos1, const VECTOR _pos2);
 
+	void UpdateRedy(void);
+	void UpdateUse(void);
+
 	StageManager& stage_;	//ステージ(参照)
 	ABILITY_TYPE useAbility_;	//使用している能力
+	std::unique_ptr<AbilityBase> abilities_[static_cast<int>(ABILITY_TYPE::MAX)];	//能力
 
-	std::string iconNames_[static_cast<int>(ABILITY_TYPE::MAX)];
+	std::string iconNames_[static_cast<int>(ABILITY_TYPE::MAX)];	//アイコン画像
+	bool isRedyAbility_;	//能力準備中か
 	bool isUsingAbility_;	//能力使用中か
 	std::weak_ptr<GimmickObjBase> selectObj_;	//選択中の物
+	FLOAT4 selectColores_[static_cast<int>(ABILITY_TYPE::MAX)];
+
+	using Update_f = void(AbilityManager::*)(void);
+	Update_f update_;
 };
 

@@ -139,7 +139,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	if (character_->GetState() == PlayerChara::STATE::ATTACK)return;
 
 	//能力が使用されていないとき入力を受け付ける
-	if (!ability_->IsUsingAbility()) {
+	if (!ability_->IsRedyAbility()) {
 		//攻撃
 		if (ins.IsTrigerrDown("attack")) {
 			//攻撃の生成および状態の設定
@@ -179,7 +179,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	}
 	else if (ins.IsTrigerrUp("ability")) {
 		//能力がまだ使用されていないとき
-		if (!ability_->IsUsingAbility()) {
+		if (!ability_->IsRedyAbility()&&!ability_->IsUsingAbility()) {
 			//能力開始
 			ability_->RedyAbility();
 		}
@@ -269,7 +269,7 @@ const bool PlayerManager::IsAlive(void) const
 
 const bool PlayerManager::IsUseAbility(void) const
 {
-	return ability_->IsUsingAbility();
+	return ability_->IsRedyAbility();
 }
 
 
