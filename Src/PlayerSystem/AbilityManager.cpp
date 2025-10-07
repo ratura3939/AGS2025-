@@ -28,10 +28,11 @@ namespace {
 AbilityManager::AbilityManager(StageManager& _stage) :stage_(_stage)
 {
 	useAbility_ = ABILITY_TYPE::LOCK_TIME;
+	state_ = STATE::END;
 	isRedyAbility_ = false;
 
-	abilities_[static_cast<int>(ABILITY_TYPE::MAGNET)] = std::make_unique<MagnetCatch>();
-	abilities_[static_cast<int>(ABILITY_TYPE::LOCK_TIME)] = std::make_unique<LockTime>();
+	abilities_[static_cast<int>(ABILITY_TYPE::MAGNET)] = std::make_unique<MagnetCatch>(*this);
+	abilities_[static_cast<int>(ABILITY_TYPE::LOCK_TIME)] = std::make_unique<LockTime>(*this);
 
 	auto& resM = ResourceManager::GetInstance();
 	auto& uiM = UIManager2d::GetInstance();
@@ -80,6 +81,7 @@ void AbilityManager::RedyAbility(void)
 {
 	//使用中に
 	isRedyAbility_ = true;
+	ChangeState(STATE::REDY);
 
 	//色の設定
 	stage_.SetAbilityColor(GetAbilityColor(useAbility_));
@@ -93,8 +95,12 @@ void AbilityManager::UseAbility(void)
 		return;
 	}
 
+	//明日ここにマグネットの伸ばす更新への遷移を行う
+
 	isRedyAbility_ = false;
 	isUsingAbility_ = true;
+	ChangeState(STATE::USE);
+
 	//全体の付与色をなくす
 	stage_.SetAbilityColor(NONE_COLOR);
 	//対象のオブジェクトは能力色を付与
@@ -111,6 +117,9 @@ void AbilityManager::EndUsingAbility(void)
 	//使用終了
 	isRedyAbility_ = false;
 	isUsingAbility_ = false;
+	ChangeState(STATE::END);
+	selectObj_.lock()->FinishAffect();
+	selectObj_.reset();
 
 	//付与色をなくす
 	stage_.SetAbilityColor(NONE_COLOR);
@@ -206,4 +215,9 @@ void AbilityManager::UpdateRedy(void)
 void AbilityManager::UpdateUse(void)
 {
 	abilities_[static_cast<int>(useAbility_)]->Update(selectObj_);
+}
+
+void AbilityManager::ChangeState(const STATE _next)
+{
+	state_ = _next;
 }

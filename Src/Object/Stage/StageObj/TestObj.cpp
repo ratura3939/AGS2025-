@@ -13,7 +13,7 @@ void TestObj::SetPram(void)
 
 	//shader設定
 	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", 0, "StdModelPS.cso", 1);
-	material_->AddConstBufPS(objColor_);
+	material_->AddConstBufPS(NOMAL_COLOR);
 
 	//デバッグ
 	isDrawScreenPosCircle_ = true;

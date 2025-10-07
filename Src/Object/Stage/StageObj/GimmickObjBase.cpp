@@ -6,9 +6,9 @@
 
 GimmickObjBase::GimmickObjBase(void)
 {
-	objColor_ = { 0.0f,0.0f,0.0f,1.0f };
 	screenPos_ = { 0.0f,0.0f,0.0f };
 	isAffectingNow_ = false;
+	update_ = &GimmickObjBase::UpdateNomal;
 }
 
 GimmickObjBase::~GimmickObjBase(void)
@@ -30,16 +30,14 @@ void GimmickObjBase::Init(void)
 
 void GimmickObjBase::Update(void)
 {
-	UpdateRotQuat();
-	MV1SetupCollInfo(modelId_);
-	material_->SetConstBufPS(0, objColor_);
+	(this->*update_)();
 }
 
 void GimmickObjBase::Draw(void)
 {
-	//MV1DrawModel(modelId_);
 	render_->Draw();
 
+	//スクリーン座標位置(デバッグ用)
 	if (isDrawScreenPosCircle_) {
 		screenPos_ = ConvWorldPosToScreenPos(pos_);
 		DrawCircle(screenPos_.x, screenPos_.y, 10, screenPosColor_);
@@ -57,7 +55,7 @@ const bool GimmickObjBase::IsHitCameraRay(const VECTOR _start, const VECTOR _end
 
 void GimmickObjBase::SetObjectRenderColor(const FLOAT4 _color)
 {
-	objColor_ = _color;
+	material_->SetConstBufPS(0, _color);
 }
 
 void GimmickObjBase::SetPos(const VECTOR _pos)
@@ -90,6 +88,21 @@ const bool GimmickObjBase::IsAffecting(void) const
 	return isAffectingNow_;
 }
 
+void GimmickObjBase::AffectedLockTime(void)
+{
+	update_ = &GimmickObjBase::UpdateAffectLock;
+}
+
+void GimmickObjBase::AffectedMagnet(void)
+{
+	update_ = &GimmickObjBase::UpdateAffectMagnet;
+}
+
+void GimmickObjBase::FinishAffect(void)
+{
+	update_ = &GimmickObjBase::UpdateNomal;
+}
+
 void GimmickObjBase::UpdateRotQuat(void)
 {
 	// 大きさ
@@ -113,4 +126,20 @@ void GimmickObjBase::UpdateRotQuat(void)
 	if (modelId_ != -1) {
 		MV1SetMatrix(modelId_, mat);
 	}
+}
+
+void GimmickObjBase::UpdateNomal(void)
+{
+	UpdateRotQuat();
+	MV1SetupCollInfo(modelId_);
+}
+
+void GimmickObjBase::UpdateAffectLock(void)
+{
+	//ベクトル計算
+}
+
+void GimmickObjBase::UpdateAffectMagnet(void)
+{
+	//移動処理(能力側に持たせるかも)
 }

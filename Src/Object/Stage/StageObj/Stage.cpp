@@ -37,7 +37,7 @@ void Stage::SetPram(void)
 	//追加テクスチャ挿入
 	material_->SetTextureBuf(ModelMaterial::SUB_TEX_1, resM.Load(ResourceManager::SRC::NOISE_STAGE).handleId_);
 	//付与色
-	material_->AddConstBufPS(objColor_);
+	material_->AddConstBufPS(NOMAL_COLOR);
 	//経過時間
 	material_->AddConstBufPS({ 0.0f,0.0f,0.0f,0.0f });
 	//UV拡大率

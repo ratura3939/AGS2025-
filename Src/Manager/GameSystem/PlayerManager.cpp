@@ -139,7 +139,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	if (character_->GetState() == PlayerChara::STATE::ATTACK)return;
 
 	//能力が使用されていないとき入力を受け付ける
-	if (!ability_->IsRedyAbility()) {
+	if (!ability_->IsRedyAbility()&&!ability_->IsUsingAbility()) {
 		//攻撃
 		if (ins.IsTrigerrDown("attack")) {
 			//攻撃の生成および状態の設定
@@ -187,6 +187,11 @@ void PlayerManager::UserInput(AttackManager& _atk)
 			//能力終了
 			ability_->EndUsingAbility();
 		}
+	}
+
+	//能力の使用
+	if (ins.IsTrigerrDown("action") && ability_->IsRedyAbility()) {
+		ability_->UseAbility();
 	}
 #pragma endregion
 }

@@ -15,7 +15,11 @@ public:
     void ResetAbility(void)override;
 
 private:
-    int timer_; //アビリティのカウンター
-    bool lockObject_;   //オブジェクトの更新を停止したか
+    int timer_;                 //アビリティのカウンター
+    int alertBeatInterval_;     //音を鳴らす間隔
+    int changeBeatCnt_;         //間隔変更のカウンタ
+    int alertAfterCnt_;         //警告音を鳴らしてからのカウンター
+    bool lockObject_;           //オブジェクトの更新を停止したか
+
 };
 

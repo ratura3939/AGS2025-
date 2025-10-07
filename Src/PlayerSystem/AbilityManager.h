@@ -19,6 +19,13 @@ public:
 		MAX
 	};
 
+	enum class STATE {
+		REDY,
+		CHECK,
+		USE,
+		END
+	};
+
 	static const std::string UI_ABILITY_MGNET;
 	static const std::string UI_ABILITY_LOCK_TIME;
 	static const VECTOR ABILITY_ICON_POS;	//アイコン位置
@@ -50,8 +57,11 @@ private:
 	void UpdateRedy(void);
 	void UpdateUse(void);
 
-	StageManager& stage_;	//ステージ(参照)
+	void ChangeState(const STATE _next);
+
+	StageManager& stage_;		//ステージ(参照)
 	ABILITY_TYPE useAbility_;	//使用している能力
+	STATE state_;				//能力発動ロジックの段階
 	std::unique_ptr<AbilityBase> abilities_[static_cast<int>(ABILITY_TYPE::MAX)];	//能力
 
 	std::string iconNames_[static_cast<int>(ABILITY_TYPE::MAX)];	//アイコン画像

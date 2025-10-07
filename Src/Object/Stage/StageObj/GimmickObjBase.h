@@ -10,6 +10,8 @@ class ModelRenderer;
 class GimmickObjBase
 {
 public:
+	static constexpr FLOAT4 NOMAL_COLOR = { 0.0f,0.0f,0.0f,1.0f };
+
 	GimmickObjBase(void);
 	virtual ~GimmickObjBase(void);
 
@@ -30,6 +32,7 @@ public:
 	void SetPos(const VECTOR _pos);	
 	VECTOR GetPos(void);
 	VECTOR GetScreenPos(void);
+
 	//能力の影響を受けるか
 	const bool IsAffectAbility(void)const;	
 
@@ -37,9 +40,22 @@ public:
 	void SetIsAffecting(const bool _flag);
 	const bool IsAffecting(void)const;
 
+	//影響開始
+	void AffectedLockTime(void);
+	void AffectedMagnet(void);
+	void FinishAffect(void);
+
+
 protected:
 	virtual void SetPram(void) = 0;
 	void UpdateRotQuat(void);
+
+	void UpdateNomal(void);
+	void UpdateAffectLock(void);
+	void UpdateAffectMagnet(void);
+
+	using Update_f = void(GimmickObjBase::*)(void);
+	Update_f update_;
 
 #pragma region モデル基礎
 	int modelId_;	//モデルID
@@ -64,8 +80,6 @@ protected:
 #pragma region shader関連
 	std::unique_ptr<ModelMaterial> material_;
 	std::unique_ptr<ModelRenderer> render_;
-
-	FLOAT4 objColor_;
 #pragma endregion
 
 	float gravity_;	//重力

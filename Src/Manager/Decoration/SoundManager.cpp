@@ -119,6 +119,16 @@ void SoundManager::AdjustVolume(const TYPE _playType, const int _persent)
 	}
 }
 
+void SoundManager::AdjustPitchRate(const float _rate) const
+{
+	SetCreateSoundPitchRate(_rate);
+}
+
+void SoundManager::AdjustTimeRate(const float _rate) const
+{
+	SetCreateSoundTimeStretchRate(_rate);
+}
+
 void SoundManager::Destroy(void)
 {
 	Release();
