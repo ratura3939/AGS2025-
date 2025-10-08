@@ -12,7 +12,7 @@
 const std::string AbilityManager::UI_ABILITY_MGNET = "MagnetIcon";
 const std::string AbilityManager::UI_ABILITY_LOCK_TIME = "LockTimeIcon";
 const VECTOR AbilityManager::ABILITY_ICON_POS = { 170.0f,230.0f,0.0f };
-const VECTOR AbilityManager::RETICLE_POS = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2 ,0.0f };
+const VECTOR AbilityManager::RETICLE_POS = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2 ,0.8f };
 
 //ローカル定数
 namespace {
@@ -29,7 +29,7 @@ namespace {
 
 AbilityManager::AbilityManager(StageManager& _stage) :stage_(_stage)
 {
-	useAbility_ = ABILITY_TYPE::LOCK_TIME;
+	useAbility_ = ABILITY_TYPE::MAGNET;
 	state_ = STATE::END;
 	update_ = &AbilityManager::UpdateEnd;
 	isRedyAbility_ = false;
@@ -92,11 +92,11 @@ void AbilityManager::RedyAbility(void)
 
 void AbilityManager::UseAbility(void)
 {
-	if (selectObj_.expired()) {
-		//失敗サウンド
+	/*if (selectObj_.expired()) {
+		失敗サウンド
 
 		return;
-	}
+	}*/
 
 	//能力の状況リセット
 	abilities_[static_cast<int>(useAbility_)]->ResetAbility();

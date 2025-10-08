@@ -18,6 +18,7 @@ public:
 private:
     VECTOR startPos_;
     VECTOR goalPos_;
+    VECTOR nowPos_;
     float direcStep_;   //線形補完のカウンタ
 
     bool isSetGoalPos_; //目標を設定するのは一度だけ
