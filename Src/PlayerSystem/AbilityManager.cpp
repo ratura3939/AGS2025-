@@ -12,23 +12,26 @@
 const std::string AbilityManager::UI_ABILITY_MGNET = "MagnetIcon";
 const std::string AbilityManager::UI_ABILITY_LOCK_TIME = "LockTimeIcon";
 const VECTOR AbilityManager::ABILITY_ICON_POS = { 170.0f,230.0f,0.0f };
+const VECTOR AbilityManager::RETICLE_POS = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2 ,0.0f };
 
 //ローカル定数
 namespace {
-	const FLOAT4 NONE_COLOR = { 0.0f,0.0f,0.0f,1.0f };
-	const FLOAT4 MAGNET_COLOR = { 1.0f,0.0f,0.0f,1.0f };
-	const FLOAT4 LOCK_TIME_COLOR = { 1.0f,1.0f,0.0f,1.0f };
-	const FLOAT4 SELECT_COLOR_MAGNET = { 1.0,1.0f,0.0f ,1.0f};
-	const FLOAT4 SELECT_COLOR_LOCK_TIME = { 0.0,1.0f,0.0f ,1.0f};
-	const VECTOR RETICLE_POS = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2 ,0.0f };
-	const float CAMERA_RAY_POW = 1000.0f;
-	const float HIT_RETICLE_DIFF = 80.0f;
+	const FLOAT4 NONE_COLOR = { 0.0f,0.0f,0.0f,1.0f };				//物体通常色
+	const FLOAT4 MAGNET_COLOR = { 1.0f,0.0f,0.0f,1.0f };			//能力色(マグネット)
+	const FLOAT4 LOCK_TIME_COLOR = { 1.0f,1.0f,0.0f,1.0f };			//能力色(ロックタイム)
+	const FLOAT4 SELECT_COLOR_MAGNET = { 1.0,1.0f,0.0f ,1.0f};		//選択色(マグネット)
+	const FLOAT4 SELECT_COLOR_LOCK_TIME = { 0.0,1.0f,0.0f ,1.0f};	//選択色(ロックタイム)
+
+	const int RETICLE_COLOR = 0x55ff00;			//レティクル通常色
+	const float HIT_RETICLE_DIFF = 80.0f;		//レティクル当たり判定大きさ
+	const float RETHICLE_SIZE = 10.0f;			//レティクル大きさ
 }
 
 AbilityManager::AbilityManager(StageManager& _stage) :stage_(_stage)
 {
 	useAbility_ = ABILITY_TYPE::LOCK_TIME;
 	state_ = STATE::END;
+	update_ = &AbilityManager::UpdateEnd;
 	isRedyAbility_ = false;
 
 	abilities_[static_cast<int>(ABILITY_TYPE::MAGNET)] = std::make_unique<MagnetCatch>(*this);
@@ -51,17 +54,15 @@ AbilityManager::AbilityManager(StageManager& _stage) :stage_(_stage)
 
 	selectColores_[static_cast<int>(ABILITY_TYPE::MAGNET)] = SELECT_COLOR_MAGNET;
 	selectColores_[static_cast<int>(ABILITY_TYPE::LOCK_TIME)] = SELECT_COLOR_LOCK_TIME;
-
-	update_ = &AbilityManager::UpdateRedy;
 }
 
 AbilityManager::~AbilityManager(void)
 {
 }
 
-void AbilityManager::Update(void)
+void AbilityManager::Update(const VECTOR _playerPos)
 {
-	(this->*update_)();
+	(this->*update_)(_playerPos);
 }
 
 void AbilityManager::Draw(void)
@@ -72,9 +73,11 @@ void AbilityManager::Draw(void)
 	}
 
 	//能力使用時のレティクル
-	if (isRedyAbility_) {
-		DrawCircle(RETICLE_POS.x, RETICLE_POS.y, 10, 0x55ff00);
+	if (state_ == STATE::REDY || state_ == STATE::DIRECTION) {
+		DrawCircle(RETICLE_POS.x, RETICLE_POS.y, RETHICLE_SIZE, RETICLE_COLOR);
 	}
+
+	abilities_[static_cast<int>(useAbility_)]->Draw();
 }
 
 void AbilityManager::RedyAbility(void)
@@ -95,21 +98,10 @@ void AbilityManager::UseAbility(void)
 		return;
 	}
 
-	//明日ここにマグネットの伸ばす更新への遷移を行う
-
-	isRedyAbility_ = false;
-	isUsingAbility_ = true;
-	ChangeState(STATE::USE);
-
-	//全体の付与色をなくす
-	stage_.SetAbilityColor(NONE_COLOR);
-	//対象のオブジェクトは能力色を付与
-	selectObj_.lock()->SetObjectRenderColor(GetAbilityColor(useAbility_));
-
 	//能力の状況リセット
 	abilities_[static_cast<int>(useAbility_)]->ResetAbility();
-
-	update_ = &AbilityManager::UpdateUse;
+	//発生演出に
+	ChangeState(STATE::DIRECTION);
 }
 
 void AbilityManager::EndUsingAbility(void)
@@ -123,9 +115,20 @@ void AbilityManager::EndUsingAbility(void)
 
 	//付与色をなくす
 	stage_.SetAbilityColor(NONE_COLOR);
+}
 
-	//更新を準備時に
-	update_ = &AbilityManager::UpdateRedy;
+void AbilityManager::DoUse(void)
+{
+	isRedyAbility_ = false;
+	isUsingAbility_ = true;
+	ChangeState(STATE::USE);
+
+	//全体の付与色をなくす
+	stage_.SetAbilityColor(NONE_COLOR);
+	//対象のオブジェクトは能力色を付与
+	selectObj_.lock()->SetObjectRenderColor(GetAbilityColor(useAbility_));
+
+	
 }
 
 void AbilityManager::ChangeAbility(const ABILITY_TYPE _type)
@@ -165,59 +168,80 @@ bool AbilityManager::IsNearObject2Camera(const VECTOR _pos1, const VECTOR _pos2)
 	return diff1 <= diff2;
 }
 
-void AbilityManager::UpdateRedy(void)
+void AbilityManager::UpdateRedy(const VECTOR _playerPos)
 {
-	if (isRedyAbility_) {
-		auto& camera = SceneManager::GetInstance().GetCamera();
-		VECTOR cameraPos = camera.GetPos();
-		VECTOR cameraRayEnd = VAdd(cameraPos, VScale(camera.GetRot().GetForward(), CAMERA_RAY_POW));
-
-		//レティクルとの当たり判定
-		std::weak_ptr<GimmickObjBase> hitReticleObj;
-		for (auto& obj : stage_.GetAffectAbilityObjectes()) {
-			//衝突していたら
-			if (IsHitReticle(obj.lock()->GetScreenPos())) {
-				//まだ参照するものがない場合
-				if (hitReticleObj.expired()) {
+	//レティクルとの当たり判定
+	std::weak_ptr<GimmickObjBase> hitReticleObj;
+	for (auto& obj : stage_.GetAffectAbilityObjectes()) {
+		//衝突していたら
+		if (IsHitReticle(obj.lock()->GetScreenPos())) {
+			//まだ参照するものがない場合
+			if (hitReticleObj.expired()) {
+				hitReticleObj = obj;
+			}
+			else {
+				//既に何かしら入っている場合
+				//新しいオブジェクトの方が近い時
+				if (!IsNearObject2Camera(hitReticleObj.lock()->GetPos(), obj.lock()->GetPos())) {
+					//近いほうを採用
 					hitReticleObj = obj;
 				}
-				else {
-					//既に何かしら入っている場合
-					//新しいオブジェクトの方が近い時
-					if (!IsNearObject2Camera(hitReticleObj.lock()->GetPos(), obj.lock()->GetPos())) {
-						//近いほうを採用
-						hitReticleObj = obj;
-					}
-				}
 			}
 		}
+	}
 
-		//対象となるものがなかった時
-		if (hitReticleObj.expired()) {
-			//現在選択されているものの解除
-			if (!selectObj_.expired()) {
-				//通常色の設定
-				selectObj_.lock()->SetObjectRenderColor(GetAbilityColor(useAbility_));
-				//選択解除
-				selectObj_.reset();
-			}
+	//対象となるものがなかった時
+	if (hitReticleObj.expired()) {
+		//現在選択されているものの解除
+		if (!selectObj_.expired()) {
+			//通常色の設定
+			selectObj_.lock()->SetObjectRenderColor(GetAbilityColor(useAbility_));
+			//選択解除
+			selectObj_.reset();
 		}
-		else {
-			//新しく選択されたものの設定
-			if (selectObj_.lock() != hitReticleObj.lock()) {
-				selectObj_ = hitReticleObj;
-				selectObj_.lock()->SetObjectRenderColor(selectColores_[static_cast<int>(useAbility_)]);
-			}
+	}
+	else {
+		//新しく選択されたものの設定
+		if (selectObj_.lock() != hitReticleObj.lock()) {
+			selectObj_ = hitReticleObj;
+			selectObj_.lock()->SetObjectRenderColor(selectColores_[static_cast<int>(useAbility_)]);
 		}
 	}
 }
 
-void AbilityManager::UpdateUse(void)
+void AbilityManager::UpdateDirection(const VECTOR _playerPos)
+{
+	abilities_[static_cast<int>(useAbility_)]->UpdateDirection(selectObj_, _playerPos);
+}
+
+void AbilityManager::UpdateUse(const VECTOR _playerPos)
 {
 	abilities_[static_cast<int>(useAbility_)]->Update(selectObj_);
+}
+
+void AbilityManager::UpdateEnd(const VECTOR _playerPos)
+{
+	//何もしない
 }
 
 void AbilityManager::ChangeState(const STATE _next)
 {
 	state_ = _next;
+	switch (state_)
+	{
+	case AbilityManager::STATE::REDY:
+		update_ = &AbilityManager::UpdateRedy;
+		break;
+	case AbilityManager::STATE::DIRECTION:
+		update_ = &AbilityManager::UpdateDirection;
+		break;
+	case AbilityManager::STATE::USE:
+		update_ = &AbilityManager::UpdateUse;
+		break;
+	case AbilityManager::STATE::END:
+		update_ = &AbilityManager::UpdateEnd;
+		break;
+	default:
+		break;
+	}
 }

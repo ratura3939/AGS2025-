@@ -70,6 +70,14 @@ void LockTime::Update(std::weak_ptr<GimmickObjBase> _obj)
 	}
 }
 
+void LockTime::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)
+{
+	//オブジェクトに対しエフェクトをかける
+
+	//使用に遷移
+	manager_.DoUse();
+}
+
 void LockTime::Draw(void)
 {
 }
