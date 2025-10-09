@@ -10,7 +10,7 @@ public:
     MagnetCatch(AbilityManager& _mng);
     ~MagnetCatch(void)override;
 
-   void Update(std::weak_ptr<GimmickObjBase> _obj)override;
+   void UpdateUse(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)override;
    void UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)override;
    void Draw(void)override;
    void ResetAbility(void)override;

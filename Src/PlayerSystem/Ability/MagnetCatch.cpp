@@ -21,8 +21,12 @@ MagnetCatch::~MagnetCatch(void)
 {
 }
 
-void MagnetCatch::Update(std::weak_ptr<GimmickObjBase> _obj)
+void MagnetCatch::UpdateUse(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)
 {
+	startPos_ = _playerPos;
+	goalPos_= _obj.lock()->GetPos();
+
+
 }
 
 void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)
@@ -43,11 +47,11 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECT
 	if (direcStep_ > DIREC_MAX) {
 		//‘ÎÛ‚ª‚È‚¢‚Æ‚«
 		if (_obj.expired()) {
-			manager_.RedyAbility();
+			manager_.ChangeState(AbilityManager::STATE::REDY);
 		}
 		else {
 			//g—p‚É‘JˆÚ
-			manager_.DoUse();
+			manager_.ChangeState(AbilityManager::STATE::USE);
 		}
 	}
 	

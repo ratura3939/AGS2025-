@@ -32,7 +32,6 @@ AbilityManager::AbilityManager(StageManager& _stage) :stage_(_stage)
 	useAbility_ = ABILITY_TYPE::MAGNET;
 	state_ = STATE::END;
 	update_ = &AbilityManager::UpdateEnd;
-	isRedyAbility_ = false;
 
 	abilities_[static_cast<int>(ABILITY_TYPE::MAGNET)] = std::make_unique<MagnetCatch>(*this);
 	abilities_[static_cast<int>(ABILITY_TYPE::LOCK_TIME)] = std::make_unique<LockTime>(*this);
@@ -78,57 +77,6 @@ void AbilityManager::Draw(void)
 	}
 
 	abilities_[static_cast<int>(useAbility_)]->Draw();
-}
-
-void AbilityManager::RedyAbility(void)
-{
-	//使用中に
-	isRedyAbility_ = true;
-	ChangeState(STATE::REDY);
-
-	//色の設定
-	stage_.SetAbilityColor(GetAbilityColor(useAbility_));
-}
-
-void AbilityManager::UseAbility(void)
-{
-	/*if (selectObj_.expired()) {
-		失敗サウンド
-
-		return;
-	}*/
-
-	//能力の状況リセット
-	abilities_[static_cast<int>(useAbility_)]->ResetAbility();
-	//発生演出に
-	ChangeState(STATE::DIRECTION);
-}
-
-void AbilityManager::EndUsingAbility(void)
-{
-	//使用終了
-	isRedyAbility_ = false;
-	isUsingAbility_ = false;
-	ChangeState(STATE::END);
-	selectObj_.lock()->FinishAffect();
-	selectObj_.reset();
-
-	//付与色をなくす
-	stage_.SetAbilityColor(NONE_COLOR);
-}
-
-void AbilityManager::DoUse(void)
-{
-	isRedyAbility_ = false;
-	isUsingAbility_ = true;
-	ChangeState(STATE::USE);
-
-	//全体の付与色をなくす
-	stage_.SetAbilityColor(NONE_COLOR);
-	//対象のオブジェクトは能力色を付与
-	selectObj_.lock()->SetObjectRenderColor(GetAbilityColor(useAbility_));
-
-	
 }
 
 void AbilityManager::ChangeAbility(const ABILITY_TYPE _type)
@@ -216,7 +164,7 @@ void AbilityManager::UpdateDirection(const VECTOR _playerPos)
 
 void AbilityManager::UpdateUse(const VECTOR _playerPos)
 {
-	abilities_[static_cast<int>(useAbility_)]->Update(selectObj_);
+	abilities_[static_cast<int>(useAbility_)]->UpdateUse(selectObj_, _playerPos);
 }
 
 void AbilityManager::UpdateEnd(const VECTOR _playerPos)
@@ -230,18 +178,65 @@ void AbilityManager::ChangeState(const STATE _next)
 	switch (state_)
 	{
 	case AbilityManager::STATE::REDY:
-		update_ = &AbilityManager::UpdateRedy;
+		RedyAbility();
 		break;
 	case AbilityManager::STATE::DIRECTION:
-		update_ = &AbilityManager::UpdateDirection;
+		DirectionAbility();
 		break;
 	case AbilityManager::STATE::USE:
-		update_ = &AbilityManager::UpdateUse;
+		UseAbility();
 		break;
 	case AbilityManager::STATE::END:
-		update_ = &AbilityManager::UpdateEnd;
+		EndUsingAbility();
 		break;
 	default:
 		break;
 	}
+}
+
+
+void AbilityManager::RedyAbility(void)
+{
+	//色の設定
+	stage_.SetAbilityColor(GetAbilityColor(useAbility_));
+
+	update_ = &AbilityManager::UpdateRedy;
+}
+
+void AbilityManager::DirectionAbility(void)
+{
+	//能力の状況リセット
+	abilities_[static_cast<int>(useAbility_)]->ResetAbility();
+
+	update_ = &AbilityManager::UpdateDirection;
+}
+
+void AbilityManager::UseAbility(void)
+{
+	/*if (selectObj_.expired()) {
+		失敗サウンド
+
+		return;
+	}*/
+
+	//全体の付与色をなくす
+	stage_.SetAbilityColor(NONE_COLOR);
+	//対象のオブジェクトは能力色を付与
+	selectObj_.lock()->SetObjectRenderColor(GetAbilityColor(useAbility_));
+
+	update_ = &AbilityManager::UpdateUse;
+
+}
+
+void AbilityManager::EndUsingAbility(void)
+{
+	//使用終了
+	selectObj_.lock()->FinishAffect();
+	selectObj_.reset();
+
+	//付与色をなくす
+	stage_.SetAbilityColor(NONE_COLOR);
+
+
+	update_ = &AbilityManager::UpdateEnd;
 }

@@ -12,7 +12,7 @@ public:
 	virtual ~AbilityBase(void);
 
 	//影響を与えてからの更新
-	virtual void Update(std::weak_ptr<GimmickObjBase> _obj) = 0;
+	virtual void UpdateUse(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos) = 0;
 	//使う際の演出用の更新
 	virtual void UpdateDirection(std::weak_ptr<GimmickObjBase> _obj,const VECTOR _playerPos) = 0;
 	virtual void Draw(void) = 0;

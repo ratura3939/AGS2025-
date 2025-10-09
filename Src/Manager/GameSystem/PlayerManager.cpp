@@ -138,8 +138,10 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	//攻撃中は入力を受け付けない
 	if (character_->GetState() == PlayerChara::STATE::ATTACK)return;
 
+	auto abilityState = ability_->GetAbilityState();
+
 	//能力が使用されていないとき入力を受け付ける
-	if (!ability_->IsRedyAbility()&&!ability_->IsUsingAbility()) {
+	if (abilityState==AbilityManager::STATE::END) {
 		//攻撃
 		if (ins.IsTrigerrDown("attack")) {
 			//攻撃の生成および状態の設定
@@ -179,19 +181,19 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	}
 	else if (ins.IsTrigerrUp("ability")) {
 		//能力がまだ使用されていないとき
-		if (!ability_->IsRedyAbility()&&!ability_->IsUsingAbility()) {
-			//能力開始
-			ability_->RedyAbility();
+		if (abilityState == AbilityManager::STATE::END) {
+			//能力使用準備
+			ability_->ChangeState(AbilityManager::STATE::REDY);
 		}
 		else {
 			//能力終了
-			ability_->EndUsingAbility();
+			ability_->ChangeState(AbilityManager::STATE::END);
 		}
 	}
 
 	//能力の使用
-	if (ins.IsTrigerrDown("action") && ability_->IsRedyAbility()) {
-		ability_->UseAbility();
+	if (ins.IsTrigerrDown("action") && abilityState == AbilityManager::STATE::REDY) {
+		ability_->ChangeState(AbilityManager::STATE::DIRECTION);
 	}
 #pragma endregion
 }
@@ -274,7 +276,9 @@ const bool PlayerManager::IsAlive(void) const
 
 const bool PlayerManager::IsUseAbility(void) const
 {
-	return ability_->IsRedyAbility();
+	using State = AbilityManager::STATE;
+	auto abilityState = ability_->GetAbilityState();
+	return abilityState == State::REDY || abilityState == State::DIRECTION || abilityState == State::USE;
 }
 
 
