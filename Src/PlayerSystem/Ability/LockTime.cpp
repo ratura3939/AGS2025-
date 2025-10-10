@@ -72,10 +72,15 @@ void LockTime::UpdateUse(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playe
 
 void LockTime::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)
 {
-	//オブジェクトに対しエフェクトをかける
+	if (_obj.expired()) {
+		manager_.ChangeState(AbilityManager::STATE::REDY);
+	} 
+	else{
+		//オブジェクトに対しエフェクトをかける
 
-	//使用に遷移
-	manager_.ChangeState(AbilityManager::STATE::USE);
+		//使用に遷移
+		manager_.ChangeState(AbilityManager::STATE::USE);
+	}
 }
 
 void LockTime::Draw(void)
