@@ -40,7 +40,6 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECT
 			VECTOR screenPos = AbilityManager::RETICLE_POS;
 			VECTOR woldPos = ConvScreenPosToWorldPos(screenPos);
 			goalDirecPos_ = woldPos;
-			//goalDirecPos_ = AbilityManager::RETICLE_POS;
 		}
 		else {
 			goalDirecPos_ = _obj.lock()->GetPos();
