@@ -161,6 +161,13 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "DudgeAllertp.png");
 	resourcesMap_.emplace(SRC::ATK_ALLERT_IMG, res);
 
+	//マグネット
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Magnet.png");
+	resourcesMap_.emplace(SRC::ABILITY_MAGNET_IMG, res);
+
+	//タイムロック
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_LockTime.png");
+	resourcesMap_.emplace(SRC::ABILITY_LOCK_TIME_IMG, res);
 ;
 	//音
 	//BGM
@@ -355,15 +362,24 @@ void ResourceManager::ResorceStage(void)
 {
 	Resource res;
 
+	//テストモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Moon.mv1");
+	resourcesMap_.emplace(SRC::TEST_MDL, res);
+
+	//テストモデル
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_CHARACTER + "Axe.mv1");
+	resourcesMap_.emplace(SRC::TEST_MDL_2, res);
+
 	//ステージ
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage1.mv1");
 	resourcesMap_.emplace(SRC::OBJECTS_MDL, res);
 
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "SkyDome.mv1");
-	resourcesMap_.emplace(SRC::SKY_DOME, res);
-
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "deco1.mv1");
 	resourcesMap_.emplace(SRC::STAGE_MDL, res);
+
+	//ノイズテクスチャ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Pattern/Noise2.png");
+	resourcesMap_.emplace(SRC::NOISE_STAGE, res);
 }
 
 void ResourceManager::Release(void)

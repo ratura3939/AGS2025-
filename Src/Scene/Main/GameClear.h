@@ -2,7 +2,7 @@
 #include "../SceneBase.h"
 #include<memory>
 
-class Stage;
+class StageManager;
 
 
 class GameClear :
@@ -25,6 +25,7 @@ public:
 	void Reset(void)override;
 
 private:
-	std::unique_ptr<Stage>stage_;	//ステージ
+
+	std::unique_ptr<StageManager>stage_;					//ステージ
 };
 

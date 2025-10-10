@@ -5,10 +5,12 @@
 #include"../../Common/Quaternion.h"
 
 class Game;
+class StageManager;
 class EnemyManager;
 class PlayerChara;
 class AttackManager;
 class LockOnManager;
+class AbilityManager;
 
 class PlayerManager
 {
@@ -21,7 +23,7 @@ public:
 	//状態上限時間
 	static constexpr int LIMIT_AVOID_STATE = 30;	//回避
 
-	PlayerManager(Game& _gameScene, EnemyManager& _enemy);
+	PlayerManager(Game& _gameScene, EnemyManager& _enemy, StageManager& _stage);
 	~PlayerManager(void);
 
 	void Init(void);
@@ -36,8 +38,11 @@ public:
 	const VECTOR GetPos(void);			//座標
 	const Quaternion GetQua(void);		//回転
 	const VECTOR GetFocusPoint(void);	//注視点
+	const VECTOR GetFollowPos4UseMagnet(void);
 
 	const bool IsAlive(void)const;
+	const bool IsUseAbility(void)const;
+	const bool IsUseMagnet(void)const;	//マグネットを使用しているか
 
 	//ロックオン・オフ時に必要な処理
 	void RedyLockOn(void);
@@ -62,8 +67,10 @@ private:
 	Game& scene_;	//ゲームクラス参照
 	std::shared_ptr<PlayerChara> character_;//キャラクター
 	std::unique_ptr<LockOnManager>lockOn_;	//ロックオン関係
+	std::unique_ptr<AbilityManager>ability_;//能力
 
 	int stateCnt_;		//キャラクター状態管理用カウンター
 	int stateLimit_;	//状態をの時間上限
+	int abilityBtnCnt_;	//能力使用ボタンの押下時間
 };
 

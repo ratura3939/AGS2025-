@@ -12,6 +12,9 @@ public:
 	// 設定できる最大のテクスチャの数
 	static constexpr int MAX_TEXTURES = 4;
 
+	//サブテクスチャ一枚目
+	static constexpr int SUB_TEX_1 = 11;
+
 	// テクスチャアドレスタイプ
 	enum class TEXADDRESS
 	{

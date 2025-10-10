@@ -2,10 +2,12 @@
 #include"../Generic/InputManager.h"
 #include"../Generic/SceneManager.h"
 #include"../Generic/Camera.h"
-#include"../GameSystem/AttackManager.h"
-#include"../GameSystem/LockOnManager.h"
 #include"../Decoration/SoundManager.h"
+#include"../GameSystem/AttackManager.h"
+#include"../../PlayerSystem/LockOnManager.h"
+#include"../../PlayerSystem/AbilityManager.h"
 #include"../../Scene/Main/Game.h"
+#include"../../Scene/Sub/SelectAbility.h"
 #include"../../Utility/Utility.h"
 #include "PlayerManager.h"
 
@@ -18,11 +20,13 @@ namespace {
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 }
 
-PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy):scene_(_gameScene)
+PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, StageManager& _stage):scene_(_gameScene)
 {
 	lockOn_ = std::make_unique<LockOnManager>(_gameScene, *this, _enemy);
+	ability_ = std::make_unique<AbilityManager>(_stage);
 	stateCnt_ = 0;
 	stateLimit_ = 0;
+	abilityBtnCnt_ = 0;
 }
 
 PlayerManager::~PlayerManager(void)
@@ -38,8 +42,6 @@ void PlayerManager::Init(void)
 
 void PlayerManager::Update(AttackManager& _atk)
 {
-	
-
 	//状態管理
 	//通常じゃないとき
 	if (character_->GetState() != PlayerChara::STATE::NOMAL) {
@@ -57,11 +59,14 @@ void PlayerManager::Update(AttackManager& _atk)
 	character_->Update();
 	//ロックオン更新
 	lockOn_->Update();
+	//能力更新
+	ability_->Update(character_->GetPos());
 }
 
 void PlayerManager::Draw(void)
 {
 	character_->Draw();
+	ability_->Draw();
 }
 
 void PlayerManager::Release(void)
@@ -89,6 +94,11 @@ const VECTOR PlayerManager::GetFocusPoint(void)
 	return character_->GetFocusPoint();
 }
 
+const VECTOR PlayerManager::GetFollowPos4UseMagnet(void)
+{
+	return ability_->GetFollowPos4UseMagnet(character_->GetPos());
+}
+
 
 void PlayerManager::RedyLockOn(void)
 {
@@ -105,26 +115,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	//プレイヤーからの入力総まとめ
 	InputManager& ins = InputManager::GetInstance();
 
-	//攻撃中は入力を受け付けない
-	if (character_->GetState() == PlayerChara::STATE::ATTACK)return;
-
-	//攻撃の生成
-	if (ins.IsTrigerrDown("attack")) {
-		//攻撃の生成および状態の設定
-		_atk.Attack("Player",ATTACK_NOMAL, AtkPow, VAdd(character_->GetPos(), character_->GetQua().PosAxis(ATK_LOCAL_POS)), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, AtkScl, "SwingSword");
-		character_->SetState(PlayerChara::STATE::ATTACK);
-		//対応するアニメーション
-		character_->PlayAnim("atkFirst");
-		//時間の設定
-		RedyStateCount(static_cast<int>(_atk.GetTotalTime(ATTACK_NOMAL)));
-	}
-
-	//回避入力があったとき(ロックオン状態でしか作動しない)
-	if (IsDudgeMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
-		//回避処理
-		DoDudge();
-	}
-
+#pragma region 移動
 	//移動
 	//入力
 	//入力があったら対応した移動方向をセット
@@ -146,15 +137,70 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	}
 	//ダッシュ
 	character_->InputDash(ins.IsPressed("dash"));
+#pragma endregion
 
-	//ロックオン
-	if (ins.IsPressed("rock") && lockOn_->CanLockOn()) {
-		lockOn_->LockOn();
+#pragma region 戦闘関連
+	//攻撃中は入力を受け付けない
+	if (character_->GetState() == PlayerChara::STATE::ATTACK)return;
+
+	auto abilityState = ability_->GetAbilityState();
+
+	//能力が使用されていないとき入力を受け付ける
+	if (abilityState==AbilityManager::STATE::END) {
+		//攻撃
+		if (ins.IsTrigerrDown("attack")) {
+			//攻撃の生成および状態の設定
+			_atk.Attack("Player", ATTACK_NOMAL, AtkPow, VAdd(character_->GetPos(), character_->GetQua().PosAxis(ATK_LOCAL_POS)), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, AtkScl, "SwingSword");
+			character_->SetState(PlayerChara::STATE::ATTACK);
+			//対応するアニメーション
+			character_->PlayAnim("atkFirst");
+			//時間の設定
+			RedyStateCount(static_cast<int>(_atk.GetTotalTime(ATTACK_NOMAL)));
+		}
+
+		//回避入力があったとき(ロックオン状態でしか作動しない)
+		if (IsDudgeMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
+			//回避処理
+			DoDudge();
+		}
+		//ロックオン
+		if (ins.IsPressed("rock") && lockOn_->CanLockOn()) {
+			lockOn_->LockOn();
+		}
+
+		if (ins.IsTrigerrUp("rock")) {
+			lockOn_->LockOff();
+		}
+	}
+#pragma endregion
+
+#pragma region 能力
+	if (ins.IsPressed("ability")) {
+		abilityBtnCnt_++;
+		//ボタンが一定時間押されていたら
+		if (abilityBtnCnt_ > AbilityManager::PRESSED_TIME_4_CHANGE_ABILITY) {
+			//能力切り換えフェーズに
+			SceneManager::GetInstance().PushScene(std::make_shared<SelectAbility>(*ability_));
+			abilityBtnCnt_ = 0;
+		}
+	}
+	else if (ins.IsTrigerrUp("ability")) {
+		//能力がまだ使用されていないとき
+		if (abilityState == AbilityManager::STATE::END) {
+			//能力使用準備
+			ability_->ChangeState(AbilityManager::STATE::REDY);
+		}
+		else {
+			//能力終了
+			ability_->ChangeState(AbilityManager::STATE::END);
+		}
 	}
 
-	if (ins.IsTrigerrUp("rock")) {
-		lockOn_->LockOff();
+	//能力の使用
+	if (ins.IsTrigerrDown("action") && abilityState == AbilityManager::STATE::REDY) {
+		ability_->ChangeState(AbilityManager::STATE::DIRECTION);
 	}
+#pragma endregion
 }
 
 
@@ -231,6 +277,18 @@ void PlayerManager::DoDudge(void)
 const bool PlayerManager::IsAlive(void) const
 {
 	return character_->IsAlive();
+}
+
+const bool PlayerManager::IsUseAbility(void) const
+{
+	using State = AbilityManager::STATE;
+	auto abilityState = ability_->GetAbilityState();
+	return abilityState == State::REDY || abilityState == State::DIRECTION || abilityState == State::USE;
+}
+
+const bool PlayerManager::IsUseMagnet(void) const
+{
+	return ability_->IsUseMagnet();
 }
 
 

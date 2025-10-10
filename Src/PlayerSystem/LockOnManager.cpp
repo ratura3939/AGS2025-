@@ -1,8 +1,8 @@
-#include"../Generic/SceneManager.h"
-#include"../Generic/Camera.h"
-#include"../GameSystem/EnemyManager.h"
-#include"../GameSystem/PlayerManager.h"
-#include"../../Scene/Main/Game.h"
+#include"../Manager/Generic/SceneManager.h"
+#include"../Manager/Generic/Camera.h"
+#include"../Manager/GameSystem/EnemyManager.h"
+#include"../Manager/GameSystem/PlayerManager.h"
+#include"../Scene/Main/Game.h"
 #include "LockOnManager.h"
 
 LockOnManager::LockOnManager(Game& _gameScene, PlayerManager& _player, EnemyManager& _enemyInfo) :scene_(_gameScene), master_(_player), targets_(_enemyInfo)
@@ -56,7 +56,7 @@ void LockOnManager::LockOn(void)
 	if (isLockOn_)return;
 
 	Camera& camera = SceneManager::GetInstance().GetCamera();
-	camera.SetRockPos(targets_.GetPos(nearTargetNum_));	//ロックオン対象の設定
+	camera.SetLockPos(targets_.GetPos(nearTargetNum_));	//ロックオン対象の設定
 	master_.RedyLockOn();
 	targets_.LokedOn(nearTargetNum_);
 	camera.ChangeMode(Camera::MODE::LOCKON);
@@ -86,15 +86,16 @@ void LockOnManager::SetTaergetPos4Camera(void)
 {
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 
-	//ロックオンをしていたら
-	if (isLockOn_) {
-		//ロックオン対象に敵を設定
-
-	}
-	else {
-		//追従対象にプレイヤーを設定
-	}
-
+	////ロックオンをしていたら
+	//if (isLockOn_) {
+	//	//ロックオン対象に敵を設定
+	//	camera.SetFocusPos(master_.GetFocusPoint());//注視点の更新
+	//	camera.SetFocusPos(master_.GetPos());//注視点の更新
+	//}
+	//else {
+	//	//追従対象にプレイヤーを設定
+	//	camera.SetRockPos(targets_.GetPos(nearTargetNum_));	//ロックオン対象の設定
+	//}
 }
 
 const int LockOnManager::DecideRockEnemy(void)

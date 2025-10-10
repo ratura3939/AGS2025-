@@ -13,7 +13,7 @@
 #include "../../Scene/Main/GameOver.h"
 #include "../../Scene/Main/GameClear.h"
 #include "../../Scene/Sub/PauseScene.h"
-#include"../../Object/Stage/Stage.h"
+#include"../../Object/Stage/StageManager.h"
 #include"../../Utility/Utility.h"
 #include"../../Renderer/PixelMaterial.h"
 #include"../../Renderer/PixelRenderer.h"
@@ -45,6 +45,8 @@ namespace {
 	const float BTN_EX = 0.6f;
 	const int BTN_DIFF_X = 300;
 	const int BTN_DIFF_Y = 100;
+
+	const float CAMERA_FOLLOW_DIFF_Y_ABILITY = 200.0f;	//能力使用時の注視点差分
 }
 
 Game::Game(void)
@@ -80,12 +82,19 @@ void Game::Init(void)
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	rsM.GetInstance().Init(SceneManager::SCENE_ID::GAME);
 
-	//生成	//敵
+	update_ = &Game::GameUpdate;
+
+	//生成
+	//ステージ
+	stage_ = std::make_unique<StageManager>();
+	stage_->Init();
+
+	//敵
 	enemy_ = std::make_unique<EnemyManager>(*this);
 	enemy_->Init();
 
 	//プレイヤー
-	player_ = std::make_unique<PlayerManager>(*this,*enemy_);
+	player_ = std::make_unique<PlayerManager>(*this,*enemy_,*stage_);
 	player_->Init();
 
 	//攻撃
@@ -95,10 +104,6 @@ void Game::Init(void)
 
 	//判定
 	collision_ = std::make_unique<CollisionManager>();
-
-	//ステージ
-	stage_ = std::make_unique<Stage>(false);
-	stage_->Init();
 
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
@@ -302,6 +307,7 @@ void Game::GameUpdate(void)
 	}
 
 #pragma region 基礎アプデ
+	//プレイヤー
 	player_->Update(*atkMng_);
 	//敵はスローの効果を受ける
 	if (isSlowEffect_) {
@@ -313,7 +319,8 @@ void Game::GameUpdate(void)
 	}
 
 	//敵
-	enemy_->Update(player_->GetPos(), *atkMng_);
+	//enemy_->Update(player_->GetPos(), *atkMng_);
+
 	//攻撃
 	atkMng_->Update();
 
@@ -321,6 +328,10 @@ void Game::GameUpdate(void)
 	if (collision_->Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks())) {
 		StartSlow();
 	}
+
+	//ステージ
+	stage_->Update();
+
 #pragma endregion
 
 #pragma region BGM
@@ -357,7 +368,18 @@ void Game::GameUpdate(void)
 
 #pragma region カメラ
 	//カメラの設定
-	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象の更新
+	if (!player_->IsUseAbility()) {
+		camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象の更新
+	}
+	else {
+		VECTOR abilityFollow = player_->GetPos();
+		abilityFollow.y += CAMERA_FOLLOW_DIFF_Y_ABILITY;
+		camera.SetFollow(abilityFollow, player_->GetQua());		//追従対象の更新
+
+
+		
+	}
+	
 #pragma endregion
 }
 

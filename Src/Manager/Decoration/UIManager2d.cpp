@@ -104,6 +104,21 @@ void UIManager2d::PopUIDirection(const std::string& _name)
 	direcInfoes_[_name].pop_back();
 }
 
+void UIManager2d::PopUIDirection(const std::string& _name, UI_DIRECTION_GROUP _group)
+{
+	bool haveNomal = false;
+	int foundCnt_ = 0;
+	for (auto& direcInfo : direcInfoes_[_name]) {
+		if (GetDirectionGroup(direcInfo.type) == _group)break;
+		if (direcInfo.type == UI_DIRECTION_2D::NOMAL)haveNomal = true;
+		foundCnt_++;
+	}
+
+	direcInfoes_[_name].erase(direcInfoes_[_name].begin() + foundCnt_);
+	if (haveNomal)foundCnt_--;
+	updates_[_name].erase(updates_[_name].begin() + foundCnt_);
+}
+
 void UIManager2d::SetUIInfo(const std::string& _name, const VECTOR _pos, const float _scale, const float _deg, const float _alpha)
 {
 	infoes_[_name].pos = _pos;
@@ -176,6 +191,16 @@ void UIManager2d::SetPos(const std::string& _name, const VECTOR& _pos)
 		infoes_[_name].pos = _pos;
 	}
 	
+}
+
+void UIManager2d::SetScale(const std::string& _name, const float& _scl)
+{
+	infoes_[_name].scl = _scl;
+}
+
+void UIManager2d::SetAlpha(const std::string& _name, const float& _alpha)
+{
+	infoes_[_name].alpha = _alpha;
 }
 
 void UIManager2d::SetImage(const std::string& _name, const int _imageHndl)
@@ -294,6 +319,17 @@ const VECTOR UIManager2d::GetDrawPos(const std::string _name) const
 {
 	return infoes_.at(_name).pos;
 }
+
+const float UIManager2d::GetDrawScale(const std::string _name) const
+{
+	return infoes_.at(_name).scl;
+}
+
+const float UIManager2d::GetDrawAlpha(const std::string _name) const
+{
+	return infoes_.at(_name).alpha;
+}
+
 
 const UIManager2d::UI_DIRECTION_GROUP UIManager2d::GetDirectionGroup(const std::string _name)
 {
@@ -418,6 +454,12 @@ void UIManager2d::Zoom(const std::string& _name, DirectionInfo& _direcInfo)
 			//èIóπ
 			_direcInfo.isFinish = true;
 			//Ç±ÇÍà»è„ïœçXÇâ¡Ç¶Ç»Ç¢
+			if (_direcInfo.type == UI_DIRECTION_2D::ZOOM_IN) {
+				infoes_[_name].scl = _direcInfo.max;
+			}
+			else if (_direcInfo.type == UI_DIRECTION_2D::ZOOM_OUT) {
+				infoes_[_name].scl = _direcInfo.min;
+			}
 			return;
 		}
 	}

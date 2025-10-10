@@ -13,7 +13,7 @@ Camera::Camera(void)
 	pos_ = { 0.0f, 0.0f, 0.0f };
 	focusPos_ = { 0.0f, 0.0f, 0.0f };
 	goalFocusPos_ = { 0.0f, 0.0f, 0.0f };
-	rockPos_ = { 0.0f, 0.0f, 0.0f };
+	lockPos_ = { 0.0f, 0.0f, 0.0f };
 	rot_ = Quaternion::Identity();
 	rotSpeed_ = MAX_ROT_SPEED;
 
@@ -33,6 +33,7 @@ Camera::Camera(void)
 
 	lerpSpeed_ = NO_LERP;
 	finishShake_ = false;
+	isRotation_ = true;
 }
 
 Camera::~Camera(void)
@@ -76,10 +77,6 @@ void Camera::SetBeforeDraw(void)
 	case MODE::LOCKON:
 		SetBeforeDrawLockOn();
 		break;
-
-	case MODE::FOLLOW_SPRING:
-		break;
-
 	case MODE::SHAKE:
 		SetBeforeDrawShake();
 		break;
@@ -155,12 +152,11 @@ void Camera::SetBeforeDrawFollow(void)
 
 void Camera::SetBeforeDrawLockOn(void)
 {
-
 	//TODO
 	//違和感が残っているので後で見直す
-
-	Rotation();
-
+	if (isRotation_) {
+		Rotation();
+	}
 
 	//追従対象の位置
 	VECTOR followPos = followObject_.pos;
@@ -168,7 +164,7 @@ void Camera::SetBeforeDrawLockOn(void)
 	Quaternion followRot = followObject_.quaRot;
 
 	//ロックオン対象と追従対象の離れている距離
-	VECTOR distance = VSub(rockPos_, followPos);
+	VECTOR distance = VSub(lockPos_, followPos);
 
 	//離れる距離を数値化
 	float disMag = Utility::MagnitudeF(distance);
@@ -185,7 +181,7 @@ void Camera::SetBeforeDrawLockOn(void)
 
 	//初動時のみに発動する
 	//カメラの初期ゴールを計算結果で算出した場所にする
-	if (!isReset_) {
+	if (!isReset_ && isRotation_) {
 		ChangeMode(MODE::RESET);
 		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(relative));
 		goal_.quaRot = followObject_.quaRot;
@@ -298,7 +294,7 @@ void Camera::SetBeforeDrawAutoMove(void)
 {
 	//目標位置まで移動する
 	//終了の判定は呼び出した側で行う
-	pos_ = Utility::Lerp(pos_, goalPos_, 0.01f);
+	pos_ = Utility::Lerp(pos_, goalDirecPos_, 0.01f);
 
 	//カメラの上方向
 	cameraUp_ = rot_.GetUp();
@@ -350,6 +346,7 @@ void Camera::ChangeMode(MODE mode)
   	mode_ = mode;
 
 	isReset_ = false;
+	isRotation_ = true;
 
 	//変更時の初期化処理
 	switch (mode_)
@@ -361,8 +358,7 @@ void Camera::ChangeMode(MODE mode)
 	case MODE::FOLLOW:
 		lerpSpeed_ = LERP_SPEED;
 		break;
-	case MODE::FOLLOW_SPRING:
-		break;
+
 	case MODE::SHAKE:
 		finishShake_ = false;
 		stepShake_ = TIME_SHAKE;
@@ -403,19 +399,20 @@ void Camera::SetFocusPos(const VECTOR& _focus)
 	goalFocusPos_ = _focus;
 }
 
-void Camera::SetRockPos(const VECTOR& _rock)
+void Camera::SetLockPos(const VECTOR& _lock, const bool _isRote)
 {
-	rockPos_ = _rock;
+	lockPos_ = _lock;
+	isRotation_ = _isRote;
 }
 
 void Camera::SetGoalPos(const VECTOR& _goal)
 {
-	goalPos_ = _goal;
+	goalDirecPos_ = _goal;
 }
 
 const VECTOR Camera::GetRockPos(void) const
 {
-	return rockPos_;
+	return lockPos_;
 }
 
 const Camera::MODE Camera::GetMode(void)
@@ -477,7 +474,6 @@ void Camera::Rotation(void)
 	//カメラ座標を中心として、注視点を回転させる
 	if (!Utility::EqualsVZero(angles_))
 	{
-
 		// 正面から設定されたY軸分、回転させる
 		rotOutX_ = Quaternion::AngleAxis(angles_.y, Utility::AXIS_Y);
 

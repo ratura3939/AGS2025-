@@ -73,13 +73,27 @@ public:
 	/// <param name="_persent">調整割合(0%～100%)</param>
 	void AdjustVolume(const TYPE _playType, const int _persent);
 
+	/// <summary>
+	/// ピッチの調整(音の高さを設定する場合Addの前にこの処理を書くこと)
+	/// 使用後、調整の必要がなくなったら引数なしで呼び出すこと
+	/// </summary>
+	/// <param name="_rate">100.0f=半音高く、1200.0f=１オクターブ高く(低くする場合は-を付ける)</param>
+	void AdjustPitchRate(const float _rate = 0.0f)const;
+
+	/// <summary>
+	/// 再生速度の調整(再生速度を設定する場合Addの前にこの処理を書くこと)
+	/// 使用後、調整の必要がなくなったら引数なしで呼び出すこと
+	/// </summary>
+	/// <param name="_rate">倍率</param>
+	void AdjustTimeRate(const float _rate = 1.0f)const;
+
 	void Destroy(void);
 private:
 	//インスタンス用
 	static SoundManager* instance_;
 
 	//データ格納用
-	std::unordered_map<std::string, SOUND_DATA>sounds_;
+	std::unordered_map<std::string, SOUND_DATA> sounds_;
 	std::string activeBgm_;
 
 	//再生間隔

@@ -8,7 +8,6 @@ class Transform;
 
 class Camera
 {
-
 public:
 	//カメラの描画域(Near,Far)関連の定数------------------------------------------------------
 	
@@ -70,7 +69,6 @@ public:
 		FIXED_POINT,	//定点カメラ
 		FREE,			//フリーモード
 		FOLLOW,			//追従モード
-		FOLLOW_SPRING,	//ばね付き追従モード
 		SHAKE,			//カメラ揺らし
 		LOCKON,			//ロックオン
 		RESET,			//カメラ位置リセット用
@@ -104,7 +102,7 @@ public:
 	void SetBeforeDrawLockOn(void);			//ロックオンカメラ
 	void SetBeforeDrawShake(void);			//カメラシェイク
 	void SetBeforeDrawReset(void);			//カメラリセット
-	void SetBeforeDrawAutoMove(void);			//カメラリセット
+	void SetBeforeDrawAutoMove(void);		//カメラ自動移動
 
 	//----------------------------------------
 	// 描画処理
@@ -116,7 +114,7 @@ public:
 	//座標取得
 	const VECTOR GetPos(void) const;
 	const VECTOR GetRockPos(void)const;
-	const VECTOR GetGoalPos(void)const { return goalPos_; }
+	const VECTOR GetGoalPos(void)const { return goalDirecPos_; }
 
 	//回転取得
 	const Quaternion GetRot(void)const;
@@ -131,12 +129,11 @@ public:
 	//追従対象の設定
 	void SetFollow(const VECTOR _pos,const Quaternion _qua);
 
-
 	//座標設定
 	void SetPos(const VECTOR& pos,const VECTOR& focus);
 	void SetPos(const VECTOR& pos);
 	void SetFocusPos(const VECTOR& _focus);
-	void SetRockPos(const VECTOR& _rock);
+	void SetLockPos(const VECTOR& _lock, const bool _isRote = true);	//_isRote=ロックオン中回転を有効にするか(能力使用中は回転しないためそれ用)
 	void SetGoalPos(const VECTOR& _goal);
 
 	//カメラを初期位置に戻す
@@ -165,14 +162,15 @@ private:
 	VECTOR pos_;
 
 	//ロックオン対象の位置
-	VECTOR rockPos_;
+	VECTOR lockPos_;
+	bool isRotation_;	//回転を有効にするか
 
 	//カメラの注視点
 	VECTOR focusPos_;
 	VECTOR goalFocusPos_;
 	
 	//移動目標位置
-	VECTOR goalPos_;
+	VECTOR goalDirecPos_;
 
 	//カメラの上方向
 	VECTOR cameraUp_;
@@ -202,6 +200,5 @@ private:
 
 	//回転
 	void Rotation(void);
-
 };
 

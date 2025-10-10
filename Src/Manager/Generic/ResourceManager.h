@@ -35,6 +35,8 @@ public:
 		FINISH_SWITCH,
 
 		FOCUS_IMG,
+		NOISE_STAGE,
+
 		//UI
 		ARROW_DOWN_IMG,
 		HEART_IMG,
@@ -54,8 +56,9 @@ public:
 		RETRY_IMG,
 		CHECK_CONFIG_IMG,
 		SWITCH_OPERATOR_IMG,
+		ABILITY_MAGNET_IMG,
+		ABILITY_LOCK_TIME_IMG,
 		
-
 		//モデル
 		STAGE_MDL,
 		OBJECTS_MDL,
@@ -96,6 +99,7 @@ public:
 		DAMAGE_EFC,
 
 		TEST_MDL,
+		TEST_MDL_2,
 	};
 
 	// 明示的にインステンスを生成する
