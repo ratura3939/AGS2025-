@@ -41,7 +41,7 @@ void LockTime::UpdateUse(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playe
 	timer_++;
 	if (timer_ > LOCK_TIME_MAX) {
 		//能力の自動解除
-		manager_.EndUsingAbility();
+		manager_.ChangeState(AbilityManager::STATE::END);
 		return;
 	}
 
@@ -75,7 +75,7 @@ void LockTime::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECTOR 
 	//オブジェクトに対しエフェクトをかける
 
 	//使用に遷移
-	manager_.DoUse();
+	manager_.ChangeState(AbilityManager::STATE::USE);
 }
 
 void LockTime::Draw(void)

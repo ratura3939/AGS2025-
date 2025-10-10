@@ -418,6 +418,16 @@ void Game::GameUpdate(void)
 		VECTOR abilityFollow = player_->GetPos();
 		abilityFollow.y += CAMERA_FOLLOW_DIFF_Y_ABILITY;
 		camera.SetFollow(abilityFollow, player_->GetQua());		//追従対象の更新
+
+
+		//if (player_->IsUseMagnet()) {
+		//	camera.SetFollow(player_->GetFollowPos4UseMagnet(), player_->GetQua());		//追従対象の更新
+		//}
+		//else {
+		//	VECTOR abilityFollow = player_->GetPos();
+		//	abilityFollow.y += CAMERA_FOLLOW_DIFF_Y_ABILITY;
+		//	camera.SetFollow(abilityFollow, player_->GetQua());		//追従対象の更新
+		//}
 	}
 	
 

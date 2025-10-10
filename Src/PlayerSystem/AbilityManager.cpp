@@ -61,6 +61,7 @@ AbilityManager::~AbilityManager(void)
 
 void AbilityManager::Update(const VECTOR _playerPos)
 {
+	test_ = _playerPos;
 	(this->*update_)(_playerPos);
 }
 
@@ -77,6 +78,10 @@ void AbilityManager::Draw(void)
 	}
 
 	abilities_[static_cast<int>(useAbility_)]->Draw();
+
+	if (IsUseMagnet()) {
+		DrawSphere3D(GetFollowPos4UseMagnet(test_), 8, 8, 0xff0000, 0xff0000, false);
+	}
 }
 
 void AbilityManager::ChangeAbility(const ABILITY_TYPE _type)
@@ -172,6 +177,17 @@ void AbilityManager::UpdateEnd(const VECTOR _playerPos)
 	//âΩÇ‡ÇµÇ»Ç¢
 }
 
+const VECTOR AbilityManager::GetFollowPos4UseMagnet(const VECTOR _playerPos)
+{
+	VECTOR retPos=_playerPos;
+	VECTOR distance = VSub(selectObj_.lock()->GetPos(), _playerPos);
+	distance = VScale(distance, 0.5f);
+
+	retPos = VAdd(retPos, distance);
+
+	return retPos;
+}
+
 void AbilityManager::ChangeState(const STATE _next)
 {
 	state_ = _next;
@@ -237,6 +253,7 @@ void AbilityManager::EndUsingAbility(void)
 	//ïtó^êFÇÇ»Ç≠Ç∑
 	stage_.SetAbilityColor(NONE_COLOR);
 
-
 	update_ = &AbilityManager::UpdateEnd;
+
+	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
 }

@@ -94,6 +94,11 @@ const VECTOR PlayerManager::GetFocusPoint(void)
 	return character_->GetFocusPoint();
 }
 
+const VECTOR PlayerManager::GetFollowPos4UseMagnet(void)
+{
+	return ability_->GetFollowPos4UseMagnet(character_->GetPos());
+}
+
 
 void PlayerManager::RedyLockOn(void)
 {
@@ -279,6 +284,11 @@ const bool PlayerManager::IsUseAbility(void) const
 	using State = AbilityManager::STATE;
 	auto abilityState = ability_->GetAbilityState();
 	return abilityState == State::REDY || abilityState == State::DIRECTION || abilityState == State::USE;
+}
+
+const bool PlayerManager::IsUseMagnet(void) const
+{
+	return ability_->IsUseMagnet();
 }
 
 

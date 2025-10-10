@@ -45,10 +45,11 @@ public:
 	void ChangeAbility(const ABILITY_TYPE _type);	//能力切り換え
 
 	const bool IsHitReticle(void)const { return !selectObj_.expired(); }	//レティクルに当たっているか(selectObj_に中身があるということはレティクルに当たっているということ)
-	const ABILITY_TYPE GetNowAbility(void)const { return useAbility_; }
-	std::string& GetAbilityUiList(void) { return *iconNames_; }
-
+	[[nodiscard]] const ABILITY_TYPE GetNowAbility(void)const { return useAbility_; }
 	[[nodiscard]] const STATE GetAbilityState(void)const { return state_; }
+	std::string& GetAbilityUiList(void) { return *iconNames_; }
+	const bool IsUseMagnet(void) { return state_ == STATE::USE && useAbility_ == ABILITY_TYPE::MAGNET; }	//マグネット使用中か(マグネット使用中の注視点は少し違くなる)
+	[[nodiscard]] const VECTOR GetFollowPos4UseMagnet(const VECTOR _playerPos);
 
 	void ChangeState(const STATE _next);
 
@@ -67,8 +68,6 @@ private:
 	void UpdateUse(const VECTOR _playerPos);
 	void UpdateEnd(const VECTOR _playerPos);
 
-	
-
 	StageManager& stage_;		//ステージ(参照)
 	ABILITY_TYPE useAbility_;	//使用している能力
 	STATE state_;				//能力発動ロジックの段階
@@ -80,5 +79,7 @@ private:
 
 	using Update_f = void(AbilityManager::*)(const VECTOR _playerPos);
 	Update_f update_;
+
+	VECTOR test_;
 };
 

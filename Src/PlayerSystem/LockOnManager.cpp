@@ -56,7 +56,7 @@ void LockOnManager::LockOn(void)
 	if (isLockOn_)return;
 
 	Camera& camera = SceneManager::GetInstance().GetCamera();
-	camera.SetRockPos(targets_.GetPos(nearTargetNum_));	//ロックオン対象の設定
+	camera.SetLockPos(targets_.GetPos(nearTargetNum_));	//ロックオン対象の設定
 	master_.RedyLockOn();
 	targets_.LokedOn(nearTargetNum_);
 	camera.ChangeMode(Camera::MODE::LOCKON);
