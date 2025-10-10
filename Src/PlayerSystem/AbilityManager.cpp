@@ -12,7 +12,7 @@
 const std::string AbilityManager::UI_ABILITY_MGNET = "MagnetIcon";
 const std::string AbilityManager::UI_ABILITY_LOCK_TIME = "LockTimeIcon";
 const VECTOR AbilityManager::ABILITY_ICON_POS = { 170.0f,230.0f,0.0f };
-const VECTOR AbilityManager::RETICLE_POS = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2 ,0.8f };
+const VECTOR AbilityManager::RETICLE_POS = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2 ,0.8f };	//レティクル位置(スクリーン座標)
 
 //ローカル定数
 namespace {

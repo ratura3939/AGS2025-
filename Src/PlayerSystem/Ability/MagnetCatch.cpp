@@ -37,8 +37,10 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECT
 	//‰Žè‚ÌƒS[ƒ‹ˆÊ’uÝ’è
 	if (!isSetGoalPos_) {
 		if (_obj.expired()) {
-			VECTOR woldPos = ConvScreenPosToWorldPos(AbilityManager::RETICLE_POS);
+			VECTOR screenPos = AbilityManager::RETICLE_POS;
+			VECTOR woldPos = ConvScreenPosToWorldPos(screenPos);
 			goalDirecPos_ = woldPos;
+			//goalDirecPos_ = AbilityManager::RETICLE_POS;
 		}
 		else {
 			goalDirecPos_ = _obj.lock()->GetPos();
@@ -80,6 +82,8 @@ void MagnetCatch::Draw(void)
 		DrawSphere3D(startDirecPos_, debugScl, divNum, debugCol, debugCol, false);
 		DrawSphere3D(nowPos_, debugScl, divNum, debugCol, debugCol, false);
 	}
+
+	DrawFormatString(50, 300, 0xff0000, "GOAL={%.1f,%.1f,%.1f}", goalDirecPos_.x, goalDirecPos_.y, goalDirecPos_.z);
 }
 
 void MagnetCatch::ResetAbility(void)
