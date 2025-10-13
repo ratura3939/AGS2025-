@@ -59,10 +59,10 @@ AbilityManager::~AbilityManager(void)
 {
 }
 
-void AbilityManager::Update(const VECTOR _playerPos)
+void AbilityManager::Update(const VECTOR _playerPos, const Quaternion _playerQua)
 {
 	test_ = _playerPos;
-	(this->*update_)(_playerPos);
+	(this->*update_)(_playerPos, _playerQua);
 }
 
 void AbilityManager::Draw(void)
@@ -121,7 +121,7 @@ bool AbilityManager::IsNearObject2Camera(const VECTOR _pos1, const VECTOR _pos2)
 	return diff1 <= diff2;
 }
 
-void AbilityManager::UpdateRedy(const VECTOR _playerPos)
+void AbilityManager::UpdateRedy(const VECTOR _playerPos, const Quaternion _playerQua)
 {
 	//ƒŒƒeƒBƒNƒ‹‚Æ‚Ì“–‚½‚è”»’è
 	std::weak_ptr<GimmickObjBase> hitReticleObj;
@@ -162,17 +162,17 @@ void AbilityManager::UpdateRedy(const VECTOR _playerPos)
 	}
 }
 
-void AbilityManager::UpdateDirection(const VECTOR _playerPos)
+void AbilityManager::UpdateDirection(const VECTOR _playerPos, const Quaternion _playerQua)
 {
 	abilities_[static_cast<int>(useAbility_)]->UpdateDirection(selectObj_, _playerPos);
 }
 
-void AbilityManager::UpdateUse(const VECTOR _playerPos)
+void AbilityManager::UpdateUse(const VECTOR _playerPos, const Quaternion _playerQua)
 {
-	abilities_[static_cast<int>(useAbility_)]->UpdateUse(selectObj_, _playerPos);
+	abilities_[static_cast<int>(useAbility_)]->UpdateUse(selectObj_, _playerPos, _playerQua);
 }
 
-void AbilityManager::UpdateEnd(const VECTOR _playerPos)
+void AbilityManager::UpdateEnd(const VECTOR _playerPos, const Quaternion _playerQua)
 {
 	//‰½‚à‚µ‚È‚¢
 }

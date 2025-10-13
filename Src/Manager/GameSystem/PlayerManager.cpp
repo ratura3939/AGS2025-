@@ -60,7 +60,7 @@ void PlayerManager::Update(AttackManager& _atk)
 	//ロックオン更新
 	lockOn_->Update();
 	//能力更新
-	ability_->Update(character_->GetPos());
+	ability_->Update(character_->GetPos(),character_->GetQua());
 }
 
 void PlayerManager::Draw(void)

@@ -1,6 +1,7 @@
 #pragma once
 #include<DxLib.h>
 #include<string>
+#include"../Common/Quaternion.h"
 #include"../Object/Stage/StageObj/GimmickObjBase.h"
 
 class StageManager;
@@ -39,7 +40,7 @@ public:
 	AbilityManager(StageManager& _stage);
 	~AbilityManager(void);
 
-	void Update(const VECTOR _playerPos);
+	void Update(const VECTOR _playerPos,const Quaternion _playerQua);
 	void Draw(void);
 
 	void ChangeAbility(const ABILITY_TYPE _type);	//能力切り換え
@@ -63,10 +64,10 @@ private:
 	void UseAbility(void);			//能力の使用
 	void EndUsingAbility(void);		//能力の終了
 
-	void UpdateRedy(const VECTOR _playerPos);
-	void UpdateDirection(const VECTOR _playerPos);
-	void UpdateUse(const VECTOR _playerPos);
-	void UpdateEnd(const VECTOR _playerPos);
+	void UpdateRedy(const VECTOR _playerPos, const Quaternion _playerQua);
+	void UpdateDirection(const VECTOR _playerPos, const Quaternion _playerQua);
+	void UpdateUse(const VECTOR _playerPos, const Quaternion _playerQua);
+	void UpdateEnd(const VECTOR _playerPos, const Quaternion _playerQua);
 
 	StageManager& stage_;		//ステージ(参照)
 	ABILITY_TYPE useAbility_;	//使用している能力
@@ -77,7 +78,7 @@ private:
 	std::weak_ptr<GimmickObjBase> selectObj_;	//選択中の物
 	FLOAT4 selectColores_[static_cast<int>(ABILITY_TYPE::MAX)];
 
-	using Update_f = void(AbilityManager::*)(const VECTOR _playerPos);
+	using Update_f = void(AbilityManager::*)(const VECTOR _playerPos, const Quaternion _playerQua);
 	Update_f update_;
 
 	VECTOR test_;

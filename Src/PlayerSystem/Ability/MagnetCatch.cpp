@@ -9,7 +9,7 @@
 namespace {
 	const float ACC_DIREC = 0.02f;
 	const float DIREC_MAX = 1.0f;
-	const float ACC_MOVE = 5.0f;
+	const float ACC_MOVE = 15.0f;
 }
 
 MagnetCatch::MagnetCatch(AbilityManager& _mng):AbilityBase(_mng)
@@ -25,9 +25,16 @@ MagnetCatch::~MagnetCatch(void)
 {
 }
 
-void MagnetCatch::UpdateUse(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)
+void MagnetCatch::UpdateUse(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos ,const Quaternion _playerQua)
 {
-	MoveObject(_obj);
+	//10/12にやること
+	//オブジェクトは相対座標を用いて回転させる。回転軸はプレイヤー
+	//カメラは上記の相対座標のXZを反転させた位置に設定する。
+	MoveRelativePosition();
+
+	VECTOR relativePos2Player = _playerQua.PosAxis(relativePos_);
+	_obj.lock()->SetPos(VAdd(_playerPos, relativePos2Player));
+
 	startDirecPos_ = _playerPos;
 	goalDirecPos_= _obj.lock()->GetPos();
 }
@@ -60,6 +67,7 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECT
 			auto& camera=SceneManager::GetInstance().GetCamera();
 			camera.ChangeMode(Camera::MODE::LOCKON);
 			camera.SetLockPos(goalDirecPos_, false);
+			relativePos_ = VSub(goalDirecPos_, startDirecPos_);
 		}
 	}
 
@@ -94,27 +102,28 @@ void MagnetCatch::ResetAbility(void)
 	direcStep_ = 0.0f;
 }
 
-void MagnetCatch::MoveObject(std::weak_ptr<GimmickObjBase> _obj)
+void MagnetCatch::MoveRelativePosition(void)
 {
 	InputManager& ins = InputManager::GetInstance();
-	VECTOR movedPos = _obj.lock()->GetPos();
 
 	if (ins.IsPressed("subUp"))
 	{
-		movedPos.y += ACC_MOVE;
+		relativePos_.y += ACC_MOVE;
 	}
 	if (ins.IsPressed("subDown"))
 	{
-		movedPos.y -= ACC_MOVE;
+		relativePos_.y -= ACC_MOVE;
 	}
 	if (ins.IsPressed("subLeft"))
 	{
-		movedPos.x -= ACC_MOVE;
+		relativePos_.x -= ACC_MOVE;
 	}
 	if (ins.IsPressed("subRight"))
 	{
-		movedPos.x += ACC_MOVE;
+		relativePos_.x += ACC_MOVE;
 	}
 
-	_obj.lock()->SetPos(movedPos);
+	//前後の入力を決めたら相対座標のXをいじる
+
+
 }

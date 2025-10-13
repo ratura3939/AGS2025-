@@ -29,7 +29,7 @@ LockTime::~LockTime(void)
 {
 }
 
-void LockTime::UpdateUse(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)
+void LockTime::UpdateUse(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos, const Quaternion _playerQua)
 {
 	if (!lockObject_) {
 		//オブジェクトの更新を止める
