@@ -109,7 +109,7 @@ void Game::Init(void)
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
 	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
-	camera.SetFocusPos(player_->GetFocusPoint());				//注視点
+	camera.SetGoalFocusPos(player_->GetFocusPoint());				//注視点
 
 	//音関係初期設定
 	InitSound();
@@ -375,9 +375,6 @@ void Game::GameUpdate(void)
 		VECTOR abilityFollow = player_->GetPos();
 		abilityFollow.y += CAMERA_FOLLOW_DIFF_Y_ABILITY;
 		camera.SetFollow(abilityFollow, player_->GetQua());		//追従対象の更新
-
-
-		
 	}
 	
 #pragma endregion
@@ -397,7 +394,7 @@ void Game::DirectionUpdate(void)
 			Camera& camera = SceneManager::GetInstance().GetCamera();
 			camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
 			camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
-			camera.SetFocusPos(player_->GetFocusPoint());				//注視点
+			camera.SetGoalFocusPos(player_->GetFocusPoint());				//注視点
 
 			//ブラーをなくす
 			ChangeActionDirec(ACTION_DIRECTION::NOMAL);

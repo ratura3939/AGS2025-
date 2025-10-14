@@ -10,21 +10,21 @@ Camera::Camera(void)
 {
 	mode_ = MODE::NONE;
 	currentMode_ = MODE::NONE;
-	pos_ = { 0.0f, 0.0f, 0.0f };
-	focusPos_ = { 0.0f, 0.0f, 0.0f };
-	goalFocusPos_ = { 0.0f, 0.0f, 0.0f };
-	lockPos_ = { 0.0f, 0.0f, 0.0f };
+	pos_ = Utility::VECTOR_ZERO;
+	focusPos_ = Utility::VECTOR_ZERO;
+	goalFocusPos_ = Utility::VECTOR_ZERO;
+	lockPos_ = Utility::VECTOR_ZERO;
 	rot_ = Quaternion::Identity();
 	rotSpeed_ = MAX_ROT_SPEED;
 
 	stepReset_ = 0.0f;
 	isReset_ = true;
 
-	followObject_.pos = { 0.0f, 0.0f, 0.0f };
+	followObject_.pos = Utility::VECTOR_ZERO;
 	followObject_.quaRot = Quaternion::Identity();
-	start_.pos = { 0.0f, 0.0f, 0.0f };
+	start_.pos = Utility::VECTOR_ZERO;
 	start_.quaRot = Quaternion::Identity();
-	goal_.pos = { 0.0f, 0.0f, 0.0f };
+	goal_.pos = Utility::VECTOR_ZERO;
 	goal_.quaRot = Quaternion::Identity();
 
 	angles_.x = Utility::Deg2RadF(0.0f);
@@ -34,6 +34,10 @@ Camera::Camera(void)
 	lerpSpeed_ = NO_LERP;
 	finishShake_ = false;
 	isRotation_ = true;
+
+	mirrorRelativeVec_ = Utility::VECTOR_ZERO;
+	mirrorQua_ = Quaternion::Identity();
+	mirrorDeg_ = 0.0f;
 }
 
 Camera::~Camera(void)
@@ -84,8 +88,13 @@ void Camera::SetBeforeDraw(void)
 	case MODE::RESET:
 		SetBeforeDrawReset();
 		break;
+
 	case MODE::AUTO_MOVE:
 		SetBeforeDrawAutoMove();
+		break;
+
+	case MODE::MIRROR:
+		SetBeforeDrawMirror();
 		break;
 	}
 
@@ -202,13 +211,8 @@ void Camera::SetBeforeDrawLockOn(void)
 	//ある程度の高さは保つ
 	if (pos_.y < UNDERLIMIT_Y)pos_.y = UNDERLIMIT_Y;
 
-
-	
-
 	//カメラの上方向
 	cameraUp_ = rot_.GetUp();
-
-	
 }
 
 void Camera::SetBeforeDrawShake(void)
@@ -300,6 +304,32 @@ void Camera::SetBeforeDrawAutoMove(void)
 	cameraUp_ = rot_.GetUp();
 }
 
+void Camera::SetBeforeDrawMirror(void)
+{
+	const float ROT_DEG_MAX = 360.0f;
+	float afterMirrorDeg = mirrorDeg_ + 180.0f;	//元の角度の反対側なので180°足す
+	if (afterMirrorDeg > ROT_DEG_MAX) {
+		afterMirrorDeg -= ROT_DEG_MAX;
+	}
+
+	Quaternion axis =
+		Quaternion::AngleAxis(
+			(double)angles_.y + Utility::Deg2RadF(afterMirrorDeg), Utility::AXIS_Y);
+
+	Quaternion mirrotRot = followObject_.quaRot.Mult(axis);
+	VECTOR relativePos2Player = mirrotRot.PosAxis(mirrorRelativeVec_);
+
+	/*VECTOR mirrorRelativePos = mirrorQua_.PosAxis(mirrorRelativeVec_);
+	mirrorRelativePos.x *= -1.0f;
+	mirrorRelativePos.z *= -1.0f;*/
+	pos_ = VAdd(followObject_.pos, relativePos2Player);
+
+	//focusPos_ = followObject_.pos;
+
+	//カメラの上方向
+	cameraUp_ = rot_.GetUp();
+}
+
 void Camera::Draw(void)
 {
 }
@@ -353,8 +383,10 @@ void Camera::ChangeMode(MODE mode)
 	{
 	case MODE::FIXED_POINT:
 		break;
+
 	case MODE::FREE:
 		break;
+
 	case MODE::FOLLOW:
 		lerpSpeed_ = LERP_SPEED;
 		break;
@@ -365,12 +397,22 @@ void Camera::ChangeMode(MODE mode)
 		shakeDir_ = VNorm({ 0.7f, 0.7f ,0.0f });
 		defaultPos_ = pos_;
 		break;
+
 	case MODE::RESET:
 		stepReset_ = 0.0f;
 		start_.pos = pos_;
 		start_.quaRot = rot_;
 		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(RELATIVE_F2C_POS_FOLLOW));
 		goal_.quaRot = followObject_.quaRot;
+		break;
+
+	case MODE::AUTO_MOVE:
+		break;
+
+	case MODE::LOCKON:
+		break;
+
+	case MODE::MIRROR:
 		break;
 	}
 
@@ -395,7 +437,11 @@ void Camera::SetPos(const VECTOR& pos)
 
 void Camera::SetFocusPos(const VECTOR& _focus)
 {
-	//focusPos_ = _focus;
+	focusPos_ = _focus;
+}
+
+void Camera::SetGoalFocusPos(const VECTOR& _focus)
+{
 	goalFocusPos_ = _focus;
 }
 
@@ -408,6 +454,16 @@ void Camera::SetLockPos(const VECTOR& _lock, const bool _isRote)
 void Camera::SetGoalPos(const VECTOR& _goal)
 {
 	goalDirecPos_ = _goal;
+}
+
+void Camera::SetMirrorInfo(const VECTOR _vec, const Quaternion _qua, const float _deg)
+{
+	mirrorRelativeVec_ = _vec;
+	////XZ平面においてのミラーなのでXZを反転
+	//mirrorRelativeVec_.x *= -1.0f;
+	//mirrorRelativeVec_.z *= -1.0f;
+	mirrorQua_ = _qua;
+	mirrorDeg_ = _deg;
 }
 
 const VECTOR Camera::GetRockPos(void) const
@@ -429,7 +485,6 @@ void Camera::DrawDebug(void)
 
 void Camera::SetDefault(void)
 {
-
 	//カメラの初期設定
 	pos_ = DEFAULT_CAMERA_POS;
 
@@ -442,12 +497,10 @@ void Camera::SetDefault(void)
 	//カメラはX軸に傾いているが、
 	//この傾いた状態を角度ゼロ、傾き無しとする
 	rot_ = Quaternion::Identity();
-
 }
 
 void Camera::Rotation(void)
 {
-
 	InputManager& ins = InputManager::GetInstance();
 
 	if (ins.IsPressed("subUp"))

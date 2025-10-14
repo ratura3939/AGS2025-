@@ -247,8 +247,11 @@ void AbilityManager::UseAbility(void)
 void AbilityManager::EndUsingAbility(void)
 {
 	//使用終了
-	selectObj_.lock()->FinishAffect();
-	selectObj_.reset();
+	if (!selectObj_.expired()) {
+		selectObj_.lock()->FinishAffect();
+		selectObj_.reset();
+	}
+	
 
 	//付与色をなくす
 	stage_.SetAbilityColor(NONE_COLOR);

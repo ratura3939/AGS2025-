@@ -73,6 +73,7 @@ public:
 		LOCKON,			//ロックオン
 		RESET,			//カメラ位置リセット用
 		AUTO_MOVE,		//目標位置まで自動的に移動
+		MIRROR,			//特定の相対座標に対して対照的な動きをとる(対象の軸はfollowObj)
 	};
 
 	struct FOR_FOLLOW_INFO
@@ -103,6 +104,7 @@ public:
 	void SetBeforeDrawShake(void);			//カメラシェイク
 	void SetBeforeDrawReset(void);			//カメラリセット
 	void SetBeforeDrawAutoMove(void);		//カメラ自動移動
+	void SetBeforeDrawMirror(void);			//カメラ自動移動
 
 	//----------------------------------------
 	// 描画処理
@@ -133,8 +135,12 @@ public:
 	void SetPos(const VECTOR& pos,const VECTOR& focus);
 	void SetPos(const VECTOR& pos);
 	void SetFocusPos(const VECTOR& _focus);
+	void SetGoalFocusPos(const VECTOR& _focus);
 	void SetLockPos(const VECTOR& _lock, const bool _isRote = true);	//_isRote=ロックオン中回転を有効にするか(能力使用中は回転しないためそれ用)
 	void SetGoalPos(const VECTOR& _goal);
+
+	//ミラーリングの情報設定
+	void SetMirrorInfo(const VECTOR _vec, const Quaternion _qua, const float _deg);
 
 	//カメラを初期位置に戻す
 	void SetDefault(void);
@@ -197,6 +203,13 @@ private:
 	VECTOR shakeDir_;
 	//補完スピード
 	float lerpSpeed_;
+
+	//ミラーリング(相対座標)
+	VECTOR mirrorRelativeVec_;
+	//ミラーリング(回転量)
+	Quaternion mirrorQua_;
+	//ミラーリング(角度)
+	float mirrorDeg_;
 
 	//回転
 	void Rotation(void);

@@ -280,24 +280,24 @@ void PlayerChara::Move(void)
 	VECTOR dir = Utility::VECTOR_ZERO;
 	std::string seName = "Walk";
 
-	float afterDeg = 0.0f;
+	float afterRad = 0.0f;
 
 	//移動方向
 	if (moveDir_ == MOVE_DIR::FORWARD) {
 		dir = cameraRot.GetForward();
-		afterDeg = Utility::Deg2RadF(DEG_FORWARD);
+		afterRad = Utility::Deg2RadF(DEG_FORWARD);
 	}
 	if (moveDir_ == MOVE_DIR::LEFT) {
 		dir = cameraRot.GetLeft();
-		afterDeg = Utility::Deg2RadF(DEG_LEFT);
+		afterRad = Utility::Deg2RadF(DEG_LEFT);
 	}
 	if (moveDir_ == MOVE_DIR::BACK) {
 		dir = cameraRot.GetBack();
-		afterDeg = Utility::Deg2RadF(DEG_BACK);
+		afterRad = Utility::Deg2RadF(DEG_BACK);
 	}
 	if (moveDir_ == MOVE_DIR::RIGHT) {
 		dir = cameraRot.GetRight();
-		afterDeg = Utility::Deg2RadF(DEG_RIGHT);
+		afterRad = Utility::Deg2RadF(DEG_RIGHT);
 	}
 
 	//速度設定
@@ -320,10 +320,10 @@ void PlayerChara::Move(void)
 	//ロックオンのとき
 	if (rState_ == ROCK_STATE::LOCKON) {
 		//敵との角度差を設定
-		afterDeg = GetToLockDeg();
+		afterRad = GetToLockDeg();
 	}
 	//目標角度設定
-	SetGoalRot(afterDeg);
+	SetGoalRot(afterRad);
 
 	//アニメーション
 	//回避中は回避アニメーションを再生しているため他はしない

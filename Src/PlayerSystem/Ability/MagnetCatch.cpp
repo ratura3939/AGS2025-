@@ -7,9 +7,11 @@
 #include "MagnetCatch.h"
 
 namespace {
-	const float ACC_DIREC = 0.02f;
-	const float DIREC_MAX = 1.0f;
-	const float ACC_MOVE = 15.0f;
+	const float ACC_DIREC = 0.02f;	//紐の移動スピード
+	const float DIREC_MAX = 1.0f;	//線形補完の最大値(紐の移動を線形補完で行う)
+	const float ACC_MOVE = 15.0f;	//物体の移動量
+	const float ACC_DEG = 2.0f;		//物体の回転量
+	const float ROT_DEG_MAX = 360.0f;	//回転角度の最大値
 }
 
 MagnetCatch::MagnetCatch(AbilityManager& _mng):AbilityBase(_mng)
@@ -19,6 +21,7 @@ MagnetCatch::MagnetCatch(AbilityManager& _mng):AbilityBase(_mng)
 	nowPos_ = Utility::VECTOR_ZERO;
 	isSetGoalPos_ = false;
 	direcStep_ = 0.0f;
+	rotationDeg_ = 0.0f;
 }
 
 MagnetCatch::~MagnetCatch(void)
@@ -30,13 +33,26 @@ void MagnetCatch::UpdateUse(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _pl
 	//10/12にやること
 	//オブジェクトは相対座標を用いて回転させる。回転軸はプレイヤー
 	//カメラは上記の相対座標のXZを反転させた位置に設定する。
-	MoveRelativePosition();
+	MakeChangeRelativePosition();
 
-	VECTOR relativePos2Player = _playerQua.PosAxis(relativePos_);
+	//回転後の位置設定
+	Quaternion abilityRot = _playerQua.Mult(magRotY_);
+	VECTOR relativePos2Player = abilityRot.PosAxis(relativePos_);
 	_obj.lock()->SetPos(VAdd(_playerPos, relativePos2Player));
 
+	VECTOR testFocusPos = VSub(_obj.lock()->GetPos(), _playerPos);
+
+	SoundManager& sndM = SoundManager::GetInstance();
+
+	//カメラに情報を渡す
+	auto& camera = SceneManager::GetInstance().GetCamera();
+	camera.SetMirrorInfo(relativePos_, abilityRot, rotationDeg_);
+	camera.SetFocusPos(testFocusPos);
+
+	//紐の設定
 	startDirecPos_ = _playerPos;
 	goalDirecPos_= _obj.lock()->GetPos();
+	nowPos_= _obj.lock()->GetPos();
 }
 
 void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)
@@ -65,8 +81,8 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECT
 			manager_.ChangeState(AbilityManager::STATE::USE);
 			goalDirecPos_ = _obj.lock()->GetPos();
 			auto& camera=SceneManager::GetInstance().GetCamera();
-			camera.ChangeMode(Camera::MODE::LOCKON);
-			camera.SetLockPos(goalDirecPos_, false);
+			camera.ChangeMode(Camera::MODE::MIRROR);
+			camera.SetLockPos(goalDirecPos_);
 			relativePos_ = VSub(goalDirecPos_, startDirecPos_);
 		}
 	}
@@ -102,7 +118,7 @@ void MagnetCatch::ResetAbility(void)
 	direcStep_ = 0.0f;
 }
 
-void MagnetCatch::MoveRelativePosition(void)
+void MagnetCatch::MakeChangeRelativePosition(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 
@@ -116,14 +132,33 @@ void MagnetCatch::MoveRelativePosition(void)
 	}
 	if (ins.IsPressed("subLeft"))
 	{
-		relativePos_.x -= ACC_MOVE;
+		//relativePos_.x -= ACC_MOVE;
+		rotationDeg_ -= ACC_DEG;
+		if (rotationDeg_ < 0.0f) {
+			rotationDeg_ = ROT_DEG_MAX;
+		}
 	}
 	if (ins.IsPressed("subRight"))
 	{
-		relativePos_.x += ACC_MOVE;
+		//relativePos_.x += ACC_MOVE;
+		rotationDeg_ += ACC_DEG;
+		if (rotationDeg_ > ROT_DEG_MAX) {
+			rotationDeg_ = 0.0f;
+		}
 	}
 
 	//前後の入力を決めたら相対座標のXをいじる
 
+	Rotation();
+}
 
+void MagnetCatch::Rotation(void)
+{
+	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetAngle();
+
+	Quaternion axis =
+		Quaternion::AngleAxis(
+			(double)cameraRot.y + Utility::Deg2RadF(rotationDeg_), Utility::AXIS_Y);
+
+	magRotY_ = axis;
 }
