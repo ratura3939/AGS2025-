@@ -5,6 +5,7 @@
 #include"../Object/Stage/StageObj/GimmickObjBase.h"
 
 class StageManager;
+class PlayerChara;
 class AbilityBase;
 
 class AbilityManager
@@ -37,7 +38,7 @@ public:
 	static constexpr float UI_EX = 0.25f;	//アイコン拡大率
 	static constexpr int PRESSED_TIME_4_CHANGE_ABILITY = 50;	//能力切り換えフェーズまでに必要な押下時間
 
-	AbilityManager(StageManager& _stage);
+	AbilityManager(StageManager& _stage, PlayerChara& _master);
 	~AbilityManager(void);
 
 	void Update(const VECTOR _playerPos,const Quaternion _playerQua);

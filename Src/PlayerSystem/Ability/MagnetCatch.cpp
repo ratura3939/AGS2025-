@@ -3,6 +3,7 @@
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Generic/InputManager.h"
 #include"../../Utility/Utility.h"
+#include"../../Object/Character/Player/PlayerChara.h"
 #include"../AbilityManager.h"
 #include "MagnetCatch.h"
 
@@ -14,7 +15,7 @@ namespace {
 	const float ROT_DEG_MAX = 360.0f;	//回転角度の最大値
 }
 
-MagnetCatch::MagnetCatch(AbilityManager& _mng):AbilityBase(_mng)
+MagnetCatch::MagnetCatch(AbilityManager& _mng, PlayerChara& _master) :AbilityBase(_mng), master_(_master)
 {
 	startDirecPos_ = Utility::VECTOR_ZERO;
 	goalDirecPos_ = Utility::VECTOR_ZERO;
@@ -28,29 +29,31 @@ MagnetCatch::~MagnetCatch(void)
 {
 }
 
-void MagnetCatch::UpdateUse(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos ,const Quaternion _playerQua)
+void MagnetCatch::UpdateUse(std::weak_ptr<GimmickObjBase> _obj)
 {
+	//プレイヤーを回転させ、それに対応してカメラとオブジェクトを回転させたらいい感じになりそう？
+
 	//10/12にやること
 	//オブジェクトは相対座標を用いて回転させる。回転軸はプレイヤー
 	//カメラは上記の相対座標のXZを反転させた位置に設定する。
 	MakeChangeRelativePosition();
 
-	//回転後の位置設定
-	Quaternion abilityRot = _playerQua.Mult(magRotY_);
-	VECTOR relativePos2Player = abilityRot.PosAxis(relativePos_);
-	_obj.lock()->SetPos(VAdd(_playerPos, relativePos2Player));
+	////回転後の位置設定
+	//Quaternion abilityRot = _playerQua.Mult(magRotY_);
+	//VECTOR relativePos2Player = abilityRot.PosAxis(relativePos_);
+	//_obj.lock()->SetPos(VAdd(_playerPos, relativePos2Player));
 
-	VECTOR testFocusPos = VSub(_obj.lock()->GetPos(), _playerPos);
+	//VECTOR testFocusPos = VSub(_obj.lock()->GetPos(), _playerPos);
 
-	SoundManager& sndM = SoundManager::GetInstance();
+	//SoundManager& sndM = SoundManager::GetInstance();
 
-	//カメラに情報を渡す
-	auto& camera = SceneManager::GetInstance().GetCamera();
-	camera.SetMirrorInfo(relativePos_, abilityRot, rotationDeg_);
-	camera.SetFocusPos(testFocusPos);
+	////カメラに情報を渡す
+	//auto& camera = SceneManager::GetInstance().GetCamera();
+	//camera.SetMirrorInfo(relativePos_, abilityRot, rotationDeg_);
+	//camera.SetFocusPos(testFocusPos);
 
 	//紐の設定
-	startDirecPos_ = _playerPos;
+	startDirecPos_ = master_.GetPos();
 	goalDirecPos_= _obj.lock()->GetPos();
 	nowPos_= _obj.lock()->GetPos();
 }

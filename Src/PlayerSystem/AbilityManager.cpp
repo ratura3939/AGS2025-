@@ -27,13 +27,13 @@ namespace {
 	const float RETHICLE_SIZE = 10.0f;			//ƒŒƒeƒBƒNƒ‹‘å‚«‚³
 }
 
-AbilityManager::AbilityManager(StageManager& _stage) :stage_(_stage)
+AbilityManager::AbilityManager(StageManager& _stage, PlayerChara& _master) :stage_(_stage)
 {
 	useAbility_ = ABILITY_TYPE::MAGNET;
 	state_ = STATE::END;
 	update_ = &AbilityManager::UpdateEnd;
 
-	abilities_[static_cast<int>(ABILITY_TYPE::MAGNET)] = std::make_unique<MagnetCatch>(*this);
+	abilities_[static_cast<int>(ABILITY_TYPE::MAGNET)] = std::make_unique<MagnetCatch>(*this, _master);
 	abilities_[static_cast<int>(ABILITY_TYPE::LOCK_TIME)] = std::make_unique<LockTime>(*this);
 
 	auto& resM = ResourceManager::GetInstance();

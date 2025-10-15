@@ -22,8 +22,10 @@ namespace {
 
 PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, StageManager& _stage):scene_(_gameScene)
 {
+	character_ = std::make_shared<PlayerChara>();
+	character_->Init(playerNum);
 	lockOn_ = std::make_unique<LockOnManager>(_gameScene, *this, _enemy);
-	ability_ = std::make_unique<AbilityManager>(_stage);
+	ability_ = std::make_unique<AbilityManager>(_stage, character_);
 	stateCnt_ = 0;
 	stateLimit_ = 0;
 	abilityBtnCnt_ = 0;
@@ -35,9 +37,7 @@ PlayerManager::~PlayerManager(void)
 
 void PlayerManager::Init(void)
 {
-	//キャラクター生成
-	character_ = std::make_shared<PlayerChara>();
-	character_->Init(playerNum);
+	
 }
 
 void PlayerManager::Update(AttackManager& _atk)
