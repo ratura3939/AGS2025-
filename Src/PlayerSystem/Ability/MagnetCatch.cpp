@@ -20,6 +20,7 @@ MagnetCatch::MagnetCatch(AbilityManager& _mng, PlayerChara& _master) :AbilityBas
 	startDirecPos_ = Utility::VECTOR_ZERO;
 	goalDirecPos_ = Utility::VECTOR_ZERO;
 	nowPos_ = Utility::VECTOR_ZERO;
+	relativePos_ = Utility::VECTOR_ZERO;
 	isSetGoalPos_ = false;
 	direcStep_ = 0.0f;
 	rotationDeg_ = 0.0f;
@@ -58,7 +59,7 @@ void MagnetCatch::UpdateUse(std::weak_ptr<GimmickObjBase> _obj)
 	nowPos_= _obj.lock()->GetPos();
 }
 
-void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)
+void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj)
 {
 	//初手のゴール位置設定
 	if (!isSetGoalPos_) {
@@ -83,15 +84,19 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECT
 			//使用に遷移
 			manager_.ChangeState(AbilityManager::STATE::USE);
 			goalDirecPos_ = _obj.lock()->GetPos();
+			relativePos_ = VSub(goalDirecPos_, startDirecPos_);
+			//カメラ設定
 			auto& camera=SceneManager::GetInstance().GetCamera();
 			camera.ChangeMode(Camera::MODE::MIRROR);
 			camera.SetLockPos(goalDirecPos_);
-			relativePos_ = VSub(goalDirecPos_, startDirecPos_);
+
+			//キャラクターの設定
+			master_.SetIsRotation(false);
 		}
 	}
 
 	//演出更新
-	startDirecPos_ = _playerPos;
+	startDirecPos_ = master_.GetPos();
 	nowPos_=Utility::Lerp(startDirecPos_, goalDirecPos_, direcStep_);
 	direcStep_ += ACC_DIREC;
 }

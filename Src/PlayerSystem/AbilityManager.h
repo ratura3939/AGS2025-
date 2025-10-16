@@ -41,7 +41,7 @@ public:
 	AbilityManager(StageManager& _stage, PlayerChara& _master);
 	~AbilityManager(void);
 
-	void Update(const VECTOR _playerPos,const Quaternion _playerQua);
+	void Update(void);
 	void Draw(void);
 
 	void ChangeAbility(const ABILITY_TYPE _type);	//能力切り換え
@@ -65,11 +65,12 @@ private:
 	void UseAbility(void);			//能力の使用
 	void EndUsingAbility(void);		//能力の終了
 
-	void UpdateRedy(const VECTOR _playerPos, const Quaternion _playerQua);
-	void UpdateDirection(const VECTOR _playerPos, const Quaternion _playerQua);
-	void UpdateUse(const VECTOR _playerPos, const Quaternion _playerQua);
-	void UpdateEnd(const VECTOR _playerPos, const Quaternion _playerQua);
+	void UpdateRedy(void);
+	void UpdateDirection(void);
+	void UpdateUse(void);
+	void UpdateEnd(void);
 
+	PlayerChara& master_;		//使用者(参照)
 	StageManager& stage_;		//ステージ(参照)
 	ABILITY_TYPE useAbility_;	//使用している能力
 	STATE state_;				//能力発動ロジックの段階
@@ -79,7 +80,7 @@ private:
 	std::weak_ptr<GimmickObjBase> selectObj_;	//選択中の物
 	FLOAT4 selectColores_[static_cast<int>(ABILITY_TYPE::MAX)];
 
-	using Update_f = void(AbilityManager::*)(const VECTOR _playerPos, const Quaternion _playerQua);
+	using Update_f = void(AbilityManager::*)(void);
 	Update_f update_;
 
 	VECTOR test_;

@@ -70,7 +70,7 @@ void LockTime::UpdateUse(std::weak_ptr<GimmickObjBase> _obj)
 	}
 }
 
-void LockTime::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)
+void LockTime::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj)
 {
 	if (_obj.expired()) {
 		manager_.ChangeState(AbilityManager::STATE::REDY);

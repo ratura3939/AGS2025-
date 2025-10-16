@@ -4,6 +4,7 @@
 #include"../Manager/Generic/Camera.h"
 #include"../Manager/Decoration/UIManager2d.h"
 #include"../Object/Stage/StageManager.h"
+#include"../Object/Character/Player/PlayerChara.h"
 #include"../Utility/Utility.h"
 #include"Ability/MagnetCatch.h"
 #include"Ability/LockTime.h"
@@ -27,13 +28,13 @@ namespace {
 	const float RETHICLE_SIZE = 10.0f;			//レティクル大きさ
 }
 
-AbilityManager::AbilityManager(StageManager& _stage, PlayerChara& _master) :stage_(_stage)
+AbilityManager::AbilityManager(StageManager& _stage, PlayerChara& _master) :master_(_master), stage_(_stage)
 {
 	useAbility_ = ABILITY_TYPE::MAGNET;
 	state_ = STATE::END;
 	update_ = &AbilityManager::UpdateEnd;
 
-	abilities_[static_cast<int>(ABILITY_TYPE::MAGNET)] = std::make_unique<MagnetCatch>(*this, _master);
+	abilities_[static_cast<int>(ABILITY_TYPE::MAGNET)] = std::make_unique<MagnetCatch>(*this, master_);
 	abilities_[static_cast<int>(ABILITY_TYPE::LOCK_TIME)] = std::make_unique<LockTime>(*this);
 
 	auto& resM = ResourceManager::GetInstance();
@@ -59,10 +60,10 @@ AbilityManager::~AbilityManager(void)
 {
 }
 
-void AbilityManager::Update(const VECTOR _playerPos, const Quaternion _playerQua)
+void AbilityManager::Update(void)
 {
-	test_ = _playerPos;
-	(this->*update_)(_playerPos, _playerQua);
+	test_ = master_.GetPos();
+	(this->*update_)();
 }
 
 void AbilityManager::Draw(void)
@@ -121,7 +122,7 @@ bool AbilityManager::IsNearObject2Camera(const VECTOR _pos1, const VECTOR _pos2)
 	return diff1 <= diff2;
 }
 
-void AbilityManager::UpdateRedy(const VECTOR _playerPos, const Quaternion _playerQua)
+void AbilityManager::UpdateRedy(void)
 {
 	//レティクルとの当たり判定
 	std::weak_ptr<GimmickObjBase> hitReticleObj;
@@ -162,17 +163,17 @@ void AbilityManager::UpdateRedy(const VECTOR _playerPos, const Quaternion _playe
 	}
 }
 
-void AbilityManager::UpdateDirection(const VECTOR _playerPos, const Quaternion _playerQua)
+void AbilityManager::UpdateDirection(void)
 {
-	abilities_[static_cast<int>(useAbility_)]->UpdateDirection(selectObj_, _playerPos);
+	abilities_[static_cast<int>(useAbility_)]->UpdateDirection(selectObj_);
 }
 
-void AbilityManager::UpdateUse(const VECTOR _playerPos, const Quaternion _playerQua)
+void AbilityManager::UpdateUse(void)
 {
-	abilities_[static_cast<int>(useAbility_)]->UpdateUse(selectObj_, _playerPos, _playerQua);
+	abilities_[static_cast<int>(useAbility_)]->UpdateUse(selectObj_);
 }
 
-void AbilityManager::UpdateEnd(const VECTOR _playerPos, const Quaternion _playerQua)
+void AbilityManager::UpdateEnd(void)
 {
 	//何もしない
 }

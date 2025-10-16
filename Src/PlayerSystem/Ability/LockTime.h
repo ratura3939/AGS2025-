@@ -11,7 +11,7 @@ public:
     ~LockTime(void)override;
 
     void UpdateUse(std::weak_ptr<GimmickObjBase> _obj)override;
-    void UpdateDirection(std::weak_ptr<GimmickObjBase> _obj, const VECTOR _playerPos)override;
+    void UpdateDirection(std::weak_ptr<GimmickObjBase> _obj)override;
     void Draw(void)override;
     void ResetAbility(void)override;
 

@@ -63,7 +63,9 @@ public:
     const STATE GetState(void)const;    //取得
     void SetState(const STATE& _state); //設定(PlayerManagerからの受付)
     void PlayAnim(const std::string _anim); //アニメーションの再生(外部<マネージャ・当たり判定>より)
-    const bool IsRock(void);
+    const bool IsLock(void);
+    void SetIsRotation(const bool _flag) { isRotation_ = _flag; }
+
     void Damage(const float _pow)override;
 
     void DrawDebug(void)override;
@@ -90,7 +92,8 @@ private:
 
     //入力受付変数
     MOVE_DIR moveDir_;  //移動方向
-    bool isDush_;        //走る
+    bool isDush_;       //走る
+    bool isRotation_;   //回転を行うか
 
     std::unique_ptr<PlayerUIController>uiCntl_; //UI
 

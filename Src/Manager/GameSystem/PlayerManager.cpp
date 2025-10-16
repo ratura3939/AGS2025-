@@ -60,7 +60,7 @@ void PlayerManager::Update(AttackManager& _atk)
 	//ロックオン更新
 	lockOn_->Update();
 	//能力更新
-	ability_->Update(character_->GetPos(),character_->GetQua());
+	ability_->Update();
 }
 
 void PlayerManager::Draw(void)
@@ -159,7 +159,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 		}
 
 		//回避入力があったとき(ロックオン状態でしか作動しない)
-		if (IsDudgeMove() && ins.IsTrigerrDown("jump") && character_->IsRock()) {
+		if (IsDudgeMove() && ins.IsTrigerrDown("jump") && character_->IsLock()) {
 			//回避処理
 			DoDudge();
 		}

@@ -61,6 +61,7 @@ PlayerChara::PlayerChara(void)
 	rState_ = ROCK_STATE::MAX;
 	state_ = STATE::NOMAL;
 	isDush_ = false;
+	isRotation_ = true;
 }
 
 PlayerChara::~PlayerChara(void)
@@ -154,7 +155,7 @@ void PlayerChara::PlayAnim(const std::string _anim)
 	animController_->Play(_anim, SPEED_ANIM);
 }
 
-const bool PlayerChara::IsRock(void)
+const bool PlayerChara::IsLock(void)
 {
 	return rState_==ROCK_STATE::LOCKON;
 }
@@ -322,8 +323,11 @@ void PlayerChara::Move(void)
 		//敵との角度差を設定
 		afterRad = GetToLockDeg();
 	}
-	//目標角度設定
-	SetGoalRot(afterRad);
+
+	if (isRotation_) {
+		//目標角度設定
+		SetGoalRot(afterRad);
+	}
 
 	//アニメーション
 	//回避中は回避アニメーションを再生しているため他はしない

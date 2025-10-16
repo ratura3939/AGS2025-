@@ -60,7 +60,8 @@ void KeyConfigScene::Update(void)
 	//決定ボタンが押されたとき
 	if (inpM.IsTrigerrDown("action",false)) {
 		//シーンをポップ
-		SceneManager::GetInstance().PopScene();
+		SceneManager::GetInstance().PopScene(); 
+		return;
 	}
 
 	//UI更新
