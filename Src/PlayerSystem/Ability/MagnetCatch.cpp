@@ -49,9 +49,19 @@ void MagnetCatch::UpdateUse(std::weak_ptr<GimmickObjBase> _obj)
 	//SoundManager& sndM = SoundManager::GetInstance();
 
 	////カメラに情報を渡す
-	//auto& camera = SceneManager::GetInstance().GetCamera();
-	//camera.SetMirrorInfo(relativePos_, abilityRot, rotationDeg_);
+	auto& camera = SceneManager::GetInstance().GetCamera();
 	//camera.SetFocusPos(testFocusPos);
+
+	//プレイヤーの角度を設定する
+	auto cameraQua = camera.GetRot();
+	auto afterRot = master_.GetQua();
+	afterRot.y = cameraQua.y;
+	master_.SetQua(afterRot);
+
+	VECTOR relativePos2Player = master_.GetQua().PosAxis(relativePos_);
+	_obj.lock()->SetPos(VAdd(master_.GetPos(), relativePos2Player));
+
+	camera.SetMirrorInfo(relativePos_, afterRot, rotationDeg_);
 
 	//紐の設定
 	startDirecPos_ = master_.GetPos();
@@ -114,6 +124,7 @@ void MagnetCatch::Draw(void)
 		DrawSphere3D(nowPos_, debugScl, divNum, debugCol, debugCol, false);
 	}
 
+	//デバッグ
 	DrawFormatString(50, 300, 0xff0000, "GOAL={%.1f,%.1f,%.1f}", goalDirecPos_.x, goalDirecPos_.y, goalDirecPos_.z);
 }
 
@@ -130,30 +141,30 @@ void MagnetCatch::MakeChangeRelativePosition(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 
-	if (ins.IsPressed("subUp"))
-	{
-		relativePos_.y += ACC_MOVE;
-	}
-	if (ins.IsPressed("subDown"))
-	{
-		relativePos_.y -= ACC_MOVE;
-	}
-	if (ins.IsPressed("subLeft"))
-	{
-		//relativePos_.x -= ACC_MOVE;
-		rotationDeg_ -= ACC_DEG;
-		if (rotationDeg_ < 0.0f) {
-			rotationDeg_ = ROT_DEG_MAX;
-		}
-	}
-	if (ins.IsPressed("subRight"))
-	{
-		//relativePos_.x += ACC_MOVE;
-		rotationDeg_ += ACC_DEG;
-		if (rotationDeg_ > ROT_DEG_MAX) {
-			rotationDeg_ = 0.0f;
-		}
-	}
+	//if (ins.IsPressed("subUp"))
+	//{
+	//	relativePos_.y += ACC_MOVE;
+	//}
+	//if (ins.IsPressed("subDown"))
+	//{
+	//	relativePos_.y -= ACC_MOVE;
+	//}
+	//if (ins.IsPressed("subLeft"))
+	//{
+	//	//relativePos_.x -= ACC_MOVE;
+	//	rotationDeg_ -= ACC_DEG;
+	//	if (rotationDeg_ < 0.0f) {
+	//		rotationDeg_ = ROT_DEG_MAX;
+	//	}
+	//}
+	//if (ins.IsPressed("subRight"))
+	//{
+	//	//relativePos_.x += ACC_MOVE;
+	//	rotationDeg_ += ACC_DEG;
+	//	if (rotationDeg_ > ROT_DEG_MAX) {
+	//		rotationDeg_ = 0.0f;
+	//	}
+	//}
 
 	//前後の入力を決めたら相対座標のXをいじる
 

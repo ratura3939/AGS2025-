@@ -306,15 +306,18 @@ void Camera::SetBeforeDrawAutoMove(void)
 
 void Camera::SetBeforeDrawMirror(void)
 {
+	Rotation();
+
 	const float ROT_DEG_MAX = 360.0f;
-	float afterMirrorDeg = mirrorDeg_ + 180.0f;	//Œ³‚ÌŠp“x‚Ì”½‘Î‘¤‚È‚Ì‚Å180‹‘«‚·
+	const float BACK_DEG = 180.0f;
+	float afterMirrorDeg = mirrorDeg_ + BACK_DEG;	//Œ³‚ÌŠp“x‚Ì”½‘Î‘¤‚È‚Ì‚Å180‹‘«‚·
 	if (afterMirrorDeg > ROT_DEG_MAX) {
 		afterMirrorDeg -= ROT_DEG_MAX;
 	}
 
 	Quaternion axis =
 		Quaternion::AngleAxis(
-			(double)angles_.y + Utility::Deg2RadF(afterMirrorDeg), Utility::AXIS_Y);
+			(double)angles_.y + Utility::Deg2RadF(BACK_DEG), Utility::AXIS_Y);
 
 	Quaternion mirrotRot = followObject_.quaRot.Mult(axis);
 	VECTOR relativePos2Player = mirrotRot.PosAxis(mirrorRelativeVec_);

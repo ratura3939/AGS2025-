@@ -64,6 +64,7 @@ public:
 
 	//‰ñ“]î•ñ‚Ìæ“¾
 	const Quaternion GetQua(void)const;
+	void SetQua(const Quaternion _qua);
 
 	//ŒÂ‘Ì–¼æ“¾
 	const std::string GetSpeciesName(void)const;

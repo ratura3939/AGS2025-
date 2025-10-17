@@ -176,6 +176,11 @@ const Quaternion CharacterBase::GetQua(void) const
 	return retRot;
 }
 
+void CharacterBase::SetQua(const Quaternion _qua)
+{
+	characterRotY_ = _qua;
+}
+
 const std::string CharacterBase::GetSpeciesName(void) const
 {
 	return speciesName_;

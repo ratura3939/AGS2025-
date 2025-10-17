@@ -25,7 +25,7 @@ PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, StageManage
 	character_ = std::make_shared<PlayerChara>();
 	character_->Init(playerNum);
 	lockOn_ = std::make_unique<LockOnManager>(_gameScene, *this, _enemy);
-	ability_ = std::make_unique<AbilityManager>(_stage, character_);
+	ability_ = std::make_unique<AbilityManager>(_stage, *character_);
 	stateCnt_ = 0;
 	stateLimit_ = 0;
 	abilityBtnCnt_ = 0;
