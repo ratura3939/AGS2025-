@@ -105,7 +105,7 @@ private:
 	std::unique_ptr<EnemyManager>enemy_;			//敵
 	std::unique_ptr<AttackManager>atkMng_;			//攻撃関連
 	std::unique_ptr<CollisionManager>collision_;	//判定関連
-	std::unique_ptr<StageManager>stage_;					//ステージ
+	std::unique_ptr<StageManager>stage_;			//ステージ
 #pragma endregion
 
 #pragma region 関数ポインタ
@@ -154,7 +154,7 @@ private:
 	int direcCnt_;					//演出に関わるカウンタ
 
 	//カメラの演出用
-	VECTOR cameraMoveStartPos_;						//初期位置
+	VECTOR cameraMoveStartPos_;							//初期位置
 	VECTOR cameraMoveGoalPos_[CAMERA_DIRECTION_NUM];	//目標位置
 	int cameraShakeCollTimeCnt_;	//画面揺れクールタイム
 	bool stayCameraShake_;			//画面揺れ待機フラグ true=待機

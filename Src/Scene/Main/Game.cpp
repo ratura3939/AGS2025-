@@ -30,7 +30,7 @@ namespace {
 
 
 	const int LIMIT_SLOW = 200;					//スロー演出時間
-	const int BGM_VOL_MAX = 100;					//BGM音量最大値
+	const int BGM_VOL_MAX = 100;				//BGM音量最大値
 	const int BGM_VOL_ACC = 1;					//BGM切り換えスピード
 	const float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
 	const float SLOW_SPEED_PERCENT = 25.0f;		//スローの割合(通常時から半分の速度にする)
