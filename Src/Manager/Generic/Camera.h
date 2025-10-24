@@ -33,6 +33,9 @@ public:
 	static constexpr float ROCK_DISTANCE_MIN = 500.0f;		//ロックオン時に最低限離れておく距離
 
 	static constexpr float ROCK_MAGNIFICATION_Y = 0.25f;	//ロックオン時のY座標調整用の倍率
+
+	static constexpr float MIRROR_MAGNIFICATION_Y = 0.1f;	//ミラー時のY座標調整用の倍率
+	static constexpr float MIRROR_MAGNIFICATION_Z = 1.25f;	//ミラー時のY座標調整用の倍率
 	
 	//カメラ移動関連の定数---------------------------------------------------------------------
 	
@@ -52,7 +55,8 @@ public:
 	static constexpr float RESET_STEP = 0.05f;
 
 	//距離最低制限
-	static constexpr float UNDERLIMIT_Y = 280.0f;
+	static constexpr float UNDER_LIMIT_Y = 280.0f;
+	static constexpr float HIGHT_LIMIT_Y = 1200.0f;
 
 	// カメラのX回転上限度角
 	static constexpr float LIMIT_X_UP_RAD = 45.0f * (DX_PI_F / 180.0f);
@@ -76,7 +80,7 @@ public:
 		MIRROR,			//特定の相対座標に対して対照的な動きをとる(対象の軸はfollowObj)
 	};
 
-	struct FOR_FOLLOW_INFO
+	struct ForFollowInfo
 	{
 		VECTOR pos;
 		Quaternion quaRot;
@@ -153,10 +157,10 @@ public:
 private:
 
 	//追従対象
-	FOR_FOLLOW_INFO followObject_;
+	ForFollowInfo followObject_;
 	//開始・目標位置(リセット時などに使用)
-	FOR_FOLLOW_INFO start_;
-	FOR_FOLLOW_INFO goal_;
+	ForFollowInfo start_;
+	ForFollowInfo goal_;
 	float stepReset_;
 	bool isReset_;
 
@@ -170,6 +174,9 @@ private:
 	//ロックオン対象の位置
 	VECTOR lockPos_;
 	bool isRotation_;	//回転を有効にするか
+	VECTOR prevGoalPos_;
+	VECTOR lockOnGoalPos_;
+	float lockOnLerpStep_;
 
 	//カメラの注視点
 	VECTOR focusPos_;

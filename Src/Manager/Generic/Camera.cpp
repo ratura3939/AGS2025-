@@ -38,6 +38,10 @@ Camera::Camera(void)
 	mirrorRelativeVec_ = Utility::VECTOR_ZERO;
 	mirrorQua_ = Quaternion::Identity();
 	mirrorDeg_ = 0.0f;
+
+	prevGoalPos_ = Utility::VECTOR_ZERO;
+	lockOnGoalPos_ = Utility::VECTOR_ZERO;
+	lockOnLerpStep_ = 0.0f;
 }
 
 Camera::~Camera(void)
@@ -161,8 +165,6 @@ void Camera::SetBeforeDrawFollow(void)
 
 void Camera::SetBeforeDrawLockOn(void)
 {
-	//TODO
-	//違和感が残っているので後で見直す
 	if (isRotation_) {
 		Rotation();
 	}
@@ -204,12 +206,21 @@ void Camera::SetBeforeDrawLockOn(void)
 	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.2f);
 
 	//カメラ位置の更新
-	auto gPos = VAdd(focusPos_, relativeCPos);
-	pos_ = Utility::Lerp(pos_, gPos, NO_LERP);
+	prevGoalPos_ = lockOnGoalPos_;
+	lockOnGoalPos_ = VAdd(focusPos_, relativeCPos);
+	if (!Utility::Equals(lockOnGoalPos_, prevGoalPos_)) {
+		lockOnLerpStep_ = 0.0f;
+	}
+
+	lockOnLerpStep_ += RESET_STEP;
+	if (lockOnLerpStep_ > 1.0f)lockOnLerpStep_ = 1.0f;
+
+	pos_ = Utility::Lerp(pos_, lockOnGoalPos_, lockOnLerpStep_);
 	//pos_ = VAdd(focusPos_, relativeCPos);
 
 	//ある程度の高さは保つ
-	if (pos_.y < UNDERLIMIT_Y)pos_.y = UNDERLIMIT_Y;
+	if (pos_.y < UNDER_LIMIT_Y)pos_.y = UNDER_LIMIT_Y;
+	if (pos_.y > HIGHT_LIMIT_Y)pos_.y = HIGHT_LIMIT_Y;
 
 	//カメラの上方向
 	cameraUp_ = rot_.GetUp();
@@ -306,28 +317,63 @@ void Camera::SetBeforeDrawAutoMove(void)
 
 void Camera::SetBeforeDrawMirror(void)
 {
-	Rotation();
-
-	const float ROT_DEG_MAX = 360.0f;
-	const float BACK_DEG = 180.0f;
-	float afterMirrorDeg = mirrorDeg_ + BACK_DEG;	//元の角度の反対側なので180°足す
-	if (afterMirrorDeg > ROT_DEG_MAX) {
-		afterMirrorDeg -= ROT_DEG_MAX;
+	if (isRotation_) {
+		Rotation();
 	}
 
-	Quaternion axis =
-		Quaternion::AngleAxis(
-			(double)angles_.y + Utility::Deg2RadF(BACK_DEG), Utility::AXIS_Y);
+	//追従対象の位置
+	VECTOR followPos = followObject_.pos;
+	//追従対象の向き
+	Quaternion followRot = followObject_.quaRot;
 
-	Quaternion mirrotRot = followObject_.quaRot.Mult(axis);
-	VECTOR relativePos2Player = mirrotRot.PosAxis(mirrorRelativeVec_);
+	//ロックオン対象と追従対象の離れている距離
+	VECTOR distance = VSub(lockPos_, followPos);
 
-	/*VECTOR mirrorRelativePos = mirrorQua_.PosAxis(mirrorRelativeVec_);
-	mirrorRelativePos.x *= -1.0f;
-	mirrorRelativePos.z *= -1.0f;*/
-	pos_ = VAdd(followObject_.pos, relativePos2Player);
+	//離れる距離を数値化
+	float disMag = Utility::MagnitudeF(distance);
 
-	//focusPos_ = followObject_.pos;
+	//最低限の値を下回っていたら
+	if (disMag <= ROCK_DISTANCE_MIN) {
+		//最低限の値を入れる
+		disMag = ROCK_DISTANCE_MIN;
+	}
+
+	//カメラ位置調整(カメラは後方位置に。Y方向は距離に応じて高さを変える。)
+	VECTOR relative = { 0.0f,disMag * MIRROR_MAGNIFICATION_Y,-disMag * MIRROR_MAGNIFICATION_Z };
+	//カメラの回転情報をもとに相対座標を回転させる
+	VECTOR relativeCPos = rot_.PosAxis(relative);
+
+	//初動時のみに発動する
+	//カメラの初期ゴールを計算結果で算出した場所にする
+	if (!isReset_ && isRotation_) {
+		ChangeMode(MODE::RESET);
+		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(relative));
+		goal_.quaRot = followObject_.quaRot;
+		return;
+	}
+
+	//注視点の更新
+	//ロックオン中の注視点は追従対象とロックオン対象の中間地点にある。
+	//focusPos_ = VAdd(followPos,VScale(distance, 0.5f));
+	goalFocusPos_ = VAdd(followPos, VScale(distance, 0.5f));
+	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.2f);
+
+	//カメラ位置の更新
+	prevGoalPos_ = lockOnGoalPos_;
+	lockOnGoalPos_ = VAdd(focusPos_, relativeCPos);
+	if (!Utility::Equals(lockOnGoalPos_, prevGoalPos_)) {
+		lockOnLerpStep_ = 0.0f;
+	}
+
+	lockOnLerpStep_ += RESET_STEP;
+	if (lockOnLerpStep_ > 1.0f)lockOnLerpStep_ = 1.0f;
+
+	pos_ = Utility::Lerp(pos_, lockOnGoalPos_, lockOnLerpStep_);
+	//pos_ = VAdd(focusPos_, relativeCPos);
+
+	//ある程度の高さは保つ
+	if (pos_.y < UNDER_LIMIT_Y)pos_.y = UNDER_LIMIT_Y;
+	if (pos_.y > HIGHT_LIMIT_Y)pos_.y = HIGHT_LIMIT_Y;
 
 	//カメラの上方向
 	cameraUp_ = rot_.GetUp();
