@@ -8,6 +8,7 @@
 namespace {
 	const float LERP_SPEED = 0.1f;
 	const float LERP_MAX = 1.0f;
+	const float HALF_DISTANCE = 0.5f;
 }
 
 Camera::Camera(void)
@@ -203,15 +204,14 @@ void Camera::SetBeforeDrawLockOn(void)
 
 	//注視点の更新
 	//ロックオン中の注視点は追従対象とロックオン対象の中間地点にある。
-	goalFocusPos_ = VAdd(followPos, VScale(distance, 0.5f));
-	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.2f);
+	goalFocusPos_ = VAdd(followPos, VScale(distance, HALF_DISTANCE));
+	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, lerpStep_);
 
 	//カメラ位置の更新
 	prevGoalPos_ = lockOnGoalPos_;
 	lockOnGoalPos_ = VAdd(focusPos_, relativeCPos);
 
 	pos_ = Utility::Lerp(pos_, lockOnGoalPos_, lerpStep_);
-	//pos_ = VAdd(focusPos_, relativeCPos);
 
 	//ある程度の高さは保つ
 	if (pos_.y < UNDER_LIMIT_Y)pos_.y = UNDER_LIMIT_Y;

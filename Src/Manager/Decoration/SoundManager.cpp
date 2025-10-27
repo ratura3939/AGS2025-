@@ -35,7 +35,6 @@ void SoundManager::Add(const TYPE _type, const std::string _name, const int _dat
 	intervales_[_name] = _interval;
 }
 
-
 void SoundManager::Play(const std::string _name)
 {
 	//Œ³ƒf[ƒ^‚ª‚È‚¢‚Æ‚«‚ÍŒx
@@ -63,7 +62,6 @@ void SoundManager::Play(const std::string _name)
 	}
 	
 }
-
 
 void SoundManager::Stop(const std::string _name)
 {

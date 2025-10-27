@@ -69,7 +69,7 @@ const bool EnemyBase::Init(const int _num)
 	//ŒÂ‘Ì–¼“o˜^
 	speciesName_ += std::to_string(_num);
 
-	SetPram();
+	SetParam();
 
 	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
 

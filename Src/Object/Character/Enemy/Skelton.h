@@ -9,6 +9,6 @@ public:
 
 private:
     void InitAnim(void)override;
-    void SetPram(void)override;
+    void SetParam(void)override;
 };
 

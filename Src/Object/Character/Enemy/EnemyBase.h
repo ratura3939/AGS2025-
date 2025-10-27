@@ -103,7 +103,7 @@ public:
     void DrawDebug(void)override;
   
 protected:
-    virtual void SetPram(void) = 0;    //各敵の固有情報
+    virtual void SetParam(void) = 0;    //各敵の固有情報
     virtual void InitAnim(void)override;
     void InitUI(void)override;
 

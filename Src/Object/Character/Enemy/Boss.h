@@ -13,7 +13,7 @@ public:
 
 private:
     void InitAnim(void)override;
-    void SetPram(void)override;
+    void SetParam(void)override;
 
     void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)override; //êÌì¨
     void MoveBattle(const VECTOR& _pPos)override;

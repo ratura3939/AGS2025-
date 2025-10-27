@@ -54,7 +54,7 @@ void Boss::InitAnim(void)
 	SoundManager::GetInstance().Add(SoundManager::TYPE::SE, "shout", ResourceManager::GetInstance().Load(ResourceManager::SRC::BOSS_SHOUT_SE).handleId_);
 }
 
-void Boss::SetPram(void)
+void Boss::SetParam(void)
 {
 	speciesName_ = "Boss";
 

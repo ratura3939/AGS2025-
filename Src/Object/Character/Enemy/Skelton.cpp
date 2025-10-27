@@ -38,7 +38,7 @@ void Skelton::InitAnim(void)
     animController_->Add("dethSus", ANIM_DETH_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
 }
 
-void Skelton::SetPram(void)
+void Skelton::SetParam(void)
 {
 	//各敵たち
 	//後々Jsonやったら楽になるかも？
