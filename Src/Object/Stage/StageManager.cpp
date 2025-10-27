@@ -3,6 +3,10 @@
 #include"StageObj/Stage.h"
 #include "StageManager.h"
 
+namespace {
+	const int STAEGE_OBJ_NUM = 0;	//地形が格納されているインデックス
+}
+
 void StageManager::Init(void)
 {
 	gmkObjs_.push_back(std::make_shared<Stage>());
@@ -36,7 +40,7 @@ void StageManager::SetAbilityColor(const FLOAT4 _color)
 	}
 }
 
-std::vector<std::weak_ptr<GimmickObjBase>> StageManager::GetAffectAbilityObjectes(void)const
+std::vector<std::weak_ptr<GimmickObjBase>> StageManager::GetAffectAbilityObjectes(void) const
 {
 	std::vector<std::weak_ptr<GimmickObjBase>> ret;
 	for (auto& obj : gmkObjs_) {

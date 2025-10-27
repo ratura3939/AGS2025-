@@ -11,6 +11,7 @@ class GimmickObjBase
 {
 public:
 	static constexpr FLOAT4 NOMAL_COLOR = { 0.0f,0.0f,0.0f,1.0f };
+	static constexpr float GRAVITY_POW = 0.98f;
 
 	GimmickObjBase(void);
 	virtual ~GimmickObjBase(void);
@@ -20,18 +21,18 @@ public:
 	virtual void Draw(void);
 	void Release(void);
 
-	const bool IsHitCameraRay(const VECTOR _start, const VECTOR _end)const;
+	const bool IsHitCameraRay(const VECTOR& _start, const VECTOR& _end)const;
 
 	/// <summary>
 	/// 付与色の設定
 	/// </summary>
 	/// <param name="_color"></param>
-	void SetObjectRenderColor(const FLOAT4 _color);
+	void SetObjectRenderColor(const FLOAT4& _color);
 
 	//位置設定
 	void SetPos(const VECTOR _pos);	
-	VECTOR GetPos(void);
-	VECTOR GetScreenPos(void);
+	const VECTOR& GetPos(void)const;
+	const VECTOR& GetScreenPos(void)const;
 
 	//能力の影響を受けるか
 	const bool IsAffectAbility(void)const;	
@@ -47,7 +48,7 @@ public:
 
 
 protected:
-	virtual void SetPram(void) = 0;
+	virtual void SetParam(void) = 0;
 	void UpdateRotQuat(void);
 
 	void UpdateNomal(void);
@@ -61,6 +62,7 @@ protected:
 	int modelId_;	//モデルID
 
 	VECTOR pos_;	//座標
+	VECTOR prevPos_;//座標(１フレーム前)
 	VECTOR scl_;	//モデル大きさ
 	VECTOR rot_;	//回転情報(XYZ)
 
@@ -83,9 +85,10 @@ protected:
 #pragma endregion
 
 	float gravity_;	//重力
+	bool isActiveGravity_;	//有効か無効か
 	bool isAffectAbilyty_;	//能力の影響を受けるか
 	bool isAffectingNow_;	//現在影響を受けているか
-	bool isTargeting_;	//対象として選択されているか
+	bool isTargeting_;		//対象として選択されているか
 
 	VECTOR screenPos_;		//スクリーン上での位置
 

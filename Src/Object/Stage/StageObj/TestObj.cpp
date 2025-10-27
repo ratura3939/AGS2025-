@@ -3,7 +3,7 @@
 #include "TestObj.h"
 
 
-void TestObj::SetPram(void)
+void TestObj::SetParam(void)
 {
 	//ŒŽ
 	isAffectAbilyty_ = true;

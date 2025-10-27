@@ -8,6 +8,6 @@ public:
     ~TestObj2(void)override;
 
 private:
-    void SetPram(void)override;
+    void SetParam(void)override;
 };
 

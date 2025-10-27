@@ -10,10 +10,11 @@
 namespace {
 	const float ACC_DIREC = 0.02f;	//紐の移動スピード
 	const float DIREC_MAX = 1.0f;	//線形補完の最大値(紐の移動を線形補完で行う)
-	const float ACC_MOVE = 15.0f;	//物体の移動量
+	const float ACC_MOVE = 5.0f;	//物体の移動量
 	const float ACC_DEG = 2.0f;		//物体の回転量
 	const float ROT_DEG_MAX = 360.0f;	//回転角度の最大値
 	const float FLIP_POW = -0.7f;		//ベクトル反転の影響量
+	const float MAX_RELATIVE_Z = 500.0f;	//相対座標の最大値
 }
 
 MagnetCatch::MagnetCatch(AbilityManager& _mng, PlayerChara& _master) :AbilityBase(_mng), master_(_master)
@@ -21,10 +22,9 @@ MagnetCatch::MagnetCatch(AbilityManager& _mng, PlayerChara& _master) :AbilityBas
 	startDirecPos_ = Utility::VECTOR_ZERO;
 	goalDirecPos_ = Utility::VECTOR_ZERO;
 	nowPos_ = Utility::VECTOR_ZERO;
-	relativePos_ = Utility::VECTOR_ZERO;
+	relativePosZ_ = 0.0f;
 	isSetGoalPos_ = false;
 	direcStep_ = 0.0f;
-	rotationDeg_ = 0.0f;
 }
 
 MagnetCatch::~MagnetCatch(void)
@@ -36,24 +36,24 @@ void MagnetCatch::UpdateUse(std::weak_ptr<GimmickObjBase> _obj)
 	MakeChangeRelativePosition();
 
 	Camera& camera = SceneManager::GetInstance().GetCamera();
-	VECTOR cameraRelative = camera.GetC2FRelativeVec();
-	cameraRelative.y *= FLIP_POW;
 	VECTOR masterPos = master_.GetPos();
+	//カメラ→プレイヤーのベクトル
+	VECTOR cameraRelative = camera.GetC2FRelativeVec();
+	//反転処理
+	cameraRelative.y *= FLIP_POW;
+	
+	//相対座標の加算
+	VECTOR addVec = master_.GetQua().PosAxis({ 0.0f,0.0f,relativePosZ_ });
+	VECTOR objRelative = VAdd(cameraRelative, addVec);
 
-	_obj.lock()->SetPos(VAdd(masterPos, cameraRelative));
+	_obj.lock()->SetPos(VAdd(masterPos, objRelative));
 
+	//ターゲット位置の更新
 	VECTOR newObjPos = _obj.lock()->GetPos();
-
 	camera.SetLockPos(newObjPos);
 
-	//プレイヤーの回転
-	//VECTOR cameraRot = camera.GetRot().ToEuler();
-	//VECTOR master2objDiff = VSub(newObjPos, masterPos);
-
-	//auto rad = atan2(master2objDiff.x, master2objDiff.z) - cameraRot.y;
-
 	//紐の設定
-	startDirecPos_ = master_.GetPos();
+	startDirecPos_ = masterPos;
 	goalDirecPos_= newObjPos;
 	nowPos_= newObjPos;
 }
@@ -83,14 +83,12 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj)
 			//使用に遷移
 			manager_.ChangeState(AbilityManager::STATE::USE);
 			goalDirecPos_ = _obj.lock()->GetPos();
-			relativePos_ = VSub(goalDirecPos_, startDirecPos_);
 			//カメラ設定
 			auto& camera=SceneManager::GetInstance().GetCamera();
 			camera.ChangeMode(Camera::MODE::MIRROR);
 			camera.SetLockPos(goalDirecPos_);
 
 			//キャラクターの設定
-			//master_.SetIsRotation(false);
 			master_.ChangeLockState(true);
 		}
 	}
@@ -123,6 +121,7 @@ void MagnetCatch::ResetAbility(void)
 	startDirecPos_ = Utility::VECTOR_ZERO;
 	goalDirecPos_ = Utility::VECTOR_ZERO;
 	nowPos_ = Utility::VECTOR_ZERO;
+	relativePosZ_ = 0.0f;
 	isSetGoalPos_ = false;
 	direcStep_ = 0.0f;
 }
@@ -131,43 +130,16 @@ void MagnetCatch::MakeChangeRelativePosition(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 
-	//if (ins.IsPressed("subUp"))
-	//{
-	//	relativePos_.y += ACC_MOVE;
-	//}
-	//if (ins.IsPressed("subDown"))
-	//{
-	//	relativePos_.y -= ACC_MOVE;
-	//}
-	//if (ins.IsPressed("subLeft"))
-	//{
-	//	//relativePos_.x -= ACC_MOVE;
-	//	rotationDeg_ -= ACC_DEG;
-	//	if (rotationDeg_ < 0.0f) {
-	//		rotationDeg_ = ROT_DEG_MAX;
-	//	}
-	//}
-	//if (ins.IsPressed("subRight"))
-	//{
-	//	//relativePos_.x += ACC_MOVE;
-	//	rotationDeg_ += ACC_DEG;
-	//	if (rotationDeg_ > ROT_DEG_MAX) {
-	//		rotationDeg_ = 0.0f;
-	//	}
-	//}
-
-	//前後の入力を決めたら相対座標のXをいじる
-
-	Rotation();
-}
-
-void MagnetCatch::Rotation(void)
-{
-	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetAngle();
-
-	Quaternion axis =
-		Quaternion::AngleAxis(
-			(double)cameraRot.y + Utility::Deg2RadF(rotationDeg_), Utility::AXIS_Y);
-
-	magRotY_ = axis;
+	if (ins.IsPressed("push")) {
+		relativePosZ_ += ACC_MOVE;
+		if(relativePosZ_ > MAX_RELATIVE_Z) {
+			relativePosZ_ = MAX_RELATIVE_Z;
+		}
+	}
+	else if (ins.IsPressed("pull")) {
+		relativePosZ_ -= ACC_MOVE;
+		if (relativePosZ_ < 0.0f) {
+			relativePosZ_ = 0.0f;
+		}
+	}
 }

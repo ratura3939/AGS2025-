@@ -11,7 +11,7 @@ public:
 	void Draw(void)override;
 
 private:
-	void SetPram(void)override;
+	void SetParam(void)override;
 
 	int noiseTex_;;
 };

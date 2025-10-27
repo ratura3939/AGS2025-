@@ -10,7 +10,7 @@ TestObj2::~TestObj2(void)
 {
 }
 
-void TestObj2::SetPram(void)
+void TestObj2::SetParam(void)
 {
 	isAffectAbilyty_ = true;
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TEST_MDL_2).handleId_;

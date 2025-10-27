@@ -2,12 +2,15 @@
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../../Renderer/ModelRenderer.h"
 
-
-
 GimmickObjBase::GimmickObjBase(void)
+	:
+	gravity_(0.0f),
+	isAffectAbilyty_(true),
+	isTargeting_(false)
 {
 	screenPos_ = { 0.0f,0.0f,0.0f };
 	isAffectingNow_ = false;
+	isActiveGravity_ = true;
 	update_ = &GimmickObjBase::UpdateNomal;
 }
 
@@ -18,14 +21,12 @@ GimmickObjBase::~GimmickObjBase(void)
 void GimmickObjBase::Init(void)
 {
 	//各オブジェクトの設定
-	SetPram();
+	SetParam();
 
 	MV1SetPosition(modelId_, pos_);
 	MV1SetScale(modelId_, scl_);
 
 	render_ = std::make_unique<ModelRenderer>(modelId_, *material_);
-
-	MV1SetupCollInfo(modelId_);
 }
 
 void GimmickObjBase::Update(void)
@@ -48,12 +49,12 @@ void GimmickObjBase::Release(void)
 {
 }
 
-const bool GimmickObjBase::IsHitCameraRay(const VECTOR _start, const VECTOR _end)const
+const bool GimmickObjBase::IsHitCameraRay(const VECTOR& _start, const VECTOR& _end)const
 {
 	return MV1CollCheck_Line(modelId_,-1,_start,_end).HitFlag;
 }
 
-void GimmickObjBase::SetObjectRenderColor(const FLOAT4 _color)
+void GimmickObjBase::SetObjectRenderColor(const FLOAT4& _color)
 {
 	material_->SetConstBufPS(0, _color);
 }
@@ -63,12 +64,12 @@ void GimmickObjBase::SetPos(const VECTOR _pos)
 	pos_ = _pos;
 }
 
-VECTOR GimmickObjBase::GetPos(void)
+const VECTOR& GimmickObjBase::GetPos(void) const
 {
 	return pos_;
 }
 
-VECTOR GimmickObjBase::GetScreenPos(void)
+const VECTOR& GimmickObjBase::GetScreenPos(void) const
 {
 	return screenPos_;
 }
@@ -131,7 +132,12 @@ void GimmickObjBase::UpdateRotQuat(void)
 void GimmickObjBase::UpdateNomal(void)
 {
 	UpdateRotQuat();
-	MV1SetupCollInfo(modelId_);
+
+	if (isActiveGravity_) {
+		//重力処理
+		gravity_ += GRAVITY_POW;
+		pos_.y -= gravity_;
+	}
 }
 
 void GimmickObjBase::UpdateAffectLock(void)
@@ -141,5 +147,4 @@ void GimmickObjBase::UpdateAffectLock(void)
 
 void GimmickObjBase::UpdateAffectMagnet(void)
 {
-	//移動処理(能力側に持たせるかも)
 }

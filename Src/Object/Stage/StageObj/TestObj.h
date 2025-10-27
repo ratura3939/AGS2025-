@@ -4,6 +4,6 @@ class TestObj :
     public GimmickObjBase
 {
 private:
-    void SetPram(void)override;
+    void SetParam(void)override;
 };
 

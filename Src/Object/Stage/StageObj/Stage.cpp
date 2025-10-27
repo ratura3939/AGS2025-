@@ -25,7 +25,7 @@ void Stage::Draw(void)
 	render_->Draw();
 }
 
-void Stage::SetPram(void)
+void Stage::SetParam(void)
 {
 	ResourceManager& resM = ResourceManager::GetInstance();
 	modelId_ = resM.Load(ResourceManager::SRC::STAGE_MDL).handleId_;
@@ -42,6 +42,8 @@ void Stage::SetPram(void)
 	material_->AddConstBufPS({ 0.0f,0.0f,0.0f,0.0f });
 	//UV拡大率
 	material_->AddConstBufPS({ UV_SCALING_NOISE,0.0f,0.0f,0.0f });
+
+	isActiveGravity_ = false;
 
 	//デバッグ
 	isDrawScreenPosCircle_ = false;

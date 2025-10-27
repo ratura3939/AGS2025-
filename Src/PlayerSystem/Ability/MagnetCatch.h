@@ -19,7 +19,6 @@ public:
 
 private:
     void MakeChangeRelativePosition(void);
-    void Rotation(void);    //能力下の回転量を得る
 
     PlayerChara& master_;   //使用者
 
@@ -27,9 +26,8 @@ private:
     VECTOR goalDirecPos_;   //能力演出終了位置
     VECTOR nowPos_;         //演出現在位置
     float direcStep_;       //線形補完のカウンタ
-    VECTOR relativePos_;    //プレイヤーとオブジェクトの相対座標
-    float rotationDeg_;     //回転量(Deg)
-    Quaternion magRotY_;    //Y軸回転用
+
+    float relativePosZ_;    //プレイヤーとオブジェクトの相対座標(前後方向のZ軸のみ)
 
     bool isSetGoalPos_;     //目標を設定するのは一度だけ
 };
