@@ -58,10 +58,10 @@ PlayerChara::PlayerChara(void)
 {
 	speciesName_ = "Player";
 	focusPoint_ = Utility::VECTOR_ZERO;
-	rState_ = ROCK_STATE::MAX;
+	lockState_ = ROCK_STATE::MAX;
 	state_ = STATE::NOMAL;
 	isDush_ = false;
-	isRotation_ = true;
+	afterMoveRad_ = 0.0f;
 }
 
 PlayerChara::~PlayerChara(void)
@@ -76,7 +76,7 @@ const bool PlayerChara::Init(const int _num)
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT),0.0f);
 
-	rState_ = ROCK_STATE::NOMAL;
+	lockState_ = ROCK_STATE::NOMAL;
 
 	//当たり判定大きさ
 	colRadius_ = CHARACTER_RADIUS;
@@ -109,8 +109,18 @@ void PlayerChara::Update(void)
 	uiPos_.y += 200.0f;
 	allertTime_++;
 	//ほかにアクション行動していないときのみ
-	if (state_ == STATE::NOMAL || rState_ == ROCK_STATE::LOCKON) {
+	if (state_ == STATE::NOMAL || lockState_ == ROCK_STATE::LOCKON) {
 		Move();
+
+		//ロックオンのとき
+		if (lockState_ == ROCK_STATE::LOCKON) {
+			//敵との角度差を設定
+			afterMoveRad_ = GetToLockDeg();
+		}
+
+		//目標角度設定
+		SetGoalRot(afterMoveRad_);
+
 		Rotation();
 		if (allertTime_ > ALLERT_TIME) {
 			uiCntl_->ChangeAllert(false);
@@ -127,16 +137,16 @@ const VECTOR PlayerChara::GetFocusPoint(void) const
 	return VAdd(pos_, focusPoint_);
 }
 
-void PlayerChara::ChangeRockState(const bool _state)
+void PlayerChara::ChangeLockState(const bool _state)
 {
 	if (_state) {
-		rState_ = ROCK_STATE::LOCKON;
+		lockState_ = ROCK_STATE::LOCKON;
 		//プレイヤーの角度を強制的に敵に向ける
 		float deg = GetToLockDeg();
 		SetGoalRot(deg);
 		characterRotY_ = goalQua_;
 	}
-	else rState_ = ROCK_STATE::NOMAL;
+	else lockState_ = ROCK_STATE::NOMAL;
 }
 
 const PlayerChara::STATE PlayerChara::GetState(void) const
@@ -157,7 +167,7 @@ void PlayerChara::PlayAnim(const std::string _anim)
 
 const bool PlayerChara::IsLock(void)
 {
-	return rState_==ROCK_STATE::LOCKON;
+	return lockState_==ROCK_STATE::LOCKON;
 }
 
 void PlayerChara::Damage(const float _pow)
@@ -177,7 +187,7 @@ void PlayerChara::DrawDebug(void)
 {
 	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
 	DrawFormatString(0, 120, 0xffffff, "GoalRot={%.1f,%.1f,%.1f}", goalQua_.x, goalQua_.y, goalQua_.z);
-	VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();
+	VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetLockPos();
 	float deg = static_cast<float>(Utility::AngleDeg(pos_, VSub(rockPos, pos_)));
 	if (pos_.x > rockPos.x)deg = 180.0f + (180.0f - deg);
 	DrawFormatString(0, 140, 0xffffff, "RockDeg={%.1f}", deg);
@@ -205,11 +215,11 @@ void PlayerChara::DrawDebug(void)
 
 float PlayerChara::GetToLockDeg(void)
 {//ロックオン特有の角度設定
-	VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetRockPos();			//ロックオン対象位置	
+	VECTOR lockPos = SceneManager::GetInstance().GetCamera().GetLockPos();			//ロックオン対象位置	
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
 
 	//自分から対象へのベクトル
-	auto diff = VSub(rockPos, pos_);
+	auto diff = VSub(lockPos, pos_);
 	//角度求める
 	return atan2(diff.x, diff.z) - cameraRot.y;
 }
@@ -281,24 +291,24 @@ void PlayerChara::Move(void)
 	VECTOR dir = Utility::VECTOR_ZERO;
 	std::string seName = "Walk";
 
-	float afterRad = 0.0f;
+	afterMoveRad_ = 0.0f;
 
 	//移動方向
 	if (moveDir_ == MOVE_DIR::FORWARD) {
 		dir = cameraRot.GetForward();
-		afterRad = Utility::Deg2RadF(DEG_FORWARD);
+		afterMoveRad_ = Utility::Deg2RadF(DEG_FORWARD);
 	}
 	if (moveDir_ == MOVE_DIR::LEFT) {
 		dir = cameraRot.GetLeft();
-		afterRad = Utility::Deg2RadF(DEG_LEFT);
+		afterMoveRad_ = Utility::Deg2RadF(DEG_LEFT);
 	}
 	if (moveDir_ == MOVE_DIR::BACK) {
 		dir = cameraRot.GetBack();
-		afterRad = Utility::Deg2RadF(DEG_BACK);
+		afterMoveRad_ = Utility::Deg2RadF(DEG_BACK);
 	}
 	if (moveDir_ == MOVE_DIR::RIGHT) {
 		dir = cameraRot.GetRight();
-		afterRad = Utility::Deg2RadF(DEG_RIGHT);
+		afterMoveRad_ = Utility::Deg2RadF(DEG_RIGHT);
 	}
 
 	//速度設定
@@ -309,7 +319,7 @@ void PlayerChara::Move(void)
 		seName = "Dush";
 	}
 	//ロックオンの時
-	if (rState_ == ROCK_STATE::LOCKON)speed = MOVE_POW;
+	if (lockState_ == ROCK_STATE::LOCKON)speed = MOVE_POW;
 
 
 	//移動処理
@@ -317,17 +327,6 @@ void PlayerChara::Move(void)
 	//上下の移動が起きない様に
 	//ゆくゆくは重力とステージの当たり判定で処理する
 	pos_.y = 0.0f;
-
-	//ロックオンのとき
-	if (rState_ == ROCK_STATE::LOCKON) {
-		//敵との角度差を設定
-		afterRad = GetToLockDeg();
-	}
-
-	if (isRotation_) {
-		//目標角度設定
-		SetGoalRot(afterRad);
-	}
 
 	//アニメーション
 	//回避中は回避アニメーションを再生しているため他はしない
@@ -343,7 +342,7 @@ const std::string PlayerChara::DecideAnim(const MOVE_DIR _dir) const
 	if(isDush_)retAnim = "dushF";
 
 	//ロックオンのとき
-	if (rState_ == ROCK_STATE::LOCKON) {
+	if (lockState_ == ROCK_STATE::LOCKON) {
 		if (_dir == MOVE_DIR::LEFT) {
 			retAnim = "dushL";
 		}

@@ -13,6 +13,7 @@ namespace {
 	const float ACC_MOVE = 15.0f;	//物体の移動量
 	const float ACC_DEG = 2.0f;		//物体の回転量
 	const float ROT_DEG_MAX = 360.0f;	//回転角度の最大値
+	const float FLIP_POW = -0.7f;		//ベクトル反転の影響量
 }
 
 MagnetCatch::MagnetCatch(AbilityManager& _mng, PlayerChara& _master) :AbilityBase(_mng), master_(_master)
@@ -32,41 +33,29 @@ MagnetCatch::~MagnetCatch(void)
 
 void MagnetCatch::UpdateUse(std::weak_ptr<GimmickObjBase> _obj)
 {
-	//プレイヤーを回転させ、それに対応してカメラとオブジェクトを回転させたらいい感じになりそう？
-
-	//10/12にやること
-	//オブジェクトは相対座標を用いて回転させる。回転軸はプレイヤー
-	//カメラは上記の相対座標のXZを反転させた位置に設定する。
 	MakeChangeRelativePosition();
 
-	////回転後の位置設定
-	//Quaternion abilityRot = _playerQua.Mult(magRotY_);
-	//VECTOR relativePos2Player = abilityRot.PosAxis(relativePos_);
-	//_obj.lock()->SetPos(VAdd(_playerPos, relativePos2Player));
+	Camera& camera = SceneManager::GetInstance().GetCamera();
+	VECTOR cameraRelative = camera.GetC2FRelativeVec();
+	cameraRelative.y *= FLIP_POW;
+	VECTOR masterPos = master_.GetPos();
 
-	//VECTOR testFocusPos = VSub(_obj.lock()->GetPos(), _playerPos);
+	_obj.lock()->SetPos(VAdd(masterPos, cameraRelative));
 
-	//SoundManager& sndM = SoundManager::GetInstance();
+	VECTOR newObjPos = _obj.lock()->GetPos();
 
-	////カメラに情報を渡す
-	auto& camera = SceneManager::GetInstance().GetCamera();
-	//camera.SetFocusPos(testFocusPos);
+	camera.SetLockPos(newObjPos);
 
-	//プレイヤーの角度を設定する
-	auto cameraQua = camera.GetRot();
-	auto afterRot = master_.GetQua();
-	afterRot.y = cameraQua.y;
-	master_.SetQua(afterRot);
+	//プレイヤーの回転
+	//VECTOR cameraRot = camera.GetRot().ToEuler();
+	//VECTOR master2objDiff = VSub(newObjPos, masterPos);
 
-	VECTOR relativePos2Player = master_.GetQua().PosAxis(relativePos_);
-	_obj.lock()->SetPos(VAdd(master_.GetPos(), relativePos2Player));
-
-	camera.SetMirrorInfo(relativePos_, afterRot, rotationDeg_);
+	//auto rad = atan2(master2objDiff.x, master2objDiff.z) - cameraRot.y;
 
 	//紐の設定
 	startDirecPos_ = master_.GetPos();
-	goalDirecPos_= _obj.lock()->GetPos();
-	nowPos_= _obj.lock()->GetPos();
+	goalDirecPos_= newObjPos;
+	nowPos_= newObjPos;
 }
 
 void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj)
@@ -101,7 +90,8 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj)
 			camera.SetLockPos(goalDirecPos_);
 
 			//キャラクターの設定
-			master_.SetIsRotation(false);
+			//master_.SetIsRotation(false);
+			master_.ChangeLockState(true);
 		}
 	}
 

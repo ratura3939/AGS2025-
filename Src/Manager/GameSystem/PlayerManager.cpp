@@ -102,12 +102,12 @@ const VECTOR PlayerManager::GetFollowPos4UseMagnet(void)
 
 void PlayerManager::RedyLockOn(void)
 {
-	character_->ChangeRockState(true);
+	character_->ChangeLockState(true);
 }
 
 void PlayerManager::RedyLockOff(void)
 {
-	character_->ChangeRockState(false);
+	character_->ChangeLockState(false);
 }
 
 void PlayerManager::UserInput(AttackManager& _atk)

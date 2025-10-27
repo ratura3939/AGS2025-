@@ -118,13 +118,14 @@ public:
 	void Release(void);
 
 	//座標取得
-	const VECTOR GetPos(void) const;
-	const VECTOR GetRockPos(void)const;
-	const VECTOR GetGoalPos(void)const { return goalDirecPos_; }
+	const VECTOR& GetPos(void) const;
+	const VECTOR& GetLockPos(void)const;
+	const VECTOR& GetGoalPos(void)const { return goalDirecPos_; }
+	const VECTOR& GetC2FRelativeVec(void)const { return c2fRelative_; }
 
 	//回転取得
-	const Quaternion GetRot(void)const;
-	const VECTOR GetAngle(void)const;
+	const Quaternion& GetRot(void)const;
+	const VECTOR& GetAngle(void)const;
 	//回転スピード
 	const float GetRotSpeed(void)const;
 	void SetRotSpeed(const float _speed);
@@ -140,18 +141,15 @@ public:
 	void SetPos(const VECTOR& pos);
 	void SetFocusPos(const VECTOR& _focus);
 	void SetGoalFocusPos(const VECTOR& _focus);
-	void SetLockPos(const VECTOR& _lock, const bool _isRote = true);	//_isRote=ロックオン中回転を有効にするか(能力使用中は回転しないためそれ用)
+	void SetLockPos(const VECTOR& _lock);	//_isRote=ロックオン中回転を有効にするか(能力使用中は回転しないためそれ用)
 	void SetGoalPos(const VECTOR& _goal);
-
-	//ミラーリングの情報設定
-	void SetMirrorInfo(const VECTOR _vec, const Quaternion _qua, const float _deg);
 
 	//カメラを初期位置に戻す
 	void SetDefault(void);
 
 
-	const MODE GetMode(void);
-	const bool IsFinishShake(void) { return finishShake_; }
+	const MODE& GetMode(void)const;
+	const bool IsFinishShake(void) { return finishShake_; }	//画面揺れ終了判別
 
 	void DrawDebug(void);
 private:
@@ -172,11 +170,9 @@ private:
 	VECTOR pos_;
 
 	//ロックオン対象の位置
-	VECTOR lockPos_;
-	bool isRotation_;	//回転を有効にするか
-	VECTOR prevGoalPos_;
-	VECTOR lockOnGoalPos_;
-	float lockOnLerpStep_;
+	VECTOR lockPos_;		//ロックオン対象の位置
+	VECTOR prevGoalPos_;	//前回の目標位置
+	VECTOR lockOnGoalPos_;	//目標位置(ロックオン)
 
 	//カメラの注視点
 	VECTOR focusPos_;
@@ -209,14 +205,10 @@ private:
 	//揺れ方向
 	VECTOR shakeDir_;
 	//補完スピード
-	float lerpSpeed_;
+	float lerpStep_;
 
-	//ミラーリング(相対座標)
-	VECTOR mirrorRelativeVec_;
-	//ミラーリング(回転量)
-	Quaternion mirrorQua_;
-	//ミラーリング(角度)
-	float mirrorDeg_;
+	//追従対象との距離
+	VECTOR c2fRelative_;
 
 	//回転
 	void Rotation(void);

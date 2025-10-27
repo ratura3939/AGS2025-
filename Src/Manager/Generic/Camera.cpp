@@ -3,12 +3,18 @@
 #include "../../Utility/Utility.h"
 #include "SceneManager.h"
 #include "InputManager.h"
-//#include "../Object/Character/PlayableChara/PlayerBase.h"
 #include "Camera.h"
 
+namespace {
+	const float LERP_SPEED = 0.1f;
+	const float LERP_MAX = 1.0f;
+}
+
 Camera::Camera(void)
+	:
+	mode_(MODE::NONE)
+	, c2fRelative_(Utility::VECTOR_ZERO)
 {
-	mode_ = MODE::NONE;
 	currentMode_ = MODE::NONE;
 	pos_ = Utility::VECTOR_ZERO;
 	focusPos_ = Utility::VECTOR_ZERO;
@@ -31,17 +37,11 @@ Camera::Camera(void)
 	angles_.y = 0.0f;
 	angles_.z = 0.0f;
 
-	lerpSpeed_ = NO_LERP;
+	lerpStep_ = 0.0f;;
 	finishShake_ = false;
-	isRotation_ = true;
-
-	mirrorRelativeVec_ = Utility::VECTOR_ZERO;
-	mirrorQua_ = Quaternion::Identity();
-	mirrorDeg_ = 0.0f;
 
 	prevGoalPos_ = Utility::VECTOR_ZERO;
 	lockOnGoalPos_ = Utility::VECTOR_ZERO;
-	lockOnLerpStep_ = 0.0f;
 }
 
 Camera::~Camera(void)
@@ -64,6 +64,8 @@ void Camera::SetBeforeDraw(void)
 	//クリップ距離を設定する(SetDrawScreenでリセットされる)
 	SetCameraNearFar(CAMERA_NEAR, CAMERA_FAR);
 
+	lerpStep_ += LERP_SPEED;
+	if (lerpStep_ > LERP_MAX)lerpStep_ = LERP_MAX;
 
 	switch (mode_)
 	{
@@ -111,6 +113,8 @@ void Camera::SetBeforeDraw(void)
 
 	// DXライブラリのカメラとEffekseerのカメラを同期する。
 	Effekseer_Sync3DSetting();
+
+	c2fRelative_ = VSub(followObject_.pos, pos_);
 }
 
 void Camera::SetBeforeDrawFixedPoint(void)
@@ -147,10 +151,10 @@ void Camera::SetBeforeDrawFollow(void)
 	VECTOR gPos = VAdd(followPos, relativeCPos);
 
 	if (fabs(Utility::MagnitudeF(gPos) - Utility::MagnitudeF(pos_)) <= 10.0f) {
-		lerpSpeed_ = NO_LERP;
+		lerpStep_ = NO_LERP;
 	}
 
-	pos_ = Utility::Lerp(pos_, gPos, lerpSpeed_);
+	pos_ = Utility::Lerp(pos_, gPos, lerpStep_);
 
 	//注視点までの距離ベクトルを回転させ相対座標を生成
 	VECTOR relativeTPos = rot_.PosAxis(RELATIVE_C2T_POS);
@@ -165,9 +169,7 @@ void Camera::SetBeforeDrawFollow(void)
 
 void Camera::SetBeforeDrawLockOn(void)
 {
-	if (isRotation_) {
-		Rotation();
-	}
+	Rotation();
 
 	//追従対象の位置
 	VECTOR followPos = followObject_.pos;
@@ -192,7 +194,7 @@ void Camera::SetBeforeDrawLockOn(void)
 
 	//初動時のみに発動する
 	//カメラの初期ゴールを計算結果で算出した場所にする
-	if (!isReset_ && isRotation_) {
+	if (!isReset_) {
 		ChangeMode(MODE::RESET);
 		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(relative));
 		goal_.quaRot = followObject_.quaRot;
@@ -201,21 +203,14 @@ void Camera::SetBeforeDrawLockOn(void)
 
 	//注視点の更新
 	//ロックオン中の注視点は追従対象とロックオン対象の中間地点にある。
-	//focusPos_ = VAdd(followPos,VScale(distance, 0.5f));
 	goalFocusPos_ = VAdd(followPos, VScale(distance, 0.5f));
 	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.2f);
 
 	//カメラ位置の更新
 	prevGoalPos_ = lockOnGoalPos_;
 	lockOnGoalPos_ = VAdd(focusPos_, relativeCPos);
-	if (!Utility::Equals(lockOnGoalPos_, prevGoalPos_)) {
-		lockOnLerpStep_ = 0.0f;
-	}
 
-	lockOnLerpStep_ += RESET_STEP;
-	if (lockOnLerpStep_ > 1.0f)lockOnLerpStep_ = 1.0f;
-
-	pos_ = Utility::Lerp(pos_, lockOnGoalPos_, lockOnLerpStep_);
+	pos_ = Utility::Lerp(pos_, lockOnGoalPos_, lerpStep_);
 	//pos_ = VAdd(focusPos_, relativeCPos);
 
 	//ある程度の高さは保つ
@@ -264,12 +259,6 @@ void Camera::SetBeforeDrawShake(void)
 
 	// 移動先座標
 	 pos_ = VAdd(defaultPos_, velocity);
-
-	//float pow = WIDTH_SHAKE * sinf(stepShake_ * SPEED_SHAKE);
-	//VECTOR velocity = VScale(shakeDir_, pow);
-	//VECTOR newPos = VAdd(defaultPos_, velocity);
-	//pos_ = newPos;
-
 }
 
 void Camera::SetBeforeDrawReset(void)
@@ -317,9 +306,7 @@ void Camera::SetBeforeDrawAutoMove(void)
 
 void Camera::SetBeforeDrawMirror(void)
 {
-	if (isRotation_) {
-		Rotation();
-	}
+	Rotation();
 
 	//追従対象の位置
 	VECTOR followPos = followObject_.pos;
@@ -345,7 +332,7 @@ void Camera::SetBeforeDrawMirror(void)
 
 	//初動時のみに発動する
 	//カメラの初期ゴールを計算結果で算出した場所にする
-	if (!isReset_ && isRotation_) {
+	if (!isReset_) {
 		ChangeMode(MODE::RESET);
 		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(relative));
 		goal_.quaRot = followObject_.quaRot;
@@ -354,22 +341,14 @@ void Camera::SetBeforeDrawMirror(void)
 
 	//注視点の更新
 	//ロックオン中の注視点は追従対象とロックオン対象の中間地点にある。
-	//focusPos_ = VAdd(followPos,VScale(distance, 0.5f));
 	goalFocusPos_ = VAdd(followPos, VScale(distance, 0.5f));
 	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.2f);
 
 	//カメラ位置の更新
 	prevGoalPos_ = lockOnGoalPos_;
 	lockOnGoalPos_ = VAdd(focusPos_, relativeCPos);
-	if (!Utility::Equals(lockOnGoalPos_, prevGoalPos_)) {
-		lockOnLerpStep_ = 0.0f;
-	}
 
-	lockOnLerpStep_ += RESET_STEP;
-	if (lockOnLerpStep_ > 1.0f)lockOnLerpStep_ = 1.0f;
-
-	pos_ = Utility::Lerp(pos_, lockOnGoalPos_, lockOnLerpStep_);
-	//pos_ = VAdd(focusPos_, relativeCPos);
+	pos_ = Utility::Lerp(pos_, lockOnGoalPos_, lerpStep_);
 
 	//ある程度の高さは保つ
 	if (pos_.y < UNDER_LIMIT_Y)pos_.y = UNDER_LIMIT_Y;
@@ -387,17 +366,17 @@ void Camera::Release(void)
 {
 }
 
-const VECTOR Camera::GetPos(void) const
+const VECTOR& Camera::GetPos(void) const
 {
 	return pos_;
 }
 
-const Quaternion Camera::GetRot(void) const
+const Quaternion& Camera::GetRot(void) const
 {
 	return rot_;
 }
 
-const VECTOR Camera::GetAngle(void) const
+const VECTOR& Camera::GetAngle(void) const
 {
 	return angles_;
 }
@@ -425,7 +404,7 @@ void Camera::ChangeMode(MODE mode)
   	mode_ = mode;
 
 	isReset_ = false;
-	isRotation_ = true;
+	lerpStep_ = 0.0f;
 
 	//変更時の初期化処理
 	switch (mode_)
@@ -437,7 +416,6 @@ void Camera::ChangeMode(MODE mode)
 		break;
 
 	case MODE::FOLLOW:
-		lerpSpeed_ = LERP_SPEED;
 		break;
 
 	case MODE::SHAKE:
@@ -494,10 +472,9 @@ void Camera::SetGoalFocusPos(const VECTOR& _focus)
 	goalFocusPos_ = _focus;
 }
 
-void Camera::SetLockPos(const VECTOR& _lock, const bool _isRote)
+void Camera::SetLockPos(const VECTOR& _lock)
 {
 	lockPos_ = _lock;
-	isRotation_ = _isRote;
 }
 
 void Camera::SetGoalPos(const VECTOR& _goal)
@@ -505,22 +482,12 @@ void Camera::SetGoalPos(const VECTOR& _goal)
 	goalDirecPos_ = _goal;
 }
 
-void Camera::SetMirrorInfo(const VECTOR _vec, const Quaternion _qua, const float _deg)
-{
-	mirrorRelativeVec_ = _vec;
-	////XZ平面においてのミラーなのでXZを反転
-	//mirrorRelativeVec_.x *= -1.0f;
-	//mirrorRelativeVec_.z *= -1.0f;
-	mirrorQua_ = _qua;
-	mirrorDeg_ = _deg;
-}
-
-const VECTOR Camera::GetRockPos(void) const
+const VECTOR& Camera::GetLockPos(void) const
 {
 	return lockPos_;
 }
 
-const Camera::MODE Camera::GetMode(void)
+const Camera::MODE& Camera::GetMode(void) const
 {
 	return mode_;
 }

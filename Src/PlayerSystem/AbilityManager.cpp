@@ -253,6 +253,7 @@ void AbilityManager::EndUsingAbility(void)
 		selectObj_.reset();
 	}
 	
+	abilities_[static_cast<int>(useAbility_)]->EndAbility();
 
 	//•t—^F‚ğ‚È‚­‚·
 	stage_.SetAbilityColor(NONE_COLOR);

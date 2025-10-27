@@ -18,6 +18,7 @@ public:
 	virtual void UpdateDirection(std::weak_ptr<GimmickObjBase> _obj) = 0;
 	virtual void Draw(void) = 0;
 	virtual void ResetAbility(void) = 0;
+	virtual void EndAbility(void);
 
 protected:
 	AbilityManager& manager_;

@@ -57,14 +57,13 @@ public:
     /// ロックオン関係の状態変化
     /// </summary>
     /// <param name="_state">ture=ロックオン,false=ロックオフ</param>
-    void ChangeRockState(const bool _state);
+    void ChangeLockState(const bool _state);
 
     //状態関係
     const STATE GetState(void)const;    //取得
     void SetState(const STATE& _state); //設定(PlayerManagerからの受付)
     void PlayAnim(const std::string _anim); //アニメーションの再生(外部<マネージャ・当たり判定>より)
     const bool IsLock(void);
-    void SetIsRotation(const bool _flag) { isRotation_ = _flag; }
 
     void Damage(const float _pow)override;
 
@@ -85,7 +84,7 @@ private:
     void Move(void);    //移動処理
     const std::string DecideAnim(const MOVE_DIR _dir)const;
 
-    ROCK_STATE rState_; //ロックオン状態
+    ROCK_STATE lockState_; //ロックオン状態
     STATE state_;       //状態
 
     VECTOR focusPoint_; //注視点
@@ -93,7 +92,8 @@ private:
     //入力受付変数
     MOVE_DIR moveDir_;  //移動方向
     bool isDush_;       //走る
-    bool isRotation_;   //回転を行うか
+
+    float afterMoveRad_;    //移動後のキャラクター角度
 
     std::unique_ptr<PlayerUIController>uiCntl_; //UI
 
