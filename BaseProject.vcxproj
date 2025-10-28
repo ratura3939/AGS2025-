@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Common\ActorBase.cpp" />
+    <ClCompile Include="Src\Object\Common\ColliderBase.cpp" />
     <ClCompile Include="Src\PlayerSystem\Ability\LockTime.cpp" />
     <ClCompile Include="Src\PlayerSystem\Ability\MagnetCatch.cpp" />
     <ClCompile Include="Src\PlayerSystem\Ability\AbilityBase.cpp" />
@@ -81,6 +83,8 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Common\ActorBase.h" />
+    <ClInclude Include="Src\Object\Common\ColliderBase.h" />
     <ClInclude Include="Src\PlayerSystem\Ability\LockTime.h" />
     <ClInclude Include="Src\PlayerSystem\Ability\MagnetCatch.h" />
     <ClInclude Include="Src\PlayerSystem\Ability\AbilityBase.h" />
