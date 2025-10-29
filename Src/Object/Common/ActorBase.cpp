@@ -55,13 +55,9 @@ const VECTOR& ActorBase::GetDown(void) const
 	return GetDir(Utility::DIR_D);
 }
 
-VECTOR ActorBase::GetDir(const VECTOR& _vec) const
+const VECTOR& ActorBase::GetDir(const VECTOR& _vec) const
 {
 	return quaRot_.PosAxis(_vec);
-}
-
-void ActorBase::HitCollider(void)
-{
 }
 
 void ActorBase::UpdateRotQuat(void)

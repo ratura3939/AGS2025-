@@ -2,6 +2,7 @@
 #include"../../../Manager/Generic/ResourceManager.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../../Renderer/ModelRenderer.h"
+#include"../../Common/Geometry/Model.h"
 #include "Stage.h"
 
 //ローカル定数1
@@ -25,12 +26,20 @@ void Stage::Draw(void)
 	render_->Draw();
 }
 
+void Stage::HitCollider(const Collider::MASTER_TYPE& _hitType)
+{
+}
+
 void Stage::SetParam(void)
 {
 	ResourceManager& resM = ResourceManager::GetInstance();
 	modelId_ = resM.Load(ResourceManager::SRC::STAGE_MDL).handleId_;
 	pos_ = { 0.0f,-50.0f,0.0f };
 	scl_ = { 1.0f,1.0f,1.0f };
+
+	//コライダー設定
+	using COL_TYPE = Collider::MASTER_TYPE;
+	collider_ = std::make_unique<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::OBJECT}, std::move(std::make_unique<Model>(pos_, quaRot_, modelId_)));
 
 	//shader設定
 	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", 0, "NoiseWavePS.cso", 3);

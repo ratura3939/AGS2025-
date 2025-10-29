@@ -1,7 +1,7 @@
 #pragma once
 #include<DxLib.h>
 #include<memory>
-#include"../Common/ActorBase.h"
+#include"../../Common/ActorBase.h"
 #include"../../../Common/Quaternion.h"
 
 class ModelMaterial;
@@ -17,10 +17,9 @@ public:
 	GimmickObjBase(void);
 	virtual ~GimmickObjBase(void);
 
-	void Init(void);
-	void Update(void);
-	virtual void Draw(void);
-	void Release(void);
+	void Init(void)override;
+	virtual void Draw(void)override;
+	void Release(void)override;
 
 	/// <summary>
 	/// 付与色の設定
@@ -29,8 +28,6 @@ public:
 	void SetObjectRenderColor(const FLOAT4& _color);
 
 	//位置設定
-	void SetPos(const VECTOR _pos);	
-	const VECTOR& GetPos(void)const;
 	const VECTOR& GetScreenPos(void)const;
 
 	//モデル取得
@@ -60,27 +57,6 @@ protected:
 	using Update_f = void(GimmickObjBase::*)(void);
 	Update_f update_;
 
-#pragma region モデル基礎
-	int modelId_;	//モデルID
-
-	VECTOR pos_;	//座標
-	VECTOR prevPos_;//座標(１フレーム前)
-	VECTOR scl_;	//モデル大きさ
-	VECTOR rot_;	//回転情報(XYZ)
-
-	//各情報の行列か
-	MATRIX matScl_;
-	MATRIX matRot_;
-	MATRIX matPos_;
-
-	// 回転
-	Quaternion quaRot_;
-	Quaternion quaRotOrigin_;
-
-	// ローカル回転
-	Quaternion quaRotLocal_;
-#pragma endregion
-
 #pragma region shader関連
 	std::unique_ptr<ModelMaterial> material_;
 	std::unique_ptr<ModelRenderer> render_;
@@ -97,5 +73,8 @@ protected:
 	//デバッグ
 	bool isDrawScreenPosCircle_;
 	int screenPosColor_;
+
+private:
+	void DoUpdate(void)override;
 };
 

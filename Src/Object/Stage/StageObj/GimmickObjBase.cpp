@@ -29,7 +29,7 @@ void GimmickObjBase::Init(void)
 	render_ = std::make_unique<ModelRenderer>(modelId_, *material_);
 }
 
-void GimmickObjBase::Update(void)
+void GimmickObjBase::DoUpdate(void)
 {
 	(this->*update_)();
 }
@@ -52,16 +52,6 @@ void GimmickObjBase::Release(void)
 void GimmickObjBase::SetObjectRenderColor(const FLOAT4& _color)
 {
 	material_->SetConstBufPS(0, _color);
-}
-
-void GimmickObjBase::SetPos(const VECTOR _pos)
-{
-	pos_ = _pos;
-}
-
-const VECTOR& GimmickObjBase::GetPos(void) const
-{
-	return pos_;
 }
 
 const VECTOR& GimmickObjBase::GetScreenPos(void) const
@@ -131,8 +121,6 @@ void GimmickObjBase::UpdateRotQuat(void)
 
 void GimmickObjBase::UpdateNomal(void)
 {
-	UpdateRotQuat();
-
 	if (isActiveGravity_) {
 		//èdóÕèàóù
 		gravity_ += GRAVITY_POW;

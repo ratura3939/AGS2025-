@@ -2,8 +2,9 @@
 #include<DxLib.h>
 #include<memory>
 #include"../../Common/Quaternion.h"
+#include"Collider.h"
 
-class ColliderBase;
+class Collider;
 
 class ActorBase
 {
@@ -12,7 +13,7 @@ public:
 	virtual ~ActorBase(void);
 
 	virtual void Init(void) = 0;
-	virtual void Update(void);
+	void Update(void);
 	virtual void Draw(void) = 0;
 	virtual void Release(void) = 0;
 
@@ -29,13 +30,13 @@ public:
 	const VECTOR& GetDown(void) const;
 
 	// 対象方向を取得
-	VECTOR GetDir(const VECTOR& _vec) const;
+	const VECTOR& GetDir(const VECTOR& _vec) const;
 
 	//衝突後の処理
-	void HitCollider(void);
+	virtual void HitCollider(const Collider::MASTER_TYPE& _hitType) = 0;
 
 protected:
-	virtual void DoUpdate(void) = 0;
+	virtual void DoUpdate(void) = 0;	//派生クラスの更新処理
 
 #pragma region モデル基礎
 	int modelId_;	//モデルID
@@ -57,9 +58,9 @@ protected:
 	Quaternion quaRotLocal_;
 #pragma endregion
 
-	std::unique_ptr<ColliderBase> collider_;
+	std::unique_ptr<Collider> collider_;
 
 private:
-	void UpdateRotQuat(void);
+	void UpdateRotQuat(void);	//基礎情報の更新
 };
 
