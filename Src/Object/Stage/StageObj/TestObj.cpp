@@ -11,6 +11,13 @@ namespace {
 
 void TestObj::HitCollider(Collider& _col)
 {
+	for (auto& type : _col.GetTypes()) {
+		//オブジェクトに当たった場合
+		if (type == Collider::MASTER_TYPE::OBJECT) {
+
+		}
+	}
+	
 }
 
 void TestObj::SetParam(void)
