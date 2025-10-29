@@ -1,13 +1,14 @@
 #pragma once
-
 #include<DxLib.h>
 #include<memory>
+#include"../Common/ActorBase.h"
 #include"../../../Common/Quaternion.h"
 
 class ModelMaterial;
 class ModelRenderer;
 
-class GimmickObjBase
+class GimmickObjBase 
+	: public ActorBase
 {
 public:
 	static constexpr FLOAT4 NOMAL_COLOR = { 0.0f,0.0f,0.0f,1.0f };
