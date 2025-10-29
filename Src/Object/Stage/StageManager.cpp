@@ -1,3 +1,4 @@
+#include<DxLib.h>
 #include"StageObj/TestObj.h"
 #include"StageObj/TestObj2.h"
 #include"StageObj/Stage.h"
@@ -33,7 +34,7 @@ void StageManager::Draw(void)
 	}
 }
 
-void StageManager::SetAbilityColor(const FLOAT4 _color)
+void StageManager::SetAbilityColor(const FLOAT4& _color)
 {
 	for (auto& obj : gmkObjs_) {
 		obj->SetObjectRenderColor(_color);
@@ -49,5 +50,24 @@ std::vector<std::weak_ptr<GimmickObjBase>> StageManager::GetAffectAbilityObjecte
 		}
 	}
 	return ret;
+}
+
+void StageManager::GravityCollisionCheck(void)
+{
+	int stageMdlId = gmkObjs_[STAEGE_OBJ_NUM]->GetModelId();
+	int idx = 0;
+
+	for (auto& obj : gmkObjs_) {
+		//地形オブジェクトはスキップ
+		if (idx == STAEGE_OBJ_NUM) {
+			idx++;
+			continue;
+		}
+
+		//当たり判定チェック
+		
+
+		idx++;
+	}
 }
 

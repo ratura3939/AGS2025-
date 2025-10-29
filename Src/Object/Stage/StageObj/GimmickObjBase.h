@@ -21,8 +21,6 @@ public:
 	virtual void Draw(void);
 	void Release(void);
 
-	const bool IsHitCameraRay(const VECTOR& _start, const VECTOR& _end)const;
-
 	/// <summary>
 	/// 付与色の設定
 	/// </summary>
@@ -33,6 +31,9 @@ public:
 	void SetPos(const VECTOR _pos);	
 	const VECTOR& GetPos(void)const;
 	const VECTOR& GetScreenPos(void)const;
+
+	//モデル取得
+	const int GetModelId(void)const;
 
 	//能力の影響を受けるか
 	const bool IsAffectAbility(void)const;	

@@ -12,10 +12,12 @@ public:
 	void Update(void);
 	void Draw(void);
 
-	void SetAbilityColor(const FLOAT4 _color);
+	void SetAbilityColor(const FLOAT4& _color);
 	std::vector<std::weak_ptr<GimmickObjBase>> GetAffectAbilityObjectes(void)const;
 
 private:
+	void GravityCollisionCheck(void);
+
 	std::vector<std::shared_ptr<GimmickObjBase>>gmkObjs_;
 };
 

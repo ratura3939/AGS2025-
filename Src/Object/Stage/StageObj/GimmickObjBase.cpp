@@ -49,11 +49,6 @@ void GimmickObjBase::Release(void)
 {
 }
 
-const bool GimmickObjBase::IsHitCameraRay(const VECTOR& _start, const VECTOR& _end)const
-{
-	return MV1CollCheck_Line(modelId_,-1,_start,_end).HitFlag;
-}
-
 void GimmickObjBase::SetObjectRenderColor(const FLOAT4& _color)
 {
 	material_->SetConstBufPS(0, _color);
@@ -72,6 +67,11 @@ const VECTOR& GimmickObjBase::GetPos(void) const
 const VECTOR& GimmickObjBase::GetScreenPos(void) const
 {
 	return screenPos_;
+}
+
+const int GimmickObjBase::GetModelId(void) const
+{
+	return modelId_;
 }
 
 const bool GimmickObjBase::IsAffectAbility(void) const
