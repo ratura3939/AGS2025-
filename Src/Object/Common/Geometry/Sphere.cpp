@@ -12,6 +12,11 @@ Sphere::~Sphere(void)
 {
 }
 
+const bool Sphere::IsHit(Geometry& _geo)
+{
+	return _geo.IsHit(*this);
+}
+
 const bool Sphere::IsHit(Sphere& _sphere)
 {
 	float radiusSum = radius_ + _sphere.GetRadius();

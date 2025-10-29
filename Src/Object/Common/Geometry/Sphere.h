@@ -7,6 +7,7 @@ public:
     Sphere(const VECTOR& _pos, const float _radius);
 	~Sphere(void) override;
 
+    const bool IsHit(Geometry& _geo) override;
     const bool IsHit(Sphere& _sphere) override;
 	const bool IsHit(Model& _model) override;
 

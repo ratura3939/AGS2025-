@@ -103,7 +103,7 @@ void Game::Init(void)
 	AttackDataInit();
 
 	//判定
-	collision_ = std::make_unique<CollisionManager>();
+	CollisionManager::CreateInstance();
 
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
@@ -325,7 +325,7 @@ void Game::GameUpdate(void)
 	atkMng_->Update();
 
 	//判定処理/その中でスロー演出が入るかどうか
-	if (collision_->Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks())) {
+	if (CollisionManager::GetInstance().Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks())) {
 		StartSlow();
 	}
 

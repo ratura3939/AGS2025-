@@ -11,7 +11,7 @@ public:
 
 	void Draw(void)override;
 
-	void HitCollider(const Collider::MASTER_TYPE& _hitType)override;
+	void HitCollider(Collider& _col)override;
 
 private:
 	void SetParam(void)override;

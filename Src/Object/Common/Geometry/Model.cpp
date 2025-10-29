@@ -12,6 +12,11 @@ Model::~Model(void)
 {
 }
 
+const bool Model::IsHit(Geometry& _geo)
+{
+    return _geo.IsHit(*this);
+}
+
 const bool Model::IsHit(Sphere& _sphere)
 {
     auto col = MV1CollCheck_Sphere(modelId_, -1, _sphere.GetPos(), _sphere.GetRadius());

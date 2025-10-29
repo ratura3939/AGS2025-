@@ -16,7 +16,7 @@ TestObj2::~TestObj2(void)
 {
 }
 
-void TestObj2::HitCollider(const Collider::MASTER_TYPE& _hitType)
+void TestObj2::HitCollider(Collider& _col)
 {
 }
 
@@ -38,4 +38,6 @@ void TestObj2::SetParam(void)
 	//デバッグ
 	isDrawScreenPosCircle_ = true;
 	screenPosColor_ = 0xff00ff;
+
+	isActiveGravity_ = false;
 }

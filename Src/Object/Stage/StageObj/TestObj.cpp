@@ -1,4 +1,5 @@
 #include"../../../Manager/Generic/ResourceManager.h"
+#include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../Common/Geometry/Sphere.h"
 #include "TestObj.h"
@@ -8,7 +9,7 @@ namespace {
 	const float SPHERE_RADIUS = 50.0f;	//コライダー半径
 }
 
-void TestObj::HitCollider(const Collider::MASTER_TYPE& _hitType)
+void TestObj::HitCollider(Collider& _col)
 {
 }
 
@@ -23,6 +24,7 @@ void TestObj::SetParam(void)
 	//コライダー設定
 	using COL_TYPE = Collider::MASTER_TYPE;
 	collider_ = std::make_unique<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::OBJECT}, std::move(std::make_unique<Sphere>(pos_, SPHERE_RADIUS)));
+	CollisionManager::GetInstance().AddCollider(*collider_);
 
 	//shader設定
 	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", 0, "StdModelPS.cso", 1);

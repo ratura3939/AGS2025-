@@ -13,7 +13,7 @@ Collider::~Collider(void)
 {
 }
 
-void Collider::OnHit(const MASTER_TYPE& _hitType)
+void Collider::OnHit(Collider& _col)
 {
 	master_.HitCollider(_hitType);
 }

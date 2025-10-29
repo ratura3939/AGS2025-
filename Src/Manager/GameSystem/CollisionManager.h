@@ -6,12 +6,20 @@
 class PlayerChara;
 class EnemyBase;
 class AttackBase;
+class Collider;
 
+//オブジェクトのコライダーを各自登録するために、シングルトン化
 class CollisionManager
 {
 public:
-	CollisionManager(void);
-	~CollisionManager(void);
+	static void CreateInstance(void);
+	static CollisionManager& GetInstance(void);
+	void Destroy(void);
+
+	void AddCollider(Collider& _col);
+
+	//すべてのコライダーの衝突判定
+	void UpdateColliders(void);
 
 	/// <summary>
 	/// 当たり判定総括
@@ -23,6 +31,11 @@ public:
 	const bool Collision(std::weak_ptr<PlayerChara> _player, std::vector<std::weak_ptr<EnemyBase>> _enemys, std::vector<AttackManager::AttackCollision> _atks);
 
 private:
+	static CollisionManager* instance_;
+
+	CollisionManager(void);
+	~CollisionManager(void);
+
 	/// <summary>
 	/// プレイヤーの当たり判定関係まとめ
 	/// </summary>
@@ -36,7 +49,14 @@ private:
 	/// <param name="_enemy">敵情報</param>
 	/// <param name="_atk">攻撃情報</param>
 	void CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _enemys, std::vector<AttackManager::AttackCollision> _atks);
+	
+	//コライダーの衝突判定
+	void CollisionGeometry(Collider& _col1, Collider& _col2);
+
+	const bool CheckCollisionTypes(const Collider& _col1, const Collider& _col2);
 
 	bool isSlow_;	//スロー演出するか
+
+	std::vector<Collider&> colliders_;
 };
 

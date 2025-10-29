@@ -11,6 +11,7 @@ public:
 	virtual ~Geometry(void);
 
 #pragma region “–‚½‚è”»’èŠeŽí
+	virtual const bool IsHit(Geometry& _geo) = 0;
 	virtual const bool IsHit(Sphere& _sphere) = 0;
 	virtual const bool IsHit(Model& _model) = 0;
 #pragma endregion

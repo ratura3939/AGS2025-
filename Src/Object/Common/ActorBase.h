@@ -33,7 +33,7 @@ public:
 	const VECTOR& GetDir(const VECTOR& _vec) const;
 
 	//衝突後の処理
-	virtual void HitCollider(const Collider::MASTER_TYPE& _hitType) = 0;
+	virtual void HitCollider(Collider& _col) = 0;
 
 protected:
 	virtual void DoUpdate(void) = 0;	//派生クラスの更新処理
