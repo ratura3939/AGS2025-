@@ -13,7 +13,12 @@ Collider::~Collider(void)
 {
 }
 
-void Collider::OnHit(Collider& _col)
+void Collider::OnHit(std::weak_ptr<Collider> _col)
 {
-	master_.HitCollider(_hitType);
+	master_.HitCollider(_col);
+}
+
+void Collider::DrawDebugCollider(void)
+{
+	geometry_->DebugDraw();
 }

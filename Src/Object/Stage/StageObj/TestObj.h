@@ -6,9 +6,10 @@ class TestObj final :
     public GimmickObjBase
 {
 public:
-    void HitCollider(Collider& _col)override;
+    void HitCollider(std::weak_ptr<Collider> _col)override;
 
 private:
     void SetParam(void)override;
+	void DrawDebug(void)override;
 };
 

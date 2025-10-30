@@ -15,5 +15,6 @@ public:
 
 private:
 	int modelId_;
+	MV1_COLL_RESULT_POLY_DIM hitSphereInfo_;
 };
 

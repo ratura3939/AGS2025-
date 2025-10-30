@@ -18,6 +18,9 @@ public:
 
 	const VECTOR& GetPos(void) const { return colPos_; }
 	const Quaternion& GetRot(void) const { return colRot_; }
+	const VECTOR& GetNormal(void) const { return normal_; }
+
+	void SetNormal(const VECTOR& _normal) { normal_ = _normal; }
 
 	//デバッグ
 	virtual void DebugDraw(void) = 0;
@@ -28,4 +31,6 @@ protected:
 
 	const VECTOR& colPos_;
 	const Quaternion& colRot_;
+
+	VECTOR normal_;
 };

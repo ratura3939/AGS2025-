@@ -11,7 +11,7 @@ public:
 
 	void Draw(void)override;
 
-	void HitCollider(Collider& _col)override;
+	void HitCollider(std::weak_ptr<Collider> _col)override;
 
 private:
 	void SetParam(void)override;

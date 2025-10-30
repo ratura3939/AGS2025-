@@ -19,8 +19,10 @@ const bool Model::IsHit(Geometry& _geo)
 
 const bool Model::IsHit(Sphere& _sphere)
 {
-    auto col = MV1CollCheck_Sphere(modelId_, -1, _sphere.GetPos(), _sphere.GetRadius());
-    return col.HitNum >= 1;
+    hitSphereInfo_ = MV1CollCheck_Sphere(modelId_, -1, _sphere.GetPos(), _sphere.GetRadius());
+    bool isHit = hitSphereInfo_.HitNum >= 1;
+
+    return isHit;
 }
 
 const bool Model::IsHit(Model& _model)

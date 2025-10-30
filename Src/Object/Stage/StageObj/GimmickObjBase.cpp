@@ -4,14 +4,16 @@
 
 GimmickObjBase::GimmickObjBase(void)
 	:
-	gravity_(0.0f),
-	isAffectAbilyty_(true),
-	isTargeting_(false)
+	gravity_({ 0.0f,0.0f,0.0f })
+	, moveVec_({ 0.0f,0.0f,0.0f })
+	,isAffectAbilyty_(true)
+	,isTargeting_(false)
+	, prePos_({ 0.0f,0.0f,0.0f })
+	, screenPos_({ 0.0f,0.0f,0.0f })
+	, isActiveGravity_(true)
+	, isAffectingNow_(false)
+	, update_(&GimmickObjBase::UpdateNomal)
 {
-	screenPos_ = { 0.0f,0.0f,0.0f };
-	isAffectingNow_ = false;
-	isActiveGravity_ = true;
-	update_ = &GimmickObjBase::UpdateNomal;
 }
 
 GimmickObjBase::~GimmickObjBase(void)
@@ -27,6 +29,8 @@ void GimmickObjBase::Init(void)
 	MV1SetScale(modelId_, scl_);
 
 	render_ = std::make_unique<ModelRenderer>(modelId_, *material_);
+
+	gravity_.y = GRAVITY_POW;
 }
 
 void GimmickObjBase::DoUpdate(void)
@@ -43,7 +47,15 @@ void GimmickObjBase::Draw(void)
 		screenPos_ = ConvWorldPosToScreenPos(pos_);
 		DrawCircle(screenPos_.x, screenPos_.y, 10, screenPosColor_);
 	}
+
+	DrawDebug();
 }
+
+void GimmickObjBase::DrawDebug(void) 
+{
+	collider_->DrawDebugCollider();
+}
+
 
 void GimmickObjBase::Release(void)
 {
@@ -94,37 +106,14 @@ void GimmickObjBase::FinishAffect(void)
 	update_ = &GimmickObjBase::UpdateNomal;
 }
 
-void GimmickObjBase::UpdateRotQuat(void)
-{
-	// 大きさ
-	matScl_ = MGetScale(scl_);
-
-	// 回転
-	rot_ = quaRot_.ToEuler();
-	matRot_ = quaRot_.ToMatrix();
-
-	// 位置
-	matPos_ = MGetTranslate(pos_);
-
-	// 行列の合成
-	MATRIX mat = MGetIdent();
-	mat = MMult(mat, matScl_);
-	Quaternion q = quaRot_.Mult(quaRotLocal_);
-	mat = MMult(mat, q.ToMatrix());
-	mat = MMult(mat, matPos_);
-
-	// 行列をモデルに判定
-	if (modelId_ != -1) {
-		MV1SetMatrix(modelId_, mat);
-	}
-}
-
 void GimmickObjBase::UpdateNomal(void)
 {
 	if (isActiveGravity_) {
+		prePos_ = pos_;
 		//重力処理
-		gravity_ += GRAVITY_POW;
-		pos_.y -= gravity_;
+		gravity_.y += GRAVITY_POW;
+		moveVec_ = VAdd(moveVec_, gravity_);
+		pos_ = VAdd(pos_, moveVec_);
 	}
 }
 

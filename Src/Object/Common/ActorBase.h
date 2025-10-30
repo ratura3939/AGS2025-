@@ -33,7 +33,7 @@ public:
 	const VECTOR& GetDir(const VECTOR& _vec) const;
 
 	//衝突後の処理
-	virtual void HitCollider(Collider& _col) = 0;
+	virtual void HitCollider(std::weak_ptr<Collider> _col) = 0;
 
 protected:
 	virtual void DoUpdate(void) = 0;	//派生クラスの更新処理
@@ -58,7 +58,7 @@ protected:
 	Quaternion quaRotLocal_;
 #pragma endregion
 
-	std::unique_ptr<Collider> collider_;
+	std::shared_ptr<Collider> collider_;
 
 private:
 	void UpdateRotQuat(void);	//基礎情報の更新

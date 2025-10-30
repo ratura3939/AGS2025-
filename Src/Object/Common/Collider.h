@@ -21,7 +21,7 @@ public:
 	~Collider(void);
 
 	//衝突処理
-	void OnHit(Collider& _col);
+	void OnHit(std::weak_ptr<Collider> _col);
 
 	//タイプの取得
 	const std::set<MASTER_TYPE>& GetTypes(void) const { return types_; }
@@ -29,6 +29,8 @@ public:
 
 	//形状の取得
 	Geometry& GetGeometry(void) const { return *geometry_; }
+
+	void DrawDebugCollider(void);
 
 protected:
 	//持ち主

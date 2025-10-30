@@ -42,7 +42,7 @@ CollisionManager::~CollisionManager(void)
 {
 }
 
-void CollisionManager::AddCollider(Collider& _col)
+void CollisionManager::AddCollider(std::weak_ptr<Collider> _col)
 {
 	colliders_.push_back(_col);
 }
@@ -56,6 +56,7 @@ void CollisionManager::UpdateColliders(void)
 		for(int i = idx + 1; i < static_cast<int>(colliders_.size()); i++) {
 			CollisionGeometry(col, colliders_[i]);
 		}
+		idx++;
 	}
 }
 
@@ -191,27 +192,27 @@ void CollisionManager::CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _ene
 	}
 }
 
-void CollisionManager::CollisionGeometry(Collider& _col1, Collider& _col2)
+void CollisionManager::CollisionGeometry(std::weak_ptr<Collider> _col1, std::weak_ptr<Collider> _col2)
 {
 	//タイプの確認(双方)
 	if (!CheckCollisionTypes(_col1, _col2))return;
 	if (!CheckCollisionTypes(_col2, _col1))return;
 	
 	//形状同士の当たり判定
-	auto& geo1 = _col1.GetGeometry();
-	auto& geo2 = _col2.GetGeometry();
+	auto& geo1 = _col1.lock()->GetGeometry();
+	auto& geo2 = _col2.lock()->GetGeometry();
 
 	//衝突があった場合
 	if (geo1.IsHit(geo2)) {
-		_col1.OnHit(_col2);
-		_col2.OnHit(_col1);
+		_col1.lock()->OnHit(_col2);
+		_col2.lock()->OnHit(_col1);
 	}
 }
 
-const bool CollisionManager::CheckCollisionTypes(const Collider& _col1, const Collider& _col2)
+const bool CollisionManager::CheckCollisionTypes(const std::weak_ptr<Collider> _col1, const std::weak_ptr<Collider> _col2)
 {
-	for (auto& type : _col1.GetTypes()) {
-		for (auto& type2 : _col2.GetNoHitTypes()) {
+	for (auto& type : _col1.lock()->GetTypes()) {
+		for (auto& type2 : _col2.lock()->GetNoHitTypes()) {
 			//相手の無効タイプに自分のタイプがあったら処理しない
 			if (type == type2) {
 				return false;

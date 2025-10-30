@@ -2,11 +2,11 @@
 #include<vector>
 #include<memory>
 #include"AttackManager.h"
+#include"../../Object/Common/Collider.h"
 
 class PlayerChara;
 class EnemyBase;
 class AttackBase;
-class Collider;
 
 //オブジェクトのコライダーを各自登録するために、シングルトン化
 class CollisionManager
@@ -16,7 +16,7 @@ public:
 	static CollisionManager& GetInstance(void);
 	void Destroy(void);
 
-	void AddCollider(Collider& _col);
+	void AddCollider(std::weak_ptr<Collider> _col);
 
 	//すべてのコライダーの衝突判定
 	void UpdateColliders(void);
@@ -51,12 +51,12 @@ private:
 	void CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _enemys, std::vector<AttackManager::AttackCollision> _atks);
 	
 	//コライダーの衝突判定
-	void CollisionGeometry(Collider& _col1, Collider& _col2);
+	void CollisionGeometry(std::weak_ptr<Collider> _col1, std::weak_ptr<Collider> _col2);
 
-	const bool CheckCollisionTypes(const Collider& _col1, const Collider& _col2);
+	const bool CheckCollisionTypes(const std::weak_ptr<Collider> _col1, const std::weak_ptr<Collider> _col2);
 
 	bool isSlow_;	//スロー演出するか
 
-	std::vector<Collider&> colliders_;
+	std::vector<std::weak_ptr<Collider>> colliders_;
 };
 

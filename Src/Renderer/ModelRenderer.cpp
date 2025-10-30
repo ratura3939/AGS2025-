@@ -30,6 +30,8 @@ void ModelRenderer::Draw(void)
 
 	// 描画
 	MV1DrawModel(modelId_);
+	auto pos = MV1GetPosition(modelId_);
+	pos.x += 1.0f;
 
 	// テクスチャアドレスタイプを元に戻す
 	SetTextureAddressModeUV(DX_TEXADDRESS_CLAMP, DX_TEXADDRESS_CLAMP);

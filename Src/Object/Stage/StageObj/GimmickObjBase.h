@@ -12,7 +12,7 @@ class GimmickObjBase
 {
 public:
 	static constexpr FLOAT4 NOMAL_COLOR = { 0.0f,0.0f,0.0f,1.0f };
-	static constexpr float GRAVITY_POW = 0.98f;
+	static constexpr float GRAVITY_POW = -0.98f;
 
 	GimmickObjBase(void);
 	virtual ~GimmickObjBase(void);
@@ -48,11 +48,12 @@ public:
 
 protected:
 	virtual void SetParam(void) = 0;
-	void UpdateRotQuat(void);
 
 	void UpdateNomal(void);
 	void UpdateAffectLock(void);
 	void UpdateAffectMagnet(void);
+
+	virtual void DrawDebug(void);
 
 	using Update_f = void(GimmickObjBase::*)(void);
 	Update_f update_;
@@ -62,7 +63,9 @@ protected:
 	std::unique_ptr<ModelRenderer> render_;
 #pragma endregion
 
-	float gravity_;	//重力
+	VECTOR prePos_;		//前フレームの位置
+	VECTOR gravity_;	//重力
+	VECTOR moveVec_;	//移動ベクトル
 	bool isActiveGravity_;	//有効か無効か
 	bool isAffectAbilyty_;	//能力の影響を受けるか
 	bool isAffectingNow_;	//現在影響を受けているか

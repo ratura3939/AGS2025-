@@ -84,6 +84,9 @@ void Game::Init(void)
 
 	update_ = &Game::GameUpdate;
 
+	//判定
+	CollisionManager::CreateInstance();
+
 	//生成
 	//ステージ
 	stage_ = std::make_unique<StageManager>();
@@ -101,9 +104,6 @@ void Game::Init(void)
 	atkMng_ = std::make_unique<AttackManager>();
 	//攻撃の登録
 	AttackDataInit();
-
-	//判定
-	CollisionManager::CreateInstance();
 
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
@@ -331,6 +331,8 @@ void Game::GameUpdate(void)
 
 	//ステージ
 	stage_->Update();
+
+	CollisionManager::GetInstance().UpdateColliders();
 
 #pragma endregion
 

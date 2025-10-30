@@ -16,7 +16,7 @@ TestObj2::~TestObj2(void)
 {
 }
 
-void TestObj2::HitCollider(Collider& _col)
+void TestObj2::HitCollider(std::weak_ptr<Collider> _col)
 {
 }
 
@@ -29,7 +29,7 @@ void TestObj2::SetParam(void)
 
 	//コライダー設定
 	using COL_TYPE = Collider::MASTER_TYPE;
-	collider_ = std::make_unique<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::OBJECT}, std::move(std::make_unique<Sphere>(pos_, SPHERE_RADIUS)));
+	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::OBJECT}, std::move(std::make_unique<Sphere>(pos_, SPHERE_RADIUS)));
 
 	//shader設定
 	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", 0, "StdModelPS.cso", 1);
