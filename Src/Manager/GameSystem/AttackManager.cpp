@@ -6,178 +6,131 @@
 
 #include "AttackManager.h"
 
-
-void AttackManager::AddAttack(const std::string _name, const ATTACK_TYPE& _type, const bool _copy, const bool _friendFire,
-	const float _total, const float _start, const float _end,const int _modelId)
+void AttackManager::AddAttackCollider(const std::string _name, std::weak_ptr<Collider> _col, const bool _friendFire, const float _totalTime, const float _start, const float _end)
 {
-	//‚·‚Å‚É—v‘f‚ª‚ ‚é‚Æ‚«
-	if (attackInfoes_.contains(_name)) {
+	//Šù‚É—v‘f‚ª‚ ‚é‚Æ‚«
+	if(attackColliders_.contains(_name)){
 		//ƒGƒ‰[–h~
 		assert("‚·‚Å‚É“o˜^‚µ‚Ä‚¢‚é‚à‚Ì‚ğÄ“o˜^‚µ‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·");
 		return;
 	}
 
+	//UŒ‚—pƒRƒ‰ƒCƒ_[î•ñ‚ÌŠi”[
+	AttackInfo addInfo;
+	addInfo.collider = _col;
+	addInfo.totalTime = _totalTime;
+	addInfo.startTime = _start;
+	addInfo.endTime = _end;
+	if(_end==0.0f){
+		addInfo.endTime = _totalTime;
+	}
+	addInfo.counter = 0.0f;
+	addInfo.isUsed = false;
 
-	//İ’è‚³‚ê‚½î•ñ‚©‚çUŒ‚‚ğ¶¬
-	AttackInfo info = {};
-	info.group = ATTACK_MASTER::NONE;
-	info.type = _type;
-	info.isCopy = _copy;
+	attackColliders_.emplace(_name, addInfo);
 
-	info.isFriendFire = _friendFire;
-
-	info.totalMotion = _total;
-	info.startAttack = _start;
-	info.endAttack = _end;
-	info.counter = 0.0f;
-	info.isHit = false;
-	info.isAllert = false;
-
-	//UŒ‚î•ñ‚ğ’Ç‰Á
-	attackInfoes_.emplace(_name, info);
+	//FFİ’è
+	//ƒvƒŒƒCƒ„[–”‚Í“G‚Ì‚Ç‚¿‚ç‚©‚É“–‚½‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+	if (_friendFire) {
+		for (auto& colTags : _col.lock()->GetTags()) {
+			if(colTags==Collider::COL_TAG::PLAYER){
+				_col.lock()->AddNoHitTag(Collider::COL_TAG::PLAYER);
+				break;
+			}
+			else if (colTags == Collider::COL_TAG::ENEMY) {
+				_col.lock()->AddNoHitTag(Collider::COL_TAG::ENEMY);
+				break;
+			}
+		}
+	}
 }
 
-void AttackManager::Attack(const std::string _master, const std::string _name, const float _pow, const VECTOR& _pos, const Quaternion& _qua, const ATTACK_MASTER _group, const float _scale, const std::string _sndName, const int _arrowModel)
+void AttackManager::Attack(const std::string _name, const std::string _sndName)
 {
 	//‚»‚à‚»‚àg—p‚µ‚½‚¢UŒ‚‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢‚Æ‚«
-	if (!attackInfoes_.contains(_name)) {
+	if(!attackColliders_.contains(_name)){
 		//ƒGƒ‰[–h~
 		assert("“o˜^‚³‚ê‚Ä‚¢‚È‚¢UŒ‚‚ğ”­¶‚³‚¹‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·");
 		return;
 	}
 
-	//ƒRƒs[•s‰Â‚ÈUŒ‚‚ªA‚·‚Å‚ÉUŒ‚’†‚Ì‚È‚©‚É—v‘f‚ª‚ ‚é‚Æ‚«
-	if (activeAttacks_[_master].contains(_name) && !attackInfoes_[_name].isCopy) {
-		//‚»‚à‚»‚à‚ ‚é‚Ì‚Åˆ—‚µ‚È‚¢
+	if(attackColliders_.at(_name).isUsed){
+		//ƒGƒ‰[–h~
+		assert("‚·‚Å‚Ég—p’†‚ÌUŒ‚‚ğÄ“x”­¶‚³‚¹‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·");
 		return;
 	}
 
-	//’Ç‰Á‚·‚éUŒ‚‚Ìì¬
-	//î•ñ•”
-	attackInfoes_[_name].scale = _scale;
-	attackInfoes_[_name].group = _group;
-	attackInfoes_[_name].isAllert = false;
-	//UŒ‚•”
-	AttackItself addAtk = { _pos,_pow };
-	//‡‚í‚¹‚½‚à‚Ì
-	AttackCollision addCol = { attackInfoes_[_name],addAtk };
-
-
-	//UŒ‚”»’è‚Ì¶¬**
-	//Œ•‚Ìê‡
-	if (attackInfoes_[_name].type == ATTACK_TYPE::SWORD) {
-		//’Ç‰Áv
-		activeAttacks_[_master].emplace(_name, addCol);
-	}
-	//‹|‚Ìê‡
-	else if (attackInfoes_[_name].type == ATTACK_TYPE::BOW) {
-		//”O‚Ì‚½‚ß‚Ì—\–hô
-		if (_arrowModel == -1) {
-			assert("‹|‚Ìƒ‚ƒfƒ‹‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
-		}
-		//‹|–î‚Ìì¬
-		//arrows_.push_back(std::make_unique<Arrow>(addInfo.master, _arrowModel, _pos, _pow, _qua));
-	}
+	//UŒ‚”­¶
+	attackColliders_[_name].collider.lock()->SetUseThis(true);
+	//UŒ‚€”õ‚Ìƒ^ƒOİ’è
+	attackColliders_[_name].collider.lock()->AddTag(Collider::COL_TAG::PREATTACK);
 
 	//‰½‚©Ä¶‚·‚é•¨‚ª‚ ‚éê‡
 	if (_sndName != "") {
 		//Œø‰Ê‰¹‚ÌÄ¶
 		SoundManager::GetInstance().Play(_sndName);
 	}
-	
 }
 
 bool AttackManager::Update(void)
 {
-	//íœ€–Ú‹L‰¯—p
-	std::map<std::string, std::vector<std::string>>deleteAtkName;
-
 	//UŒ‚XVˆ—iUŒ‚”­¶Ò”•ªj
 	//master=first:UŒ‚”­¶Ò–¼ second:UŒ‚ƒf[ƒ^
-	for (auto& master : activeAttacks_) {
-		//atkData=first:UŒ‚í—Ş–¼@second:UŒ‚î•ñ
-		for (auto& atkData : master.second) {
-			auto data = atkData.second;
+	for (auto& atk : attackColliders_) {
+		//ƒJƒEƒ“ƒ^‚Ì‘‰Á
+		atk.second.counter++;
+		auto atkCol = atk.second.collider.lock();
 
-			AttackInfo& info = data.info;
-			//ƒJƒEƒ“ƒ^[‚ªãŒÀ‚æ‚èã‚¾‚Á‚½‚ç
-			if (info.counter >= info.totalMotion) {
-				//I—¹
-				info.counter = 0;
-				info.isHit = false;
-				//íœ€–Ú‚É’Ç‰Á
-				//”­¶Ò(atkAll.first)‚Ì‚±‚ÌUŒ‚(atkData.first)‚ğíœ‚·‚é‚Æ‹L‰¯
-				deleteAtkName[master.first].push_back(atkData.first);
-				continue;
+		//UŒ‚‚ªg—p’†‚Å‚È‚¯‚ê‚Î
+		if (!atk.second.isUsed) {
+			//UŒ‚ŠJnˆ—
+			if (atk.second.counter >= atk.second.startTime) {
+				//€”õó‘Ô¨UŒ‚ó‘Ô‚Ö
+				atkCol->DeleteTag(Collider::COL_TAG::PREATTACK);
+				atkCol->AddTag(Collider::COL_TAG::ATACK);
+				atk.second.isUsed = true;
 			}
-			//ƒJƒEƒ“ƒ^[‚ÌXV
-			info.counter++;
+		}
+		else {
+			if (atk.second.counter >= atk.second.endTime) {
+				//UŒ‚I—¹ˆ—
+				atkCol->SetUseThis(false);
+				atkCol->DeleteTag(Collider::COL_TAG::ATACK);
+				atk.second.counter = 0.0f;
+				atk.second.isUsed = false;
+			}
 		}
 	}
-
-	//íœ
-	for (auto& master : deleteAtkName) {
-		for (auto& atk : master.second) {
-			activeAttacks_[master.first].erase(atk);
-		}
-		if (activeAttacks_[master.first].size() <= 0) {
-			activeAttacks_.erase(master.first);
-		}
-	}
-
-
-	//‹|–î‚ÌXV
-	//for (auto& arrow : arrows_) {
-	//	arrow->Update();
-	//	//‹|–î‚ªÁ–Å‚µ‚½‚ç
-	//	//”z—ñ‚©‚çíœ‚·‚é
-	//}
-
 	return true;
-}
-
-std::vector<AttackManager::AttackCollision> AttackManager::GetActiveAttacks(void)
-{
-	std::vector<AttackCollision>retVector;
-	//UŒ‚‚Ì€–Ú”•ª
-	for (auto& master : activeAttacks_) {
-		//‚»‚Ì€–Ú–¼‚ªg‚í‚ê‚Ä‚¢‚éUŒ‚”•ª
-		for (auto& atkData : master.second) {
-			//î•ñ‚ğ“ü‚ê‚é
-			retVector.push_back(atkData.second);
-		}
-	}
-
-	return retVector;
 }
 
 const float AttackManager::GetTotalTime(const std::string _name) const
 {
 	//—v‘f‚ª‚È‚¢‚Æ‚«
-	if (!attackInfoes_.contains(_name)) {
+	if (!attackColliders_.contains(_name)) {
 		return -1.0f;
 	}
-	return attackInfoes_.at(_name).totalMotion;
+	return attackColliders_.at(_name).totalTime;
 }
 
 void AttackManager::DrawDebug(void)
 {
-	int color = 0xff00ff;
-	for (auto& master : activeAttacks_) {
-		for (auto& atkData : master.second) {
-			auto& info = attackInfoes_[atkData.first];
-			if (info.group == ATTACK_MASTER::ENEMY) {
-				if (info.counter < info.startAttack) {
-					color = 0x00ff00;
-				}
-				else if (info.counter >= info.endAttack) {
-					color = 0x0000ff;
-				}
-				else color = 0xff00ff;
-			}
-			//ƒfƒoƒbƒO—p‚Ì‹…‘Ì‚ğ•`‰æ
-			DrawSphere3D(atkData.second.attack.pos, info.scale, 8, color, color, false);
-		}
-	}
+	//int color = 0xff00ff;
+	//for (auto& master : activeAttacks_) {
+	//	for (auto& atkData : master.second) {
+	//		auto& info = attackInfoes_[atkData.first];
+	//		if (info.group == ATTACK_MASTER::ENEMY) {
+	//			if (info.counter < info.startAttack) {
+	//				color = 0x00ff00;
+	//			}
+	//			else if (info.counter >= info.endAttack) {
+	//				color = 0x0000ff;
+	//			}
+	//			else color = 0xff00ff;
+	//		}
+	//		//ƒfƒoƒbƒO—p‚Ì‹…‘Ì‚ğ•`‰æ
+	//		DrawSphere3D(atkData.second.attack.pos, info.scale, 8, color, color, false);
+	//	}
+	//}
 	
 }

@@ -39,7 +39,7 @@ void Stage::SetParam(void)
 	scl_ = { 1.0f,1.0f,1.0f };
 
 	//コライダー設定
-	using COL_TYPE = Collider::MASTER_TYPE;
+	using COL_TYPE = Collider::COL_TAG;
 	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE}, std::move(std::make_unique<Model>(pos_, quaRot_, modelId_)));
 	CollisionManager::GetInstance().AddCollider(collider_);
 

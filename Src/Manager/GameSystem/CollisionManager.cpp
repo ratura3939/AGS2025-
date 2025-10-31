@@ -126,7 +126,7 @@ void CollisionManager::CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::
 
 
 			//発生時間中に当たっていたら
-			if (atkCol.info.IsOuccerAttack()) {
+			if (atkCol.info.IsOccerAttack()) {
 				//ダメージ
 				_player.lock()->Damage(atkCol.attack.pow);
 				//ダメージエフェクト・SEの再生
@@ -211,8 +211,8 @@ void CollisionManager::CollisionGeometry(std::weak_ptr<Collider> _col1, std::wea
 
 const bool CollisionManager::CheckCollisionTypes(const std::weak_ptr<Collider> _col1, const std::weak_ptr<Collider> _col2)
 {
-	for (auto& type : _col1.lock()->GetTypes()) {
-		for (auto& type2 : _col2.lock()->GetNoHitTypes()) {
+	for (auto& type : _col1.lock()->GetTags()) {
+		for (auto& type2 : _col2.lock()->GetNoHitTags()) {
 			//相手の無効タイプに自分のタイプがあったら処理しない
 			if (type == type2) {
 				return false;

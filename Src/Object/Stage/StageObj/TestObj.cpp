@@ -11,9 +11,10 @@ namespace {
 
 void TestObj::HitCollider(std::weak_ptr<Collider> _col)
 {
-	for (auto& type : _col.lock()->GetTypes()) {
+	//衝突したコライダーのタグを取得
+	for (auto& type : _col.lock()->GetTags()) {
 		//オブジェクトに当たった場合
-		if (type == Collider::MASTER_TYPE::STAGE) {
+		if (type == Collider::COL_TAG::STAGE) {
 			pos_ = prePos_;
 			gravity_ = { 0.0f,0.0f,0.0f };
 			//衝突した物体の法線方向に少し押し戻す
@@ -31,7 +32,7 @@ void TestObj::SetParam(void)
 	scl_ = { 1.0f,1.0f ,1.0f };
 
 	//コライダー設定
-	using COL_TYPE = Collider::MASTER_TYPE;
+	using COL_TYPE = Collider::COL_TAG;
 	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::OBJECT}, std::move(std::make_unique<Sphere>(pos_, SPHERE_RADIUS)));
 	CollisionManager::GetInstance().AddCollider(collider_);
 
