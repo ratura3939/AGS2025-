@@ -51,23 +51,3 @@ std::vector<std::weak_ptr<GimmickObjBase>> StageManager::GetAffectAbilityObjecte
 	}
 	return ret;
 }
-
-void StageManager::GravityCollisionCheck(void)
-{
-	int stageMdlId = gmkObjs_[STAEGE_OBJ_NUM]->GetModelId();
-	int idx = 0;
-
-	for (auto& obj : gmkObjs_) {
-		//地形オブジェクトはスキップ
-		if (idx == STAEGE_OBJ_NUM) {
-			idx++;
-			continue;
-		}
-
-		//当たり判定チェック
-		
-
-		idx++;
-	}
-}
-

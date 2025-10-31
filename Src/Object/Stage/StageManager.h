@@ -16,8 +16,6 @@ public:
 	std::vector<std::weak_ptr<GimmickObjBase>> GetAffectAbilityObjectes(void)const;
 
 private:
-	void GravityCollisionCheck(void);
-
 	std::vector<std::shared_ptr<GimmickObjBase>>gmkObjs_;
 };
 

@@ -13,7 +13,7 @@ void TestObj::HitCollider(std::weak_ptr<Collider> _col)
 {
 	for (auto& type : _col.lock()->GetTypes()) {
 		//オブジェクトに当たった場合
-		if (type == Collider::MASTER_TYPE::OBJECT) {
+		if (type == Collider::MASTER_TYPE::STAGE) {
 			pos_ = prePos_;
 			gravity_ = { 0.0f,0.0f,0.0f };
 			//衝突した物体の法線方向に少し押し戻す

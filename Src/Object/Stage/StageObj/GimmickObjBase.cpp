@@ -48,7 +48,7 @@ void GimmickObjBase::Draw(void)
 		DrawCircle(screenPos_.x, screenPos_.y, 10, screenPosColor_);
 	}
 
-	DrawDebug();
+	//DrawDebug();
 }
 
 void GimmickObjBase::DrawDebug(void) 

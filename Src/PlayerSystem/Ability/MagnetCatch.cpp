@@ -83,6 +83,7 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj)
 			//g—p‚É‘JˆÚ
 			manager_.ChangeState(AbilityManager::STATE::USE);
 			goalDirecPos_ = _obj.lock()->GetPos();
+			_obj.lock()->AffectedMagnet();
 			//ƒJƒƒ‰İ’è
 			auto& camera=SceneManager::GetInstance().GetCamera();
 			camera.ChangeMode(Camera::MODE::MIRROR);

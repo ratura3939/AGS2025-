@@ -240,6 +240,7 @@ void AbilityManager::UseAbility(void)
 	stage_.SetAbilityColor(NONE_COLOR);
 	//対象のオブジェクトは能力色を付与
 	selectObj_.lock()->SetObjectRenderColor(GetAbilityColor(useAbility_));
+	selectObj_.lock()->ResetGravity();
 
 	update_ = &AbilityManager::UpdateUse;
 

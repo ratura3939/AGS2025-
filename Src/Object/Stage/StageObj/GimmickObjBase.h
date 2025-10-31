@@ -45,6 +45,7 @@ public:
 	void AffectedMagnet(void);
 	void FinishAffect(void);
 
+	void ResetGravity(void) { gravity_ = { 0.0f,0.0f,0.0f }; }
 
 protected:
 	virtual void SetParam(void) = 0;
