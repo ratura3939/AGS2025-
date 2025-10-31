@@ -11,15 +11,12 @@ namespace {
 
 void TestObj::HitCollider(std::weak_ptr<Collider> _col)
 {
-	//衝突したコライダーのタグを取得
-	for (auto& type : _col.lock()->GetTags()) {
-		//オブジェクトに当たった場合
-		if (type == Collider::COL_TAG::STAGE) {
-			pos_ = prePos_;
-			gravity_ = { 0.0f,0.0f,0.0f };
-			//衝突した物体の法線方向に少し押し戻す
-			moveVec_ = VScale(moveVec_, -0.3f);
-		}
+	//ステージタグが存在するとき
+	if(_col.lock()->IsContainsTag(Collider::COL_TAG::STAGE)){
+		pos_ = prePos_;
+		gravity_ = { 0.0f,0.0f,0.0f };
+		//衝突した物体の法線方向に少し押し戻す
+		moveVec_ = VScale(moveVec_, -0.3f);
 	}
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include<DxLib.h>
 #include<memory>
+#include"../Common/ActorBase.h"
 #include "../../Common/Quaternion.h"
 #include"../../Manager/GameSystem/AnimationController.h"
 
@@ -11,6 +12,7 @@ class ModelRenderer;
 class Game;
 
 class CharacterBase
+	: public ActorBase
 {
 public:
 	//初期化用
@@ -41,17 +43,6 @@ public:
 	void UpdateAnimOnly(void);
 	virtual void Draw(void);
 	virtual const bool Release(void);
-
-	// 各種方向を取得
-	VECTOR GetForward(void) const;
-	VECTOR GetBack(void) const;
-	VECTOR GetRight(void) const;
-	VECTOR GetLeft(void) const;
-	VECTOR GetUp(void) const;
-	VECTOR GetDown(void) const;
-
-	// 対象方向を取得
-	VECTOR GetDir(const VECTOR& _vec) const;
 
 	//座標取得
 	const VECTOR GetPos(void)const;				//足元
@@ -98,29 +89,12 @@ protected:
 	void Rotation(void);
 
 #pragma region モデル基礎制御
-	int modelId_;	//モデルID
-
-	VECTOR pos_;	//座標
 	VECTOR prePos_;	//座標
 	VECTOR uiPos_; //UI表示位置
-	VECTOR scl_;	//モデル大きさ
-	VECTOR rot_;	//回転情報(XYZ)
 	Quaternion characterRotY_;	//Y軸回転用
 
 	Quaternion goalQua_;	//目標の回転量
 	float stepRotation_;	//回転のカウンター
-
-	//各情報の行列か
-	MATRIX matScl_;
-	MATRIX matRot_;
-	MATRIX matPos_;
-
-	// 回転
-	Quaternion quaRot_;
-	Quaternion quaRotOrigin_;
-
-	// ローカル回転
-	Quaternion quaRotLocal_;
 #pragma endregion
 
 	

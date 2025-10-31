@@ -37,6 +37,10 @@ public:
 	void DeleteTag(const COL_TAG& _tag);
 	void DeleteNoHitTag(const COL_TAG& _tag);
 
+	//ƒ^ƒO‚ÌŒŸõ
+	bool IsContainsTag(const COL_TAG& _tag) const { return tags_.contains(_tag); }
+	bool IsContainsNoHitTag(const COL_TAG& _tag) const { return noHitTags_.contains(_tag); }
+
 	//Œ`ó‚Ìæ“¾
 	Geometry& GetGeometry(void) const { return *geometry_; }
 

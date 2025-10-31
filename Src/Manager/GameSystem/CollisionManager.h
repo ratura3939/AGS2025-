@@ -8,6 +8,10 @@ class PlayerChara;
 class EnemyBase;
 class AttackBase;
 
+//10/31メモ
+//AttackManagerの更新を完了。このマネージャの改修及び、それに付随したプレイヤーや敵の辺り判定の改修を行う。
+//ジャスト回避の判定は設計的にプレイヤー側で行う。
+
 //オブジェクトのコライダーを各自登録するために、シングルトン化
 class CollisionManager
 {
