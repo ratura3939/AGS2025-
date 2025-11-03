@@ -16,7 +16,7 @@ public:
     /// <summary>
     /// ロックオン時状態にあるかどうか
     /// </summary>
-    enum class ROCK_STATE {
+    enum class LOCK_STATE {
         NOMAL,  //通常
         LOCKON, //ロックオン
         MAX
@@ -47,8 +47,7 @@ public:
     PlayerChara(void);
     ~PlayerChara(void)override;
 
-    const bool Init(const int _num)override;
-    void Update(void)override;
+    void Init(void)override;
 
     //注視点の取得
     const VECTOR GetFocusPoint(void)const;
@@ -78,13 +77,14 @@ public:
     void SetAtkAllert(void);    //攻撃危機察知
 
 private:
+    void DoUpdate(void)override;
     void InitAnim(void)override;
     void InitUI(void)override;
     void DrawUI(void)override;
     void Move(void);    //移動処理
     const std::string DecideAnim(const MOVE_DIR _dir)const;
 
-    ROCK_STATE lockState_; //ロックオン状態
+    LOCK_STATE lockState_; //ロックオン状態
     STATE state_;       //状態
 
     VECTOR focusPoint_; //注視点

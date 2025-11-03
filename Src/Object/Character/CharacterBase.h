@@ -5,7 +5,6 @@
 #include "../../Common/Quaternion.h"
 #include"../../Manager/GameSystem/AnimationController.h"
 
-//class AnimationController;
 class AttackManager;
 class ModelMaterial;
 class ModelRenderer;
@@ -37,16 +36,12 @@ public:
 	CharacterBase(void);
 	virtual ~CharacterBase(void);
 
-	virtual const bool Init(const int _num) = 0;
-	virtual void Update(void);
-	virtual void Update(const VECTOR _pPos, AttackManager& _atk);	//敵用(敵はキャラクター自身が行動を決めるのでそれ用に分けている)
-	void UpdateAnimOnly(void);
-	virtual void Draw(void);
-	virtual const bool Release(void);
+	virtual void Init(void)override = 0;
+	virtual void Draw(void)override;
+	void Release(void)override;
 
 	//座標取得
-	const VECTOR GetPos(void)const;				//足元
-	const VECTOR GetHeight(void)const;			//頭辺り
+	const VECTOR& GetHeight(void)const;			//頭辺り
 
 	//当たり判定の半径
 	const float GetCollisionRadius(void)const;
@@ -54,11 +49,8 @@ public:
 	void SetPrePos(void);
 
 	//回転情報の取得
-	const Quaternion GetQua(void)const;
+	const Quaternion& GetQua(void)const;
 	void SetQua(const Quaternion _qua);
-
-	//個体名取得
-	const std::string GetSpeciesName(void)const;
 
 	//判定
 	virtual const bool IsAlive(void)const;
@@ -74,11 +66,11 @@ public:
 	void DrawCupcel(void);
 
 protected:
+	virtual void DoUpdate(void)override = 0;
 	//必ず更新・初期化処理に入れること
 	//************************************************
 	virtual void InitAnim(void) = 0;
 	virtual void InitUI(void) = 0;
-	void UpdateRotQuat(void);
 	//**********************************************
 	//UI描画
 	virtual void DrawUI(void) = 0;
@@ -97,15 +89,10 @@ protected:
 	float stepRotation_;	//回転のカウンター
 #pragma endregion
 
-	
-
 #pragma region 描画関連
 	std::unique_ptr<ModelMaterial>material_;
 	std::unique_ptr<ModelRenderer>renderer_;
 #pragma endregion
-
-	//個体名
-	std::string speciesName_;
 
 	//アニメーション
 	std::unique_ptr<AnimationController> animController_;

@@ -50,36 +50,10 @@ void CharacterBase::Draw(void)
 	DrawUI();
 }
 
-const bool CharacterBase::Release(void)
+void CharacterBase::Release(void)
 {
-	return true;
+	
 }
-
-void CharacterBase::UpdateRotQuat(void)
-{
-	// 大きさ
-	matScl_ = MGetScale(scl_);
-
-	// 回転
-	rot_ = quaRot_.ToEuler();
-	matRot_ = quaRot_.ToMatrix();
-
-	// 位置
-	matPos_ = MGetTranslate(pos_);
-
-	// 行列の合成
-	MATRIX mat = MGetIdent();
-	mat = MMult(mat, matScl_);
-	Quaternion q = quaRot_.Mult(quaRotLocal_);
-	mat = MMult(mat, q.ToMatrix());
-	mat = MMult(mat, matPos_);
-
-	// 行列をモデルに判定
-	if (modelId_ != -1){
-		MV1SetMatrix(modelId_, mat);
-	}
-}
-
 
 void CharacterBase::SetGoalRot(const float _rad)
 {
@@ -146,7 +120,7 @@ VECTOR CharacterBase::GetDir(const VECTOR& _vec) const
 	return quaRot_.PosAxis(_vec);
 }
 
-const VECTOR CharacterBase::GetPos(void) const
+const VECTOR& CharacterBase::GetPos(void) const
 {
 	return pos_;
 }
@@ -166,24 +140,14 @@ void CharacterBase::SetPrePos(void)
 	pos_ = prePos_;
 }
 
-const Quaternion CharacterBase::GetQua(void) const
+const Quaternion& CharacterBase::GetQua(void) const
 {
 	return characterRotY_;
-
-	Quaternion retRot = Quaternion();
-	//VECTORなのでQuaternionに変化
-	retRot = retRot.Mult(characterRotY_);
-	return retRot;
 }
 
 void CharacterBase::SetQua(const Quaternion _qua)
 {
 	characterRotY_ = _qua;
-}
-
-const std::string CharacterBase::GetSpeciesName(void) const
-{
-	return speciesName_;
 }
 
 const bool CharacterBase::IsAlive(void) const

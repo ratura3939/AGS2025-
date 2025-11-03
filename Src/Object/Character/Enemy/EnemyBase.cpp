@@ -24,9 +24,11 @@ namespace {
 	constexpr int alertDebugCol2 = 0xffdd88;
 }
 
-EnemyBase::EnemyBase(VECTOR& _pos)
+EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, VECTOR& _pPos)
+	: atkManager_(_atk)
+	, pPos_(_pPos)
 {
-	speciesName_ = "Enemy";
+	speciesName_ = "Enemy" + _num;
 	serchCol_ = serchDebugCol;
 	alertCol_ = serchDebugCol2;
 	color_ = 0xffffff;
@@ -64,29 +66,22 @@ EnemyBase::~EnemyBase(void)
 {
 }
 
-const bool EnemyBase::Init(const int _num)
+void EnemyBase::Init(void)
 {
-	//個体名登録
-	speciesName_ += std::to_string(_num);
-
 	SetParam();
 
 	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
-
-	
-	return true;
 }
 
 
-void EnemyBase::Update(const VECTOR _pPos, AttackManager& _atk)
+void EnemyBase::DoUpdate(void)
 {
 	prePos_ = pos_;
 
 	//行動更新
-	(this->*update_)(_pPos,_atk);
+	(this->*update_)(pPos_,atkManager_);
 	//共通更新
 	Rotation();
-	UpdateRotQuat();
 
 	animController_->Update();
 	//位置設定
@@ -109,9 +104,6 @@ void EnemyBase::InitUI(void)
 	uiCntl_->Init(speciesName_);
 	uiCntl_->CreateUI(speciesName_, hp_, maxHp_);
 }
-
-
-
 
 void EnemyBase::UpdateNomal(const VECTOR& _pPos, AttackManager& _atk)
 {
@@ -452,4 +444,9 @@ void EnemyBase::Deth(void)
 void EnemyBase::Shout(void)
 {
 	//ボス専用
+}
+
+const std::string& EnemyBase::GetSpeciesName(void) const
+{
+	return speciesName_;
 }

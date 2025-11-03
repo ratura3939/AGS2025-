@@ -71,11 +71,10 @@ public:
         bool isFind;
     };
 
-    EnemyBase(VECTOR& _pos);
+    EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, VECTOR& _pPos);
     ~EnemyBase(void)override;
 
-    const bool Init(const int _num)override;
-    void Update(const VECTOR _pPos, AttackManager& _atk)override;
+    void Init(void)override;
     void Draw(void)override;
 
     //生存判定
@@ -96,6 +95,9 @@ public:
     void Deth(void)override;
 
     virtual void Shout(void);//ボス専用
+
+    //個体名取得
+    const std::string& GetSpeciesName(void)const;
 
      //デバッグ用
     void SetColor(int _color);
@@ -128,6 +130,13 @@ protected:
 #pragma endregion
 
     virtual void DrawUI(void)override;
+
+    //参照
+	AttackManager& atkManager_;
+	VECTOR& pPos_; //プレイヤー位置参照
+
+    //個体名
+    std::string speciesName_;
 
     using Update_f = void(EnemyBase::*)(const VECTOR& _pPos, AttackManager& _atk);
     using Move_f = void(EnemyBase::*)(const VECTOR& _pPos);
@@ -163,5 +172,8 @@ protected:
     int serchCol_;
     int alertCol_;
     double debugRot_;
+
+private:
+        void DoUpdate(void)override;
 };
 

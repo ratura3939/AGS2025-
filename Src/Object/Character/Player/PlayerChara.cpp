@@ -17,7 +17,8 @@ namespace {
 	const VECTOR FOCUS_NOMAL = { 0.0f,0.0f,50.0f };      //注視点(通常)
 	//static constexpr VECTOR FOCUS_BOW = { 0.0f,20.0f,150.0f };    //注視点(弓矢)
 
-	const int ALLERT_TIME = 30;  //警戒UI描画時間    
+	const int ALLERT_TIME = 30;  //警戒UI描画時間   
+	const std::string UI_NAME = "PlayerUI"; //UIリソース名
 #pragma endregion
 
 #pragma region アニメーション関連定数
@@ -56,9 +57,8 @@ namespace {
 
 PlayerChara::PlayerChara(void)
 {
-	speciesName_ = "Player";
 	focusPoint_ = Utility::VECTOR_ZERO;
-	lockState_ = ROCK_STATE::MAX;
+	lockState_ = LOCK_STATE::MAX;
 	state_ = STATE::NOMAL;
 	isDush_ = false;
 	afterMoveRad_ = 0.0f;
@@ -68,26 +68,22 @@ PlayerChara::~PlayerChara(void)
 {
 }
 
-const bool PlayerChara::Init(const int _num)
+void PlayerChara::Init(void)
 {
+	//モデル基礎情報
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;
-	if (modelId_ == -1)return false;
 
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT),0.0f);
 
-	lockState_ = ROCK_STATE::NOMAL;
+	lockState_ = LOCK_STATE::NOMAL;
 
 	//当たり判定大きさ
 	colRadius_ = CHARACTER_RADIUS;
 
-	//個体名登録
-	speciesName_ += std::to_string(_num);
-
 	//注視点の設定
 	focusPoint_ = FOCUS_NOMAL;
 
-	UpdateRotQuat();
 	hp_ = PALYER_HP;
 
 	//アニメ初期化
@@ -98,22 +94,20 @@ const bool PlayerChara::Init(const int _num)
 
 	//UI初期化
 	InitUI();
-
-	return true;
 }
 
-void PlayerChara::Update(void)
+void PlayerChara::DoUpdate(void)
 {
 	prePos_ = pos_;
 	uiPos_ = pos_;
 	uiPos_.y += 200.0f;
 	allertTime_++;
 	//ほかにアクション行動していないときのみ
-	if (state_ == STATE::NOMAL || lockState_ == ROCK_STATE::LOCKON) {
+	if (state_ == STATE::NOMAL || lockState_ == LOCK_STATE::LOCKON) {
 		Move();
 
 		//ロックオンのとき
-		if (lockState_ == ROCK_STATE::LOCKON) {
+		if (lockState_ == LOCK_STATE::LOCKON) {
 			//敵との角度差を設定
 			afterMoveRad_ = GetToLockDeg();
 		}
@@ -126,8 +120,6 @@ void PlayerChara::Update(void)
 			uiCntl_->ChangeAllert(false);
 		}
 	}
-
-	UpdateRotQuat();
 	animController_->Update();
 	uiCntl_->Update();
 }
@@ -140,13 +132,13 @@ const VECTOR PlayerChara::GetFocusPoint(void) const
 void PlayerChara::ChangeLockState(const bool _state)
 {
 	if (_state) {
-		lockState_ = ROCK_STATE::LOCKON;
+		lockState_ = LOCK_STATE::LOCKON;
 		//プレイヤーの角度を強制的に敵に向ける
 		float deg = GetToLockDeg();
 		SetGoalRot(deg);
 		characterRotY_ = goalQua_;
 	}
-	else lockState_ = ROCK_STATE::NOMAL;
+	else lockState_ = LOCK_STATE::NOMAL;
 }
 
 const PlayerChara::STATE PlayerChara::GetState(void) const
@@ -167,7 +159,7 @@ void PlayerChara::PlayAnim(const std::string _anim)
 
 const bool PlayerChara::IsLock(void)
 {
-	return lockState_==ROCK_STATE::LOCKON;
+	return lockState_==LOCK_STATE::LOCKON;
 }
 
 void PlayerChara::Damage(const float _pow)
@@ -230,7 +222,6 @@ void PlayerChara::SetAtkAllert(void)
 	allertTime_ = 0;
 }
 
-
 void PlayerChara::InitAnim(void)
 {
 	animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);
@@ -266,7 +257,7 @@ void PlayerChara::InitUI(void)
 	uiPos_ = pos_;
 	uiPos_.y += 200.0f;
 	uiCntl_ = std::make_unique<PlayerUIController>(uiPos_, PALYER_HP);
-	uiCntl_->Init(speciesName_);
+	uiCntl_->Init(UI_NAME);
 }
 
 void PlayerChara::DrawUI(void)
@@ -319,7 +310,7 @@ void PlayerChara::Move(void)
 		seName = "Dush";
 	}
 	//ロックオンの時
-	if (lockState_ == ROCK_STATE::LOCKON)speed = MOVE_POW;
+	if (lockState_ == LOCK_STATE::LOCKON)speed = MOVE_POW;
 
 
 	//移動処理
@@ -342,7 +333,7 @@ const std::string PlayerChara::DecideAnim(const MOVE_DIR _dir) const
 	if(isDush_)retAnim = "dushF";
 
 	//ロックオンのとき
-	if (lockState_ == ROCK_STATE::LOCKON) {
+	if (lockState_ == LOCK_STATE::LOCKON) {
 		if (_dir == MOVE_DIR::LEFT) {
 			retAnim = "dushL";
 		}
