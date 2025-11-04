@@ -1,16 +1,19 @@
+#include"../../Application.h"
+#include"../Generic/ResourceManager.h"
+#include"../GameSystem/AttackManager.h"
+#include"../../Scene/Main/Game.h"
 #include"../../Object/Character/Enemy/EnemyBase.h"
 #include"../../Object/Character/Enemy/Boss.h"
 #include"../../Object/Character/Enemy/Skelton.h"
 #include"../../Utility/Utility.h"
-#include"../../Application.h"
 #include"../../UI/Enemy/EnemyCount.h"
-#include"../Generic/ResourceManager.h"
-#include"../../Scene/Main/Game.h"
 #include "EnemyManager.h"
 
 const std::string EnemyManager::ATTACK_NOMAL = "EnemyAttack";
 
-EnemyManager::EnemyManager(Game& _scene):gameScene_(_scene)
+EnemyManager::EnemyManager(Game& _scene, AttackManager& _atk)
+	:gameScene_(_scene)
+	,atkMng_(_atk)
 {
 	enemyCnt_ = -1;
 	numImg_ = nullptr;
@@ -23,7 +26,7 @@ EnemyManager::~EnemyManager(void)
 {
 }
 
-void EnemyManager::Init(void)
+void EnemyManager::Init(const VECTOR& _pPos)
 {
 	//デバッグ用
 	VECTOR initPos[4] = { INIT_1 ,INIT_2 ,INIT_3 ,INIT_4 };
@@ -32,8 +35,9 @@ void EnemyManager::Init(void)
 	numImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::NUMBER_IMGS).handleIds_;
 
 	for (int i = 0; i < ENEMY_NUM; i++) {
-		std::shared_ptr enemy = std::make_shared<Skelton>(initPos[i]);
-		enemy->Init(i);
+		std::shared_ptr enemy = std::make_shared<Skelton>(initPos[i],i,atkMng_,_pPos);
+		enemy->Init();
+		atkMng_.AddAttackCollider(enemy->GetSpeciesName(), enemy->GetAttackCollider(), false, ATTACK_TIME, ATTACK_TIME_START, ATTACK_TIME_END);
 		characters_.push_back(std::move(enemy));
 	}
 

@@ -87,7 +87,7 @@ bool AttackManager::Update(void)
 			if (atk.second.counter >= atk.second.startTime) {
 				//€”õó‘Ô¨UŒ‚ó‘Ô‚Ö
 				atkCol->DeleteTag(Collider::COL_TAG::PREATTACK);
-				atkCol->AddTag(Collider::COL_TAG::ATACK);
+				atkCol->AddTag(Collider::COL_TAG::ATTACK);
 				atk.second.isUsed = true;
 			}
 		}
@@ -95,7 +95,7 @@ bool AttackManager::Update(void)
 			if (atk.second.counter >= atk.second.endTime) {
 				//UŒ‚I—¹ˆ—
 				atkCol->SetUseThis(false);
-				atkCol->DeleteTag(Collider::COL_TAG::ATACK);
+				atkCol->DeleteTag(Collider::COL_TAG::ATTACK);
 				atk.second.counter = 0.0f;
 				atk.second.isUsed = false;
 			}

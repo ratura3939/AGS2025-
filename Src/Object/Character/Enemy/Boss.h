@@ -6,7 +6,7 @@ class Boss :
 public:
     
 
-    Boss(VECTOR& _pos);
+    Boss(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos);
     ~Boss(void)override;
 
     void Shout(void)override;

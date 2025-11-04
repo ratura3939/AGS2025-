@@ -29,10 +29,10 @@ public:
 	static constexpr VECTOR INIT_3 = { 0.0f,0.0f,-1000.0f };
 	static constexpr VECTOR INIT_4 = { -500.0f,0.0f,-1000.0f };
 
-	EnemyManager(Game& _scene);
+	EnemyManager(Game& _scene, AttackManager& _atk);
 	~EnemyManager(void);
 
-	void Init(void);
+	void Init(const VECTOR& _pPos);
 	void Update(const VECTOR& _playerPos, AttackManager& _atkMng);
 	void UpdateAnim(void);
 	void Draw(void);
@@ -86,6 +86,8 @@ public:
 	void DrawDebug(void);
 
 private:
+	AttackManager& atkMng_;
+
 	std::vector<std::shared_ptr<EnemyBase>> characters_;
 	bool preBattle_;	//位置フレーム前が戦闘状態であるかどうか
 

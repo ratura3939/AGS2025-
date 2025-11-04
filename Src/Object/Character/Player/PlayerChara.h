@@ -76,6 +76,9 @@ public:
 
     void SetAtkAllert(void);    //UŒ‚Šë‹@@’m
 
+	//“–‚½‚è”»’èŒãˆ—
+	void HitCollider(std::weak_ptr<Collider> _col)override;
+
 private:
     void DoUpdate(void)override;
     void InitAnim(void)override;

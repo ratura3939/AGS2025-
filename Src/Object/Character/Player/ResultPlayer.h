@@ -5,7 +5,7 @@ class ResultPlayer :
     public CharacterBase
 {
 public:
-    const bool Init(const int _num)override;
+    void Init(void)override;
     void InitAnim(void)override;
     void InitUI(void)override;
     void DrawUI(void)override;

@@ -1,4 +1,5 @@
 #include"../../../Manager/Generic/ResourceManager.h"
+#include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Utility/Utility.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include "Skelton.h"
@@ -20,7 +21,8 @@ namespace {
 #pragma endregion
 }
 
-Skelton::Skelton(VECTOR& _pos) :EnemyBase(_pos)
+Skelton::Skelton(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)
+	:EnemyBase(_pos,_num,_atk,_pPos)
 {
 }
 
@@ -52,16 +54,27 @@ void Skelton::SetParam(void)
 	preStayPos_ = pos_;
 	rot_ = { 0.0f,0.0f,-1.0f };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
-	//‰Šú‰»—p‚Éˆê‰ñÀs
-	UpdateRotQuat();
 
 	//“–‚½‚è”»’è‘å‚«‚³
 	colRadius_ = CHARACTER_RADIUS;
+	//“–‚½‚è”»’è
+	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//“ªˆÊ’u
+	using COL_TYPE = Collider::COL_TAG;
+	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::ENEMY},
+		std::move(std::make_unique<Capsule>(headPos_, pos_, colRadius_)));
+
+	CollisionManager::GetInstance().AddCollider(collider_);	//“–‚½‚è”»’è“o˜^
 
 	//UŒ‚‚Ì”­¶ˆÊ’u(‘Š‘ÎÀ•W)
 	atkRelative_ = RELATIVE_ATTACK_POS;
-	//UŒ‚‚Ì‘å‚«‚³
-	atkScale_ = SCALE_ATTACK_NOMAL;
+
+	//UŒ‚
+	atkPos_ = VAdd(pos_, atkRelative_);
+	atkCollider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{ COL_TYPE::ENEMY, COL_TYPE::ATTACK },
+		std::move(std::make_unique<Sphere>(atkPos_, SCALE_ATTACK_NOMAL)));
+
+	CollisionManager::GetInstance().AddCollider(atkCollider_);	//“–‚½‚è”»’è“o˜^
+
 	//UŒ‚‰Â”\‹——£
 	atkDistance_ = ATTACK_DISTANCE;
 

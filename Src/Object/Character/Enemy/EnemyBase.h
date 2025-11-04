@@ -45,7 +45,7 @@ public:
 
     static constexpr float SPEED_ANIM = 1.0f;  //アニメーションスピード
 
-    //攻撃関連(外部ファイル化させる)
+    //攻撃関連
     static constexpr VECTOR RELATIVE_ATTACK_POS = { 0.0f, 75.0f, 100.0f };
     static constexpr float SCALE_ATTACK_NOMAL = 70.0f;
     static constexpr float POW_ATTACK_NOMAL = 1.0f;
@@ -71,7 +71,7 @@ public:
         bool isFind;
     };
 
-    EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, VECTOR& _pPos);
+    EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos);
     ~EnemyBase(void)override;
 
     void Init(void)override;
@@ -98,6 +98,9 @@ public:
 
     //個体名取得
     const std::string& GetSpeciesName(void)const;
+
+    //当たり判定後処理
+	void HitCollider(std::weak_ptr<Collider> _col)override;
 
      //デバッグ用
     void SetColor(int _color);
@@ -133,7 +136,7 @@ protected:
 
     //参照
 	AttackManager& atkManager_;
-	VECTOR& pPos_; //プレイヤー位置参照
+    const VECTOR& pPos_; //プレイヤー位置参照
 
     //個体名
     std::string speciesName_;
@@ -163,9 +166,11 @@ protected:
 
     bool isLockTarget_;   //ロックオン対象になっているか(マネージャでのみ変更が可能)
 
-    VECTOR atkRelative_;    //攻撃の発生位置の相対座標
+    VECTOR atkRelative_;   //攻撃の発生位置の相対座標
     float atkScale_;    //攻撃の大きさ
     float atkDistance_; //攻撃可能距離
+
+	float colRadius_; //当たり判定の半径
 
     //デバッグ用
     int color_;

@@ -4,8 +4,6 @@
 #include"../../Common/Quaternion.h"
 #include"Collider.h"
 
-class Collider;
-
 class ActorBase
 {
 public:
@@ -34,6 +32,7 @@ public:
 
 	//衝突後の処理
 	virtual void HitCollider(std::weak_ptr<Collider> _col) = 0;
+	const float GetPower(void)const;
 
 protected:
 	virtual void DoUpdate(void) = 0;	//派生クラスの更新処理
@@ -59,6 +58,7 @@ protected:
 #pragma endregion
 
 	std::shared_ptr<Collider> collider_;
+	float power_;	//攻撃力
 
 private:
 	void UpdateRotQuat(void);	//基礎情報の更新

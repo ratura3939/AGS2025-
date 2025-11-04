@@ -1,8 +1,8 @@
 #include "ResultPlayer.h"
 
-const bool ResultPlayer::Init(const int _num)
+void ResultPlayer::Init(void)
 {
-	return false;
+	
 }
 
 void ResultPlayer::InitAnim(void)

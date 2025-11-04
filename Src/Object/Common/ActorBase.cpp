@@ -60,6 +60,11 @@ const VECTOR& ActorBase::GetDir(const VECTOR& _vec) const
 	return quaRot_.PosAxis(_vec);
 }
 
+const float ActorBase::GetPower(void) const
+{
+	return power_;
+}
+
 void ActorBase::UpdateRotQuat(void)
 {
 	// ‘å‚«‚³

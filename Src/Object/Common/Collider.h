@@ -15,7 +15,7 @@ public:
 		,ENEMY		//敵
 		,STAGE		//ステージ
 		,OBJECT		//オブジェクト
-		,ATACK		//攻撃
+		,ATTACK		//攻撃
 		,PREATTACK	//攻撃前隙
 	};
 

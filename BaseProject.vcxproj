@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Geometry\Capsule.cpp" />
     <ClCompile Include="Src\Object\Common\Geometry\Sphere.cpp" />
     <ClCompile Include="Src\Object\Common\Geometry\Model.cpp" />
     <ClCompile Include="Src\Object\Common\Geometry\Geometry.cpp" />
@@ -48,7 +49,6 @@
     <ClCompile Include="Src\Manager\GameSystem\AnimationController.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\CollisionManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\AttackManager.cpp" />
-    <ClCompile Include="Src\Object\Attack\Arrow.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerChara.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\EnemyManager.cpp" />
@@ -86,6 +86,7 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Common\Geometry\Capsule.h" />
     <ClInclude Include="Src\Object\Common\Geometry\Sphere.h" />
     <ClInclude Include="Src\Object\Common\Geometry\Model.h" />
     <ClInclude Include="Src\Object\Common\Geometry\Geometry.h" />
@@ -115,7 +116,6 @@
     <ClInclude Include="Src\Manager\GameSystem\AnimationController.h" />
     <ClInclude Include="Src\Manager\GameSystem\CollisionManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\AttackManager.h" />
-    <ClInclude Include="Src\Object\Attack\Arrow.h" />
     <ClInclude Include="Src\Object\Character\Enemy\EnemyBase.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerChara.h" />
     <ClInclude Include="Src\Manager\GameSystem\EnemyManager.h" />

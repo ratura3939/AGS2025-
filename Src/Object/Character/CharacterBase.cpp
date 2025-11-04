@@ -3,6 +3,7 @@
 #include"../../Manager/Generic/Camera.h"
 #include"../../Renderer/ModelMaterial.h"
 #include"../../Renderer/ModelRenderer.h"
+#include"../Common/Collider.h"
 #include "CharacterBase.h"
 
 CharacterBase::CharacterBase(void)
@@ -26,14 +27,6 @@ CharacterBase::CharacterBase(void)
 }
 
 CharacterBase::~CharacterBase(void)
-{
-}
-
-void CharacterBase::Update(void)
-{
-}
-
-void CharacterBase::Update(const VECTOR _pPos, AttackManager& _atk)
 {
 }
 
@@ -85,54 +78,15 @@ void CharacterBase::Rotation(void)
 	quaRot_ = quaRot_.Mult(characterRotY_);
 }
 
-VECTOR CharacterBase::GetForward(void) const
-{
-	return GetDir(Utility::DIR_F);
-}
 
-VECTOR CharacterBase::GetBack(void) const
+const VECTOR& CharacterBase::GetHeight(void) const
 {
-	return GetDir(Utility::DIR_B);
-}
-
-VECTOR CharacterBase::GetRight(void) const
-{
-	return GetDir(Utility::DIR_R);
-}
-
-VECTOR CharacterBase::GetLeft(void) const
-{
-	return GetDir(Utility::DIR_L);
-}
-
-VECTOR CharacterBase::GetUp(void) const
-{
-	return GetDir(Utility::DIR_U);
-}
-
-VECTOR CharacterBase::GetDown(void) const
-{
-	return GetDir(Utility::DIR_D);
-}
-
-VECTOR CharacterBase::GetDir(const VECTOR& _vec) const
-{
-	return quaRot_.PosAxis(_vec);
-}
-
-const VECTOR& CharacterBase::GetPos(void) const
-{
-	return pos_;
-}
-
-const VECTOR CharacterBase::GetHeight(void) const
-{
-	return VAdd(pos_, CHARACTER_HEIGHT);
+	return headPos_;
 }
 
 const float CharacterBase::GetCollisionRadius(void) const
 {
-	return colRadius_;
+	return collider_->GetGeometry().GetRadius();
 }
 
 void CharacterBase::SetPrePos(void)
@@ -148,6 +102,11 @@ const Quaternion& CharacterBase::GetQua(void) const
 void CharacterBase::SetQua(const Quaternion _qua)
 {
 	characterRotY_ = _qua;
+}
+
+std::weak_ptr<Collider> CharacterBase::GetAttackCollider(void)
+{
+	return atkCollider_;
 }
 
 const bool CharacterBase::IsAlive(void) const

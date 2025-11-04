@@ -32,7 +32,7 @@ public:
 	/// <param name="_enemys">“Gî•ñ</param>
 	/// <param name="_atks">UŒ‚î•ñ</param>
 	/// <returns>true=ƒXƒ[‰‰o‚ª“ü‚é/false=’Êí</returns>
-	const bool Collision(std::weak_ptr<PlayerChara> _player, std::vector<std::weak_ptr<EnemyBase>> _enemys, std::vector<AttackManager::AttackCollision> _atks);
+	//const bool Collision(std::weak_ptr<PlayerChara> _player, std::vector<std::weak_ptr<EnemyBase>> _enemys, std::vector<AttackManager::AttackCollision> _atks);
 
 private:
 	static CollisionManager* instance_;
@@ -45,14 +45,14 @@ private:
 	/// </summary>
 	/// <param name="_player">ƒvƒŒƒCƒ„[î•ñ</param>
 	/// <param name="_atk">UŒ‚î•ñ</param>
-	void CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::vector<AttackManager::AttackCollision> _atks);
+	//void CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::vector<AttackManager::AttackCollision> _atks);
 
 	/// <summary>
 	/// “G‚Ì“–‚½‚è”»’èŠÖŒW‚Ü‚Æ‚ß
 	/// </summary>
 	/// <param name="_enemy">“Gî•ñ</param>
 	/// <param name="_atk">UŒ‚î•ñ</param>
-	void CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _enemys, std::vector<AttackManager::AttackCollision> _atks);
+	//void CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _enemys, std::vector<AttackManager::AttackCollision> _atks);
 	
 	//ƒRƒ‰ƒCƒ_[‚ÌÕ“Ë”»’è
 	void CollisionGeometry(std::weak_ptr<Collider> _col1, std::weak_ptr<Collider> _col2);

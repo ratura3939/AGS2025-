@@ -23,7 +23,7 @@ public:
 	//状態上限時間
 	static constexpr int LIMIT_AVOID_STATE = 30;	//回避
 
-	PlayerManager(Game& _gameScene, EnemyManager& _enemy, StageManager& _stage);
+	PlayerManager(Game& _gameScene, EnemyManager& _enemy, AttackManager& _atk, StageManager& _stage);;
 	~PlayerManager(void);
 
 	void Init(void);
@@ -35,7 +35,7 @@ public:
 	std::weak_ptr<PlayerChara> GetPlayer(void);
 
 	//位置・回転取得
-	const VECTOR GetPos(void);			//座標
+	const VECTOR& GetPos(void)const;			//座標
 	const Quaternion GetQua(void);		//回転
 	const VECTOR GetFocusPoint(void);	//注視点
 	const VECTOR GetFollowPos4UseMagnet(void);
@@ -65,6 +65,8 @@ private:
 	void RedyStateCount(const int _limit);
 
 	Game& scene_;	//ゲームクラス参照
+	AttackManager& atkMng_;
+
 	std::shared_ptr<PlayerChara> character_;//キャラクター
 	std::unique_ptr<LockOnManager>lockOn_;	//ロックオン関係
 	std::unique_ptr<AbilityManager>ability_;//能力

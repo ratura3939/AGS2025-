@@ -2,6 +2,7 @@
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/GameSystem/AttackManager.h"
+#include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Manager/GameSystem/AnimationController.h"
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Manager/Decoration/EffectManager.h"
@@ -10,6 +11,8 @@
 #include"../../../Utility/Utility.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../../Renderer/ModelRenderer.h"
+#include"../../Common/Collider.h"
+#include"../../Common/Geometry/Capsule.h"
 #include "EnemyBase.h"
 
 namespace {
@@ -24,7 +27,7 @@ namespace {
 	constexpr int alertDebugCol2 = 0xffdd88;
 }
 
-EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, VECTOR& _pPos)
+EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)
 	: atkManager_(_atk)
 	, pPos_(_pPos)
 {
@@ -70,12 +73,21 @@ void EnemyBase::Init(void)
 {
 	SetParam();
 
+	//当たり判定生成
+	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
+	using COL_TYPE = Collider::COL_TAG;
+	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::ENEMY},
+		std::move(std::make_unique<Capsule>(headPos_, pos_, CHARACTER_RADIUS)));
+
+	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
+
 	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
 }
 
 
 void EnemyBase::DoUpdate(void)
 {
+	atkPos_ = VAdd(pos_, characterRotY_.PosAxis(atkRelative_));
 	prePos_ = pos_;
 
 	//行動更新
@@ -157,7 +169,6 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 		ChangeState(ENEMY_STATE::NOMAL);
 	}
 
-
 	//デバッグ
 	debugRot_ = deg;
 }
@@ -190,7 +201,7 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
 	if (distance <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
 		//攻撃する
-		_atk.Attack(speciesName_,EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(atkRelative_)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, atkScale_, "SwingSword");
+		_atk.Attack(speciesName_,"SwingSword");
 		animController_->Play("attack", SPEED_ANIM);
 		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 		intervalCnt_ = 0.0f;
@@ -449,4 +460,8 @@ void EnemyBase::Shout(void)
 const std::string& EnemyBase::GetSpeciesName(void) const
 {
 	return speciesName_;
+}
+
+void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
+{
 }

@@ -92,18 +92,20 @@ void Game::Init(void)
 	stage_ = std::make_unique<StageManager>();
 	stage_->Init();
 
-	//“G
-	enemy_ = std::make_unique<EnemyManager>(*this);
-	enemy_->Init();
-
-	//ƒvƒŒƒCƒ„[
-	player_ = std::make_unique<PlayerManager>(*this,*enemy_,*stage_);
-	player_->Init();
-
 	//UŒ‚
 	atkMng_ = std::make_unique<AttackManager>();
+
+	//“G
+	enemy_ = std::make_unique<EnemyManager>(*this, *atkMng_);
+	
+	//ƒvƒŒƒCƒ„[
+	player_ = std::make_unique<PlayerManager>(*this, *enemy_, *atkMng_, *stage_);
+	player_->Init();
+
+	enemy_->Init(player_->GetPos());	//‚µ‚Ô‚µ‚Ô‚±‚ÌˆÊ’u
+
 	//UŒ‚‚Ì“o˜^
-	AttackDataInit();
+	//AttackDataInit();
 
 	//ƒJƒƒ‰‚Ì‰Šúİ’è
 	Camera& camera = SceneManager::GetInstance().GetCamera();
@@ -660,9 +662,9 @@ void Game::ChangeActionDirec(const ACTION_DIRECTION _direc)
 
 void Game::AttackDataInit(void)
 {
-	//UŒ‚‚Ìî•ñ“ü‚ê
-	atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD,false, false, PlayerManager::ATTACK_TIME);
-	atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, true,false, EnemyManager::ATTACK_TIME, EnemyManager::ATTACK_TIME_START, EnemyManager::ATTACK_TIME_END);
+	////UŒ‚‚Ìî•ñ“ü‚ê
+	//atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD,false, false, PlayerManager::ATTACK_TIME);
+	//atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, true,false, EnemyManager::ATTACK_TIME, EnemyManager::ATTACK_TIME_START, EnemyManager::ATTACK_TIME_END);
 }
 
 const int Game::DecideRockEnemy(void)

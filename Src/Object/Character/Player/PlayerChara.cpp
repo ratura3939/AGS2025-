@@ -3,8 +3,12 @@
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/GameSystem/AnimationController.h"
+#include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Utility/Utility.h"
+#include"../../Common/Collider.h"
+#include"../../Common/Geometry/Capsule.h"
+#include"../../Common/Geometry/Sphere.h"
 #include "PlayerChara.h"
 
 //ローカル定数
@@ -15,7 +19,6 @@ namespace {
 	const float DUSH_POW = 20.0f;	//移動量(ダッシュ)
 	const float CHARA_SCALE = 0.7f;	//サイズ
 	const VECTOR FOCUS_NOMAL = { 0.0f,0.0f,50.0f };      //注視点(通常)
-	//static constexpr VECTOR FOCUS_BOW = { 0.0f,20.0f,150.0f };    //注視点(弓矢)
 
 	const int ALLERT_TIME = 30;  //警戒UI描画時間   
 	const std::string UI_NAME = "PlayerUI"; //UIリソース名
@@ -52,6 +55,10 @@ namespace {
 	const int ANIM_DETH_START = 25;      //死亡開始
 	const int ANIM_DETH_SUSTANABLE = 26; //死亡持続
 #pragma endregion
+
+	//攻撃関連
+	float ATK_SCALE = 70.0f;
+	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 }
 
 
@@ -78,8 +85,20 @@ void PlayerChara::Init(void)
 
 	lockState_ = LOCK_STATE::NOMAL;
 
-	//当たり判定大きさ
-	colRadius_ = CHARACTER_RADIUS;
+	//当たり判定
+	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
+	using COL_TYPE = Collider::COL_TAG;
+	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::PLAYER},
+		std::move(std::make_unique<Capsule>(headPos_, pos_, CHARACTER_RADIUS)));
+
+	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
+
+	//攻撃用当たり判定
+	atkPos_ = VAdd(pos_, ATK_LOCAL_POS);
+	atkCollider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{ COL_TYPE::PLAYER,COL_TYPE::ATTACK },
+		std::move(std::make_unique<Sphere>(atkPos_, ATK_SCALE)));
+
+	CollisionManager::GetInstance().AddCollider(atkCollider_);	//当たり判定登録
 
 	//注視点の設定
 	focusPoint_ = FOCUS_NOMAL;
@@ -98,6 +117,7 @@ void PlayerChara::Init(void)
 
 void PlayerChara::DoUpdate(void)
 {
+	atkPos_ = VAdd(pos_, characterRotY_.PosAxis(ATK_LOCAL_POS));
 	prePos_ = pos_;
 	uiPos_ = pos_;
 	uiPos_.y += 200.0f;
@@ -220,6 +240,11 @@ void PlayerChara::SetAtkAllert(void)
 {
 	uiCntl_->ChangeAllert(true);
 	allertTime_ = 0;
+}
+
+void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
+{
+	//当たり判定後処理
 }
 
 void PlayerChara::InitAnim(void)

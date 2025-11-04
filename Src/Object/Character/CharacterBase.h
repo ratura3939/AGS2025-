@@ -52,6 +52,9 @@ public:
 	const Quaternion& GetQua(void)const;
 	void SetQua(const Quaternion _qua);
 
+	//攻撃の当たり判定取得(マネージャ側で攻撃を登録する際に使用)
+	std::weak_ptr<Collider> GetAttackCollider(void);
+
 	//判定
 	virtual const bool IsAlive(void)const;
 
@@ -67,6 +70,8 @@ public:
 
 protected:
 	virtual void DoUpdate(void)override = 0;
+	void UpdateAnimOnly(void);
+
 	//必ず更新・初期化処理に入れること
 	//************************************************
 	virtual void InitAnim(void) = 0;
@@ -82,6 +87,8 @@ protected:
 
 #pragma region モデル基礎制御
 	VECTOR prePos_;	//座標
+	VECTOR headPos_; //頭辺りの座標
+
 	VECTOR uiPos_; //UI表示位置
 	Quaternion characterRotY_;	//Y軸回転用
 
@@ -97,8 +104,10 @@ protected:
 	//アニメーション
 	std::unique_ptr<AnimationController> animController_;
 
+	std::shared_ptr<Collider> atkCollider_;	//攻撃用コライダー
+	VECTOR atkPos_;	//攻撃位置
+
 	//ステータスなど
-	float hp_;		
-	float colRadius_;	//当たり判定の大きさ
+	float hp_;
 };
 

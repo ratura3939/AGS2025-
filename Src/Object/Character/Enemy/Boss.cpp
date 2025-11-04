@@ -2,30 +2,38 @@
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/GameSystem/AttackManager.h"
+#include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Manager/GameSystem/EnemyManager.h"
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Utility/Utility.h"
 #include"../../../UI/EnemyUIController.h"
 #include"../../../Renderer/ModelMaterial.h"
+#include"../../Common/Collider.h"
+#include"../../Common/Geometry/Sphere.h"
 #include "Boss.h"
 
 //ローカル定数
 namespace {
 #pragma region アニメーション関連
-	static constexpr int BOSS_IDLE = 1;
-	static constexpr int BOSS_WALK = 2;
-	static constexpr int BOSS_PRE_PUNCH = 5;
-	static constexpr int BOSS_PUNCH = 6;
-	static constexpr int BOSS_PRE_SHOUT = 9;
-	static constexpr int BOSS_SHOUT = 10;
-	static constexpr int BOSS_DETH = 12;
-
-	static constexpr float BOSS_HP = 300.0f;
-	static constexpr float BOSS_RADIUS = 400.0f;
+	const int BOSS_IDLE = 1;
+	const int BOSS_WALK = 2;
+	const int BOSS_PRE_PUNCH = 5;
+	const int BOSS_PUNCH = 6;
+	const int BOSS_PRE_SHOUT = 9;
+	const int BOSS_SHOUT = 10;
+	const int BOSS_DETH = 12;
 #pragma endregion
+
+	const float BOSS_HP = 300.0f;
+	const float BOSS_RADIUS = 400.0f;
+
+	const float BOSS_ATTACK_SCALE = 500.0f;
+
+	const float BOSS_ATTACK_RELATIVE_Y = 75.0f;
 }
 
-Boss::Boss(VECTOR& _pos):EnemyBase(_pos)
+Boss::Boss(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)
+	:EnemyBase(_pos,_num,_atk,_pPos)
 {
 }
 
@@ -69,19 +77,30 @@ void Boss::SetParam(void)
 	preStayPos_ = pos_;
 	rot_ = { 0.0f,0.0f,-1.0f };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
-	//初期化用に一回実行
-	UpdateRotQuat();
 
 	//当たり判定大きさ
 	colRadius_ = BOSS_RADIUS;
+	//当たり判定
+	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
+	using COL_TYPE = Collider::COL_TAG;
+	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::ENEMY},
+		std::move(std::make_unique<Capsule>(headPos_, pos_, colRadius_)));
+
+	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
 
 	//攻撃可能距離
-	atkDistance_ = 500.0f;
+	atkDistance_ = BOSS_ATTACK_SCALE;
 
 	//攻撃の発生位置(相対座標)
-	atkRelative_ = VECTOR{ 0.0f,75.0f,atkDistance_ };
-	//攻撃の大きさ
-	atkScale_ = 500.0f;
+	atkRelative_ = VECTOR{ 0.0f,BOSS_ATTACK_RELATIVE_Y,atkDistance_ };
+
+	//攻撃
+	atkPos_ = VAdd(pos_, atkRelative_);
+	using COL_TYPE = Collider::COL_TAG;
+	atkCollider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{ COL_TYPE::ENEMY, COL_TYPE::ATTACK },
+		std::move(std::make_unique<Sphere>(atkPos_, BOSS_ATTACK_SCALE)));
+
+	CollisionManager::GetInstance().AddCollider(atkCollider_);	//当たり判定登録
 
 	//アニメーション初期化
 	animController_ = std::make_unique<AnimationController>(modelId_);
@@ -144,7 +163,7 @@ void Boss::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 		//攻撃の準備時間
 
 		//準備時間が終わったら攻撃する
-		_atk.Attack(speciesName_, EnemyManager::ATTACK_NOMAL, POW_ATTACK_NOMAL, VAdd(pos_, characterRotY_.PosAxis(atkRelative_)), characterRotY_, AttackManager::ATTACK_MASTER::ENEMY, atkScale_, "SwingSword");
+		_atk.Attack(speciesName_,"SwingSword");
 		animController_->Play("attack", SPEED_ANIM);
 		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 		intervalCnt_ = 0.0f;

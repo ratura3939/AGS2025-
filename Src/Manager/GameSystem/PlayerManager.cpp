@@ -16,14 +16,14 @@ const std::string PlayerManager::ATTACK_NOMAL = "PlayerAttack";
 namespace {
 	float AtkScl = 70.0f;
 	float AtkPow = 30.0f;
-	int playerNum = 0;
-	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//UŒ‚‘Š‘ÎÀ•W
 }
 
-PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, StageManager& _stage):scene_(_gameScene)
+PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, AttackManager& _atk, StageManager& _stage)
+	:scene_(_gameScene)
+	,atkMng_(_atk)
 {
 	character_ = std::make_shared<PlayerChara>();
-	character_->Init(playerNum);
+	character_->Init();
 	lockOn_ = std::make_unique<LockOnManager>(_gameScene, *this, _enemy);
 	ability_ = std::make_unique<AbilityManager>(_stage, *character_);
 	stateCnt_ = 0;
@@ -37,7 +37,8 @@ PlayerManager::~PlayerManager(void)
 
 void PlayerManager::Init(void)
 {
-	
+	//UŒ‚‚ÆƒRƒ‰ƒCƒ_[‚Ì•R‚Ã‚¯
+	atkMng_.AddAttackCollider(ATTACK_NOMAL, character_->GetAttackCollider(), false, ATTACK_TIME);
 }
 
 void PlayerManager::Update(AttackManager& _atk)
@@ -74,7 +75,7 @@ void PlayerManager::Release(void)
 	character_->Release();
 }
 
-const VECTOR PlayerManager::GetPos(void)
+const VECTOR& PlayerManager::GetPos(void)const
 {
 	return character_->GetPos();
 }
@@ -150,7 +151,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 		//UŒ‚
 		if (ins.IsTrigerrDown("attack")) {
 			//UŒ‚‚Ì¶¬‚¨‚æ‚Ñó‘Ô‚Ìİ’è
-			_atk.Attack("Player", ATTACK_NOMAL, AtkPow, VAdd(character_->GetPos(), character_->GetQua().PosAxis(ATK_LOCAL_POS)), character_->GetQua(), AttackManager::ATTACK_MASTER::PLAYER, AtkScl, "SwingSword");
+			_atk.Attack(ATTACK_NOMAL, "SwingSword");
 			character_->SetState(PlayerChara::STATE::ATTACK);
 			//‘Î‰‚·‚éƒAƒjƒ[ƒVƒ‡ƒ“
 			character_->PlayAnim("atkFirst");

@@ -4,7 +4,7 @@ class Skelton :
     public EnemyBase
 {
 public:
-    Skelton(VECTOR& _pos);
+    Skelton(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos);
     ~Skelton(void)override;
 
 private:
