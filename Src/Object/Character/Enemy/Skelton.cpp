@@ -2,6 +2,9 @@
 #include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Utility/Utility.h"
 #include"../../../Renderer/ModelMaterial.h"
+#include"../../Common/Collider.h"
+#include"../../Common/Geometry/Capsule.h"
+#include"../../Common/Geometry/Sphere.h"
 #include "Skelton.h"
 
 namespace {
@@ -72,6 +75,8 @@ void Skelton::SetParam(void)
 	atkPos_ = VAdd(pos_, atkRelative_);
 	atkCollider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{ COL_TYPE::ENEMY, COL_TYPE::ATTACK },
 		std::move(std::make_unique<Sphere>(atkPos_, SCALE_ATTACK_NOMAL)));
+
+	atkCollider_->SetUseThis(false);
 
 	CollisionManager::GetInstance().AddCollider(atkCollider_);	//“–‚½‚è”»’è“o˜^
 

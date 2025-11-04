@@ -20,7 +20,7 @@ GimmickObjBase::~GimmickObjBase(void)
 {
 }
 
-void GimmickObjBase::Init(void)
+void GimmickObjBase::DoInit(void)
 {
 	//各オブジェクトの設定
 	SetParam();

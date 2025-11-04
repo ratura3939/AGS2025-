@@ -1,6 +1,6 @@
 #include "ResultPlayer.h"
 
-void ResultPlayer::Init(void)
+void ResultPlayer::DoInit(void)
 {
 	
 }

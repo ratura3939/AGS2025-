@@ -9,6 +9,12 @@ ActorBase::~ActorBase(void)
 {
 }
 
+void ActorBase::Init(void)
+{
+	DoInit();
+	UpdateRotQuat();
+}
+
 void ActorBase::Update(void)
 {
 	DoUpdate();

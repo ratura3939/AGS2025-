@@ -30,13 +30,16 @@ public:
 	static constexpr VECTOR CHARACTER_HEIGHT = { 0.0f,150.0f,0.0f };	//キャラクターの身長
 	static constexpr float CHARACTER_RADIUS = 80.0f;					//キャラクターの判定の大きさ
 
+	//移動制限(大まか)
+	static constexpr float MOVE_MAX = 5000.0f;
+
 	//デバッグ用
 	static constexpr int COLOR = 0xffffff;
 
 	CharacterBase(void);
 	virtual ~CharacterBase(void);
 
-	virtual void Init(void)override = 0;
+	void UpdateAnimOnly(void);
 	virtual void Draw(void)override;
 	void Release(void)override;
 
@@ -69,8 +72,8 @@ public:
 	void DrawCupcel(void);
 
 protected:
+	virtual void DoInit(void)override = 0;
 	virtual void DoUpdate(void)override = 0;
-	void UpdateAnimOnly(void);
 
 	//必ず更新・初期化処理に入れること
 	//************************************************
@@ -88,6 +91,7 @@ protected:
 #pragma region モデル基礎制御
 	VECTOR prePos_;	//座標
 	VECTOR headPos_; //頭辺りの座標
+	VECTOR centerPos_; //モデル中央辺りの座標
 
 	VECTOR uiPos_; //UI表示位置
 	Quaternion characterRotY_;	//Y軸回転用

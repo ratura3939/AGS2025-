@@ -5,6 +5,7 @@
 #include"../../../Manager/GameSystem/AnimationController.h"
 #include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Manager/Decoration/SoundManager.h"
+#include"../../../Manager/Decoration/EffectManager.h"
 #include"../../../Utility/Utility.h"
 #include"../../Common/Collider.h"
 #include"../../Common/Geometry/Capsule.h"
@@ -22,6 +23,7 @@ namespace {
 
 	const int ALLERT_TIME = 30;  //警戒UI描画時間   
 	const std::string UI_NAME = "PlayerUI"; //UIリソース名
+	const std::string EFC_NAME = "PlayerEfc"; //UIリソース名
 #pragma endregion
 
 #pragma region アニメーション関連定数
@@ -58,6 +60,7 @@ namespace {
 
 	//攻撃関連
 	float ATK_SCALE = 70.0f;
+	float ATK_POWER = 30.0f;
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 }
 
@@ -75,7 +78,7 @@ PlayerChara::~PlayerChara(void)
 {
 }
 
-void PlayerChara::Init(void)
+void PlayerChara::DoInit(void)
 {
 	//モデル基礎情報
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;
@@ -94,9 +97,12 @@ void PlayerChara::Init(void)
 	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
 
 	//攻撃用当たり判定
+	power_ = ATK_POWER;
 	atkPos_ = VAdd(pos_, ATK_LOCAL_POS);
 	atkCollider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{ COL_TYPE::PLAYER,COL_TYPE::ATTACK },
 		std::move(std::make_unique<Sphere>(atkPos_, ATK_SCALE)));
+
+	atkCollider_->SetUseThis(false);
 
 	CollisionManager::GetInstance().AddCollider(atkCollider_);	//当たり判定登録
 
@@ -244,7 +250,35 @@ void PlayerChara::SetAtkAllert(void)
 
 void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 {
-	//当たり判定後処理
+	const float DmgEfcScl = 25.0f;
+	const float DmgEfcSpeed = 2.5f;
+	const float SwordEfcScl = 50.0f;
+	const float SwordEfcSpeed = 1.5;
+
+	using TAG = Collider::COL_TAG;
+	//敵の物の場合
+	if (_col.lock()->IsContainsTag(TAG::ENEMY)) {
+		//発動準備中
+		if (_col.lock()->IsContainsTag(TAG::PREATTACK)) {
+			//回避状態の場合
+			if (state_ == STATE::DODGE) {
+				//スロー処理に
+
+				//攻撃なのでフラグをオフに
+				_col.lock()->SetUseThis(false);
+			}
+		}
+		//攻撃
+		else if (_col.lock()->IsContainsTag(TAG::ATTACK)) {
+			//ダメージ処理
+			Damage(_col.lock()->GetPower());
+			auto& efcM = EffectManager::GetInstance();
+			efcM.Play(EFC_NAME, "Damage", centerPos_, rot_, DmgEfcScl, DmgEfcSpeed, "Damage");
+			efcM.Play(EFC_NAME, "Sword", centerPos_, rot_, SwordEfcScl, SwordEfcSpeed);
+			//攻撃なのでフラグをオフに
+			_col.lock()->SetUseThis(false);
+		}
+	}
 }
 
 void PlayerChara::InitAnim(void)
@@ -349,6 +383,12 @@ void PlayerChara::Move(void)
 	if (state_ != STATE::DODGE) {
 		animController_->Play(DecideAnim(moveDir_), SPEED_ANIM);
 		SoundManager::GetInstance().Play(seName);
+	}
+
+	//テキトーな移動制限
+	if (Utility::MagnitudeF(pos_) > MOVE_MAX) {
+		SetPrePos();
+		return;
 	}
 }
 

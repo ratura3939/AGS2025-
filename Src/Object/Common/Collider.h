@@ -26,8 +26,8 @@ public:
 	void OnHit(std::weak_ptr<Collider> _col);
 
 	//タイプの取得
-	const std::set<COL_TAG>& GetTags(void) const { return tags_; }
-	const std::set<COL_TAG>& GetNoHitTags(void) const { return noHitTags_; }
+	const std::set<COL_TAG>& GetTags(void)const { return tags_; }
+	const std::set<COL_TAG>& GetNoHitTags(void)const { return noHitTags_; }
 
 	//タグの追加
 	void AddTag(const COL_TAG& _tag) { tags_.insert(_tag); }
@@ -38,8 +38,10 @@ public:
 	void DeleteNoHitTag(const COL_TAG& _tag);
 
 	//タグの検索
-	bool IsContainsTag(const COL_TAG& _tag) const { return tags_.contains(_tag); }
-	bool IsContainsNoHitTag(const COL_TAG& _tag) const { return noHitTags_.contains(_tag); }
+	const bool IsContainsTag(const COL_TAG& _tag)const { return tags_.contains(_tag); }
+	const bool IsContainsTag(const std::set<COL_TAG>& _tags);
+	const bool IsContainsNoHitTag(const COL_TAG& _tag)const { return noHitTags_.contains(_tag); }
+	const bool IsContainsNoHitTag(const std::set<COL_TAG>& _tags);
 
 	//形状の取得
 	Geometry& GetGeometry(void) const { return *geometry_; }
@@ -49,6 +51,9 @@ public:
 
 	//衝突判定の使用設定
 	void SetUseThis(const bool _isUse) { isCollision_ = _isUse; }
+
+	//攻撃力の取得
+	const float GetPower(void)const;
 
 	//デバッグ
 	void DrawDebugCollider(void);

@@ -10,6 +10,7 @@
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../Common/Collider.h"
 #include"../../Common/Geometry/Sphere.h"
+#include"../../Common/Geometry/Capsule.h"
 #include "Boss.h"
 
 //ローカル定数
@@ -78,9 +79,10 @@ void Boss::SetParam(void)
 	rot_ = { 0.0f,0.0f,-1.0f };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
 
+	//ボスはもしかしたらモデルで判定するかも
 	//当たり判定大きさ
 	colRadius_ = BOSS_RADIUS;
-	//当たり判定
+	//当たり判定生成
 	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
 	using COL_TYPE = Collider::COL_TAG;
 	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::ENEMY},
@@ -94,11 +96,14 @@ void Boss::SetParam(void)
 	//攻撃の発生位置(相対座標)
 	atkRelative_ = VECTOR{ 0.0f,BOSS_ATTACK_RELATIVE_Y,atkDistance_ };
 
+
 	//攻撃
 	atkPos_ = VAdd(pos_, atkRelative_);
 	using COL_TYPE = Collider::COL_TAG;
 	atkCollider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{ COL_TYPE::ENEMY, COL_TYPE::ATTACK },
 		std::move(std::make_unique<Sphere>(atkPos_, BOSS_ATTACK_SCALE)));
+
+	atkCollider_->SetUseThis(false);
 
 	CollisionManager::GetInstance().AddCollider(atkCollider_);	//当たり判定登録
 

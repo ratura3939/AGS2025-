@@ -52,8 +52,18 @@ void CollisionManager::UpdateColliders(void)
 	int idx = 0;
 	
 	for (auto& col : colliders_) {
+		//必要ないものは削除
+
+		//使わないものは判定しない
+		if (!col.lock()->IsUseThis()) {
+			idx++;
+			continue;
+		}
+
 		//現在以降の物としか判定をとらない(既に判定を行っているため)
 		for(int i = idx + 1; i < static_cast<int>(colliders_.size()); i++) {
+			//使わないものは判定しない
+			if (!colliders_[i].lock()->IsUseThis())continue;
 			CollisionGeometry(col, colliders_[i]);
 		}
 		idx++;

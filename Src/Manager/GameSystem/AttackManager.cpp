@@ -1,6 +1,5 @@
 #include<cassert>
 #include<map>
-#include"../../Object/Attack/Arrow.h"
 #include"../../Object/Character/CharacterBase.h"
 #include"../Decoration/SoundManager.h"
 
@@ -54,7 +53,7 @@ void AttackManager::Attack(const std::string _name, const std::string _sndName)
 		return;
 	}
 
-	if(attackColliders_.at(_name).isUsed){
+	if (attackColliders_[_name].collider.lock()->IsUseThis()) {
 		//エラー防止
 		assert("すでに使用中の攻撃を再度発生させようとしています");
 		return;

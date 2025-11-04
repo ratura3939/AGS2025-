@@ -10,7 +10,7 @@ public:
 	ActorBase(void);
 	virtual ~ActorBase(void);
 
-	virtual void Init(void) = 0;
+	void Init(void);
 	void Update(void);
 	virtual void Draw(void) = 0;
 	virtual void Release(void) = 0;
@@ -35,6 +35,7 @@ public:
 	const float GetPower(void)const;
 
 protected:
+	virtual void DoInit(void) = 0;
 	virtual void DoUpdate(void) = 0;	//派生クラスの更新処理
 
 #pragma region モデル基礎

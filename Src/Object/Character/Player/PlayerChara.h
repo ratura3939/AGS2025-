@@ -47,8 +47,6 @@ public:
     PlayerChara(void);
     ~PlayerChara(void)override;
 
-    void Init(void)override;
-
     //’‹“_‚Ìæ“¾
     const VECTOR GetFocusPoint(void)const;
 
@@ -80,6 +78,7 @@ public:
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 
 private:
+    void DoInit(void)override;
     void DoUpdate(void)override;
     void InitAnim(void)override;
     void InitUI(void)override;

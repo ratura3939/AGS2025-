@@ -24,6 +24,8 @@ CharacterBase::CharacterBase(void)
 	quaRotLocal_ = Quaternion();
 	goalQua_ = Quaternion();
 	stepRotation_ = 0.0f;
+
+	centerPos_ = Utility::VECTOR_ZERO;
 }
 
 CharacterBase::~CharacterBase(void)

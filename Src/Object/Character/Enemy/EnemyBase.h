@@ -74,7 +74,6 @@ public:
     EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos);
     ~EnemyBase(void)override;
 
-    void Init(void)override;
     void Draw(void)override;
 
     //ê∂ë∂îªíË
@@ -179,6 +178,7 @@ protected:
     double debugRot_;
 
 private:
-        void DoUpdate(void)override;
+    void DoInit(void)override;
+    void DoUpdate(void)override;
 };
 

@@ -65,7 +65,7 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 	//“G‚ÌŒÂ‘Ì•ª‰ñ‚·
 	for (auto& chara : characters_) {
 		//XV‚ð‚©‚¯‚é
-		chara->Update(_playerPos, _atkMng);
+		chara->Update();
 
 		//Ž€–S‚µ‚Ä‚¢‚½‚ç
 		if (!chara->IsAlive()) {
@@ -249,11 +249,13 @@ void EnemyManager::LokedOn(const int _num)
 	}
 }
 
-void EnemyManager::CreateBoss(void)
+void EnemyManager::CreateBoss(const VECTOR& _pPos)
 {
 	VECTOR pos = INIT_1;
-	auto boss = std::make_shared<Boss>(pos);
-	boss->Init(0);
+	auto boss = std::make_shared<Boss>(pos, 0, atkMng_, _pPos);
+	boss->Init();
+	//UŒ‚‚Ì•R‚Ã‚¯
+	atkMng_.AddAttackCollider(boss->GetSpeciesName(), boss->GetAttackCollider(), false, ATTACK_TIME, ATTACK_TIME_START, ATTACK_TIME_END);
 	characters_.push_back(boss);
 	createBoss_ = true;
 

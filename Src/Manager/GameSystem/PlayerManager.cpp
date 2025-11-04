@@ -13,11 +13,6 @@
 
 const std::string PlayerManager::ATTACK_NOMAL = "PlayerAttack";
 
-namespace {
-	float AtkScl = 70.0f;
-	float AtkPow = 30.0f;
-}
-
 PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, AttackManager& _atk, StageManager& _stage)
 	:scene_(_gameScene)
 	,atkMng_(_atk)

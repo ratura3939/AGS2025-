@@ -69,17 +69,9 @@ EnemyBase::~EnemyBase(void)
 {
 }
 
-void EnemyBase::Init(void)
+void EnemyBase::DoInit(void)
 {
 	SetParam();
-
-	//当たり判定生成
-	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
-	using COL_TYPE = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::ENEMY},
-		std::move(std::make_unique<Capsule>(headPos_, pos_, CHARACTER_RADIUS)));
-
-	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
 
 	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
 }
@@ -87,7 +79,10 @@ void EnemyBase::Init(void)
 
 void EnemyBase::DoUpdate(void)
 {
-	atkPos_ = VAdd(pos_, characterRotY_.PosAxis(atkRelative_));
+	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
+	atkPos_ = VAdd(pos_, characterRotY_.PosAxis(atkRelative_));	//攻撃発生位置
+	centerPos_ = headPos_;	//モデル中央
+	centerPos_.y /= 2.0f;
 	prePos_ = pos_;
 
 	//行動更新
@@ -121,6 +116,12 @@ void EnemyBase::UpdateNomal(const VECTOR& _pPos, AttackManager& _atk)
 {
 	//移動処理
 	(this->*move_)(_pPos);
+
+	//テキトーな移動制限
+	if (Utility::MagnitudeF(pos_) > MOVE_MAX) {
+		SetPrePos();
+		return;
+	}
 
 	//カウンタ増加
 	searchRestartCnt_++;
@@ -464,4 +465,21 @@ const std::string& EnemyBase::GetSpeciesName(void) const
 
 void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
 {
+	const float DmgEfcScl = 25.0f;
+	const float DmgEfcSpeed = 2.5f;
+	const float SwordEfcScl = 50.0f;
+	const float SwordEfcSpeed = 1.5;
+
+	using TAG = Collider::COL_TAG;
+	//プレイヤーの攻撃の場合
+	if (_col.lock()->IsContainsTag({ TAG::PLAYER,TAG::ATTACK })) {
+		//ダメージ処理
+		Damage(_col.lock()->GetPower());
+		auto& efcM = EffectManager::GetInstance();
+		efcM.Play(GetSpeciesName(), "Damage", centerPos_, rot_, DmgEfcScl, DmgEfcSpeed, "Damage");
+		efcM.Play(GetSpeciesName(), "Sword", centerPos_, rot_, SwordEfcScl, SwordEfcSpeed);
+
+		//攻撃なのでフラグをオフに
+		_col.lock()->SetUseThis(false);
+	}
 }

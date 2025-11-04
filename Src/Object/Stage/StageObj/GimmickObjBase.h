@@ -17,7 +17,6 @@ public:
 	GimmickObjBase(void);
 	virtual ~GimmickObjBase(void);
 
-	void Init(void)override;
 	virtual void Draw(void)override;
 	void Release(void)override;
 
@@ -48,6 +47,7 @@ public:
 	void ResetGravity(void) { gravity_ = { 0.0f,0.0f,0.0f }; }
 
 protected:
+	void DoInit(void)override;
 	virtual void SetParam(void) = 0;
 
 	void UpdateNomal(void);

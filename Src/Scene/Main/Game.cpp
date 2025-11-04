@@ -104,9 +104,6 @@ void Game::Init(void)
 
 	enemy_->Init(player_->GetPos());	//しぶしぶこの位置
 
-	//攻撃の登録
-	//AttackDataInit();
-
 	//カメラの初期設定
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
@@ -321,15 +318,15 @@ void Game::GameUpdate(void)
 	}
 
 	//敵
-	//enemy_->Update(player_->GetPos(), *atkMng_);
+	enemy_->Update(player_->GetPos(), *atkMng_);
 
 	//攻撃
 	atkMng_->Update();
 
-	//判定処理/その中でスロー演出が入るかどうか
-	if (CollisionManager::GetInstance().Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks())) {
-		StartSlow();
-	}
+	////判定処理/その中でスロー演出が入るかどうか
+	//if (CollisionManager::GetInstance().Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks())) {
+	//	StartSlow();
+	//}
 
 	//ステージ
 	stage_->Update();
@@ -421,7 +418,7 @@ void Game::DirectionUpdate(void)
 		//カメラ移動
 		else if (direcState_ == BOSS_DIRECTION::CAMERA_MOVE) {
 			//ボスの生成
-			enemy_->CreateBoss();
+			enemy_->CreateBoss(player_->GetPos());
 
 			//カメラを自動移動に設定
 			auto& camera = SceneManager::GetInstance().GetCamera();

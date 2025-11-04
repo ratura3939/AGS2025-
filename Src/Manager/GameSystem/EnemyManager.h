@@ -80,7 +80,7 @@ public:
 	//ƒƒbƒNƒIƒ“‚³‚ê‚½ˆ—
 	void LokedOn(const int _num);
 
-	void CreateBoss(void);
+	void CreateBoss(const VECTOR& _pPos);
 	void BossShout(void);
 
 	void DrawDebug(void);
