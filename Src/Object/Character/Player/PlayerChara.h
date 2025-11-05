@@ -104,5 +104,7 @@ private:
 
     //UIŠÖ˜A
     int allertTime_;
+
+    bool isSlow_;   //ƒXƒ[ó‘Ô‚É‚·‚é‚©
 };
 
