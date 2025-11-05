@@ -34,8 +34,9 @@ void CollisionManager::Destroy(void)
 }
 
 CollisionManager::CollisionManager(void)
+	: colliderCounter_(0)
+	, isSlow_(false)
 {
-	isSlow_ = false;
 }
 
 CollisionManager::~CollisionManager(void)
@@ -44,8 +45,23 @@ CollisionManager::~CollisionManager(void)
 
 void CollisionManager::AddCollider(std::weak_ptr<Collider> _col)
 {
+	//管理番号付与→追加→カウンタ増加
+	_col.lock()->SetManagementNumber(colliderCounter_);
 	colliders_.push_back(_col);
+	colliderCounter_++;
 }
+
+void CollisionManager::DeleteCollider(const std::weak_ptr<Collider> _col)
+{
+	const int deleteIdx = _col.lock()->GetManagementNumber();
+	//削除以降の管理番号を一つ手前に
+	for (int idx = deleteIdx + 1; idx < static_cast<int>(colliders_.size()); idx++) {
+		colliders_[idx].lock()->DecreaseManagementNuber();
+	}
+	//削除
+	colliders_.erase(colliders_.begin() + deleteIdx);
+}
+
 
 void CollisionManager::UpdateColliders(void)
 {

@@ -3,6 +3,7 @@
 #include"../../../Manager/Generic/Camera.h"
 #include"../../../Manager/Generic/SceneManager.h"
 #include"../../../Manager/GameSystem/AnimationController.h"
+#include"../../../Manager/GameSystem/AttackManager.h"
 #include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Manager/Decoration/EffectManager.h"
@@ -24,6 +25,7 @@ namespace {
 	const int ALLERT_TIME = 30;  //警戒UI描画時間   
 	const std::string UI_NAME = "PlayerUI"; //UIリソース名
 	const std::string EFC_NAME = "PlayerEfc"; //UIリソース名
+	const std::string CHARACTER_NAME = "Player"; //UIリソース名
 #pragma endregion
 
 #pragma region アニメーション関連定数
@@ -65,13 +67,15 @@ namespace {
 }
 
 
-PlayerChara::PlayerChara(void)
+PlayerChara::PlayerChara(AttackManager& _atk)
+	: atkMng_(_atk)
 {
 	focusPoint_ = Utility::VECTOR_ZERO;
 	lockState_ = LOCK_STATE::MAX;
 	state_ = STATE::NOMAL;
 	isDush_ = false;
 	afterMoveRad_ = 0.0f;
+	speciesName_ = CHARACTER_NAME;
 }
 
 PlayerChara::~PlayerChara(void)
@@ -258,14 +262,27 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 	using TAG = Collider::COL_TAG;
 	//敵の物の場合
 	if (_col.lock()->IsContainsTag(TAG::ENEMY)) {
+		//攻撃発生者の名前を取得
+		auto& atkMaster = _col.lock()->GetMasterName();
+
 		//発動準備中
 		if (_col.lock()->IsContainsTag(TAG::PREATTACK)) {
+			//警告音
+			if (!atkMng_.IsAllert(atkMaster)) {
+				//音声の再生
+				SoundManager::GetInstance().Play("Allert");
+				//警告使用済みに
+				atkMng_.UseAllert(atkMaster);
+			}
+
 			//回避状態の場合
 			if (state_ == STATE::DODGE) {
 				//スロー処理に
 
-				//攻撃なのでフラグをオフに
-				_col.lock()->SetUseThis(false);
+				//音声の再生
+				SoundManager::GetInstance().Play("JustDodge");
+				//判定を使用した
+				atkMng_.UseAttackCollision(atkMaster);
 			}
 		}
 		//攻撃
@@ -275,8 +292,8 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 			auto& efcM = EffectManager::GetInstance();
 			efcM.Play(EFC_NAME, "Damage", centerPos_, rot_, DmgEfcScl, DmgEfcSpeed, "Damage");
 			efcM.Play(EFC_NAME, "Sword", centerPos_, rot_, SwordEfcScl, SwordEfcSpeed);
-			//攻撃なのでフラグをオフに
-			_col.lock()->SetUseThis(false);
+			//判定を使用した
+			atkMng_.UseAttackCollision(atkMaster);
 		}
 	}
 }

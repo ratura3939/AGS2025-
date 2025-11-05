@@ -32,7 +32,12 @@ public:
 
 	//Õ“ËŒã‚Ìˆ—
 	virtual void HitCollider(std::weak_ptr<Collider> _col) = 0;
-	const float GetPower(void)const;
+
+	//UŒ‚—Í‚Ìæ“¾
+	const float GetPower(void)const;	
+
+	//ŒÂ‘Ì–¼æ“¾
+	const std::string& GetSpeciesName(void)const;
 
 protected:
 	virtual void DoInit(void) = 0;
@@ -57,6 +62,9 @@ protected:
 	// ƒ[ƒJƒ‹‰ñ“]
 	Quaternion quaRotLocal_;
 #pragma endregion
+
+	//ŒÂ‘Ì–¼
+	std::string speciesName_;
 
 	std::shared_ptr<Collider> collider_;
 	float power_;	//UŒ‚—Í

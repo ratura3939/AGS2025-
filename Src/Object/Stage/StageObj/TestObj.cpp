@@ -7,6 +7,7 @@
 //ローカル定数
 namespace {
 	const float SPHERE_RADIUS = 150.0f;	//コライダー半径
+	const std::string OBJ_NAME = "Moon";
 }
 
 void TestObj::HitCollider(std::weak_ptr<Collider> _col)
@@ -23,6 +24,7 @@ void TestObj::HitCollider(std::weak_ptr<Collider> _col)
 void TestObj::SetParam(void)
 {
 	//月
+	speciesName_ = OBJ_NAME;
 	isAffectAbilyty_ = true;
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TEST_MDL).handleId_;
 	pos_ = { 200.0f,1500.0f,500.0f };

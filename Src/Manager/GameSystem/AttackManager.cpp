@@ -5,7 +5,7 @@
 
 #include "AttackManager.h"
 
-void AttackManager::AddAttackCollider(const std::string _name, std::weak_ptr<Collider> _col, const bool _friendFire, const float _totalTime, const float _start, const float _end)
+void AttackManager::AddAttackCollider(const std::string& _name, std::weak_ptr<Collider> _col, const bool _friendFire, const float _totalTime, const float _start, const float _end)
 {
 	//Šù‚É—v‘f‚ª‚ ‚é‚Æ‚«
 	if(attackColliders_.contains(_name)){
@@ -25,8 +25,12 @@ void AttackManager::AddAttackCollider(const std::string _name, std::weak_ptr<Col
 	}
 	addInfo.counter = 0.0f;
 	addInfo.isUsed = false;
+	addInfo.isAllert = false;
 
 	attackColliders_.emplace(_name, addInfo);
+
+	UpdateAttack_f addUpdate = &AttackManager::UpdatePreAttack;
+	updateAtk_.emplace(_name, addUpdate);
 
 	//FFÝ’è
 	//ƒvƒŒƒCƒ„[–”‚Í“G‚Ì‚Ç‚¿‚ç‚©‚É“–‚½‚ç‚È‚¢‚æ‚¤‚É‚·‚é
@@ -44,7 +48,7 @@ void AttackManager::AddAttackCollider(const std::string _name, std::weak_ptr<Col
 	}
 }
 
-void AttackManager::Attack(const std::string _name, const std::string _sndName)
+void AttackManager::Attack(const std::string& _name, const std::string& _sndName)
 {
 	//‚»‚à‚»‚àŽg—p‚µ‚½‚¢UŒ‚‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢‚Æ‚«
 	if(!attackColliders_.contains(_name)){
@@ -53,7 +57,7 @@ void AttackManager::Attack(const std::string _name, const std::string _sndName)
 		return;
 	}
 
-	if (attackColliders_[_name].collider.lock()->IsUseThis()) {
+	if (attackColliders_[_name].isUsed) {
 		//ƒGƒ‰[–hŽ~
 		assert("‚·‚Å‚ÉŽg—p’†‚ÌUŒ‚‚ðÄ“x”­¶‚³‚¹‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·");
 		return;
@@ -63,12 +67,21 @@ void AttackManager::Attack(const std::string _name, const std::string _sndName)
 	attackColliders_[_name].collider.lock()->SetUseThis(true);
 	//UŒ‚€”õ‚Ìƒ^ƒOÝ’è
 	attackColliders_[_name].collider.lock()->AddTag(Collider::COL_TAG::PREATTACK);
+	attackColliders_[_name].isUsed = true;
+
+	//XVˆ—‚ÌÝ’è
+	updateAtk_[_name] = &AttackManager::UpdatePreAttack;
 
 	//‰½‚©Ä¶‚·‚é•¨‚ª‚ ‚éê‡
 	if (_sndName != "") {
 		//Œø‰Ê‰¹‚ÌÄ¶
 		SoundManager::GetInstance().Play(_sndName);
 	}
+}
+
+void AttackManager::DeleteCollider(const std::string& _name)
+{
+	attackColliders_.erase(_name);
 }
 
 bool AttackManager::Update(void)
@@ -80,36 +93,37 @@ bool AttackManager::Update(void)
 		atk.second.counter++;
 		auto atkCol = atk.second.collider.lock();
 
-		//UŒ‚‚ªŽg—p’†‚Å‚È‚¯‚ê‚Î
-		if (!atk.second.isUsed) {
-			//UŒ‚ŠJŽnˆ—
-			if (atk.second.counter >= atk.second.startTime) {
-				//€”õó‘Ô¨UŒ‚ó‘Ô‚Ö
-				atkCol->DeleteTag(Collider::COL_TAG::PREATTACK);
-				atkCol->AddTag(Collider::COL_TAG::ATTACK);
-				atk.second.isUsed = true;
-			}
-		}
-		else {
-			if (atk.second.counter >= atk.second.endTime) {
-				//UŒ‚I—¹ˆ—
-				atkCol->SetUseThis(false);
-				atkCol->DeleteTag(Collider::COL_TAG::ATTACK);
-				atk.second.counter = 0.0f;
-				atk.second.isUsed = false;
-			}
+		if (atk.second.isUsed) {
+			//ƒAƒNƒeƒBƒu‚ÈUŒ‚‚ÌXV
+			(this->*updateAtk_[atk.first])(atk.first, atk.second);
 		}
 	}
 	return true;
 }
 
-const float AttackManager::GetTotalTime(const std::string _name) const
+const float AttackManager::GetTotalTime(const std::string& _name) const
 {
 	//—v‘f‚ª‚È‚¢‚Æ‚«
 	if (!attackColliders_.contains(_name)) {
 		return -1.0f;
 	}
 	return attackColliders_.at(_name).totalTime;
+}
+
+void AttackManager::UseAllert(const std::string& _name)
+{
+	attackColliders_[_name].isAllert = true;
+}
+
+const bool AttackManager::IsAllert(const std::string& _name) const
+{
+	return attackColliders_.at(_name).isAllert;
+}
+
+void AttackManager::UseAttackCollision(const std::string& _name)
+{
+	attackColliders_[_name].collider.lock()->SetUseThis(false);
+	attackColliders_[_name].isUsed = false;
 }
 
 void AttackManager::DrawDebug(void)
@@ -132,4 +146,28 @@ void AttackManager::DrawDebug(void)
 	//	}
 	//}
 	
+}
+
+void AttackManager::UpdatePreAttack(const std::string& _name, AttackInfo& _info)
+{
+	if (_info.counter >= _info.startTime) {
+		//UŒ‚ŠJŽnˆ—
+		auto atkCol = _info.collider.lock();
+		//€”õó‘Ô¨UŒ‚ó‘Ô‚Ö
+		atkCol->DeleteTag(Collider::COL_TAG::PREATTACK);
+		atkCol->AddTag(Collider::COL_TAG::ATTACK);
+		updateAtk_[_name] = &AttackManager::UpdateAttack;
+	}
+}
+
+void AttackManager::UpdateAttack(const std::string& _name, AttackInfo& _info)
+{
+	if (_info.counter >= _info.endTime) {
+		//UŒ‚I—¹ˆ—
+		auto atkCol = _info.collider.lock();
+		atkCol->SetUseThis(false);
+		atkCol->DeleteTag(Collider::COL_TAG::ATTACK);
+		_info.counter = 0.0f;
+		_info.isUsed = false;
+	}
 }

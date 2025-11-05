@@ -17,7 +17,7 @@ PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, AttackManag
 	:scene_(_gameScene)
 	,atkMng_(_atk)
 {
-	character_ = std::make_shared<PlayerChara>();
+	character_ = std::make_shared<PlayerChara>(_atk);
 	character_->Init();
 	lockOn_ = std::make_unique<LockOnManager>(_gameScene, *this, _enemy);
 	ability_ = std::make_unique<AbilityManager>(_stage, *character_);
@@ -33,7 +33,7 @@ PlayerManager::~PlayerManager(void)
 void PlayerManager::Init(void)
 {
 	//攻撃とコライダーの紐づけ
-	atkMng_.AddAttackCollider(ATTACK_NOMAL, character_->GetAttackCollider(), false, ATTACK_TIME);
+	atkMng_.AddAttackCollider(character_->GetSpeciesName(), character_->GetAttackCollider(), false, ATTACK_TIME);
 }
 
 void PlayerManager::Update(AttackManager& _atk)
@@ -146,12 +146,12 @@ void PlayerManager::UserInput(AttackManager& _atk)
 		//攻撃
 		if (ins.IsTrigerrDown("attack")) {
 			//攻撃の生成および状態の設定
-			_atk.Attack(ATTACK_NOMAL, "SwingSword");
+			_atk.Attack(character_->GetSpeciesName(), "SwingSword");
 			character_->SetState(PlayerChara::STATE::ATTACK);
 			//対応するアニメーション
 			character_->PlayAnim("atkFirst");
 			//時間の設定
-			RedyStateCount(static_cast<int>(_atk.GetTotalTime(ATTACK_NOMAL)));
+			RedyStateCount(static_cast<int>(_atk.GetTotalTime(character_->GetSpeciesName())));
 		}
 
 		//回避入力があったとき(ロックオン状態でしか作動しない)

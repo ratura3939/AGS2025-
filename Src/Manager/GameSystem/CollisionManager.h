@@ -22,6 +22,8 @@ public:
 
 	void AddCollider(std::weak_ptr<Collider> _col);
 
+	void DeleteCollider(const std::weak_ptr<Collider> _col);
+
 	//すべてのコライダーの衝突判定
 	void UpdateColliders(void);
 
@@ -62,5 +64,7 @@ private:
 	bool isSlow_;	//スロー演出するか
 
 	std::vector<std::weak_ptr<Collider>> colliders_;
+
+	int colliderCounter_;
 };
 

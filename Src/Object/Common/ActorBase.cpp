@@ -71,6 +71,11 @@ const float ActorBase::GetPower(void) const
 	return power_;
 }
 
+const std::string& ActorBase::GetSpeciesName(void) const
+{
+	return speciesName_;
+}
+
 void ActorBase::UpdateRotQuat(void)
 {
 	// ‘å‚«‚³

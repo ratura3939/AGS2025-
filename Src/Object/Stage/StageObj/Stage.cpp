@@ -9,11 +9,13 @@
 //ƒ[ƒJƒ‹’è”1
 namespace {
 	const float UV_SCALING_NOISE = 10.0f;
+	const std::string OBJ_NAME = "Stage";
 }
 
 Stage::Stage(void)
 {
 	isAffectAbilyty_ = false;
+	speciesName_ = OBJ_NAME;
 }
 Stage::~Stage(void)
 {

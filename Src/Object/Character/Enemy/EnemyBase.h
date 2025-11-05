@@ -95,8 +95,7 @@ public:
 
     virtual void Shout(void);//ボス専用
 
-    //個体名取得
-    const std::string& GetSpeciesName(void)const;
+   
 
     //当たり判定後処理
 	void HitCollider(std::weak_ptr<Collider> _col)override;
@@ -136,9 +135,6 @@ protected:
     //参照
 	AttackManager& atkManager_;
     const VECTOR& pPos_; //プレイヤー位置参照
-
-    //個体名
-    std::string speciesName_;
 
     using Update_f = void(EnemyBase::*)(const VECTOR& _pPos, AttackManager& _atk);
     using Move_f = void(EnemyBase::*)(const VECTOR& _pPos);

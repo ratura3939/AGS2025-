@@ -349,6 +349,11 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		//死亡アニメーション
 		animController_->Play("dethStart", SPEED_ANIM,{"dethSus"});
 
+		//コライダー登録解除
+		CollisionManager& colM = CollisionManager::GetInstance();
+		colM.DeleteCollider(collider_);
+		colM.DeleteCollider(atkCollider_);
+
 		break;
 	case ENEMY_STATE::END:
 		//削除可能に
@@ -456,11 +461,6 @@ void EnemyBase::Deth(void)
 void EnemyBase::Shout(void)
 {
 	//ボス専用
-}
-
-const std::string& EnemyBase::GetSpeciesName(void) const
-{
-	return speciesName_;
 }
 
 void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)

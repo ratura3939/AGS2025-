@@ -6,10 +6,12 @@
 //ローカル定数
 namespace {
 	const float SPHERE_RADIUS = 20.0f;	//コライダー半径
+	const std::string OBJ_NAME = "Axe";
 }
 
 TestObj2::TestObj2(void)
 {
+	speciesName_ = OBJ_NAME;
 }
 
 TestObj2::~TestObj2(void)

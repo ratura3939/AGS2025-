@@ -8,6 +8,7 @@
 //よって更新に関わるカウンターは通常のインクリメント
 
 class Game;
+class AttackManager;
 
 class PlayerChara :
     public CharacterBase
@@ -44,7 +45,7 @@ public:
         BACK
     };
 
-    PlayerChara(void);
+    PlayerChara(AttackManager& _atk);
     ~PlayerChara(void)override;
 
     //注視点の取得
@@ -85,6 +86,8 @@ private:
     void DrawUI(void)override;
     void Move(void);    //移動処理
     const std::string DecideAnim(const MOVE_DIR _dir)const;
+
+    AttackManager& atkMng_;
 
     LOCK_STATE lockState_; //ロックオン状態
     STATE state_;       //状態
