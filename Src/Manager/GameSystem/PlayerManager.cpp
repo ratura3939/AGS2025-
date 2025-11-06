@@ -49,6 +49,12 @@ void PlayerManager::Update(AttackManager& _atk)
 		stateCnt_++;
 	}
 
+	//スロー状態管理
+	if (character_->IsSlow()) {
+		scene_.StartSlow();
+		character_->SetIsSlow(false);
+	}
+
 	//プレイヤーからの入力
 	UserInput(_atk);
 	//キャラクター更新

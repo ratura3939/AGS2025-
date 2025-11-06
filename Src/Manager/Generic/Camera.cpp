@@ -53,6 +53,8 @@ void Camera::Init(void)
 {
 	//ƒJƒƒ‰‚Ì‰Šúİ’è
 	SetDefault();
+	collider_ = std::make_unique<CameraCollider>(*this);
+	collider_->Init();
 }
 
 void Camera::Update(void)

@@ -69,6 +69,7 @@ namespace {
 
 PlayerChara::PlayerChara(AttackManager& _atk)
 	: atkMng_(_atk)
+	, isSlow_(false)
 {
 	focusPoint_ = Utility::VECTOR_ZERO;
 	lockState_ = LOCK_STATE::MAX;

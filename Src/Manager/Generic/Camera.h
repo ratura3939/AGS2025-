@@ -2,7 +2,9 @@
 #include <DxLib.h>
 #include <cmath>
 #include <DirectXMath.h>
+#include<ranges>
 #include "../../Common/Quaternion.h"
+#include"CameraCollider.h"
 
 class Transform;
 
@@ -10,14 +12,11 @@ class Camera
 {
 public:
 	//カメラの描画域(Near,Far)関連の定数------------------------------------------------------
-	
-	static constexpr float SPEED = 10.0f;			//カメラスピード：NEAR
+	static constexpr float SPEED = 10.0f;			//カメラスピード
 
-	
 	static constexpr float CAMERA_NEAR = 40.0f;		//カメラクリップ：NEAR
 
-	
-	static constexpr float CAMERA_FAR = 15000.0f;	//カメラクリップ：NEAR
+	static constexpr float CAMERA_FAR = 15000.0f;	//カメラクリップ：FAR
 
 	//カメラ座標関連の定数---------------------------------------------------------------------
 	
@@ -153,6 +152,8 @@ public:
 
 	void DrawDebug(void);
 private:
+	//コライダー
+	std::unique_ptr<CameraCollider> collider_;
 
 	//追従対象
 	ForFollowInfo followObject_;

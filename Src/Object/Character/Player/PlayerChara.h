@@ -61,7 +61,11 @@ public:
     const STATE GetState(void)const;    //取得
     void SetState(const STATE& _state); //設定(PlayerManagerからの受付)
     void PlayAnim(const std::string _anim); //アニメーションの再生(外部<マネージャ・当たり判定>より)
-    const bool IsLock(void);
+    const bool IsLock(void);        //ロックオン状態か
+
+    //スロー判定
+    void SetIsSlow(const bool _flag){ isSlow_ = _flag; }
+    const bool IsSlow(void)const { return isSlow_; }
 
     void Damage(const float _pow)override;
 
@@ -105,6 +109,7 @@ private:
     //UI関連
     int allertTime_;
 
-    bool isSlow_;   //スロー状態にするか
+    //スロー状態にするか
+    bool isSlow_;   
 };
 

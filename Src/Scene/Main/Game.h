@@ -56,6 +56,8 @@ public:
 	//ブラー入れるか入れないか
 	void ChangeActionDirec(const ACTION_DIRECTION _direc);	
 
+	//スロー演出開始
+	void StartSlow(void);
 	//スロー終了
 	void EndSlow(void);		
 
@@ -91,9 +93,6 @@ private:
 
 	//切り換え終了時の処理
 	void FinishSwitchBgm(void);
-
-	//スロー演出開始
-	void StartSlow(void);	
 	
 	//デバッグ描画
 	void DrawDebug(void);

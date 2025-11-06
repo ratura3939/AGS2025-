@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\Generic\CameraCollider.cpp" />
     <ClCompile Include="Src\Object\Common\Geometry\Capsule.cpp" />
     <ClCompile Include="Src\Object\Common\Geometry\Sphere.cpp" />
     <ClCompile Include="Src\Object\Common\Geometry\Model.cpp" />
@@ -86,6 +87,7 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\Generic\CameraCollider.h" />
     <ClInclude Include="Src\Object\Common\Geometry\Capsule.h" />
     <ClInclude Include="Src\Object\Common\Geometry\Sphere.h" />
     <ClInclude Include="Src\Object\Common\Geometry\Model.h" />
