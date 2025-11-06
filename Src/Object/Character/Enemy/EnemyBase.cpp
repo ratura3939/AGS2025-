@@ -350,9 +350,9 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		animController_->Play("dethStart", SPEED_ANIM,{"dethSus"});
 
 		//コライダー登録解除
-		CollisionManager& colM = CollisionManager::GetInstance();
-		colM.DeleteCollider(collider_);
-		colM.DeleteCollider(atkCollider_);
+		//CollisionManager& colM = CollisionManager::GetInstance();
+		CollisionManager::GetInstance().DeleteCollider(collider_);
+		CollisionManager::GetInstance().DeleteCollider(atkCollider_);
 
 		break;
 	case ENEMY_STATE::END:

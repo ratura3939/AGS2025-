@@ -32,7 +32,7 @@ void CameraCollider::HitCollider(std::weak_ptr<Collider> _col)
 void CameraCollider::DoInit(void)
 {
 	using TAG = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, TAG::OBJECT, std::move(std::make_unique<Sphere>(camera_.GetPos(), SPHERE_RADIUS)));
+	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::OBJECT}, std::move(std::make_unique<Sphere>(camera_.GetPos(), SPHERE_RADIUS)));
 }
 
 void CameraCollider::DoUpdate(void)
