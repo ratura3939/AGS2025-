@@ -92,6 +92,11 @@ const bool Sphere::IsHit(Capsule& _capsule)
 	return ret;
 }
 
+const bool Sphere::IsHit(Cube& _capsule)
+{
+	return false;
+}
+
 const bool Sphere::IsHit(Model& _model)
 {
 	//ƒ‚ƒfƒ‹‘¤‚Ì“–‚½‚è”»’èˆ—‚É”C‚¹‚é

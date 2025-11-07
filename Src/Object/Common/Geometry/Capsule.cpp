@@ -74,6 +74,11 @@ const bool Capsule::IsHit(Capsule& _capsule)
 	return distance <= (GetRadius() + _capsule.GetRadius());
 }
 
+const bool Capsule::IsHit(Cube& _capsule)
+{
+	return false;
+}
+
 const bool Capsule::IsHit(Model& _model)
 {
 	return _model.IsHit(*this);

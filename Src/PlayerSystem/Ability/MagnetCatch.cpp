@@ -127,6 +127,12 @@ void MagnetCatch::ResetAbility(void)
 	direcStep_ = 0.0f;
 }
 
+void MagnetCatch::EndAbility(void)
+{
+	//キャラクターの設定
+	master_.ChangeLockState(false);
+}
+
 void MagnetCatch::MakeChangeRelativePosition(void)
 {
 	InputManager& ins = InputManager::GetInstance();

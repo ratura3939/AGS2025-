@@ -10,6 +10,7 @@ public:
     const bool IsHit(Geometry& _geo)override;
     const bool IsHit(Sphere& _sphere)override;
 	const bool IsHit(Capsule& _capsule)override;
+	const bool IsHit(Cube& _capsule)override;
 	const bool IsHit(Model& _model)override;
 
 	const float GetRadius(void)const override { return radius_; }

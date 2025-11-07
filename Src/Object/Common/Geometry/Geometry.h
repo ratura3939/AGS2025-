@@ -4,6 +4,7 @@
 
 class Sphere;
 class Capsule;
+class Cube;
 class Model;
 
 class Geometry
@@ -15,6 +16,7 @@ public:
 	virtual const bool IsHit(Geometry& _geo) = 0;
 	virtual const bool IsHit(Sphere& _sphere) = 0;
 	virtual const bool IsHit(Capsule& _capsule) = 0;
+	virtual const bool IsHit(Cube& _capsule) = 0;
 	virtual const bool IsHit(Model& _model) = 0;
 #pragma endregion
 

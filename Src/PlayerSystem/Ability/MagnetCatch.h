@@ -17,6 +17,8 @@ public:
    void Draw(void)override;
    void ResetAbility(void)override;
 
+   void EndAbility(void)override;
+
 private:
     void MakeChangeRelativePosition(void);
 

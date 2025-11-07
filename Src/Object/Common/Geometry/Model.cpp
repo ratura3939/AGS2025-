@@ -34,6 +34,11 @@ const bool Model::IsHit(Capsule& _capsule)
     return isHit;
 }
 
+const bool Model::IsHit(Cube& _capsule)
+{
+    return false;
+}
+
 const bool Model::IsHit(Model& _model)
 {
     //èoóàÇ»Ç¢
