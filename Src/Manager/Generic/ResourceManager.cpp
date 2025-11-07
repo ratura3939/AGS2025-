@@ -371,10 +371,10 @@ void ResourceManager::ResorceStage(void)
 	resourcesMap_.emplace(SRC::TEST_MDL_2, res);
 
 	//ステージ
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage1.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage_sakata.mv1");
 	resourcesMap_.emplace(SRC::OBJECTS_MDL, res);
 
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "deco1.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage_sakata.mv1");
 	resourcesMap_.emplace(SRC::STAGE_MDL, res);
 
 	//ノイズテクスチャ
