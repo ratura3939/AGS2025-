@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\GateGimmickObjs.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\Fence.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\Gate.cpp" />
     <ClCompile Include="Src\Object\Common\Geometry\Cube.cpp" />
     <ClCompile Include="Src\Manager\Generic\CameraCollider.cpp" />
     <ClCompile Include="Src\Object\Common\Geometry\Capsule.cpp" />
@@ -86,8 +89,12 @@
     <ClCompile Include="Src\Scene\Sub\SwitchControllerScene.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\TestObj2.cpp" />
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\SwitchObj.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Stage\StageObj\GateGmc\GateGimmickObjs.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\GateGmc\Fence.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\GateGmc\Gate.h" />
     <ClInclude Include="Src\Object\Common\Geometry\Cube.h" />
     <ClInclude Include="Src\Manager\Generic\CameraCollider.h" />
     <ClInclude Include="Src\Object\Common\Geometry\Capsule.h" />
@@ -155,6 +162,7 @@
     <ClInclude Include="Src\Scene\Sub\SwitchControllerScene.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\TestObj2.h" />
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\GateGmc\SwitchObj.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\Model\BlurSkinPS.hlsl">

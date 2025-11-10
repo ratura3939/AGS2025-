@@ -198,7 +198,7 @@ bool EnemyManager::IsBattleEnemy(void)
 	return false;
 }
 
-bool EnemyManager::IsSwitchBattleOrNomalEnemyTrg(void)
+bool EnemyManager::IsBattleStateChanged(void)
 {
 	//更新前の状態と更新後の物を比較
 	if (preBattle_ != IsBattleEnemy()) {

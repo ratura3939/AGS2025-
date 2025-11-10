@@ -1,4 +1,5 @@
 #include"Sphere.h"
+#include"Cube.h"
 #include"Model.h"
 #include "Capsule.h"
 
@@ -74,9 +75,9 @@ const bool Capsule::IsHit(Capsule& _capsule)
 	return distance <= (GetRadius() + _capsule.GetRadius());
 }
 
-const bool Capsule::IsHit(Cube& _capsule)
+const bool Capsule::IsHit(Cube& _cube)
 {
-	return false;
+	return _cube.IsHit(*this);
 }
 
 const bool Capsule::IsHit(Model& _model)

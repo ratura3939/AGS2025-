@@ -337,7 +337,7 @@ void Game::GameUpdate(void)
 
 #pragma region BGM
 	//敵の状態(戦闘・それ以外)のトリガ
-	if (enemy_->IsSwitchBattleOrNomalEnemyTrg()) {
+	if (enemy_->IsBattleStateChanged()) {
 		//もともと切り換え中だったら
 		if (switchBgm_) {
 			//強制終了処理

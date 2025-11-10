@@ -1,10 +1,12 @@
-#include"Model.h"
+ï»¿#include"../../../Utility/Utility.h"
 #include"Capsule.h"
+#include"Cube.h"
+#include"Model.h"
 #include "Sphere.h"
 
 
 Sphere::Sphere(const VECTOR& _pos, const float _radius)
-	: Geometry(_pos, Quaternion())	//‰ñ“]‚ÍŠÖŒW‚È‚¢‚Ì‚ÅƒfƒtƒHƒ‹ƒg‚Å‰Šú‰»
+	: Geometry(_pos, Quaternion())	//å›è»¢ã¯é–¢ä¿‚ãªã„ã®ã§ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§åˆæœŸåŒ–
 	, radius_(_radius)
 {
 }
@@ -30,59 +32,59 @@ const bool Sphere::IsHit(Sphere& _sphere)
 
 const bool Sphere::IsHit(Capsule& _capsule)
 {
-	//‹…‘Ì‚ÆƒJƒvƒZƒ‹‚Ì“–‚½‚è”»’è
+	//çƒä½“ã¨ã‚«ãƒ—ã‚»ãƒ«ã®å½“ãŸã‚Šåˆ¤å®š
 	bool ret = false;
 
-	// ƒJƒvƒZƒ‹‹…‘Ì‚Ì’†S‚ğŒq‚®ƒxƒNƒgƒ‹
+	// ã‚«ãƒ—ã‚»ãƒ«çƒä½“ã®ä¸­å¿ƒã‚’ç¹‹ããƒ™ã‚¯ãƒˆãƒ«
 	VECTOR cap1to2 = VSub(_capsule.GetPosBottom(), _capsule.GetPosTop());
 
-	// ƒxƒNƒgƒ‹‚ğ³‹K‰»
+	// ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–
 	VECTOR cap1to2ENor = VNorm(cap1to2);
 
-	// ƒJƒvƒZƒ‹Œq‚¬‚Ì’PˆÊƒxƒNƒgƒ‹‚ÆA
-	// ‚»‚ÌƒxƒNƒgƒ‹Œ³‚©‚ç‹…‘Ì‚Ö‚ÌƒxƒNƒgƒ‹‚Ì“àÏ‚ğæ‚é
+	// ã‚«ãƒ—ã‚»ãƒ«ç¹‹ãã®å˜ä½ãƒ™ã‚¯ãƒˆãƒ«ã¨ã€
+	// ãã®ãƒ™ã‚¯ãƒˆãƒ«å…ƒã‹ã‚‰çƒä½“ã¸ã®ãƒ™ã‚¯ãƒˆãƒ«ã®å†…ç©ã‚’å–ã‚‹
 	float dot = VDot(cap1to2ENor, VSub(GetPos(), _capsule.GetPosTop()));
 
-	// “àÏ‚Å‹‚ß‚½Ë‰e‹——£‚ğg‚Á‚ÄAƒJƒvƒZƒ‹Œq‚¬ã‚ÌÀ•W‚ğæ‚é
+	// å†…ç©ã§æ±‚ã‚ãŸå°„å½±è·é›¢ã‚’ä½¿ã£ã¦ã€ã‚«ãƒ—ã‚»ãƒ«ç¹‹ãä¸Šã®åº§æ¨™ã‚’å–ã‚‹
 	VECTOR capRidePos = VAdd(_capsule.GetPosTop(), VScale(cap1to2ENor, dot));
 
-	// ƒJƒvƒZƒ‹Œq‚¬‚ÌƒxƒNƒgƒ‹‚Ì’·‚³‚ğæ‚é
+	// ã‚«ãƒ—ã‚»ãƒ«ç¹‹ãã®ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’å–ã‚‹
 	float len = sqrt((cap1to2.x * cap1to2.x) + (cap1to2.y * cap1to2.y) + (cap1to2.z * cap1to2.z));
 
-	// ‹…‘Ì‚ªƒJƒvƒZƒ‹Œq‚¬ã‚É‚¢‚é‚©”»•Ê‚·‚é‚½‚ßA”ä—¦‚ğæ‚é
+	// çƒä½“ãŒã‚«ãƒ—ã‚»ãƒ«ç¹‹ãä¸Šã«ã„ã‚‹ã‹åˆ¤åˆ¥ã™ã‚‹ãŸã‚ã€æ¯”ç‡ã‚’å–ã‚‹
 	float rate = dot / len;
 
 	VECTOR centerPos = { 0.0f,0.0f,0.0f };
 
-	// ‹…‘Ì‚ÌˆÊ’u‚ª‚RƒGƒŠƒA‚É•ªŠ„‚³‚ê‚½ƒJƒvƒZƒ‹Œ`ó‚Ì‚Ç‚±‚É‚¢‚é‚©”»•Ê
+	// çƒä½“ã®ä½ç½®ãŒï¼“ã‚¨ãƒªã‚¢ã«åˆ†å‰²ã•ã‚ŒãŸã‚«ãƒ—ã‚»ãƒ«å½¢çŠ¶ã®ã©ã“ã«ã„ã‚‹ã‹åˆ¤åˆ¥
 	if (rate > 0.0f && rate <= 1.0f)
 	{
-		// ‡@‹…‘Ì‚ªƒJƒvƒZƒ‹Œq‚¬ã‚É‚¢‚é
+		// â‘ çƒä½“ãŒã‚«ãƒ—ã‚»ãƒ«ç¹‹ãä¸Šã«ã„ã‚‹
 		centerPos = VAdd(_capsule.GetPosTop(), VScale(cap1to2ENor, dot));
 	}
 	else if (rate > 1.0f)
 	{
-		// ‡A‹…‘Ì‚ªƒJƒvƒZƒ‹‚ÌI“_‘¤‚É‚¢‚é
+		// â‘¡çƒä½“ãŒã‚«ãƒ—ã‚»ãƒ«ã®çµ‚ç‚¹å´ã«ã„ã‚‹
 		centerPos = _capsule.GetPosBottom();
 	}
 	else if (rate < 0.0f)
 	{
-		// ‡B‹…‘Ì‚ªƒJƒvƒZƒ‹‚Ìn“_‘¤‚É‚¢‚é
+		// â‘¢çƒä½“ãŒã‚«ãƒ—ã‚»ãƒ«ã®å§‹ç‚¹å´ã«ã„ã‚‹
 		centerPos = _capsule.GetPosTop();
 	}
 	else
 	{
-		// ‚±‚±‚É‚«‚Ä‚Í‚¢‚¯‚È‚¢
+		// ã“ã“ã«ãã¦ã¯ã„ã‘ãªã„
 		return false;
 	}
 
-	// ‚¨Œİ‚¢‚Ì”¼Œa‚Ì‡Œv
+	// ãŠäº’ã„ã®åŠå¾„ã®åˆè¨ˆ
 	float radius = GetRadius() + _capsule.GetRadius();
 
-	// À•W‚Ì·‚©‚ç‚¨Œİ‚¢‚Ì‹——£‚ğæ‚é
+	// åº§æ¨™ã®å·®ã‹ã‚‰ãŠäº’ã„ã®è·é›¢ã‚’å–ã‚‹
 	VECTOR diff = VSub(centerPos, GetPos());
 
-	// O•½•û‚Ì’è—‚Å”äŠr(SqrMagnitude‚Æ“¯‚¶)
+	// ä¸‰å¹³æ–¹ã®å®šç†ã§æ¯”è¼ƒ(SqrMagnitudeã¨åŒã˜)
 	float dis = (diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z);
 	if (dis < (radius * radius))
 	{
@@ -92,14 +94,49 @@ const bool Sphere::IsHit(Capsule& _capsule)
 	return ret;
 }
 
-const bool Sphere::IsHit(Cube& _capsule)
+const bool Sphere::IsHit(Cube& _cube)
 {
-	return false;
+	const Cube::Obb& obb = _cube.GetObb();
+	// OBBã®ä¸­å¿ƒï¼ˆãƒ­ãƒ¼ã‚«ãƒ«min/maxã®ä¸­ç‚¹ + ãƒ¯ãƒ¼ãƒ«ãƒ‰ä½ç½®ï¼‰
+	VECTOR obbCenter = _cube.GetPos();
+
+	// çƒã®ä¸­å¿ƒã¨ã®ç›¸å¯¾ãƒ™ã‚¯ãƒˆãƒ«
+	VECTOR d = VSub(colPos_, obbCenter);
+
+	// æœ€è¿‘æ¥ç‚¹ã‚’OBBã®ä¸­å¿ƒã‹ã‚‰ã‚¹ã‚¿ãƒ¼ãƒˆ
+	VECTOR closest = obbCenter;
+
+	// Xè»¸æ–¹å‘
+	{
+		float dist = VDot(d, _cube.GetObb().axis[0]);
+		dist = std::max(-obb.halfDiff.x, std::min(dist, obb.halfDiff.x));
+		closest = VAdd(closest, VScale(_cube.GetObb().axis[0], dist));
+	}
+
+	// Yè»¸æ–¹å‘
+	{
+		float dist = VDot(d, _cube.GetObb().axis[1]);
+		dist = std::max(-obb.halfDiff.y, std::min(dist, obb.halfDiff.y));
+		closest = VAdd(closest, VScale(_cube.GetObb().axis[1], dist));
+	}
+
+	// Zè»¸æ–¹å‘
+	{
+		float dist = VDot(d, _cube.GetObb().axis[2]);
+		dist = std::max(-obb.halfDiff.z, std::min(dist, obb.halfDiff.z));
+		closest = VAdd(closest, VScale(_cube.GetObb().axis[2], dist));
+	}
+
+	// çƒã¨æœ€è¿‘æ¥ç‚¹ã®è·é›¢Â²ã‚’è¨ˆç®—
+	float distSq = Utility::SqrMagnitudeF(VSub(closest, colPos_));
+
+	//åŠå¾„ã¨æ¯”è¼ƒ
+	return distSq <= (radius_ * radius_);
 }
 
 const bool Sphere::IsHit(Model& _model)
 {
-	//ƒ‚ƒfƒ‹‘¤‚Ì“–‚½‚è”»’èˆ—‚É”C‚¹‚é
+	//ãƒ¢ãƒ‡ãƒ«å´ã®å½“ãŸã‚Šåˆ¤å®šå‡¦ç†ã«ä»»ã›ã‚‹
 	return _model.IsHit(*this);
 }
 

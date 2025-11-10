@@ -10,6 +10,8 @@
 namespace {
 	const float UV_SCALING_NOISE = 10.0f;
 	const std::string OBJ_NAME = "Stage";
+	const VECTOR INIT_POS = { 0.0f,1400.0f,0.0f };
+	const VECTOR INIT_SCL = { 0.75f,0.75f,0.75f };
 }
 
 Stage::Stage(void)
@@ -27,8 +29,6 @@ void Stage::Draw(void)
 	material_->SetConstBufPS(1,{ SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
 	//描画
 	render_->Draw();
-
-	//MV1DrawModel(modelId_);
 }
 
 void Stage::HitCollider(std::weak_ptr<Collider> _col)
@@ -39,8 +39,8 @@ void Stage::SetParam(void)
 {
 	ResourceManager& resM = ResourceManager::GetInstance();
 	modelId_ = resM.Load(ResourceManager::SRC::STAGE_MDL).handleId_;
-	pos_ = { 0.0f,1500.0f,0.0f };
-	scl_ = { 1.0f,1.0f,1.0f };
+	pos_ = INIT_POS;
+	scl_ = INIT_SCL;
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;

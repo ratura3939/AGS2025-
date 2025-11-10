@@ -15,7 +15,5 @@ public:
 
 private:
 	void SetParam(void)override;
-
-	int noiseTex_;;
 };
 

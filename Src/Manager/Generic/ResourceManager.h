@@ -66,6 +66,9 @@ public:
 		ENEMY_MDL,
 		BOSS_MDL,
 		SKY_DOME,
+		SWITCH_MDL,
+		GATE_MDL,
+		FENCE_MDL,
 
 		//‰¹
 		TITLE_BGM,

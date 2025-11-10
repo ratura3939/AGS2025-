@@ -373,9 +373,20 @@ void ResourceManager::ResorceStage(void)
 	//ステージ
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage_sakata.mv1");
 	resourcesMap_.emplace(SRC::OBJECTS_MDL, res);
-
+	//ステージ(土台)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage_sakata.mv1");
 	resourcesMap_.emplace(SRC::STAGE_MDL, res);
+
+	//ボタン
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Switch.mv1");
+	resourcesMap_.emplace(SRC::SWITCH_MDL, res);
+
+	//ゲート
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Gate.mv1");
+	resourcesMap_.emplace(SRC::GATE_MDL, res);
+	//ゲートの柵
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Fence.mv1");
+	resourcesMap_.emplace(SRC::FENCE_MDL, res);
 
 	//ノイズテクスチャ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Pattern/Noise2.png");

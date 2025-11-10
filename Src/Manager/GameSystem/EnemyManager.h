@@ -60,7 +60,7 @@ public:
 	/// IsBattleEnemyのONまたはOFFのトリガー
 	/// </summary>
 	/// <returns>true=トリガ起動/false=変化なし</returns>
-	bool IsSwitchBattleOrNomalEnemyTrg(void);
+	bool IsBattleStateChanged(void);
 
 	//アニメのスピードの設定
 	void SetAnimSpeedRate(const float _percent);

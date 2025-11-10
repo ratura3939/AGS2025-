@@ -11,6 +11,7 @@ class GimmickObjBase
 	: public ActorBase
 {
 public:
+	static constexpr float UNITY_MODEL_ADJUST_Y = 1500.0f;
 	static constexpr FLOAT4 NOMAL_COLOR = { 0.0f,0.0f,0.0f,1.0f };
 	static constexpr float GRAVITY_POW = -0.98f;
 
@@ -24,7 +25,7 @@ public:
 	/// ïtó^êFÇÃê›íË
 	/// </summary>
 	/// <param name="_color"></param>
-	void SetObjectRenderColor(const FLOAT4& _color);
+	virtual void SetObjectRenderColor(const FLOAT4& _color);
 
 	//à íuê›íË
 	const VECTOR& GetScreenPos(void)const;
@@ -50,7 +51,7 @@ protected:
 	void DoInit(void)override;
 	virtual void SetParam(void) = 0;
 
-	void UpdateNomal(void);
+	virtual void UpdateNomal(void);
 	void UpdateAffectLock(void);
 	void UpdateAffectMagnet(void);
 

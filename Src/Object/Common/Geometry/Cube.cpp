@@ -1,16 +1,17 @@
 ﻿#include<algorithm>
 #include"../../../Utility/Utility.h"
+#include"Sphere.h"
+#include"Capsule.h"
 #include "Cube.h"
 
-Cube::Cube(const VECTOR& _pos, const Quaternion& _rot, const VECTOR& _min, const VECTOR& _max)
-	: Geometry(_pos,_rot)
-{
-	UpdateObbAxis();
+namespace {
+	const int NORMAL_COLOR = 0xff00ff;
 }
 
-Cube::Cube(const VECTOR& _pos, const Quaternion& _rot, const VECTOR& _squareSize)
+Cube::Cube(const VECTOR& _pos, const Quaternion& _rot, const VECTOR& _halfSize)
 	: Geometry(_pos, _rot)
 {
+	obb_.halfDiff = _halfSize;
 	UpdateObbAxis();
 }
 
@@ -21,31 +22,164 @@ Cube::~Cube(void)
 const bool Cube::IsHit(Geometry& _geo)
 {
 	UpdateObbAxis();
-	return false;
+	return _geo.IsHit(*this);
 }
 
 const bool Cube::IsHit(Sphere& _sphere)
 {
-	return false;
+	return _sphere.IsHit(*this);
 }
 
 const bool Cube::IsHit(Capsule& _capsule)
 {
-	return false;
+	// OBB のワールド中心
+	VECTOR worldCenter = colPos_;
+
+	// カプセル線分をOBBのローカル空間に変換
+	VECTOR rel1 = VSub(_capsule.GetPosTop(), worldCenter);
+	VECTOR rel2 = VSub(_capsule.GetPosBottom(), worldCenter);
+
+	VECTOR local1 = {
+		VDot(rel1, obb_.axis[0]),
+		VDot(rel1, obb_.axis[1]),
+		VDot(rel1, obb_.axis[2])
+	};
+
+	VECTOR local2 = {
+		VDot(rel2, obb_.axis[0]),
+		VDot(rel2, obb_.axis[1]),
+		VDot(rel2, obb_.axis[2])
+	};
+
+	// スラブ法で最近接点を見つける
+	// AABBとして処理する（OBBローカル空間内で）
+
+	float distSq = ClosestPointDiff(local1, local2);
+
+	return distSq <= (_capsule.GetRadius() * _capsule.GetRadius());
 }
 
-const bool Cube::IsHit(Cube& _capsule)
+const bool Cube::IsHit(Cube& _cube)
 {
-	return false;
+	const Obb& obbB = _cube.GetObb();
+
+	// 各OBBの中心座標（ワールド空間）
+	VECTOR centerA = colPos_;
+	VECTOR centerB = _cube.GetPos();
+
+	// 2つの中心の差
+	VECTOR t = VSub(centerB, centerA);
+
+	// OBBの軸長（半サイズ）
+	VECTOR halfA = obb_.halfDiff;
+	VECTOR halfB = obbB.halfDiff;
+
+	// 各軸を順にチェック（15軸）
+	for (int i = 0; i < static_cast<int>(CUBE_AXIS::MAX); ++i) {
+		const VECTOR& axisA = obb_.axis[i];
+
+		// 軸Aの投影量
+		float ra = halfA.x * fabs(VDot(axisA, obb_.axis[0])) +
+			halfA.y * fabs(VDot(axisA, obb_.axis[1])) +
+			halfA.z * fabs(VDot(axisA, obb_.axis[2]));
+
+		float rb = halfB.x * fabs(VDot(axisA, obbB.axis[0])) +
+			halfB.y * fabs(VDot(axisA, obbB.axis[1])) +
+			halfB.z * fabs(VDot(axisA, obbB.axis[2]));
+
+		if (fabs(VDot(t, axisA)) > ra + rb) return false;
+	}
+
+	for (int i = 0; i < static_cast<int>(CUBE_AXIS::MAX); ++i) {
+		const VECTOR& axisB = obbB.axis[i];
+
+		float ra = halfA.x * fabs(VDot(axisB, obb_.axis[0])) +
+			halfA.y * fabs(VDot(axisB, obb_.axis[1])) +
+			halfA.z * fabs(VDot(axisB, obb_.axis[2]));
+
+		float rb = halfB.x * fabs(VDot(axisB, obbB.axis[0])) +
+			halfB.y * fabs(VDot(axisB, obbB.axis[1])) +
+			halfB.z * fabs(VDot(axisB, obbB.axis[2]));
+
+		if (fabs(VDot(t, axisB)) > ra + rb) return false;
+	}
+
+	// 外積軸
+	for (int i = 0; i < 3; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			VECTOR axis = VCross(obb_.axis[i], obbB.axis[j]);
+
+			// 軸が0に近い（平行またはゼロベクトル） → 無視
+			if (VSize(axis) < 0.0001f) continue;
+			axis = VNorm(axis);
+
+			float ra = halfA.x * fabs(VDot(axis, obb_.axis[0])) +
+				halfA.y * fabs(VDot(axis, obb_.axis[1])) +
+				halfA.z * fabs(VDot(axis, obb_.axis[2]));
+
+			float rb = halfB.x * fabs(VDot(axis, obbB.axis[0])) +
+				halfB.y * fabs(VDot(axis, obbB.axis[1])) +
+				halfB.z * fabs(VDot(axis, obbB.axis[2]));
+
+			if (fabs(VDot(t, axis)) > ra + rb) return false;
+		}
+	}
+
+	// すべての軸で重なっている → 衝突
+	return true;
 }
 
 const bool Cube::IsHit(Model& _model)
 {
+	//出来ない
 	return false;
 }
 
 void Cube::DebugDraw(void)
 {
+	VECTOR vertices[8];
+	CalculateVertices(vertices);
+
+	// 12本のエッジのインデックス
+	static const int edges[12][2] = {
+		{0,1},{0,2},{0,4}, {1,3},{1,5},
+		{2,3},{2,6}, {3,7},
+		{4,5},{4,6}, {5,7},{6,7}
+	};
+
+	for (int i = 0; i < 12; ++i)
+	{
+		DrawLine3D(vertices[edges[i][0]], vertices[edges[i][1]], NORMAL_COLOR);
+	}
+}
+
+void Cube::CalculateVertices(VECTOR outVertices[8])
+{
+	MATRIX rotMat;
+	rotMat = colRot_.ToMatrix();
+
+	const VECTOR obbMinPos = GetCubeMinPos();
+	const VECTOR obbMaxPos = GetCubeMaxPos();
+
+	int idx = 0;
+	for (int x = 0; x <= 1; ++x)
+	{
+		for (int y = 0; y <= 1; ++y)
+		{
+			for (int z = 0; z <= 1; ++z)
+			{
+				VECTOR local;
+				local.x = (x == 0) ? obbMinPos.x : obbMaxPos.x;
+				local.y = (y == 0) ? obbMinPos.y : obbMaxPos.y;
+				local.z = (z == 0) ? obbMinPos.z : obbMaxPos.z;
+
+				VECTOR world = VTransform(local, rotMat);
+				world = VAdd(world, colPos_);
+
+				outVertices[idx++] = world;
+			}
+		}
+	}
 }
 
 void Cube::UpdateObbAxis(void)
@@ -102,10 +236,10 @@ const float Cube::ClosestPointDiff(const VECTOR& _startPos, const VECTOR& _endPo
 
 const VECTOR Cube::GetCubeMinPos(void)
 {
-	return { obb_.centerPos.x - obb_.halfDiff.x,obb_.centerPos.y - obb_.halfDiff.y,obb_.centerPos.z - obb_.halfDiff.z };
+	return { colPos_.x - obb_.halfDiff.x,colPos_.y - obb_.halfDiff.y,colPos_.z - obb_.halfDiff.z };
 }
 
 const VECTOR Cube::GetCubeMaxPos(void)
 {
-	return { obb_.centerPos.x + obb_.halfDiff.x,obb_.centerPos.y + obb_.halfDiff.y,obb_.centerPos.z + obb_.halfDiff.z };
+	return { colPos_.x + obb_.halfDiff.x,colPos_.y + obb_.halfDiff.y,colPos_.z + obb_.halfDiff.z };
 }
