@@ -139,6 +139,11 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	}
 	//ダッシュ
 	character_->InputDash(ins.IsPressed("dash"));
+
+	if(character_->GetLockState() != PlayerChara::LOCK_STATE::LOCKON&& ins.IsTrigerrDown("jump"))
+	{
+		character_->Jump();
+	}
 #pragma endregion
 
 #pragma region 戦闘関連

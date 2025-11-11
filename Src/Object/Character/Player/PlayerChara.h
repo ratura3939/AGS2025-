@@ -7,6 +7,8 @@
 //プレイヤーはスローの影響を受けない
 //よって更新に関わるカウンターは通常のインクリメント
 
+//β提出につき重力をごり押しで実装。見直し必須
+
 class Game;
 class AttackManager;
 
@@ -59,6 +61,7 @@ public:
 
     //状態関係
     const STATE GetState(void)const;    //取得
+	const LOCK_STATE& GetLockState(void)const; //ロックオン状態取得
     void SetState(const STATE& _state); //設定(PlayerManagerからの受付)
     void PlayAnim(const std::string _anim); //アニメーションの再生(外部<マネージャ・当たり判定>より)
     const bool IsLock(void);        //ロックオン状態か
@@ -68,6 +71,8 @@ public:
     const bool IsSlow(void)const { return isSlow_; }
 
     void Damage(const float _pow)override;
+
+	void Jump(void); //ジャンプ
 
     void DrawDebug(void)override;
 
@@ -111,5 +116,9 @@ private:
 
     //スロー状態にするか
     bool isSlow_;   
+
+    //重力関係
+	float gravityPow_;
+	float jumpPow_;
 };
 

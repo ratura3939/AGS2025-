@@ -64,6 +64,9 @@ namespace {
 	float ATK_SCALE = 70.0f;
 	float ATK_POWER = 30.0f;
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
+
+	const float GRAVITY_POW = 1.0f; //重力
+	const float JUMP_POW = 40.0f; //ジャンプ力
 }
 
 
@@ -77,6 +80,9 @@ PlayerChara::PlayerChara(AttackManager& _atk)
 	isDush_ = false;
 	afterMoveRad_ = 0.0f;
 	speciesName_ = CHARACTER_NAME;
+	gravityPow_ = 0.0f;
+	jumpPow_ = 0.0f;
+
 }
 
 PlayerChara::~PlayerChara(void)
@@ -151,6 +157,20 @@ void PlayerChara::DoUpdate(void)
 			uiCntl_->ChangeAllert(false);
 		}
 	}
+
+	//ジャンプ
+	jumpPow_ -= GRAVITY_POW;
+	pos_.y += jumpPow_;
+
+	//重力
+	gravityPow_ += GRAVITY_POW;
+	pos_.y -= gravityPow_;
+	if (pos_.y < 0.0f) {
+		pos_.y = 0.0f;
+		gravityPow_ = 0.0f;
+		jumpPow_ = 0.0f;
+	}s
+
 	animController_->Update();
 	uiCntl_->Update();
 }
@@ -175,6 +195,11 @@ void PlayerChara::ChangeLockState(const bool _state)
 const PlayerChara::STATE PlayerChara::GetState(void) const
 {
 	return state_;
+}
+
+const PlayerChara::LOCK_STATE& PlayerChara::GetLockState(void) const
+{
+	return lockState_;
 }
 
 void PlayerChara::SetState(const STATE& _state)
@@ -204,6 +229,12 @@ void PlayerChara::Damage(const float _pow)
 		//死亡処理
 		Deth();
 	}
+}
+
+void PlayerChara::Jump(void)
+{
+	if (jumpPow_ > 0.0f)return;
+	jumpPow_ = JUMP_POW;
 }
 
 void PlayerChara::DrawDebug(void)
@@ -394,7 +425,7 @@ void PlayerChara::Move(void)
 	pos_ = VAdd(pos_, VScale(dir, speed));
 	//上下の移動が起きない様に
 	//ゆくゆくは重力とステージの当たり判定で処理する
-	pos_.y = 0.0f;
+	//pos_.y = 0.0f;
 
 	//アニメーション
 	//回避中は回避アニメーションを再生しているため他はしない
