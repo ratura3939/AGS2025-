@@ -12,7 +12,7 @@ namespace {
 	const std::string OBJ_NAME = "Gate";
 	const VECTOR INIT_POS = { 0.0f,0.0f,0.0f };
 	const VECTOR INIT_SCL = { 0.4f,0.4f,0.4f };
-	const float MOVE_SPEED = 3.0f;
+	const float MOVE_SPEED = 6.0f;
 }
 
 Fence::Fence(const VECTOR& _pos, const Quaternion& _rot)

@@ -1,6 +1,7 @@
 #include"../../../Manager/Generic/ResourceManager.h"
 #include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Renderer/ModelMaterial.h"
+#include"../../../Utility/Utility.h"
 #include"../../Common/Geometry/Sphere.h"
 #include "TestObj.h"
 
@@ -17,7 +18,14 @@ void TestObj::HitCollider(std::weak_ptr<Collider> _col)
 		pos_ = prePos_;
 		gravity_ = { 0.0f,0.0f,0.0f };
 		//Õ“Ë‚µ‚½•¨‘Ì‚Ì–@ü•ûŒü‚É­‚µ‰Ÿ‚µ–ß‚·
-		moveVec_ = VScale(moveVec_, -0.3f);
+		moveDir_ = VScale(moveDir_, -0.3f);
+	}
+
+	if(_col.lock()->IsContainsTag(Collider::COL_TAG::ATTACK)){
+		//UŒ‚‚É“–‚½‚Á‚½‚Æ‚«‚Ìˆ—
+		//UŒ‚‚©‚ç‚ÌƒxƒNƒgƒ‹‚ð•t—^
+		moveDir_ = Utility::VNormalize(VSub(pos_, _col.lock()->GetGeometry().GetPos()));
+		moveSpeed_ += _col.lock()->GetPower();
 	}
 }
 

@@ -2,12 +2,15 @@
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../../Renderer/ModelRenderer.h"
 
+namespace {
+	const float MOVE_SPEED_DEC = -1.0f;
+}
+
 GimmickObjBase::GimmickObjBase(void)
-	:
-	gravity_({ 0.0f,0.0f,0.0f })
-	, moveVec_({ 0.0f,0.0f,0.0f })
-	,isAffectAbilyty_(true)
-	,isTargeting_(false)
+	: gravity_({ 0.0f,0.0f,0.0f })
+	, moveDir_({ 0.0f,0.0f,0.0f })
+	, isAffectAbilyty_(true)
+	, isTargeting_(false)
 	, prePos_({ 0.0f,0.0f,0.0f })
 	, screenPos_({ 0.0f,0.0f,0.0f })
 	, isActiveGravity_(true)
@@ -36,6 +39,14 @@ void GimmickObjBase::DoInit(void)
 void GimmickObjBase::DoUpdate(void)
 {
 	(this->*update_)();
+}
+
+void GimmickObjBase::DecMoveSpeed(void)
+{
+	moveSpeed_+= MOVE_SPEED_DEC;
+	if (moveSpeed_ < 0.0f) {
+		moveSpeed_ = 0.0f;
+	}
 }
 
 void GimmickObjBase::Draw(void)
@@ -110,10 +121,15 @@ void GimmickObjBase::UpdateNomal(void)
 {
 	if (isActiveGravity_) {
 		prePos_ = pos_;
+		VECTOR moveVec = { 0.0f,0.0f,0.0f };
+		//ˆÚ“®—ÊŒ¸Š
+		DecMoveSpeed();
+		//ˆÚ“®—Ê‚Ì•t—^
+		moveVec = VScale(moveDir_, moveSpeed_);
 		//d—Íˆ—
 		gravity_.y += GRAVITY_POW;
-		moveVec_ = VAdd(moveVec_, gravity_);
-		pos_ = VAdd(pos_, moveVec_);
+		moveVec = VAdd(moveVec, gravity_);
+		pos_ = VAdd(pos_, moveVec);
 	}
 }
 

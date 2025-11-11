@@ -67,7 +67,8 @@ protected:
 
 	VECTOR prePos_;		//前フレームの位置
 	VECTOR gravity_;	//重力
-	VECTOR moveVec_;	//移動ベクトル
+	VECTOR moveDir_;	//移動方向ベクトル
+	float moveSpeed_;	//移動速度
 	bool isActiveGravity_;	//有効か無効か
 	bool isAffectAbilyty_;	//能力の影響を受けるか
 	bool isAffectingNow_;	//現在影響を受けているか
@@ -81,5 +82,6 @@ protected:
 
 private:
 	void DoUpdate(void)override;
+	void DecMoveSpeed(void);	//移動量減衰処理
 };
 
