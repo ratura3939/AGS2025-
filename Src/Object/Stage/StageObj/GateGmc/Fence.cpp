@@ -31,7 +31,7 @@ void Fence::Draw(void)
 	//•`‰æ
 	render_->Draw();
 
-	DrawSphere3D(pos_, 50.0f, 8, 0x00ffff, 0, false);
+	//DrawSphere3D(pos_, 50.0f, 8, 0x00ffff, 0, false);
 }
 
 void Fence::HitCollider(std::weak_ptr<Collider> _col)

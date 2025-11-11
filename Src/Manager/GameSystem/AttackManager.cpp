@@ -68,6 +68,7 @@ void AttackManager::Attack(const std::string& _name, const std::string& _sndName
 	//攻撃準備のタグ設定
 	attackColliders_[_name].collider.lock()->AddTag(Collider::COL_TAG::PREATTACK);
 	attackColliders_[_name].isUsed = true;
+	attackColliders_[_name].counter = 0.0f;
 
 	//更新処理の設定
 	updateAtk_[_name] = &AttackManager::UpdatePreAttack;
@@ -89,11 +90,10 @@ bool AttackManager::Update(void)
 	//攻撃更新処理（攻撃発生者数分）
 	//master=first:攻撃発生者名 second:攻撃データ
 	for (auto& atk : attackColliders_) {
-		//カウンタの増加
-		atk.second.counter++;
-		auto atkCol = atk.second.collider.lock();
-
 		if (atk.second.isUsed) {
+			//カウンタの増加
+			atk.second.counter++;
+			auto atkCol = atk.second.collider.lock();
 			//アクティブな攻撃の更新
 			(this->*updateAtk_[atk.first])(atk.first, atk.second);
 		}

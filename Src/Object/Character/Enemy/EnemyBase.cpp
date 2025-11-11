@@ -73,6 +73,7 @@ void EnemyBase::DoInit(void)
 {
 	SetParam();
 
+	power_ = POW_ATTACK_NOMAL;
 	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
 }
 
@@ -351,8 +352,8 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 
 		//ƒRƒ‰ƒCƒ_[“o˜^‰ðœ
 		//CollisionManager& colM = CollisionManager::GetInstance();
-		CollisionManager::GetInstance().DeleteCollider(collider_);
-		CollisionManager::GetInstance().DeleteCollider(atkCollider_);
+		CollisionManager::GetInstance().MarkForDelete(collider_->GetManagementNumber());
+		CollisionManager::GetInstance().MarkForDelete(atkCollider_->GetManagementNumber());
 
 		break;
 	case ENEMY_STATE::END:

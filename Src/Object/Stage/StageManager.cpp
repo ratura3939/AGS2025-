@@ -20,7 +20,6 @@ void StageManager::Init(void)
 	gmkObjs_.push_back(std::make_shared<GateGimmickObjs>(GATE_SWITCH_POS, GATE_POS, Quaternion()));
 	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS));
 	gmkObjs_.push_back(std::make_shared<TestObj>());
-	gmkObjs_.push_back(std::make_shared<TestObj2>());
 	
 
 	for (auto& obj : gmkObjs_) {

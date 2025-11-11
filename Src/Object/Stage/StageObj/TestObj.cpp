@@ -9,6 +9,7 @@
 namespace {
 	const float SPHERE_RADIUS = 150.0f;	//コライダー半径
 	const std::string OBJ_NAME = "Moon";
+	const float ATTACK_POW_DEC_RATE = 30.0f;	//攻撃力減衰率
 }
 
 void TestObj::HitCollider(std::weak_ptr<Collider> _col)
@@ -27,7 +28,7 @@ void TestObj::HitCollider(std::weak_ptr<Collider> _col)
 		//攻撃に当たったときの処理
 		//攻撃からのベクトルを付与
 		moveDir_ = Utility::VNormalize(VSub(pos_, _col.lock()->GetGeometry().GetPos()));
-		moveSpeed_ += _col.lock()->GetPower();
+		moveSpeed_ += _col.lock()->GetPower() / ATTACK_POW_DEC_RATE;
 	}
 }
 
@@ -56,8 +57,8 @@ void TestObj::SetParam(void)
 
 void TestObj::DrawDebug(void)
 {
-	collider_->DrawDebugCollider();
-	VECTOR modelPos = MV1GetPosition(modelId_);
-	DrawFormatString(10, 600, 0xffffff, "TestObj ModelPos X:%f Y:%f Z:%f", modelPos.x, modelPos.y, modelPos.z);
+	//collider_->DrawDebugCollider();
+	//VECTOR modelPos = MV1GetPosition(modelId_);
+	//DrawFormatString(10, 600, 0xffffff, "TestObj ModelPos X:%f Y:%f Z:%f", modelPos.x, modelPos.y, modelPos.z);
 	DrawFormatString(10, 620, 0xffffff, "TestObj Pos       X:%f Y:%f Z:%f", pos_.x, pos_.y, pos_.z);
 }

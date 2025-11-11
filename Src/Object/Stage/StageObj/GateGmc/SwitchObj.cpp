@@ -45,7 +45,7 @@ void SwitchObj::Draw(void)
 	//•`‰æ
 	render_->Draw();
 
-	collider_->DrawDebugCollider();
+	//collider_->DrawDebugCollider();
 }
 
 void SwitchObj::HitCollider(std::weak_ptr<Collider> _col)

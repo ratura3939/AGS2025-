@@ -51,15 +51,31 @@ void CollisionManager::AddCollider(std::weak_ptr<Collider> _col)
 	colliderCounter_++;
 }
 
-void CollisionManager::DeleteCollider(const std::weak_ptr<Collider> _col)
+void CollisionManager::DeleteCollider(void)
 {
-	const int deleteIdx = _col.lock()->GetManagementNumber();
-	//削除以降の管理番号を一つ手前に
-	for (int idx = deleteIdx + 1; idx < static_cast<int>(colliders_.size()); idx++) {
-		colliders_[idx].lock()->DecreaseManagementNuber();
+	//削除予定リストに入っているものを削除
+	for (int deleteCounter = 0; deleteCounter < static_cast<int>(deleteColliderIdxs_.size()); deleteCounter++) {
+		const int deleteIdx = deleteColliderIdxs_[deleteCounter];
+
+		//削除以降の管理番号を一つ手前に
+		for (int idx = deleteIdx + 1; idx < static_cast<int>(colliders_.size()); idx++) {
+			colliders_[idx].lock()->DecreaseManagementNuber();
+		}
+		//削除
+		colliders_.erase(colliders_.begin() + deleteIdx);
+
+		for (int i = deleteCounter + 1; i < static_cast<int>(deleteColliderIdxs_.size()); i++) {
+			//削除した分インデックスをずらす
+			if (deleteColliderIdxs_[i] > deleteIdx) {
+				deleteColliderIdxs_[i]--;
+			}
+		}
 	}
-	//削除
-	colliders_.erase(colliders_.begin() + deleteIdx);
+}
+
+void CollisionManager::MarkForDelete(const int _colliderIdx)
+{
+	deleteColliderIdxs_.push_back(_colliderIdx);
 }
 
 
@@ -68,8 +84,6 @@ void CollisionManager::UpdateColliders(void)
 	int idx = 0;
 	
 	for (auto& col : colliders_) {
-		//必要ないものは削除
-
 		//使わないものは判定しない
 		if (!col.lock()->IsUseThis()) {
 			idx++;
@@ -84,6 +98,11 @@ void CollisionManager::UpdateColliders(void)
 		}
 		idx++;
 	}
+
+	//削除予定リストに入っているものを削除
+	DeleteCollider();
+	//削除予定リストクリア
+	deleteColliderIdxs_.clear();
 }
 
 //const bool CollisionManager::Collision(std::weak_ptr<PlayerChara> _player, std::vector<std::weak_ptr<EnemyBase>> _enemy, std::vector<AttackManager::AttackCollision> _atks)

@@ -42,8 +42,8 @@ public:
 	std::vector<std::weak_ptr<EnemyBase>> GetEnemys(void);
 
 	//ˆÊ’uE‰ñ“]æ“¾
-	const VECTOR GetPos(const int _num);//À•W
-	const Quaternion GetQua(const int _num);//‰ñ“]
+	const VECTOR& GetPos(const int _num);//À•W
+	const Quaternion& GetQua(const int _num);//‰ñ“]
 
 	//ˆê”Ô‹ß‚¢“G‚Ì”z—ñ”Ô†‚ğ•Ô‚·
 	int GetNearEnemyNum(const VECTOR _pPos);

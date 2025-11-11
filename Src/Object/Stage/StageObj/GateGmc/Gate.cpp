@@ -35,7 +35,7 @@ void Gate::Draw(void)
 	//•`‰æ
 	render_->Draw();
 
-	DrawSphere3D(pos_, 50.0f, 8, 0xffff0000, 0, false);
+	//DrawSphere3D(pos_, 50.0f, 8, 0xffff0000, 0, false);
 }
 
 void Gate::HitCollider(std::weak_ptr<Collider> _col)

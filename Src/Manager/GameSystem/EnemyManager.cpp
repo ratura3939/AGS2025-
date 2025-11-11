@@ -133,12 +133,12 @@ std::vector<std::weak_ptr<EnemyBase>> EnemyManager::GetEnemys(void)
 	return retVector;
 }
 
-const VECTOR EnemyManager::GetPos(const int _num)
+const VECTOR& EnemyManager::GetPos(const int _num)
 {
 	return characters_[_num]->GetPos();
 }
 
-const Quaternion EnemyManager::GetQua(const int _num)
+const Quaternion& EnemyManager::GetQua(const int _num)
 {
 	return characters_[_num]->GetQua();
 }

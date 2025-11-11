@@ -157,5 +157,8 @@ private:
 	int cameraShakeCollTimeCnt_;	//画面揺れクールタイム
 	bool stayCameraShake_;			//画面揺れ待機フラグ true=待機
 #pragma endregion
+
+	bool prevInputP_;			//デバッグ用トリガ
+	bool isEnemyUpdate_;
 };
 

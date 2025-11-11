@@ -20,9 +20,11 @@ public:
 	static CollisionManager& GetInstance(void);
 	void Destroy(void);
 
+	//要素追加
 	void AddCollider(std::weak_ptr<Collider> _col);
-
-	void DeleteCollider(const std::weak_ptr<Collider> _col);
+	
+	//削除予定リスト追加
+	void MarkForDelete(const int _colliderIdx);
 
 	//すべてのコライダーの衝突判定
 	void UpdateColliders(void);
@@ -56,6 +58,9 @@ private:
 	/// <param name="_atk">攻撃情報</param>
 	//void CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _enemys, std::vector<AttackManager::AttackCollision> _atks);
 	
+	//要素削除
+	void DeleteCollider(void);
+
 	//コライダーの衝突判定
 	void CollisionGeometry(std::weak_ptr<Collider> _col1, std::weak_ptr<Collider> _col2);
 
@@ -65,6 +70,7 @@ private:
 
 	std::vector<std::weak_ptr<Collider>> colliders_;
 
-	int colliderCounter_;
+	int colliderCounter_;	//管理番号カウンター
+	std::vector<int> deleteColliderIdxs_;	//削除予定コライダーインデックス
 };
 

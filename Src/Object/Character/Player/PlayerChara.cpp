@@ -279,7 +279,7 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 			//回避状態の場合
 			if (state_ == STATE::DODGE) {
 				//スロー処理に
-
+				SetIsSlow(true);
 				//音声の再生
 				SoundManager::GetInstance().Play("JustDodge");
 				//判定を使用した

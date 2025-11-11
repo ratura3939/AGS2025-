@@ -56,6 +56,9 @@ Game::Game(void)
 	nextBgmVol_ = 0;
 	switchBgm_ = false;
 
+	prevInputP_ = false;
+	isEnemyUpdate_ = true;
+
 	cameraMoveStartPos_ = CAMERA_START_1;
 	cameraMoveGoalPos_[0] = CAMERA_GOAL_1;
 	cameraMoveGoalPos_[1] = CAMERA_GOAL_2;
@@ -269,6 +272,17 @@ void Game::Update(void)
 	Camera& camera = scM.GetCamera();
 	InputManager& inpM = InputManager::GetInstance();
 
+	//デバッグ用
+	bool nowInputP = CheckHitKey(KEY_INPUT_P);
+	if (!prevInputP_ && nowInputP) {
+		if (isEnemyUpdate_)
+			isEnemyUpdate_ = false;
+		else
+			isEnemyUpdate_ = true;
+	}
+	prevInputP_ = nowInputP;
+
+
 #pragma region シーン遷移(ルール)
 	//プレイヤーが死んでいたら
 	if (!player_->IsAlive()) {
@@ -318,15 +332,12 @@ void Game::GameUpdate(void)
 	}
 
 	//敵
-	enemy_->Update(player_->GetPos(), *atkMng_);
+	if (isEnemyUpdate_) {
+		enemy_->Update(player_->GetPos(), *atkMng_);
+	}
 
 	//攻撃
 	atkMng_->Update();
-
-	////判定処理/その中でスロー演出が入るかどうか
-	//if (CollisionManager::GetInstance().Collision(player_->GetPlayer(), enemy_->GetEnemys(), atkMng_->GetActiveAttacks())) {
-	//	StartSlow();
-	//}
 
 	//ステージ
 	stage_->Update();
@@ -609,6 +620,7 @@ void Game::Release(void)
 	SoundManager& sndM = SoundManager::GetInstance();
 	sndM.Stop("NomalBgm");	//今まで流していたものを停止
 	sndM.Stop("BattleBgm");	//今まで流していたものを停止
+	CollisionManager::GetInstance().Destroy();
 }
 
 void Game::Reset(void)
