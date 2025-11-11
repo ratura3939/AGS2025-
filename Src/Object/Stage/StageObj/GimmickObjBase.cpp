@@ -121,6 +121,7 @@ void GimmickObjBase::UpdateNomal(void)
 {
 	if (isActiveGravity_) {
 		prePos_ = pos_;
+		power_ = moveSpeed_;
 		VECTOR moveVec = { 0.0f,0.0f,0.0f };
 		//à⁄ìÆó å∏êä
 		DecMoveSpeed();

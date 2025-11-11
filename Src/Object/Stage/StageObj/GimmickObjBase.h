@@ -55,6 +55,9 @@ protected:
 	void UpdateAffectLock(void);
 	void UpdateAffectMagnet(void);
 
+
+	void DecMoveSpeed(void);	//ˆÚ“®—ÊŒ¸Šˆ—
+
 	virtual void DrawDebug(void);
 
 	using Update_f = void(GimmickObjBase::*)(void);
@@ -82,6 +85,5 @@ protected:
 
 private:
 	void DoUpdate(void)override;
-	void DecMoveSpeed(void);	//ˆÚ“®—ÊŒ¸Šˆ—
 };
 

@@ -16,9 +16,11 @@ void TestObj::HitCollider(std::weak_ptr<Collider> _col)
 	//ステージタグが存在するとき
 	if(_col.lock()->IsContainsTag(Collider::COL_TAG::STAGE)){
 		pos_ = prePos_;
-		gravity_ = { 0.0f,0.0f,0.0f };
 		//衝突した物体の法線方向に少し押し戻す
-		moveDir_ = VScale(moveDir_, -0.3f);
+		moveDir_ = collider_->GetGeometry().GetHitNormal();
+		moveSpeed_ = Utility::MagnitudeF(gravity_) * 0.5f;
+
+		gravity_ = { 0.0f,0.0f,0.0f };
 	}
 
 	if(_col.lock()->IsContainsTag(Collider::COL_TAG::ATTACK)){

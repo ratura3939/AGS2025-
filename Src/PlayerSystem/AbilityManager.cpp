@@ -28,7 +28,10 @@ namespace {
 	const float RETHICLE_SIZE = 10.0f;			//ƒŒƒeƒBƒNƒ‹‘å‚«‚³
 }
 
-AbilityManager::AbilityManager(StageManager& _stage, PlayerChara& _master) :master_(_master), stage_(_stage)
+AbilityManager::AbilityManager(StageManager& _stage, PlayerChara& _master)
+	: master_(_master)
+	, stage_(_stage)
+	, isPlayerAnyInput_(false)
 {
 	useAbility_ = ABILITY_TYPE::MAGNET;
 	state_ = STATE::END;
@@ -88,6 +91,10 @@ void AbilityManager::Draw(void)
 void AbilityManager::ChangeAbility(const ABILITY_TYPE _type)
 {
 	useAbility_ = _type;
+	isPlayerAnyInput_ = false;
+	if (_type == ABILITY_TYPE::LOCK_TIME) {
+		isPlayerAnyInput_ = true;
+	}
 }
 
 FLOAT4 AbilityManager::GetAbilityColor(const ABILITY_TYPE _type)
@@ -104,7 +111,7 @@ FLOAT4 AbilityManager::GetAbilityColor(const ABILITY_TYPE _type)
 	return ret;
 }
 
-bool AbilityManager::IsHitReticle(VECTOR _screenPos)
+bool AbilityManager::IsHitReticle(const VECTOR& _screenPos)
 {
 	float diff = fabs(Utility::MagnitudeF(VSub(_screenPos, RETICLE_POS)));
 	bool ret = false;
@@ -114,7 +121,7 @@ bool AbilityManager::IsHitReticle(VECTOR _screenPos)
 	return ret;
 }
 
-bool AbilityManager::IsNearObject2Camera(const VECTOR _pos1, const VECTOR _pos2)
+bool AbilityManager::IsNearObject2Camera(const VECTOR& _pos1, const VECTOR& _pos2)
 {
 	VECTOR cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
 	float diff1 = Utility::MagnitudeF(VSub(_pos1, cameraPos));

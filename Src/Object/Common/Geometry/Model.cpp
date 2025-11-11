@@ -21,7 +21,11 @@ const bool Model::IsHit(Geometry& _geo)
 const bool Model::IsHit(Sphere& _sphere)
 {
     hitSphereInfo_ = MV1CollCheck_Sphere(modelId_, -1, _sphere.GetPos(), _sphere.GetRadius());
+   
     bool isHit = hitSphereInfo_.HitNum >= 1;
+    if (isHit) {
+        _sphere.SetHitNormal(hitSphereInfo_.Dim->Normal);
+    }
 
     return isHit;
 }

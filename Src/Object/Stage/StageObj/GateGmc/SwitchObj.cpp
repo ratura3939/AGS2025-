@@ -70,7 +70,7 @@ void SwitchObj::SetParam(void)
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE,COL_TYPE::SWITCH}, std::move(std::make_unique<Cube>(pos_, quaRot_, COLLIDER_BOX_SIZE)));
+	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE,COL_TYPE::SWITCH}, std::move(std::make_unique<Cube>(pos_, quaRot_, COLLIDER_BOX_SIZE)), std::set<COL_TYPE>{COL_TYPE::STAGE, COL_TYPE::SWITCH});
 	CollisionManager::GetInstance().AddCollider(collider_);
 
 	//shader設定

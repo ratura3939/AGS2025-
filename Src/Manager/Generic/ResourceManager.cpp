@@ -388,6 +388,10 @@ void ResourceManager::ResorceStage(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Fence.mv1");
 	resourcesMap_.emplace(SRC::FENCE_MDL, res);
 
+	//ゲートの柵
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "TurnTable.mv1");
+	resourcesMap_.emplace(SRC::TURN_TABLE_MDL, res);
+
 	//ノイズテクスチャ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Pattern/Noise2.png");
 	resourcesMap_.emplace(SRC::NOISE_STAGE, res);

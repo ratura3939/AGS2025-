@@ -69,6 +69,7 @@ public:
 		SWITCH_MDL,
 		GATE_MDL,
 		FENCE_MDL,
+		TURN_TABLE_MDL,
 
 		//‰¹
 		TITLE_BGM,

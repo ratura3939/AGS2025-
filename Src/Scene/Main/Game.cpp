@@ -318,7 +318,7 @@ void Game::GameUpdate(void)
 	}
 
 	//“G
-	//enemy_->Update(player_->GetPos(), *atkMng_);
+	enemy_->Update(player_->GetPos(), *atkMng_);
 
 	//UŒ‚
 	atkMng_->Update();

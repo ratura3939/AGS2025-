@@ -54,11 +54,12 @@ public:
 	[[nodiscard]] const VECTOR GetFollowPos4UseMagnet(const VECTOR _playerPos);
 
 	void ChangeState(const STATE _next);
+	const bool IsPlayerAnyInput(void)const { return isPlayerAnyInput_; }
 
 private:
 	FLOAT4 GetAbilityColor(const ABILITY_TYPE _type);
-	bool IsHitReticle(VECTOR _screenPos);
-	bool IsNearObject2Camera(const VECTOR _pos1, const VECTOR _pos2);
+	bool IsHitReticle(const VECTOR& _screenPos);
+	bool IsNearObject2Camera(const VECTOR& _pos1, const VECTOR& _pos2);
 
 	void RedyAbility(void);			//能力の開始(使用準備)
 	void DirectionAbility(void);	//能力の開始(演出)
@@ -79,6 +80,7 @@ private:
 	std::string iconNames_[static_cast<int>(ABILITY_TYPE::MAX)];	//アイコン画像
 	std::weak_ptr<GimmickObjBase> selectObj_;	//選択中の物
 	FLOAT4 selectColores_[static_cast<int>(ABILITY_TYPE::MAX)];
+	bool isPlayerAnyInput_;	//プレイヤーの攻撃などの入力を許可するか
 
 	using Update_f = void(AbilityManager::*)(void);
 	Update_f update_;

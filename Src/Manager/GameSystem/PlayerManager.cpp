@@ -147,8 +147,8 @@ void PlayerManager::UserInput(AttackManager& _atk)
 
 	auto abilityState = ability_->GetAbilityState();
 
-	//能力が使用されていないとき入力を受け付ける
-	if (abilityState==AbilityManager::STATE::END) {
+	//能力が使用されていない、又は許可されているとき入力を受け付ける
+	if (abilityState == AbilityManager::STATE::END || ability_->IsPlayerAnyInput()) {
 		//攻撃
 		if (ins.IsTrigerrDown("attack")) {
 			//攻撃の生成および状態の設定
@@ -187,15 +187,15 @@ void PlayerManager::UserInput(AttackManager& _atk)
 		}
 	}
 	else if (ins.IsTrigerrUp("ability")) {
+		AbilityManager::STATE nextState = AbilityManager::STATE::END;
 		//能力がまだ使用されていないとき
 		if (abilityState == AbilityManager::STATE::END) {
 			//能力使用準備
-			ability_->ChangeState(AbilityManager::STATE::REDY);
+			nextState = AbilityManager::STATE::REDY;
 		}
-		else {
-			//能力終了
-			ability_->ChangeState(AbilityManager::STATE::END);
-		}
+
+		//状態遷移
+		ability_->ChangeState(nextState);
 	}
 
 	//能力の使用

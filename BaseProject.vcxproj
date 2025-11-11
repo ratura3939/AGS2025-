@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Stage\StageObj\RotationGmc\SpinDisc.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\RotationGmc\RotationObjBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\GateGimmickObjs.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\Fence.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\Gate.cpp" />
@@ -92,6 +94,8 @@
     <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\SwitchObj.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Stage\StageObj\RotationGmc\SpinDisc.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\RotationGmc\RotationObjBase.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\GateGmc\GateGimmickObjs.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\GateGmc\Fence.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\GateGmc\Gate.h" />
