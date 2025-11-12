@@ -12,6 +12,7 @@ public:
 	// ƒŠƒ\[ƒX–¼
 	enum class SRC
 	{
+		JINNAI_TEST,
 		//‰æ‘œ
 		TITLE_LOGO,
 		SHADOW_LOGO,

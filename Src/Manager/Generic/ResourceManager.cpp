@@ -50,6 +50,10 @@ void ResourceManager::InitTitle(void)
 {
 	Resource res;
 
+	// 陣内テスト用
+	res = Resource(Resource::TYPE::IMG, Application::PATH_BGM + "TestJinnai/Battle.mp3");
+	resourcesMap_.emplace(SRC::JINNAI_TEST, res);
+
 	// タイトル
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
 	resourcesMap_.emplace(SRC::TITLE_LOGO, res);
