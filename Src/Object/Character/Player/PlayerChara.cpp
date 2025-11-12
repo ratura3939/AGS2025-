@@ -82,7 +82,6 @@ PlayerChara::PlayerChara(AttackManager& _atk)
 	speciesName_ = CHARACTER_NAME;
 	gravityPow_ = 0.0f;
 	jumpPow_ = 0.0f;
-
 }
 
 PlayerChara::~PlayerChara(void)
@@ -104,8 +103,6 @@ void PlayerChara::DoInit(void)
 	using COL_TYPE = Collider::COL_TAG;
 	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::PLAYER},
 		std::move(std::make_unique<Capsule>(headPos_, pos_, CHARACTER_RADIUS)));
-
-	CollisionManager::GetInstance().AddCollider(collider_);	//“–‚½‚è”»’è“o˜^
 
 	//UŒ‚—p“–‚½‚è”»’è
 	power_ = ATK_POWER;
@@ -169,7 +166,7 @@ void PlayerChara::DoUpdate(void)
 		pos_.y = 0.0f;
 		gravityPow_ = 0.0f;
 		jumpPow_ = 0.0f;
-	}s
+	}
 
 	animController_->Update();
 	uiCntl_->Update();

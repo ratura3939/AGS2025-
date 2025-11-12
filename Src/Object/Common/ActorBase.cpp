@@ -1,4 +1,5 @@
 #include"../../Utility/Utility.h"
+#include"../../Manager/GameSystem/CollisionManager.h"
 #include "ActorBase.h"
 
 ActorBase::ActorBase(void)
@@ -13,6 +14,7 @@ void ActorBase::Init(void)
 {
 	DoInit();
 	UpdateRotQuat();
+	CollisionManager::GetInstance().AddCollider(collider_);	//“–‚½‚è”»’è“o˜^
 }
 
 void ActorBase::Update(void)

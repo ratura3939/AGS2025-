@@ -66,8 +66,6 @@ void Skelton::SetParam(void)
 	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::ENEMY},
 		std::move(std::make_unique<Capsule>(headPos_, pos_, colRadius_)));
 
-	CollisionManager::GetInstance().AddCollider(collider_);	//“–‚½‚è”»’è“o˜^
-
 	//UŒ‚‚Ì”­¶ˆÊ’u(‘Š‘ÎÀ•W)
 	atkRelative_ = RELATIVE_ATTACK_POS;
 
