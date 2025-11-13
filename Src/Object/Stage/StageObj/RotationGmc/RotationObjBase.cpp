@@ -1,3 +1,4 @@
+#include"../../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../../Renderer/ModelMaterial.h"
 #include"../../../../Renderer/ModelRenderer.h"
 #include"../../../../Utility/Utility.h"
@@ -31,6 +32,8 @@ void RotationObjBase::SetParam(void)
 {
 	SetModel();
 	isAffectAbilyty_ = true;
+
+	CollisionManager::GetInstance().AddCollider(collider_);	//“–‚½‚è”»’è“o˜^
 
 	//shaderİ’è
 	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", 0, "StdModelPS.cso", 1);

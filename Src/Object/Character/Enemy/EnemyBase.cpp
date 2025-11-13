@@ -63,6 +63,8 @@ EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VE
 	state_ = ENEMY_STATE::END;
 
 	isLockTarget_ = false;
+
+	isActiveGravity_ = false;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -73,6 +75,7 @@ void EnemyBase::DoInit(void)
 {
 	SetParam();
 
+	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
 	power_ = POW_ATTACK_NOMAL;
 	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
 }
@@ -84,7 +87,6 @@ void EnemyBase::DoUpdate(void)
 	atkPos_ = VAdd(pos_, characterRotY_.PosAxis(atkRelative_));	//攻撃発生位置
 	centerPos_ = headPos_;	//モデル中央
 	centerPos_.y /= 2.0f;
-	prePos_ = pos_;
 
 	//行動更新
 	(this->*update_)(pPos_,atkManager_);
@@ -120,7 +122,7 @@ void EnemyBase::UpdateNomal(const VECTOR& _pPos, AttackManager& _atk)
 
 	//テキトーな移動制限
 	if (Utility::MagnitudeF(pos_) > MOVE_MAX) {
-		SetPrePos();
+		SetPrevPos();
 		return;
 	}
 

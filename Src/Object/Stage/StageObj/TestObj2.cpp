@@ -1,4 +1,5 @@
 #include"../../../Manager/Generic/ResourceManager.h"
+#include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../Common/Geometry/Sphere.h"
 #include "TestObj2.h"
@@ -32,6 +33,8 @@ void TestObj2::SetParam(void)
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;
 	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::OBJECT}, std::move(std::make_unique<Sphere>(pos_, SPHERE_RADIUS)));
+
+	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
 
 	//shader設定
 	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", 0, "StdModelPS.cso", 1);

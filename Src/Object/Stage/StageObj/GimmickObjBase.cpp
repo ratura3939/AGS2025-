@@ -1,19 +1,16 @@
-#include "GimmickObjBase.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../../Renderer/ModelRenderer.h"
+#include "GimmickObjBase.h"
 
 namespace {
 	const float MOVE_SPEED_DEC = -1.0f;
 }
 
 GimmickObjBase::GimmickObjBase(void)
-	: gravity_({ 0.0f,0.0f,0.0f })
-	, moveDir_({ 0.0f,0.0f,0.0f })
+	: moveDir_({ 0.0f,0.0f,0.0f })
 	, isAffectAbilyty_(true)
 	, isTargeting_(false)
-	, prePos_({ 0.0f,0.0f,0.0f })
 	, screenPos_({ 0.0f,0.0f,0.0f })
-	, isActiveGravity_(true)
 	, isAffectingNow_(false)
 	, update_(&GimmickObjBase::UpdateNomal)
 {
@@ -27,7 +24,6 @@ void GimmickObjBase::DoInit(void)
 {
 	//各オブジェクトの設定
 	SetParam();
-
 	MV1SetPosition(modelId_, pos_);
 	MV1SetScale(modelId_, scl_);
 
@@ -119,19 +115,13 @@ void GimmickObjBase::FinishAffect(void)
 
 void GimmickObjBase::UpdateNomal(void)
 {
-	if (isActiveGravity_) {
-		prePos_ = pos_;
-		power_ = moveSpeed_;
-		VECTOR moveVec = { 0.0f,0.0f,0.0f };
-		//移動量減衰
-		DecMoveSpeed();
-		//移動量の付与
-		moveVec = VScale(moveDir_, moveSpeed_);
-		//重力処理
-		gravity_.y += GRAVITY_POW;
-		moveVec = VAdd(moveVec, gravity_);
-		pos_ = VAdd(pos_, moveVec);
-	}
+	power_ = moveSpeed_;
+	VECTOR moveVec = { 0.0f,0.0f,0.0f };
+	//移動量減衰
+	DecMoveSpeed();
+	//移動量の付与
+	moveVec = VScale(moveDir_, moveSpeed_);
+	pos_ = VAdd(pos_, moveVec);
 }
 
 void GimmickObjBase::UpdateAffectLock(void)

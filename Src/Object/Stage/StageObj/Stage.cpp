@@ -46,6 +46,8 @@ void Stage::SetParam(void)
 	using COL_TYPE = Collider::COL_TAG;
 	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE}, std::move(std::make_unique<Model>(pos_, quaRot_, modelId_)));
 
+	CollisionManager::GetInstance().AddCollider(collider_);	//“–‚½‚è”»’è“o˜^
+
 	//shaderİ’è
 	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", 0, "NoiseWavePS.cso", 3);
 	//’Ç‰ÁƒeƒNƒXƒ`ƒƒ‘}“ü

@@ -110,6 +110,9 @@ void PlayerChara::DoInit(void)
 	atkCollider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{ COL_TYPE::PLAYER,COL_TYPE::ATTACK },
 		std::move(std::make_unique<Sphere>(atkPos_, ATK_SCALE)));
 
+
+	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
+
 	atkCollider_->SetUseThis(false);
 
 	CollisionManager::GetInstance().AddCollider(atkCollider_);	//当たり判定登録
@@ -132,7 +135,6 @@ void PlayerChara::DoInit(void)
 void PlayerChara::DoUpdate(void)
 {
 	atkPos_ = VAdd(pos_, characterRotY_.PosAxis(ATK_LOCAL_POS));
-	prePos_ = pos_;
 	uiPos_ = pos_;
 	uiPos_.y += 200.0f;
 	allertTime_++;
@@ -158,15 +160,6 @@ void PlayerChara::DoUpdate(void)
 	//ジャンプ
 	jumpPow_ -= GRAVITY_POW;
 	pos_.y += jumpPow_;
-
-	//重力
-	gravityPow_ += GRAVITY_POW;
-	pos_.y -= gravityPow_;
-	if (pos_.y < 0.0f) {
-		pos_.y = 0.0f;
-		gravityPow_ = 0.0f;
-		jumpPow_ = 0.0f;
-	}
 
 	animController_->Update();
 	uiCntl_->Update();
@@ -289,6 +282,13 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 	const float SwordEfcSpeed = 1.5;
 
 	using TAG = Collider::COL_TAG;
+	//ステージとの衝突
+	if (_col.lock()->IsContainsTag(TAG::STAGE)) {
+		SetPrevPos();
+		gravityPow_ = 0.0f;
+		jumpPow_ = 0.0f;
+	}
+
 	//敵の物の場合
 	if (_col.lock()->IsContainsTag(TAG::ENEMY)) {
 		//攻撃発生者の名前を取得
@@ -433,7 +433,7 @@ void PlayerChara::Move(void)
 
 	//テキトーな移動制限
 	if (Utility::MagnitudeF(pos_) > MOVE_MAX) {
-		SetPrePos();
+		SetPrevPos();
 		return;
 	}
 }

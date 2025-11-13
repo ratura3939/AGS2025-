@@ -16,7 +16,7 @@ void TestObj::HitCollider(std::weak_ptr<Collider> _col)
 {
 	//ステージタグが存在するとき
 	if(_col.lock()->IsContainsTag(Collider::COL_TAG::STAGE)){
-		pos_ = prePos_;
+		SetPrevPos();
 		//衝突した物体の法線方向に少し押し戻す
 		moveDir_ = collider_->GetGeometry().GetHitNormal();
 		moveSpeed_ = Utility::MagnitudeF(gravity_) * 0.5f;
@@ -44,6 +44,8 @@ void TestObj::SetParam(void)
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;
 	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::OBJECT}, std::move(std::make_unique<Sphere>(pos_, SPHERE_RADIUS)));
+
+	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
 
 	//shader設定
 	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", 0, "StdModelPS.cso", 1);

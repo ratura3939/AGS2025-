@@ -49,8 +49,6 @@ public:
 	//当たり判定の半径
 	const float GetCollisionRadius(void)const;
 
-	void SetPrePos(void);
-
 	//回転情報の取得
 	const Quaternion& GetQua(void)const;
 	void SetQua(const Quaternion _qua);
@@ -89,7 +87,6 @@ protected:
 	void Rotation(void);
 
 #pragma region モデル基礎制御
-	VECTOR prePos_;	//座標
 	VECTOR headPos_; //頭辺りの座標
 	VECTOR centerPos_; //モデル中央辺りの座標
 

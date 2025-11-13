@@ -7,6 +7,9 @@
 class ActorBase
 {
 public:
+	//重力定数
+	static constexpr float GRAVITY_POW = -0.98f;
+
 	ActorBase(void);
 	virtual ~ActorBase(void);
 
@@ -17,6 +20,7 @@ public:
 
 	//位置設定
 	void SetPos(const VECTOR& _pos);
+	void SetPrevPos(void);
 	const VECTOR& GetPos(void)const;
 
 	// 各種方向を取得
@@ -47,6 +51,7 @@ protected:
 	int modelId_;	//モデルID
 
 	VECTOR pos_;	//座標
+	VECTOR prevPos_; //前フレームの座標
 	VECTOR scl_;	//モデル大きさ
 	VECTOR rot_;	//回転情報(XYZ)
 
@@ -69,7 +74,11 @@ protected:
 	std::shared_ptr<Collider> collider_;
 	float power_;	//攻撃力
 
+	VECTOR gravity_; //重力ベクトル
+	bool isActiveGravity_; //重力が有効か
+
 private:
 	void UpdateRotQuat(void);	//基礎情報の更新
+	void UpdateGravity(void);	//重力処理
 };
 

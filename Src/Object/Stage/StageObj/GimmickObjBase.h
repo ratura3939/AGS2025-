@@ -13,7 +13,6 @@ class GimmickObjBase
 public:
 	static constexpr float UNITY_MODEL_ADJUST_Y = 1500.0f;
 	static constexpr FLOAT4 NOMAL_COLOR = { 0.0f,0.0f,0.0f,1.0f };
-	static constexpr float GRAVITY_POW = -0.98f;
 
 	GimmickObjBase(void);
 	virtual ~GimmickObjBase(void);
@@ -68,11 +67,8 @@ protected:
 	std::unique_ptr<ModelRenderer> render_;
 #pragma endregion
 
-	VECTOR prePos_;		//前フレームの位置
-	VECTOR gravity_;	//重力
 	VECTOR moveDir_;	//移動方向ベクトル
 	float moveSpeed_;	//移動速度
-	bool isActiveGravity_;	//有効か無効か
 	bool isAffectAbilyty_;	//能力の影響を受けるか
 	bool isAffectingNow_;	//現在影響を受けているか
 	bool isTargeting_;		//対象として選択されているか

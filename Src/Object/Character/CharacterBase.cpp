@@ -91,11 +91,6 @@ const float CharacterBase::GetCollisionRadius(void) const
 	return collider_->GetGeometry().GetRadius();
 }
 
-void CharacterBase::SetPrePos(void)
-{
-	pos_ = prePos_;
-}
-
 const Quaternion& CharacterBase::GetQua(void) const
 {
 	return characterRotY_;

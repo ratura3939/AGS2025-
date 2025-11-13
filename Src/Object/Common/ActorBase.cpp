@@ -1,8 +1,22 @@
 #include"../../Utility/Utility.h"
-#include"../../Manager/GameSystem/CollisionManager.h"
 #include "ActorBase.h"
 
 ActorBase::ActorBase(void)
+	: modelId_(-1)
+	, pos_(Utility::VECTOR_ZERO)
+	, scl_(Utility::VECTOR_ONE)
+	, rot_(Utility::VECTOR_ZERO)
+	, matScl_(MGetIdent())
+	, matRot_(MGetIdent())
+	, matPos_(MGetIdent())
+	, quaRot_(Quaternion::Euler(Utility::VECTOR_ZERO))
+	, quaRotOrigin_(Quaternion::Euler(Utility::VECTOR_ZERO))
+	, quaRotLocal_(Quaternion::Euler(Utility::VECTOR_ZERO))
+	, speciesName_("")
+	, power_(0.0f)
+	, gravity_(Utility::VECTOR_ZERO)
+	, isActiveGravity_(true)
+	, prevPos_(Utility::VECTOR_ZERO)
 {
 }
 
@@ -14,18 +28,24 @@ void ActorBase::Init(void)
 {
 	DoInit();
 	UpdateRotQuat();
-	CollisionManager::GetInstance().AddCollider(collider_);	//ìñÇΩÇËîªíËìoò^
 }
 
 void ActorBase::Update(void)
 {
+	prevPos_ = pos_;
 	DoUpdate();
+	UpdateGravity();
 	UpdateRotQuat();
 }
 
 void ActorBase::SetPos(const VECTOR& _pos)
 {
 	pos_ = _pos;
+}
+
+void ActorBase::SetPrevPos(void)
+{
+	pos_ = prevPos_;
 }
 
 const VECTOR& ActorBase::GetPos(void) const
@@ -100,5 +120,14 @@ void ActorBase::UpdateRotQuat(void)
 	// çsóÒÇÉÇÉfÉãÇ…îªíË
 	if (modelId_ != -1) {
 		MV1SetMatrix(modelId_, mat);
+	}
+}
+
+void ActorBase::UpdateGravity(void)
+{
+	if (isActiveGravity_) {
+		//èdóÕèàóù
+		gravity_.y += GRAVITY_POW;
+		pos_ = VAdd(pos_, gravity_);
 	}
 }
