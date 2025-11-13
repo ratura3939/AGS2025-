@@ -80,7 +80,6 @@ PlayerChara::PlayerChara(AttackManager& _atk)
 	isDush_ = false;
 	afterMoveRad_ = 0.0f;
 	speciesName_ = CHARACTER_NAME;
-	gravityPow_ = 0.0f;
 	jumpPow_ = 0.0f;
 }
 
@@ -284,8 +283,9 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 	using TAG = Collider::COL_TAG;
 	//ステージとの衝突
 	if (_col.lock()->IsContainsTag(TAG::STAGE)) {
+		//強制位置固定なので修正必須
 		SetPrevPos();
-		gravityPow_ = 0.0f;
+		gravity_ = { 0.0f,0.0f,0.0f };
 		jumpPow_ = 0.0f;
 	}
 

@@ -118,7 +118,6 @@ private:
     bool isSlow_;   
 
     //d—ÍŠÖŒW
-	float gravityPow_;
 	float jumpPow_;
 };
 
