@@ -177,7 +177,7 @@ void Title::InitSound(void)
 
 	//BGM
 	sndM.Add(SoundManager::TYPE::BGM, "NomalBgm",
-		rsM.Load(ResourceManager::SRC::JINNAI_TEST).handleId_);
+		rsM.Load(ResourceManager::SRC::TITLE_BGM).handleId_);
 	//BGMçƒê∂
 	sndM.Play("NomalBgm");
 

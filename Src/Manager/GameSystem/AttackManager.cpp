@@ -110,7 +110,7 @@ const float AttackManager::GetTotalTime(const std::string& _name) const
 	return attackColliders_.at(_name).totalTime;
 }
 
-void AttackManager::UseAllert(const std::string& _name)
+void AttackManager::UseAllertCollision(const std::string& _name)
 {
 	attackColliders_[_name].isAllert = true;
 }

@@ -4,13 +4,6 @@
 #include"AttackManager.h"
 #include"../../Object/Common/Collider.h"
 
-class PlayerChara;
-class EnemyBase;
-class AttackBase;
-
-//10/31メモ
-//AttackManagerの更新を完了。このマネージャの改修及び、それに付随したプレイヤーや敵の辺り判定の改修を行う。
-//ジャスト回避の判定は設計的にプレイヤー側で行う。
 
 //オブジェクトのコライダーを各自登録するために、シングルトン化
 class CollisionManager
@@ -29,34 +22,18 @@ public:
 	//すべてのコライダーの衝突判定
 	void UpdateColliders(void);
 
-	/// <summary>
-	/// 当たり判定総括
-	/// </summary>
-	/// <param name="_player">プレイヤー情報</param>
-	/// <param name="_enemys">敵情報</param>
-	/// <param name="_atks">攻撃情報</param>
-	/// <returns>true=スロー演出が入る/false=通常</returns>
-	//const bool Collision(std::weak_ptr<PlayerChara> _player, std::vector<std::weak_ptr<EnemyBase>> _enemys, std::vector<AttackManager::AttackCollision> _atks);
+	//攻撃マネージャとの連携
+	void SetAttackManager(const std::weak_ptr<AttackManager>& _atkMng) { atkMng_ = _atkMng; }
+	void UseAllert(const std::string& _atkName);
+	void UseAttack(const std::string& _atkName);
 
 private:
 	static CollisionManager* instance_;
 
+	std::weak_ptr<AttackManager> atkMng_;
+
 	CollisionManager(void);
 	~CollisionManager(void);
-
-	/// <summary>
-	/// プレイヤーの当たり判定関係まとめ
-	/// </summary>
-	/// <param name="_player">プレイヤー情報</param>
-	/// <param name="_atk">攻撃情報</param>
-	//void CollisionPlayer(std::weak_ptr<PlayerChara> _player, std::vector<AttackManager::AttackCollision> _atks);
-
-	/// <summary>
-	/// 敵の当たり判定関係まとめ
-	/// </summary>
-	/// <param name="_enemy">敵情報</param>
-	/// <param name="_atk">攻撃情報</param>
-	//void CollisionEnemy(std::vector<std::weak_ptr<EnemyBase>> _enemys, std::vector<AttackManager::AttackCollision> _atks);
 	
 	//要素削除
 	void DeleteCollider(void);

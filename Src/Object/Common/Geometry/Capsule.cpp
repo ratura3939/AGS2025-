@@ -87,5 +87,42 @@ const bool Capsule::IsHit(Model& _model)
 
 void Capsule::DebugDraw(void)
 {
-	DrawSphere3D(VSub(posTop_,posBottom_), radius_, 10, NORMAL_COLOR, NORMAL_COLOR, false);
+	DrawFormatString(50, 400, NORMAL_COLOR, "Capsule PosTop X:%f Y:%f Z:%f\nCapsule PosBottom X:%f Y:%f Z:%f", posTop_.x, posTop_.y, posTop_.z, posBottom_.x, posBottom_.y, posBottom_.z);
+
+	// 上の球体
+	DrawSphere3D(posTop_, radius_, 5, NORMAL_COLOR, NORMAL_COLOR, false);
+
+	// 下の球体
+	DrawSphere3D(posBottom_, radius_, 5, NORMAL_COLOR, NORMAL_COLOR, false);
+
+	//VECTOR dir;
+	//VECTOR s;
+	//VECTOR e;
+
+	//// 球体を繋ぐ線(X+)
+	//dir = GetRight();
+	//s = VAdd(posTop_, VScale(dir, radius_));
+	//e = VAdd(posBottom_, VScale(dir, radius_));
+	//DrawLine3D(s, e, COLOR);
+
+	//// 球体を繋ぐ線(X-)
+	//dir = GetLeft();
+	//s = VAdd(posTop_, VScale(dir, radius_));
+	//e = VAdd(posBottom_, VScale(dir, radius_));
+	//DrawLine3D(s, e, NORMAL_COLOR);
+
+	//// 球体を繋ぐ線(Z+)
+	//dir = GetForward();
+	//s = VAdd(posTop_, VScale(dir, radius_));
+	//e = VAdd(posBottom_, VScale(dir, radius_));
+	//DrawLine3D(s, e, NORMAL_COLOR);
+
+	//// 球体を繋ぐ線(Z-)
+	//dir = GetBack();
+	//s = VAdd(posTop_, VScale(dir, radius_));
+	//e = VAdd(posBottom_, VScale(dir, radius_));
+	//DrawLine3D(s, e, NORMAL_COLOR);
+
+	// カプセルの中心
+	DrawSphere3D(VAdd(GetPos(), VScale(posTop_, 2.0f)), 5.0f, 10, NORMAL_COLOR, NORMAL_COLOR, true);
 }

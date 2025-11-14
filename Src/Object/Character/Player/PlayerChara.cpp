@@ -66,7 +66,7 @@ namespace {
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 
 	const float GRAVITY_POW = 1.0f; //重力
-	const float JUMP_POW = 40.0f; //ジャンプ力
+	const float JUMP_POW = 80.0f; //ジャンプ力
 }
 
 
@@ -133,6 +133,7 @@ void PlayerChara::DoInit(void)
 
 void PlayerChara::DoUpdate(void)
 {
+	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
 	atkPos_ = VAdd(pos_, characterRotY_.PosAxis(ATK_LOCAL_POS));
 	uiPos_ = pos_;
 	uiPos_.y += 200.0f;
@@ -157,7 +158,10 @@ void PlayerChara::DoUpdate(void)
 	}
 
 	//ジャンプ
-	jumpPow_ -= GRAVITY_POW;
+	jumpPow_ += GRAVITY_POW;
+	if (jumpPow_ <= 0.0f) {
+		jumpPow_ = 0.0f;
+	}
 	pos_.y += jumpPow_;
 
 	animController_->Update();
@@ -223,12 +227,12 @@ void PlayerChara::Damage(const float _pow)
 void PlayerChara::Jump(void)
 {
 	if (jumpPow_ > 0.0f)return;
-	jumpPow_ = JUMP_POW;
+  	jumpPow_ = JUMP_POW;
 }
 
 void PlayerChara::DrawDebug(void)
 {
-	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
+	/*DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
 	DrawFormatString(0, 120, 0xffffff, "GoalRot={%.1f,%.1f,%.1f}", goalQua_.x, goalQua_.y, goalQua_.z);
 	VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetLockPos();
 	float deg = static_cast<float>(Utility::AngleDeg(pos_, VSub(rockPos, pos_)));
@@ -253,12 +257,14 @@ void PlayerChara::DrawDebug(void)
 		break;
 	}
 
-	DrawCupcel();
+	DrawCupcel();*/
+
+	collider_->DrawDebugCollider();
 }
 
 float PlayerChara::GetToLockDeg(void)
 {//ロックオン特有の角度設定
-	VECTOR lockPos = SceneManager::GetInstance().GetCamera().GetLockPos();			//ロックオン対象位置	
+	VECTOR lockPos = SceneManager::GetInstance().GetCamera().GetLockPos();			//ロックオン対象位置
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
 
 	//自分から対象へのベクトル
@@ -283,10 +289,12 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 	using TAG = Collider::COL_TAG;
 	//ステージとの衝突
 	if (_col.lock()->IsContainsTag(TAG::STAGE)) {
-		//強制位置固定なので修正必須
-		SetPrevPos();
+		//本来立つべき位置と現在位置の差分を取得
+		VECTOR backVec = VSub(collider_->GetGeometry().GetHitPoint(), pos_);
+		pos_.y = VAdd(pos_, backVec).y;
+
 		gravity_ = { 0.0f,0.0f,0.0f };
-		jumpPow_ = 0.0f;
+		//jumpPow_ = 0.0f;
 	}
 
 	//敵の物の場合
@@ -301,7 +309,7 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 				//音声の再生
 				SoundManager::GetInstance().Play("Allert");
 				//警告使用済みに
-				atkMng_.UseAllert(atkMaster);
+				CollisionManager::GetInstance().UseAllert(atkMaster);
 			}
 
 			//回避状態の場合
@@ -311,7 +319,7 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 				//音声の再生
 				SoundManager::GetInstance().Play("JustDodge");
 				//判定を使用した
-				atkMng_.UseAttackCollision(atkMaster);
+				CollisionManager::GetInstance().UseAttack(atkMaster);
 			}
 		}
 		//攻撃
@@ -322,7 +330,7 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 			efcM.Play(EFC_NAME, "Damage", centerPos_, rot_, DmgEfcScl, DmgEfcSpeed, "Damage");
 			efcM.Play(EFC_NAME, "Sword", centerPos_, rot_, SwordEfcScl, SwordEfcSpeed);
 			//判定を使用した
-			atkMng_.UseAttackCollision(atkMaster);
+			CollisionManager::GetInstance().UseAttack(atkMaster);
 		}
 	}
 }
@@ -417,7 +425,7 @@ void PlayerChara::Move(void)
 	//ロックオンの時
 	if (lockState_ == LOCK_STATE::LOCKON)speed = MOVE_POW;
 
-
+	dir.y = 0.0f; //上下成分を消す
 	//移動処理
 	pos_ = VAdd(pos_, VScale(dir, speed));
 	//上下の移動が起きない様に

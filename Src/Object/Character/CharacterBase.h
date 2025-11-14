@@ -28,7 +28,7 @@ public:
 	static constexpr float DEG_RIGHT = 90.0f;	//右方
 
 	static constexpr VECTOR CHARACTER_HEIGHT = { 0.0f,150.0f,0.0f };	//キャラクターの身長
-	static constexpr float CHARACTER_RADIUS = 80.0f;					//キャラクターの判定の大きさ
+	static constexpr float CHARACTER_RADIUS = 50.0f;					//キャラクターの判定の大きさ
 
 	//移動制限(大まか)
 	static constexpr float MOVE_MAX = 5000.0f;

@@ -6,6 +6,7 @@
 
 namespace {
 	const float ROTATION_SPEED = 0.02f;
+	const float POWER_SCALING = 0.3f;
 }
 
 RotationObjBase::RotationObjBase(const VECTOR& _pos)
@@ -24,7 +25,8 @@ void RotationObjBase::HitCollider(std::weak_ptr<Collider> _col)
 		//UŒ‚‚É“–‚½‚Á‚½‚Æ‚«‚Ìˆ—
 		//UŒ‚‚©‚ç‚ÌƒxƒNƒgƒ‹‚ð•t—^
 		moveDir_ = Utility::VNormalize(VSub(pos_, _col.lock()->GetGeometry().GetPos()));
-		moveSpeed_ += _col.lock()->GetPower();
+		moveSpeed_ += _col.lock()->GetPower() / POWER_SCALING;
+		CollisionManager::GetInstance().UseAttack(_col.lock()->GetMasterName());
 	}
 }
 
@@ -51,6 +53,7 @@ void RotationObjBase::UpdateNomal(void)
 	DecMoveSpeed();
 	rotPow_ += ROTATION_SPEED;
 	rotPow_ += moveSpeed_;
+
 	//‰ñ“]
 	Quaternion axis =
 		Quaternion::AngleAxis(

@@ -84,9 +84,10 @@ void Boss::SetParam(void)
 	colRadius_ = BOSS_RADIUS;
 	//ìñÇΩÇËîªíËê∂ê¨
 	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//ì™à íu
-	using COL_TYPE = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::ENEMY},
-		std::move(std::make_unique<Capsule>(headPos_, pos_, colRadius_)));
+	using TAG = Collider::COL_TAG;
+	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::ENEMY},
+		std::move(std::make_unique<Capsule>(headPos_, pos_, colRadius_))
+	, std::set<TAG>{TAG::STAGE, TAG::OBJECT});
 
 	//çUåÇâ¬î\ãóó£
 	atkDistance_ = BOSS_ATTACK_SCALE;
@@ -97,9 +98,9 @@ void Boss::SetParam(void)
 
 	//çUåÇ
 	atkPos_ = VAdd(pos_, atkRelative_);
-	using COL_TYPE = Collider::COL_TAG;
-	atkCollider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{ COL_TYPE::ENEMY, COL_TYPE::ATTACK },
-		std::move(std::make_unique<Sphere>(atkPos_, BOSS_ATTACK_SCALE)));
+	atkCollider_ = std::make_shared<Collider>(*this, std::set<TAG>{ TAG::ENEMY, TAG::ATTACK },
+		std::move(std::make_unique<Sphere>(atkPos_, BOSS_ATTACK_SCALE))
+	, std::set<TAG>{TAG::STAGE, TAG::OBJECT});
 
 	atkCollider_->SetUseThis(false);
 

@@ -57,7 +57,7 @@ public:
 	const float GetTotalTime(const std::string& _name)const;
 
 	//Œx‚ğg—p
-	void UseAllert(const std::string& _name);
+	void UseAllertCollision(const std::string& _name);
 
 	//Œx‚ğs‚Á‚½‚©æ“¾
 	const bool IsAllert(const std::string& _name)const;

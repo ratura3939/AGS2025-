@@ -25,6 +25,6 @@ void SpinDisc::SetModel(void)
 	scl_ = INIT_SCL;
 
 	//コライダー設定
-	using COL_TYPE = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::OBJECT}, std::move(std::make_unique<Model>(pos_, quaRot_, modelId_)));
+	using TAG = Collider::COL_TAG;
+	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::STAGE,TAG::OBJECT}, std::move(std::make_unique<Model>(pos_, quaRot_, modelId_)));
 }

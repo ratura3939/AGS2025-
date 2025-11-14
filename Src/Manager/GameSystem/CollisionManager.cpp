@@ -78,7 +78,6 @@ void CollisionManager::MarkForDelete(const int _colliderIdx)
 	deleteColliderIdxs_.push_back(_colliderIdx);
 }
 
-
 void CollisionManager::UpdateColliders(void)
 {
 	int idx = 0;
@@ -103,6 +102,16 @@ void CollisionManager::UpdateColliders(void)
 	DeleteCollider();
 	//削除予定リストクリア
 	deleteColliderIdxs_.clear();
+}
+
+void CollisionManager::UseAllert(const std::string& _atkName)
+{
+	atkMng_.lock()->UseAllertCollision(_atkName);
+}
+
+void CollisionManager::UseAttack(const std::string& _atkName)
+{
+	atkMng_.lock()->UseAttackCollision(_atkName);
 }
 
 //const bool CollisionManager::Collision(std::weak_ptr<PlayerChara> _player, std::vector<std::weak_ptr<EnemyBase>> _enemy, std::vector<AttackManager::AttackCollision> _atks)

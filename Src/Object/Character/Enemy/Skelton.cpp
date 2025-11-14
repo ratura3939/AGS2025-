@@ -62,17 +62,19 @@ void Skelton::SetParam(void)
 	colRadius_ = CHARACTER_RADIUS;
 	//ìñÇΩÇËîªíË
 	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//ì™à íu
-	using COL_TYPE = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::ENEMY},
-		std::move(std::make_unique<Capsule>(headPos_, pos_, colRadius_)));
+	using TAG = Collider::COL_TAG;
+	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::ENEMY},
+		std::move(std::make_unique<Capsule>(headPos_, pos_, colRadius_))
+	, std::set<TAG>{TAG::STAGE, TAG::OBJECT});
 
 	//çUåÇÇÃî≠ê∂à íu(ëäëŒç¿ïW)
 	atkRelative_ = RELATIVE_ATTACK_POS;
 
 	//çUåÇ
 	atkPos_ = VAdd(pos_, atkRelative_);
-	atkCollider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{ COL_TYPE::ENEMY, COL_TYPE::ATTACK },
-		std::move(std::make_unique<Sphere>(atkPos_, SCALE_ATTACK_NOMAL)));
+	atkCollider_ = std::make_shared<Collider>(*this, std::set<TAG>{ TAG::ENEMY, TAG::ATTACK },
+		std::move(std::make_unique<Sphere>(atkPos_, SCALE_ATTACK_NOMAL))
+	, std::set<TAG>{TAG::STAGE, TAG::OBJECT});
 
 	atkCollider_->SetUseThis(false);
 

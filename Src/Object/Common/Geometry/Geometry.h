@@ -23,9 +23,11 @@ public:
 	const VECTOR& GetPos(void)const { return colPos_; }
 	const Quaternion& GetRot(void)const { return colRot_; }
 	const VECTOR& GetHitNormal(void)const { return hitNormal_; }
+	const VECTOR& GetHitPoint(void)const { return hitPoint_; }
 	virtual const float GetRadius(void)const = 0;
 
 	void SetHitNormal(const VECTOR& _normal) { hitNormal_ = _normal; }
+	void SetHitPoint(const VECTOR& _point) { hitPoint_ = _point; }
 
 	//デバッグ
 	virtual void DebugDraw(void) = 0;
@@ -38,4 +40,5 @@ protected:
 	const Quaternion& colRot_;
 
 	VECTOR hitNormal_;
+	VECTOR hitPoint_;
 };
