@@ -96,7 +96,8 @@ void Game::Init(void)
 	stage_->Init();
 
 	//UŒ‚
-	atkMng_ = std::make_unique<AttackManager>();
+	atkMng_ = std::make_shared<AttackManager>();
+	CollisionManager::GetInstance().SetAttackManager(atkMng_);
 
 	//“G
 	enemy_ = std::make_unique<EnemyManager>(*this, *atkMng_);

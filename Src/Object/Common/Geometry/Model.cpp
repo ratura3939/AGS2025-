@@ -1,4 +1,5 @@
 #include<DxLib.h>
+#include"../../../Utility/Utility.h"
 #include"Sphere.h"
 #include"Capsule.h"
 #include "Model.h"
@@ -24,7 +25,7 @@ const bool Model::IsHit(Sphere& _sphere)
    
     bool isHit = hitSphereInfo_.HitNum >= 1;
     if (isHit) {
-        _sphere.SetHitNormal(hitSphereInfo_.Dim->Normal);
+        _sphere.SetHitNormal(Utility::VNormalize(hitSphereInfo_.Dim->Normal));
 		_sphere.SetHitPoint(hitSphereInfo_.Dim->HitPosition);
     }
 
@@ -39,7 +40,7 @@ const bool Model::IsHit(Capsule& _capsule)
         //衝突したポリゴンを形成する三点から中点を算出
         VECTOR hitPos = VAdd(VAdd(hitCapsuleInfo_.Dim->Position[0], hitCapsuleInfo_.Dim->Position[1]), hitCapsuleInfo_.Dim->Position[2]);
 		hitPos = VScale(hitPos, 1.0f / 3.0f);
-        _capsule.SetHitNormal(hitCapsuleInfo_.Dim->Normal);
+        _capsule.SetHitNormal(Utility::VNormalize(hitCapsuleInfo_.Dim->Normal));
         _capsule.SetHitPoint(hitPos);
     }
 

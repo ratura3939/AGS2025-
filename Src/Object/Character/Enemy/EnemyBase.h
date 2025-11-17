@@ -114,10 +114,10 @@ protected:
 
     //共通の基礎処理
     //特有の処理がある場合overrideする
-    virtual void UpdateNomal(const VECTOR& _pPos, AttackManager& _atk);  //通常
-    virtual void UpdateSearch(const VECTOR& _pPos, AttackManager& _atk); //索敵
-    virtual void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk); //戦闘
-    void UpdateDeth(const VECTOR& _pPos, AttackManager& _atk); //死亡
+    virtual void UpdateNomal(void);  //通常
+    virtual void UpdateSearch(void); //索敵
+    virtual void UpdateBattle(void); //戦闘
+    void UpdateDeth(void); //死亡
 
     //各種移動処理
     void MoveNomal(const VECTOR& _pPos);
@@ -136,7 +136,7 @@ protected:
 	AttackManager& atkManager_;
     const VECTOR& pPos_; //プレイヤー位置参照
 
-    using Update_f = void(EnemyBase::*)(const VECTOR& _pPos, AttackManager& _atk);
+    using Update_f = void(EnemyBase::*)(void);
     using Move_f = void(EnemyBase::*)(const VECTOR& _pPos);
     Update_f update_;   //更新関数
     Move_f move_;       //移動関数

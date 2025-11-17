@@ -26,7 +26,8 @@ void RotationObjBase::HitCollider(std::weak_ptr<Collider> _col)
 		//UŒ‚‚©‚ç‚ÌƒxƒNƒgƒ‹‚ð•t—^
 		moveDir_ = Utility::VNormalize(VSub(pos_, _col.lock()->GetGeometry().GetPos()));
 		moveSpeed_ += _col.lock()->GetPower() / POWER_SCALING;
-		CollisionManager::GetInstance().UseAttack(_col.lock()->GetMasterName());
+		const std::string& atkName = _col.lock()->GetMasterName();
+		CollisionManager::GetInstance().UseAttack(atkName);
 	}
 }
 

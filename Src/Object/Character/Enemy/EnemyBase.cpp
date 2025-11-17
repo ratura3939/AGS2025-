@@ -31,7 +31,7 @@ EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VE
 	: atkManager_(_atk)
 	, pPos_(_pPos)
 {
-	speciesName_ = "Enemy" + _num;
+	speciesName_ = "Enemy" + std::to_string(_num);
 	serchCol_ = serchDebugCol;
 	alertCol_ = serchDebugCol2;
 	color_ = 0xffffff;
@@ -89,7 +89,7 @@ void EnemyBase::DoUpdate(void)
 	centerPos_.y /= 2.0f;
 
 	//行動更新
-	(this->*update_)(pPos_,atkManager_);
+	(this->*update_)();
 	//共通更新
 	Rotation();
 
@@ -115,10 +115,10 @@ void EnemyBase::InitUI(void)
 	uiCntl_->CreateUI(speciesName_, hp_, maxHp_);
 }
 
-void EnemyBase::UpdateNomal(const VECTOR& _pPos, AttackManager& _atk)
+void EnemyBase::UpdateNomal(void)
 {
 	//移動処理
-	(this->*move_)(_pPos);
+	(this->*move_)(pPos_);
 
 	//テキトーな移動制限
 	if (Utility::MagnitudeF(pos_) > MOVE_MAX) {
@@ -132,10 +132,10 @@ void EnemyBase::UpdateNomal(const VECTOR& _pPos, AttackManager& _atk)
 	//サーチ完了時間になったら
 	if (searchRestartCnt_ > SEARCH_RESTART_TIME) {
 		//判定
-		auto deg = Utility::AngleDeg(GetForward(), VSub(_pPos, pos_));
+		auto deg = Utility::AngleDeg(GetForward(), VSub(pPos_, pos_));
 
 		//索敵可能範囲内に入ったら
-		if (Utility::MagnitudeF(VSub(_pPos, pos_)) <= ALERT_DISTANCE &&
+		if (Utility::MagnitudeF(VSub(pPos_, pos_)) <= ALERT_DISTANCE &&
 			deg <= FIELD_VISION_DEG_HALF) {
 			//索敵状態に
 			ChangeState(ENEMY_STATE::SEARCH);
@@ -144,14 +144,14 @@ void EnemyBase::UpdateNomal(const VECTOR& _pPos, AttackManager& _atk)
 	
 }
 
-void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
+void EnemyBase::UpdateSearch(void)
 {
 	//移動処理
-	(this->*move_)(_pPos);
+	(this->*move_)(pPos_);
 	
 	//判定
-	auto deg = Utility::AngleDeg(GetForward(), VSub(_pPos, pos_));
-	auto distance = Utility::MagnitudeF(VSub(_pPos, pos_));
+	auto deg = Utility::AngleDeg(GetForward(), VSub(pPos_, pos_));
+	auto distance = Utility::MagnitudeF(VSub(pPos_, pos_));
 
 	//視界内なら
 	if (deg <= FIELD_VISION_DEG_HALF &&
@@ -177,19 +177,19 @@ void EnemyBase::UpdateSearch(const VECTOR& _pPos, AttackManager& _atk)
 	debugRot_ = deg;
 }
 
-void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
+void EnemyBase::UpdateBattle(void)
 {
 	//この内容は初期キャラ用。攻撃時には止まって攻撃する
 	//強いキャラクターは移動攻撃も想定するのでここの処理とは少し違っていくる
 	//プレイヤーとの距離
-	float distance = Utility::MagnitudeF(VSub(_pPos, pos_));
+	float distance = Utility::MagnitudeF(VSub(pPos_, pos_));
 
 	//移動処理
 	if (distance >= ATTACK_DISTANCE) {
-		(this->*move_)(_pPos);
+		(this->*move_)(pPos_);
 	}
 	else {
-		OderGoalRot(_pPos);	//回転の設定だけは行う
+		OderGoalRot(pPos_);	//回転の設定だけは行う
 	}
 	
 	//カウンタ増加(ゲーム更新スピード)
@@ -205,14 +205,14 @@ void EnemyBase::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
 	if (distance <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
 		//攻撃する
-		_atk.Attack(speciesName_,"SwingSword");
+		atkManager_.Attack(speciesName_,"SwingSword");
 		animController_->Play("attack", SPEED_ANIM);
-		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
+		stopTime_ = atkManager_.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 		intervalCnt_ = 0.0f;
 	}
 }
 
-void EnemyBase::UpdateDeth(const VECTOR& _pPos, AttackManager& _atk)
+void EnemyBase::UpdateDeth(void)
 {
 	scl_ = VSub(scl_, SCALE_DOWN);
 	if (Utility::LessThanVZero(scl_)) {

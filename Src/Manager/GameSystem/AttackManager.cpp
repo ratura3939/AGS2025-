@@ -7,6 +7,8 @@
 
 void AttackManager::AddAttackCollider(const std::string& _name, std::weak_ptr<Collider> _col, const bool _friendFire, const float _totalTime, const float _start, const float _end)
 {
+	auto& adress = *this;
+
 	//Šù‚É—v‘f‚ª‚ ‚é‚Æ‚«
 	if(attackColliders_.contains(_name)){
 		//ƒGƒ‰[–hŽ~
@@ -112,7 +114,7 @@ const float AttackManager::GetTotalTime(const std::string& _name) const
 
 void AttackManager::UseAllertCollision(const std::string& _name)
 {
-	attackColliders_[_name].isAllert = true;
+	attackColliders_.at(_name).isAllert = true;
 }
 
 const bool AttackManager::IsAllert(const std::string& _name) const
@@ -122,8 +124,8 @@ const bool AttackManager::IsAllert(const std::string& _name) const
 
 void AttackManager::UseAttackCollision(const std::string& _name)
 {
-	attackColliders_[_name].collider.lock()->SetUseThis(false);
-	attackColliders_[_name].isUsed = false;
+	attackColliders_.at(_name).collider.lock()->SetUseThis(false);
+	attackColliders_.at(_name).isUsed = false;
 }
 
 void AttackManager::DrawDebug(void)

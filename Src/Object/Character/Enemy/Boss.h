@@ -15,7 +15,7 @@ private:
     void InitAnim(void)override;
     void SetParam(void)override;
 
-    void UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)override; //í“¬
+    void UpdateBattle(void)override; //í“¬
     void MoveBattle(const VECTOR& _pPos)override;
 
     void DrawUI(void)override;

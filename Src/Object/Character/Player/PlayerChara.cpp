@@ -232,8 +232,8 @@ void PlayerChara::Jump(void)
 
 void PlayerChara::DrawDebug(void)
 {
-	/*DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
-	DrawFormatString(0, 120, 0xffffff, "GoalRot={%.1f,%.1f,%.1f}", goalQua_.x, goalQua_.y, goalQua_.z);
+	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
+	/*DrawFormatString(0, 120, 0xffffff, "GoalRot={%.1f,%.1f,%.1f}", goalQua_.x, goalQua_.y, goalQua_.z);
 	VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetLockPos();
 	float deg = static_cast<float>(Utility::AngleDeg(pos_, VSub(rockPos, pos_)));
 	if (pos_.x > rockPos.x)deg = 180.0f + (180.0f - deg);
@@ -259,7 +259,7 @@ void PlayerChara::DrawDebug(void)
 
 	DrawCupcel();*/
 
-	collider_->DrawDebugCollider();
+	//collider_->DrawDebugCollider();
 }
 
 float PlayerChara::GetToLockDeg(void)
@@ -291,6 +291,8 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 	if (_col.lock()->IsContainsTag(TAG::STAGE)) {
 		//–{—ˆ—§‚Â‚×‚«ˆÊ’u‚ÆŒ»ÝˆÊ’u‚Ì·•ª‚ðŽæ“¾
 		VECTOR backVec = VSub(collider_->GetGeometry().GetHitPoint(), pos_);
+		VECTOR colNormal = collider_->GetGeometry().GetHitNormal();
+
 		pos_.y = VAdd(pos_, backVec).y;
 
 		gravity_ = { 0.0f,0.0f,0.0f };

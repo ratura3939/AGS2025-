@@ -141,20 +141,20 @@ void Boss::SetParam(void)
 	ChangeState(ENEMY_STATE::BATTLE);
 }
 
-void Boss::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
+void Boss::UpdateBattle(void)
 {
 	//‚±‚Ì“à—e‚Í‰ŠúƒLƒƒƒ‰—pBUŒ‚Žž‚É‚ÍŽ~‚Ü‚Á‚ÄUŒ‚‚·‚é
 	//‹­‚¢ƒLƒƒƒ‰ƒNƒ^[‚ÍˆÚ“®UŒ‚‚à‘z’è‚·‚é‚Ì‚Å‚±‚±‚Ìˆ—‚Æ‚Í­‚µˆá‚Á‚Ä‚¢‚­‚é
 	//ƒvƒŒƒCƒ„[‚Æ‚Ì‹——£
-	float distance = Utility::MagnitudeF(VSub(_pPos, pos_));
+	float distance = Utility::MagnitudeF(VSub(pPos_, pos_));
 
 	//ˆÚ“®ˆ—
 	//ˆÚ“®ˆ—
 	if (distance >= atkDistance_) {
-		(this->*move_)(_pPos);
+		(this->*move_)(pPos_);
 	}
 	else {
-		OderGoalRot(_pPos);	//‰ñ“]‚ÌÝ’è‚¾‚¯‚Ís‚¤
+		OderGoalRot(pPos_);	//‰ñ“]‚ÌÝ’è‚¾‚¯‚Ís‚¤
 	}
 
 
@@ -167,9 +167,9 @@ void Boss::UpdateBattle(const VECTOR& _pPos, AttackManager& _atk)
 		//UŒ‚‚Ì€”õŽžŠÔ
 
 		//€”õŽžŠÔ‚ªI‚í‚Á‚½‚çUŒ‚‚·‚é
-		_atk.Attack(speciesName_,"SwingSword");
+		atkManager_.Attack(speciesName_,"SwingSword");
 		animController_->Play("attack", SPEED_ANIM);
-		stopTime_ = _atk.GetTotalTime(EnemyManager::ATTACK_NOMAL);
+		stopTime_ = atkManager_.GetTotalTime(EnemyManager::ATTACK_NOMAL);
 		intervalCnt_ = 0.0f;
 	}
 }
@@ -178,7 +178,6 @@ void Boss::MoveBattle(const VECTOR& _pPos)
 {
 	//’âŽ~ŽžŠÔ‚ª‚Ü‚¾‚ ‚éê‡
 	if (stopTime_ > 0) {
-
 		stopTime_--;
 		return;
 	}
