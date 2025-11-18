@@ -496,7 +496,7 @@ double Utility::AngleDeg(const VECTOR& from, const VECTOR& to)
     auto fLen = SqrMagnitude(from);
     auto tLen = SqrMagnitude(to);
     auto denominator = sqrt(fLen * tLen);
-    if (denominator < kEpsilonNormalSqrt)
+    if (denominator < EOSILON_NORMAL_SQRT)
     {
         return 0.0f;
     }
@@ -566,6 +566,37 @@ void Utility::DrawLineXYZ(const VECTOR& pos, const Quaternion& rot, float len)
 float Utility::DotF(VECTOR& v1, VECTOR& v2)
 {
     return (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z);
+}
+
+VECTOR Utility::VMul(const VECTOR& v1, const VECTOR& v2)
+{
+    return VECTOR{v1.x*v2.x,v1.y * v2.y ,v1.z * v2.z };
+}
+
+VECTOR Utility::EpsilonToZero(const VECTOR& v)
+{
+    VECTOR ret = v;
+    if (fabsf(ret.x) < EPSILON_MIN)ret.x = 0.0f;
+    if (fabsf(ret.y) < EPSILON_MIN)ret.y = 0.0f;
+    if (fabsf(ret.z) < EPSILON_MIN)ret.z = 0.0f;
+    return ret;
+}
+
+VECTOR Utility::EpsilonNormal(const VECTOR& normal)
+{
+	VECTOR ret = normal;
+    VECTOR fabsVec = { fabsf(ret.x) ,fabsf(ret.y) ,fabsf(ret.z) };
+
+    if (fabsVec.x < EPSILON_MIN)ret.x = 0.0f;
+    else if (fabsVec.x > EPSILON_MAX)ret.x = 1.0f;
+
+	if (fabsVec.y < EPSILON_MIN)ret.y = 0.0f;
+    else if (fabsVec.y > EPSILON_MAX)ret.y = 1.0f;
+
+	if (fabsVec.z < EPSILON_MIN)ret.z = 0.0f;
+	else if (fabsVec.z > EPSILON_MAX)ret.z = 1.0f;
+
+    return ret;
 }
 
 

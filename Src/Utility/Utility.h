@@ -34,8 +34,10 @@ public:
 	static constexpr VECTOR DIR_U = { 0.0f, 1.0f, 0.0f };
 	static constexpr VECTOR DIR_D = { 0.0f, -1.0f, 0.0f };
 
-	static constexpr float kEpsilonNormalSqrt = 1e-15F;
-
+	static constexpr float EPSILON_MIN = 0.000001f;
+	static constexpr float EPSILON_MAX = 0.99f;
+	static constexpr float EOSILON_NORMAL_SQRT = 1e-15F;
+	
 	// 四捨五入
 	static int Round(float v);
 
@@ -123,6 +125,10 @@ public:
 
 	//内積
 	static float DotF(VECTOR& v1, VECTOR& v2);
+	static VECTOR VMul(const VECTOR& v1, const VECTOR& v2);
 
+	//イプシロン処理
+	static VECTOR EpsilonToZero(const VECTOR& v);
+	static VECTOR EpsilonNormal(const VECTOR& normal);
 };
 

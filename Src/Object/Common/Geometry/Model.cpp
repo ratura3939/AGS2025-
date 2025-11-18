@@ -21,28 +21,39 @@ const bool Model::IsHit(Geometry& _geo)
 
 const bool Model::IsHit(Sphere& _sphere)
 {
-    hitSphereInfo_ = MV1CollCheck_Sphere(modelId_, -1, _sphere.GetPos(), _sphere.GetRadius());
-   
-    bool isHit = hitSphereInfo_.HitNum >= 1;
+    MV1_COLL_RESULT_POLY_DIM hitSphereInfo = MV1CollCheck_Sphere(modelId_, -1, _sphere.GetPos(), _sphere.GetRadius());
+    bool isHit = hitSphereInfo.HitNum >= 1;
+
     if (isHit) {
-        _sphere.SetHitNormal(Utility::VNormalize(hitSphereInfo_.Dim->Normal));
-		_sphere.SetHitPoint(hitSphereInfo_.Dim->HitPosition);
+        _sphere.SetHitNormal(Utility::VNormalize(Utility::EpsilonNormal(hitSphereInfo.Dim->Normal)));
+		_sphere.SetHitPoint(hitSphereInfo.Dim->HitPosition);
     }
+
+    MV1CollResultPolyDimTerminate(hitSphereInfo);
 
     return isHit;
 }
 
 const bool Model::IsHit(Capsule& _capsule)
 {
-    hitCapsuleInfo_ = MV1CollCheck_Capsule(modelId_, -1, _capsule.GetPosTop(), _capsule.GetPosBottom(), _capsule.GetRadius());
-    bool isHit = hitCapsuleInfo_.HitNum >= 1;
+    MV1_COLL_RESULT_POLY_DIM hitCapsuleInfo = MV1CollCheck_Capsule(modelId_, -1, _capsule.GetPosTop(), _capsule.GetPosBottom(), _capsule.GetRadius());
+    bool isHit = hitCapsuleInfo.HitNum >= 1;
+
     if (isHit) {
+        VECTOR hitNormal = Utility::VNormalize(Utility::EpsilonNormal(hitCapsuleInfo.Dim->Normal));
         //衝突したポリゴンを形成する三点から中点を算出
-        VECTOR hitPos = VAdd(VAdd(hitCapsuleInfo_.Dim->Position[0], hitCapsuleInfo_.Dim->Position[1]), hitCapsuleInfo_.Dim->Position[2]);
+        VECTOR hitPos = VAdd(VAdd(hitCapsuleInfo.Dim->Position[0], hitCapsuleInfo.Dim->Position[1]), hitCapsuleInfo.Dim->Position[2]);
 		hitPos = VScale(hitPos, 1.0f / 3.0f);
-        _capsule.SetHitNormal(Utility::VNormalize(hitCapsuleInfo_.Dim->Normal));
+        VECTOR test;
+        test.x = (hitCapsuleInfo.Dim->Position[0].x + hitCapsuleInfo.Dim->Position[1].x + hitCapsuleInfo.Dim->Position[2].x) / 3.0f;
+        test.y = (hitCapsuleInfo.Dim->Position[0].y + hitCapsuleInfo.Dim->Position[1].y + hitCapsuleInfo.Dim->Position[2].y) / 3.0f;
+        test.z = (hitCapsuleInfo.Dim->Position[0].z + hitCapsuleInfo.Dim->Position[1].z + hitCapsuleInfo.Dim->Position[2].z) / 3.0f;
+
+        _capsule.SetHitNormal(hitNormal);
         _capsule.SetHitPoint(hitPos);
     }
+
+    MV1CollResultPolyDimTerminate(hitCapsuleInfo);
 
     return isHit;
 }

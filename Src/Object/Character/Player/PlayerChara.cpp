@@ -259,7 +259,7 @@ void PlayerChara::DrawDebug(void)
 
 	DrawCupcel();*/
 
-	//collider_->DrawDebugCollider();
+	collider_->DrawDebugCollider();
 }
 
 float PlayerChara::GetToLockDeg(void)
@@ -289,11 +289,49 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 	using TAG = Collider::COL_TAG;
 	//ステージとの衝突
 	if (_col.lock()->IsContainsTag(TAG::STAGE)) {
-		//本来立つべき位置と現在位置の差分を取得
-		VECTOR backVec = VSub(collider_->GetGeometry().GetHitPoint(), pos_);
-		VECTOR colNormal = collider_->GetGeometry().GetHitNormal();
 
-		pos_.y = VAdd(pos_, backVec).y;
+
+		Geometry& myGeo = collider_->GetGeometry();
+		//本来立つべき位置と現在位置の差分を取得
+		VECTOR hitPoint = myGeo.GetHitPoint();		//衝突位置
+		VECTOR backPow = VSub(myGeo.GetHitPoint(), pos_);		//めり込み量
+		VECTOR colNormal = myGeo.GetHitNormal();				//法線ベクトル
+		
+		//壁に衝突しているとき、コライダーの半径分追加で押し戻す
+		if(colNormal.x!=0.0f|| colNormal.z != 0.0f){
+			float backPowRadius = Utility::MagnitudeF(backPow) + myGeo.GetRadius()*2;
+			backPow = VScale(Utility::VNormalize(backPow), backPowRadius);
+		}
+
+		VECTOR backVec = Utility::VMul(backPow, colNormal);		//上記二つを加味した修正ベクトル
+
+		//モデルの淵に立ってしまい、重力の影響が切れないとき
+		if (colNormal.y == 0.0f) {
+			backVec = VSub(backVec, gravity_);
+		}
+
+		//pos_.y = VAdd(pos_, backVec).y;
+		pos_ = VAdd(pos_, backVec);
+
+	
+		//Geometry& myGeo = collider_->GetGeometry();
+		//float radius = myGeo.GetRadius();			//半径
+
+		//VECTOR hitPoint = myGeo.GetHitPoint();		//法線ベクトル
+		//VECTOR hitNormal = myGeo.GetHitNormal();	//法線ベクトル
+		//
+		//VECTOR diff = VSub(hitPoint, pos_);		//めり込み量(ベクトル)
+		//float diffPow = Utility::MagnitudeF(diff);	//めり込み量(大きさ)
+
+		//float backPow = radius - diffPow;		//修正量
+		//VECTOR backVec = VScale(hitNormal, backPow);	//修正ベクトル
+
+		//////モデルの淵に立ってしまい、重力の影響が切れないとき
+		////if (hitNormal.y == 0.0f) {
+		////	backVec = VSub(backVec, gravity_);
+		////}
+
+		//pos_ = VAdd(pos_, backVec);
 
 		gravity_ = { 0.0f,0.0f,0.0f };
 		//jumpPow_ = 0.0f;

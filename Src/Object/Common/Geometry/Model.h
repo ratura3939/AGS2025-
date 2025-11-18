@@ -21,7 +21,5 @@ public:
 
 private:
 	int modelId_;
-	MV1_COLL_RESULT_POLY_DIM hitSphereInfo_;	//‹…‘Ì‚Æ‚Ì“–‚½‚è”»’èî•ñ
-	MV1_COLL_RESULT_POLY_DIM hitCapsuleInfo_;	//ƒJƒvƒZƒ‹‚Æ‚Ì“–‚½‚è”»’èî•ñ
 };
 
