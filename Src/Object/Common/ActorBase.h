@@ -37,6 +37,9 @@ public:
 	//衝突後の処理
 	virtual void HitCollider(std::weak_ptr<Collider> _col) = 0;
 
+	//外部影響の追加
+	void AddExternalVec(const VECTOR& _vec);	
+
 	//攻撃力の取得
 	const float GetPower(void)const;	
 
@@ -44,16 +47,17 @@ public:
 	const std::string& GetSpeciesName(void)const;
 
 protected:
-	virtual void DoInit(void) = 0;
-	virtual void DoUpdate(void) = 0;	//派生クラスの更新処理
+	//派生クラス用
+	virtual void DoInit(void) = 0;		//初期化
+	virtual void DoUpdate(void) = 0;	//更新
 
 #pragma region モデル基礎
-	int modelId_;	//モデルID
+	int modelId_;		//モデルID
 
-	VECTOR pos_;	//座標
-	VECTOR prevPos_; //前フレームの座標
-	VECTOR scl_;	//モデル大きさ
-	VECTOR rot_;	//回転情報(XYZ)
+	VECTOR pos_;		//座標
+	VECTOR prevPos_;	//前フレームの座標
+	VECTOR scl_;		//モデル大きさ
+	VECTOR rot_;		//回転情報(XYZ)
 
 	//各情報の行列か
 	MATRIX matScl_;
@@ -71,11 +75,13 @@ protected:
 	//個体名
 	std::string speciesName_;
 
-	std::shared_ptr<Collider> collider_;
-	float power_;	//攻撃力
+	std::shared_ptr<Collider> collider_;	//コライダー
+	float power_;			//攻撃力
 
-	VECTOR gravity_; //重力ベクトル
-	bool isActiveGravity_; //重力が有効か
+	VECTOR gravity_;		//重力ベクトル
+	bool isActiveGravity_;	//重力が有効か
+
+	VECTOR externalVec_;	//外部の影響による移動量
 
 private:
 	void UpdateRotQuat(void);	//基礎情報の更新

@@ -9,8 +9,11 @@ public:
 
     void HitCollider(std::weak_ptr<Collider> _col)override;
 
+ 
+
 protected:
     virtual void SetModel(void) = 0;
+    void DrawDebug(void)override;
 
 private:
     void SetParam(void)override;

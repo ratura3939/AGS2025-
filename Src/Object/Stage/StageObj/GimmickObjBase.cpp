@@ -2,10 +2,6 @@
 #include"../../../Renderer/ModelRenderer.h"
 #include "GimmickObjBase.h"
 
-namespace {
-	const float MOVE_SPEED_DEC = -1.0f;
-}
-
 GimmickObjBase::GimmickObjBase(void)
 	: moveDir_({ 0.0f,0.0f,0.0f })
 	, isAffectAbilyty_(true)
@@ -55,7 +51,7 @@ void GimmickObjBase::Draw(void)
 		DrawCircle(screenPos_.x, screenPos_.y, 10, screenPosColor_);
 	}
 
-	//DrawDebug();
+	DrawDebug();
 }
 
 void GimmickObjBase::DrawDebug(void) 

@@ -4,8 +4,10 @@
 #include"Capsule.h"
 #include "Model.h"
 
-Model::Model(const VECTOR& _pos, const Quaternion& _rot, const int _modelId) 
+Model::Model(const VECTOR& _pos, const Quaternion& _rot, const Quaternion& _rotLocal, const VECTOR& _scl, const int _modelId)
     : Geometry(_pos, _rot)
+	, colScale_(_scl)
+	, colRotLocal_(_rotLocal)
 	, modelId_(_modelId)
 {
 }
@@ -70,6 +72,13 @@ const bool Model::IsHit(Model& _model)
     return false;
 }
 
+void Model::RedyCollision(void)
+{
+	//コリジョン情報更新
+    MV1RefreshCollInfo(modelId_);
+}
+
 void Model::DebugDraw(void)
 {
+	DrawFormatString(0, 0, GetColor(255, 0, 255), "Model Collider: Pos(%.2f, %.2f, %.2f)", colPos_.x, colPos_.y, colPos_.z);
 }

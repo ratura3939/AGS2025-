@@ -6,7 +6,7 @@
 
 namespace {
 	const float ROTATION_SPEED = 0.02f;
-	const float POWER_SCALING = 0.3f;
+	const float POWER_SCALING = 10.0f;
 }
 
 RotationObjBase::RotationObjBase(const VECTOR& _pos)
@@ -28,6 +28,37 @@ void RotationObjBase::HitCollider(std::weak_ptr<Collider> _col)
 		moveSpeed_ += _col.lock()->GetPower() / POWER_SCALING;
 		const std::string& atkName = _col.lock()->GetMasterName();
 		CollisionManager::GetInstance().UseAttack(atkName);
+	}
+	
+	//プレイヤーと当たっているとき
+	if (_col.lock()->IsContainsTag(Collider::COL_TAG::PLAYER)) {
+		//プレイヤー位置
+		const VECTOR& colPos = _col.lock()->GetGeometry().GetPos();
+
+		//プレイヤーが上にいるとき
+		if(pos_.y < colPos.y){
+			//台に乗っているので
+			//回転の影響を与える処理
+
+			VECTOR addVec;	//影響ベクトル
+
+			//台の中心からプレイヤーまでの相対座標
+			VECTOR relativePos = VSub(colPos, pos_);
+
+			//相対座標を回転させる
+			//１フレーム後の回転量と現フレームの角度差をとる
+			//１フレーム後のクォータニオンを作成し、QuaternionのAngleを使用して角度を取得
+			float nextRotationPow = rotPow_;
+			nextRotationPow += ROTATION_SPEED;
+			nextRotationPow += (moveSpeed_ + MOVE_SPEED_DEC);
+
+
+			//回転後-回転前で移動量が算出
+
+
+			//影響を与える
+			_col.lock()->AddExternalVecToMaster(addVec);
+		}
 	}
 }
 

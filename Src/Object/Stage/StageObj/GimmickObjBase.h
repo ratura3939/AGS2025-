@@ -13,11 +13,13 @@ class GimmickObjBase
 public:
 	static constexpr float UNITY_MODEL_ADJUST_Y = 1500.0f;
 	static constexpr FLOAT4 NOMAL_COLOR = { 0.0f,0.0f,0.0f,1.0f };
+	static constexpr float MOVE_SPEED_DEC = -1.0f;
 
 	GimmickObjBase(void);
 	virtual ~GimmickObjBase(void);
 
 	virtual void Draw(void)override;
+	virtual void DrawDebug(void);
 	void Release(void)override;
 
 	/// <summary>
@@ -56,8 +58,6 @@ protected:
 
 
 	void DecMoveSpeed(void);	//à⁄ìÆó å∏êäèàóù
-
-	virtual void DrawDebug(void);
 
 	using Update_f = void(GimmickObjBase::*)(void);
 	Update_f update_;

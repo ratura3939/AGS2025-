@@ -44,7 +44,7 @@ void Stage::SetParam(void)
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE}, std::move(std::make_unique<Model>(pos_, quaRot_, modelId_)));
+	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE}, std::move(std::make_unique<Model>(pos_, quaRot_, quaRotLocal_, scl_, modelId_)));
 
 	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
 

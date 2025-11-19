@@ -285,6 +285,7 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 	const float DmgEfcSpeed = 2.5f;
 	const float SwordEfcScl = 50.0f;
 	const float SwordEfcSpeed = 1.5;
+	const float COLLIDER_RADIUS_POW = 1.0f;
 
 	using TAG = Collider::COL_TAG;
 	//ステージとの衝突
@@ -299,7 +300,7 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 		
 		//壁に衝突しているとき、コライダーの半径分追加で押し戻す
 		if(colNormal.x!=0.0f|| colNormal.z != 0.0f){
-			float backPowRadius = Utility::MagnitudeF(backPow) + myGeo.GetRadius()*2;
+			float backPowRadius = Utility::MagnitudeF(backPow) + myGeo.GetRadius() * COLLIDER_RADIUS_POW;
 			backPow = VScale(Utility::VNormalize(backPow), backPowRadius);
 		}
 

@@ -26,5 +26,10 @@ void SpinDisc::SetModel(void)
 
 	//コライダー設定
 	using TAG = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::STAGE,TAG::OBJECT}, std::move(std::make_unique<Model>(pos_, quaRot_, modelId_)));
+	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::STAGE,TAG::OBJECT}, std::move(std::make_unique<Model>(pos_, quaRot_,quaRotLocal_,scl_, modelId_)));
+}
+
+void RotationObjBase::DrawDebug(void)
+{
+	collider_->DrawDebugCollider();
 }

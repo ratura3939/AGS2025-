@@ -57,6 +57,11 @@ void Collider::DrawDebugCollider(void)
 	geometry_->DebugDraw();
 }
 
+void Collider::AddExternalVecToMaster(const VECTOR& _vec)
+{
+	master_.AddExternalVec(_vec);
+}
+
 const float Collider::GetPower(void)const
 {
 	return master_.GetPower();

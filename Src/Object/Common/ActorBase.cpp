@@ -33,9 +33,14 @@ void ActorBase::Init(void)
 void ActorBase::Update(void)
 {
 	prevPos_ = pos_;
+	//派生クラスの更新処理
 	DoUpdate();
+	//共通処理
 	UpdateGravity();
 	UpdateRotQuat();
+
+	//外部影響のリセット
+	externalVec_ = Utility::VECTOR_ZERO;
 }
 
 void ActorBase::SetPos(const VECTOR& _pos)
@@ -86,6 +91,11 @@ const VECTOR& ActorBase::GetDown(void) const
 const VECTOR& ActorBase::GetDir(const VECTOR& _vec) const
 {
 	return quaRot_.PosAxis(_vec);
+}
+
+void ActorBase::AddExternalVec(const VECTOR& _vec)
+{
+	externalVec_ = VAdd(externalVec_, _vec);
 }
 
 const float ActorBase::GetPower(void) const

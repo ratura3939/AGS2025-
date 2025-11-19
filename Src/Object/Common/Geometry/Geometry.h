@@ -29,6 +29,9 @@ public:
 	void SetHitNormal(const VECTOR& _normal) { hitNormal_ = _normal; }
 	void SetHitPoint(const VECTOR& _point) { hitPoint_ = _point; }
 
+	//判定前の準備
+	virtual void RedyCollision(void);
+
 	//デバッグ
 	virtual void DebugDraw(void) = 0;
 

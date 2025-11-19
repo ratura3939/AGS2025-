@@ -54,6 +54,9 @@ public:
 	//Õ“Ë”»’è‚Ìg—pİ’è
 	void SetUseThis(const bool _isUse) { isCollision_ = _isUse; }
 
+	//‚¿å‚É‘Î‚µ‚ÄŠO•”‚©‚ç‚Ì‰e‹¿(ˆÚ“®—Ê)‚ğ—^‚¦‚é
+	void AddExternalVecToMaster(const VECTOR& _vec);
+
 	//UŒ‚—Í‚Ìæ“¾
 	const float GetPower(void)const;
 
