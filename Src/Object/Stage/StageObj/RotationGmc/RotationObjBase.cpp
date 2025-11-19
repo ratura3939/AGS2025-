@@ -55,6 +55,8 @@ void RotationObjBase::HitCollider(std::weak_ptr<Collider> _col)
 
 			//‰ñ“]Œã-‰ñ“]‘O‚ÅˆÚ“®—Ê‚ªŽZo
 
+			//ˆÄ‡AŽæ“¾‚µ‚½‘Š‘ÎÀ•W‚ÍArotPow_•ª‚Ì‰ñ“]‚ð‰Á–¡‚µ‚½À•W‚È‚Ì‚ÅA‰ñ“]—Ê‚ð‚O‚É–ß‚µ‚ÄAV‚½‚É¶¬‚µ‚½‚à‚Ì‚ðŽQÆ‚³‚¹‚éH
+
 
 			//‰e‹¿‚ð—^‚¦‚é
 			_col.lock()->AddExternalVecToMaster(addVec);
