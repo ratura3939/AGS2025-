@@ -6,7 +6,7 @@
 
 namespace {
 	const float ROTATION_SPEED = 0.02f;
-	const float POWER_SCALING = 10.0f;
+	const float POWER_SCALING = 2.0f;
 }
 
 RotationObjBase::RotationObjBase(const VECTOR& _pos)
@@ -34,9 +34,10 @@ void RotationObjBase::HitCollider(std::weak_ptr<Collider> _col)
 	if (_col.lock()->IsContainsTag(Collider::COL_TAG::PLAYER)) {
 		//プレイヤー位置
 		const VECTOR& colPos = _col.lock()->GetGeometry().GetPos();
+		const float normalY = collider_->GetGeometry().GetHitNormal().y;
 
 		//プレイヤーが上にいるとき
-		if(pos_.y < colPos.y){
+		if(normalY>=1.0f&&!isAffectingNow_){
 			//台に乗っているので
 			//回転の影響を与える処理
 
@@ -50,13 +51,25 @@ void RotationObjBase::HitCollider(std::weak_ptr<Collider> _col)
 			//１フレーム後のクォータニオンを作成し、QuaternionのAngleを使用して角度を取得
 			float nextRotationPow = rotPow_;
 			nextRotationPow += ROTATION_SPEED;
-			nextRotationPow += (moveSpeed_ + MOVE_SPEED_DEC);
+			if (moveSpeed_ > 0.0f) {
+				nextRotationPow += (moveSpeed_ + MOVE_SPEED_DEC);
+			}
 
+			float oneFramePow = nextRotationPow - rotPow_;
+
+			//回転
+			Quaternion axis =
+				Quaternion::AngleAxis(
+					oneFramePow, Utility::AXIS_Y);
+
+			//初期化を行い新たな回転量を設定する
+			Quaternion quaRot = Quaternion();
+			quaRot = quaRot.Mult(axis);
+
+			VECTOR nextPos = quaRot.PosAxis(relativePos);
 
 			//回転後-回転前で移動量が算出
-
-			//案②取得した相対座標は、rotPow_分の回転を加味した座標なので、回転量を０に戻して、新たに生成したものを参照させる？
-
+			addVec = VSub(nextPos, relativePos);
 
 			//影響を与える
 			_col.lock()->AddExternalVecToMaster(addVec);

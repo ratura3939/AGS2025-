@@ -248,6 +248,7 @@ void AbilityManager::UseAbility(void)
 	//対象のオブジェクトは能力色を付与
 	selectObj_.lock()->SetObjectRenderColor(GetAbilityColor(useAbility_));
 	selectObj_.lock()->ResetGravity();
+	selectObj_.lock()->SetIsAffecting(true);
 
 	update_ = &AbilityManager::UpdateUse;
 
@@ -258,6 +259,7 @@ void AbilityManager::EndUsingAbility(void)
 	//使用終了
 	if (!selectObj_.expired()) {
 		selectObj_.lock()->FinishAffect();
+		selectObj_.lock()->SetIsAffecting(false);
 		selectObj_.reset();
 	}
 	

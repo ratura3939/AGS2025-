@@ -46,10 +46,9 @@ const bool Model::IsHit(Capsule& _capsule)
         //衝突したポリゴンを形成する三点から中点を算出
         VECTOR hitPos = VAdd(VAdd(hitCapsuleInfo.Dim->Position[0], hitCapsuleInfo.Dim->Position[1]), hitCapsuleInfo.Dim->Position[2]);
 		hitPos = VScale(hitPos, 1.0f / 3.0f);
-        VECTOR test;
-        test.x = (hitCapsuleInfo.Dim->Position[0].x + hitCapsuleInfo.Dim->Position[1].x + hitCapsuleInfo.Dim->Position[2].x) / 3.0f;
-        test.y = (hitCapsuleInfo.Dim->Position[0].y + hitCapsuleInfo.Dim->Position[1].y + hitCapsuleInfo.Dim->Position[2].y) / 3.0f;
-        test.z = (hitCapsuleInfo.Dim->Position[0].z + hitCapsuleInfo.Dim->Position[1].z + hitCapsuleInfo.Dim->Position[2].z) / 3.0f;
+
+        SetHitNormal(hitNormal);
+        SetHitPoint(hitPos);
 
         _capsule.SetHitNormal(hitNormal);
         _capsule.SetHitPoint(hitPos);

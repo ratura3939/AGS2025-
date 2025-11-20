@@ -4,6 +4,7 @@
 #include"../../../../Renderer/ModelMaterial.h"
 #include"../../../../Renderer/ModelRenderer.h"
 #include"../../../Common/Geometry/Model.h"
+#include"../../../Common/Geometry/Cube.h"
 #include "Fence.h"
 
 //ローカル定数1
@@ -13,6 +14,8 @@ namespace {
 	const VECTOR INIT_POS = { 0.0f,0.0f,0.0f };
 	const VECTOR INIT_SCL = { 0.4f,0.4f,0.4f };
 	const float MOVE_SPEED = 6.0f;
+
+	const VECTOR COLLIDER_SIZE = VECTOR{ 300.0f,600.0f,100.0f };
 }
 
 Fence::Fence(const VECTOR& _pos, const Quaternion& _rot)
@@ -31,7 +34,7 @@ void Fence::Draw(void)
 	//描画
 	render_->Draw();
 
-	//DrawSphere3D(pos_, 50.0f, 8, 0x00ffff, 0, false);
+	collider_->DrawDebugCollider();
 }
 
 void Fence::HitCollider(std::weak_ptr<Collider> _col)
@@ -58,7 +61,8 @@ void Fence::SetParam(void)
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE, COL_TYPE::SWITCH}, std::move(std::make_unique<Model>(pos_, quaRot_, quaRotLocal_, scl_, modelId_)));
+	//collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE, COL_TYPE::SWITCH}, std::move(std::make_unique<Model>(pos_, quaRot_, quaRotLocal_, scl_, modelId_)));
+	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE, COL_TYPE::SWITCH}, std::move(std::make_unique<Cube>(pos_, quaRot_, COLLIDER_SIZE)));
 
 
 	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録

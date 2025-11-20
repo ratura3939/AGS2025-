@@ -17,6 +17,7 @@ ActorBase::ActorBase(void)
 	, gravity_(Utility::VECTOR_ZERO)
 	, isActiveGravity_(true)
 	, prevPos_(Utility::VECTOR_ZERO)
+	, externalVec_(Utility::VECTOR_ZERO)
 {
 }
 
@@ -36,6 +37,7 @@ void ActorBase::Update(void)
 	//派生クラスの更新処理
 	DoUpdate();
 	//共通処理
+	pos_ = VAdd(pos_, externalVec_);
 	UpdateGravity();
 	UpdateRotQuat();
 
