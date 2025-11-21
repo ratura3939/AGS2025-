@@ -130,5 +130,6 @@ public:
 	//ƒCƒvƒVƒƒ“ˆ—
 	static VECTOR EpsilonToZero(const VECTOR& v);
 	static VECTOR EpsilonNormal(const VECTOR& normal);
+	static VECTOR EpsilonCustomThreshold(const VECTOR& normal,const float _threshold);
 };
 

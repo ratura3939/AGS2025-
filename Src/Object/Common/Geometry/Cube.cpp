@@ -56,6 +56,14 @@ const bool Cube::IsHit(Capsule& _capsule)
 
 	float distSq = ClosestPointDiff(local1, local2);
 
+	bool isHit = distSq <= (_capsule.GetRadius() * _capsule.GetRadius());
+
+	if (isHit) {
+		//押し戻し方向
+		VECTOR nomal = Utility::VNormalize(local1);
+		_capsule.SetHitNormal(Utility::EpsilonToZero(nomal));
+	}
+
 	return distSq <= (_capsule.GetRadius() * _capsule.GetRadius());
 }
 
@@ -155,11 +163,11 @@ void Cube::DebugDraw(void)
 
 void Cube::CalculateVertices(VECTOR outVertices[8])
 {
-	MATRIX rotMat;
-	rotMat = colRot_.ToMatrix();
+	/*MATRIX rotMat;
+	rotMat = colRot_.ToMatrix();*/
 
-	const VECTOR obbMinPos = GetCubeMinPos();
-	const VECTOR obbMaxPos = GetCubeMaxPos();
+	const VECTOR obbMinPos = GetCubeMinWorldPos();
+	const VECTOR obbMaxPos = GetCubeMaxWorldPos();
 
 	int idx = 0;
 	for (int x = 0; x <= 1; ++x)
@@ -173,10 +181,11 @@ void Cube::CalculateVertices(VECTOR outVertices[8])
 				local.y = (y == 0) ? obbMinPos.y : obbMaxPos.y;
 				local.z = (z == 0) ? obbMinPos.z : obbMaxPos.z;
 
-				VECTOR world = VTransform(local, rotMat);
-				world = VAdd(world, colPos_);
+				/*VECTOR world = VTransform(local, rotMat);
+				world = VAdd(world, colPos_);*/
 
-				outVertices[idx++] = world;
+				//outVertices[idx++] = world;
+				outVertices[idx++] = local;
 			}
 		}
 	}
@@ -203,8 +212,8 @@ const float Cube::ClosestPointDiff(const VECTOR& _startPos, const VECTOR& _endPo
 	// 線分とAABBの最短距離²を求める
 		// → 各軸でクランプを行う
 
-	const VECTOR obbMinPos = GetCubeMinPos();
-	const VECTOR obbMaxPos = GetCubeMaxPos();
+	const VECTOR obbMinPos = GetCubeMinLocalPos();
+	const VECTOR obbMaxPos = GetCubeMaxLocalPos();
 
 	float t = 0.0f;
 	float minDiff = FLT_MAX;
@@ -214,7 +223,8 @@ const float Cube::ClosestPointDiff(const VECTOR& _startPos, const VECTOR& _endPo
 	for (int i = 0; i <= steps; ++i)
 	{
 		float ft = static_cast<float>(i) / steps;
-		VECTOR point = VAdd(_startPos, VScale(VSub(_endPos, _startPos), ft));
+		VECTOR endToStart = VSub(_endPos, _startPos);
+		VECTOR point = VAdd(_startPos, VScale(endToStart, ft));
 
 		// AABB内の最近接点
 		VECTOR clamped = {
@@ -234,12 +244,22 @@ const float Cube::ClosestPointDiff(const VECTOR& _startPos, const VECTOR& _endPo
 	return minDiff;
 }
 
-const VECTOR Cube::GetCubeMinPos(void)
+const VECTOR Cube::GetCubeMinWorldPos(void)
 {
 	return { colPos_.x - obb_.halfDiff.x,colPos_.y - obb_.halfDiff.y,colPos_.z - obb_.halfDiff.z };
 }
 
-const VECTOR Cube::GetCubeMaxPos(void)
+const VECTOR Cube::GetCubeMaxWorldPos(void)
 {
 	return { colPos_.x + obb_.halfDiff.x,colPos_.y + obb_.halfDiff.y,colPos_.z + obb_.halfDiff.z };
+}
+
+const VECTOR Cube::GetCubeMinLocalPos(void)
+{
+	return VScale(obb_.halfDiff,-1.0f);
+}
+
+const VECTOR Cube::GetCubeMaxLocalPos(void)
+{
+	return obb_.halfDiff;
 }

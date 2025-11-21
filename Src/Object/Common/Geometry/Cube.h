@@ -48,7 +48,10 @@ private:
 
 	const float ClosestPointDiff(const VECTOR& _startPos, const VECTOR& _endPos);
 
-	const VECTOR GetCubeMinPos(void);
-	const VECTOR GetCubeMaxPos(void);
+	const VECTOR GetCubeMinWorldPos(void);
+	const VECTOR GetCubeMaxWorldPos(void);
+
+	const VECTOR GetCubeMinLocalPos(void);
+	const VECTOR GetCubeMaxLocalPos(void);
 };
 

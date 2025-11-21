@@ -599,4 +599,21 @@ VECTOR Utility::EpsilonNormal(const VECTOR& normal)
     return ret;
 }
 
+VECTOR Utility::EpsilonCustomThreshold(const VECTOR& normal, const float _threshold)
+{
+    VECTOR ret = normal;
+    VECTOR fabsVec = { fabsf(ret.x) ,fabsf(ret.y) ,fabsf(ret.z) };
+
+    if (fabsVec.x < _threshold)ret.x = 0.0f;
+    else if (fabsVec.x > _threshold)ret.x = 1.0f;
+
+    if (fabsVec.y < _threshold)ret.y = 0.0f;
+    else if (fabsVec.y > _threshold)ret.y = 1.0f;
+
+    if (fabsVec.z < _threshold)ret.z = 0.0f;
+    else if (fabsVec.z > _threshold)ret.z = 1.0f;
+
+    return ret;
+}
+
 

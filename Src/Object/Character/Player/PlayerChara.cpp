@@ -297,22 +297,14 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 		VECTOR hitPoint = myGeo.GetHitPoint();		//衝突位置
 		VECTOR backPow = VSub(myGeo.GetHitPoint(), pos_);		//めり込み量
 		VECTOR colNormal = myGeo.GetHitNormal();				//法線ベクトル
+
+		const float threshold = 0.3f;
+		VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
+
+		if (enablePrevPos.x > 0.0f)pos_.x = prevPos_.x;
+		if (enablePrevPos.y > 0.0f)pos_.y += backPow.y;
+		if (enablePrevPos.z > 0.0f)pos_.z = prevPos_.z;
 		
-		//壁に衝突しているとき、コライダーの半径分押し戻す
-		if(colNormal.x!=0.0f|| colNormal.z != 0.0f){
-			backPow.x = radius;
-			backPow.z = radius;
-		}
-
-		VECTOR backVec = Utility::VMul(backPow, colNormal);		//上記二つを加味した修正ベクトル
-
-		//モデルの淵に立ってしまい、重力の影響が切れないとき
-		if (colNormal.y == 0.0f) {
-			backVec = VSub(backVec, gravity_);
-		}
-
-		//pos_.y = VAdd(pos_, backVec).y;
-		pos_ = VAdd(pos_, backVec);
 
 		gravity_ = { 0.0f,0.0f,0.0f };
 	}

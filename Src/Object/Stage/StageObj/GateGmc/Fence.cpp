@@ -3,6 +3,7 @@
 #include"../../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../../Renderer/ModelMaterial.h"
 #include"../../../../Renderer/ModelRenderer.h"
+#include"../../../../Utility/Utility.h"
 #include"../../../Common/Geometry/Model.h"
 #include"../../../Common/Geometry/Cube.h"
 #include "Fence.h"
@@ -15,10 +16,12 @@ namespace {
 	const VECTOR INIT_SCL = { 0.4f,0.4f,0.4f };
 	const float MOVE_SPEED = 6.0f;
 
-	const VECTOR COLLIDER_SIZE = VECTOR{ 300.0f,600.0f,100.0f };
+	const VECTOR COLLIDER_SIZE = VECTOR{ 100.0f,400.0f,400.0f };
+	const VECTOR COLLIDER_DIFF_Y= VECTOR{ 0.0f,400.0f,0.0f };
 }
 
 Fence::Fence(const VECTOR& _pos, const Quaternion& _rot)
+	: colliderPos_(Utility::VECTOR_ZERO)
 {
 	pos_ = _pos;
 }
@@ -39,6 +42,7 @@ void Fence::Draw(void)
 
 void Fence::HitCollider(std::weak_ptr<Collider> _col)
 {
+	int a = 0;
 }
 
 void Fence::MoveFnece(const MOVE_DIR _dir)
@@ -51,6 +55,7 @@ void Fence::MoveFnece(const MOVE_DIR _dir)
 		pos_.y -= MOVE_SPEED;
 		movedFenceDiff_ -= MOVE_SPEED;
 	}
+	colliderPos_ = VAdd(pos_, COLLIDER_DIFF_Y);
 }
 
 void Fence::SetParam(void)
@@ -59,10 +64,11 @@ void Fence::SetParam(void)
 	modelId_ = resM.Load(ResourceManager::SRC::FENCE_MDL).handleId_;
 	scl_ = INIT_SCL;
 
+	colliderPos_ = VAdd(pos_, COLLIDER_DIFF_Y);
+
 	//ÉRÉâÉCÉ_Å[ê›íË
 	using COL_TYPE = Collider::COL_TAG;
-	//collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE, COL_TYPE::SWITCH}, std::move(std::make_unique<Model>(pos_, quaRot_, quaRotLocal_, scl_, modelId_)));
-	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE, COL_TYPE::SWITCH}, std::move(std::make_unique<Cube>(pos_, quaRot_, COLLIDER_SIZE)));
+	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE, COL_TYPE::SWITCH}, std::move(std::make_unique<Cube>(colliderPos_, quaRot_, COLLIDER_SIZE)));
 
 
 	CollisionManager::GetInstance().AddCollider(collider_);	//ìñÇΩÇËîªíËìoò^

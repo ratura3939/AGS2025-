@@ -21,5 +21,6 @@ public:
 private:
     void SetParam(void)override;
     int movedFenceDiff_;    //ò‚ÌˆÚ“®—Ê
+    VECTOR colliderPos_;    //ƒ‚ƒfƒ‹’†‰›‚É‚·‚é‚½‚ß‚ÌY²·•ª—pˆÊ’u
 };
 
