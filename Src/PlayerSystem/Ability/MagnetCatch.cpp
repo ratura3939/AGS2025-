@@ -134,7 +134,7 @@ void MagnetCatch::Draw(void)
 	}
 
 	//デバッグ
-	DrawFormatString(50, 300, 0xff0000, "GOAL={%.1f,%.1f,%.1f}", goalDirecPos_.x, goalDirecPos_.y, goalDirecPos_.z);
+	//DrawFormatString(50, 300, 0xff0000, "GOAL={%.1f,%.1f,%.1f}", goalDirecPos_.x, goalDirecPos_.y, goalDirecPos_.z);
 }
 
 void MagnetCatch::ResetAbility(void)
