@@ -221,6 +221,26 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Dodge_4.mp3");
 	resourcesMap_.emplace(SRC::JUST_DODGE_SE, res);
 
+	//ロックカウント
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "LockCount.mp3");
+	resourcesMap_.emplace(SRC::TIME_LOCK_SE, res);
+
+	//ロック終了
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "BreakLock.mp3");
+	resourcesMap_.emplace(SRC::BREAK_TIME_LOCK_SE, res);
+
+	//能力使用中音
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "AbilitySound.wav");
+	resourcesMap_.emplace(SRC::ABILITY_SE, res);
+
+	//マグネット中
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "MagnetWave.mp3");
+	resourcesMap_.emplace(SRC::WAVE_MAGNET_SE, res);
+
+	//マグネット終了
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "ConnectMagnet.mp3");
+	resourcesMap_.emplace(SRC::CONNECT_MAGNET, res);
+
 	//エフェクト
 	//剣
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "SwordEfc.efkefc");
@@ -381,6 +401,10 @@ void ResourceManager::ResorceStage(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Switch.mv1");
 	resourcesMap_.emplace(SRC::SWITCH_MDL, res);
 
+	//選択
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "PressSwitch.mp3");
+	resourcesMap_.emplace(SRC::SWITCH_SE, res);
+
 	//ゲート
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Gate.mv1");
 	resourcesMap_.emplace(SRC::GATE_MDL, res);
@@ -388,9 +412,21 @@ void ResourceManager::ResorceStage(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Fence.mv1");
 	resourcesMap_.emplace(SRC::FENCE_MDL, res);
 
-	//ゲートの柵
+	//選択
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "MoveFence.mp3");
+	resourcesMap_.emplace(SRC::FENCE_SE, res);
+
+	//回転台
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "TurnTable.mv1");
 	resourcesMap_.emplace(SRC::TURN_TABLE_MDL, res);
+
+	//階段
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stairs.mv1");
+	resourcesMap_.emplace(SRC::STAIRS_MDL, res);
+
+	//十字道
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Cross.mv1");
+	resourcesMap_.emplace(SRC::CROSS_MDL, res);
 
 	//ノイズテクスチャ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Pattern/Noise2.png");

@@ -65,6 +65,9 @@ public:
 	//死亡させる
 	virtual void Deth(void);
 
+	//当たり判定後処理
+	void HitCollider(std::weak_ptr<Collider> _col)override;
+
 	//デバッグ
 	virtual void DrawDebug(void);
 	void DrawCupcel(void);
@@ -72,6 +75,7 @@ public:
 protected:
 	virtual void DoInit(void)override = 0;
 	virtual void DoUpdate(void)override = 0;
+	virtual void DoHitCollider(std::weak_ptr<Collider>& _col) = 0;
 
 	//必ず更新・初期化処理に入れること
 	//************************************************

@@ -14,6 +14,7 @@ GimmickObjBase::GimmickObjBase(void)
 
 GimmickObjBase::~GimmickObjBase(void)
 {
+
 }
 
 void GimmickObjBase::DoInit(void)
@@ -45,13 +46,13 @@ void GimmickObjBase::Draw(void)
 {
 	render_->Draw();
 
-	//スクリーン座標位置(デバッグ用)
+	////スクリーン座標位置(デバッグ用)
 	if (isDrawScreenPosCircle_) {
 		screenPos_ = ConvWorldPosToScreenPos(pos_);
-		DrawCircle(screenPos_.x, screenPos_.y, 10, screenPosColor_);
+		//DrawCircle(screenPos_.x, screenPos_.y, 10, screenPosColor_);
 	}
 
-	DrawDebug();
+	//DrawDebug();
 }
 
 void GimmickObjBase::DrawDebug(void) 
@@ -87,6 +88,10 @@ const bool GimmickObjBase::IsAffectAbility(void) const
 void GimmickObjBase::SetIsAffecting(const bool _flag)
 {
 	isAffectingNow_ = _flag;
+	if (_flag) {
+		isActiveGravity_ = false;
+	}
+	else isActiveGravity_ = true;
 }
 
 const bool GimmickObjBase::IsAffecting(void) const

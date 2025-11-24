@@ -21,7 +21,7 @@ SpinDisc::~SpinDisc(void)
 void SpinDisc::SetModel(void)
 {
 	speciesName_ = OBJ_NAME;
-	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TURN_TABLE_MDL).handleId_;
+	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::TURN_TABLE_MDL);
 	scl_ = INIT_SCL;
 
 	//コライダー設定

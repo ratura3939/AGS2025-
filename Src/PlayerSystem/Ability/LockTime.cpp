@@ -1,3 +1,4 @@
+#include"../../Manager/Generic/ResourceManager.h"
 #include"../../Manager/Decoration/SoundManager.h"
 #include"../AbilityManager.h"
 #include "LockTime.h"
@@ -23,10 +24,21 @@ LockTime::LockTime(AbilityManager& _mng) :AbilityBase(_mng)
 	alertBeatInterval_ = TEMPO;
 	alertAfterCnt_ = 0;
 	lockObject_ = false;
+	SoundManager& sndM = SoundManager::GetInstance();
+	sndM.Add(SoundManager::TYPE::SE, "LockCount", ResourceManager::GetInstance().Load(ResourceManager::SRC::TIME_LOCK_SE).handleId_);
+	sndM.AdjustVolume("LockCount", 60);
+
+	sndM.AdjustPitchRate(600.0f);
+
+	sndM.Add(SoundManager::TYPE::SE, "BreakLock", ResourceManager::GetInstance().Load(ResourceManager::SRC::BREAK_TIME_LOCK_SE).handleId_);
+	sndM.AdjustVolume("LockCount", 40);
+	sndM.AdjustPitchRate();
+	
 }
 
 LockTime::~LockTime(void)
 {
+	
 }
 
 void LockTime::UpdateUse(std::weak_ptr<GimmickObjBase> _obj)
@@ -42,13 +54,14 @@ void LockTime::UpdateUse(std::weak_ptr<GimmickObjBase> _obj)
 	if (timer_ > LOCK_TIME_MAX) {
 		//”\—Í‚ÌŽ©“®‰ðœ
 		manager_.ChangeState(AbilityManager::STATE::END);
+		SoundManager::GetInstance().Play("BreakLock");
 		return;
 	}
 
 	//Œx•\Ž¦
 	if (timer_ % alertBeatInterval_ == 0) {
 		//‰¹‚ð‚È‚ç‚·
-
+		SoundManager::GetInstance().Play("LockCount");
 		//‰©F‚É‚·‚é
 		_obj.lock()->SetObjectRenderColor(ABILITY_COLOR);
 

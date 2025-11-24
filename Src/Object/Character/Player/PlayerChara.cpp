@@ -66,7 +66,7 @@ namespace {
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 
 	const float GRAVITY_POW = 1.0f; //重力
-	const float JUMP_POW = 80.0f; //ジャンプ力
+	const float JUMP_POW = 60.0f; //ジャンプ力
 }
 
 
@@ -232,7 +232,7 @@ void PlayerChara::Jump(void)
 
 void PlayerChara::DrawDebug(void)
 {
-	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
+	//DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
 	/*DrawFormatString(0, 120, 0xffffff, "GoalRot={%.1f,%.1f,%.1f}", goalQua_.x, goalQua_.y, goalQua_.z);
 	VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetLockPos();
 	float deg = static_cast<float>(Utility::AngleDeg(pos_, VSub(rockPos, pos_)));
@@ -259,7 +259,7 @@ void PlayerChara::DrawDebug(void)
 
 	DrawCupcel();*/
 
-	collider_->DrawDebugCollider();
+	//collider_->DrawDebugCollider();
 }
 
 float PlayerChara::GetToLockDeg(void)
@@ -279,7 +279,7 @@ void PlayerChara::SetAtkAllert(void)
 	allertTime_ = 0;
 }
 
-void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
+void PlayerChara::DoHitCollider(std::weak_ptr<Collider>& _col)
 {
 	const float DmgEfcScl = 25.0f;
 	const float DmgEfcSpeed = 2.5f;
@@ -288,26 +288,6 @@ void PlayerChara::HitCollider(std::weak_ptr<Collider> _col)
 	const float COLLIDER_RADIUS_POW = 1.0f;
 
 	using TAG = Collider::COL_TAG;
-	//ステージとの衝突
-	if (_col.lock()->IsContainsTag(TAG::STAGE)) {
-
-		Geometry& myGeo = collider_->GetGeometry();
-		float radius = myGeo.GetRadius();
-		//本来立つべき位置と現在位置の差分を取得
-		VECTOR hitPoint = myGeo.GetHitPoint();		//衝突位置
-		VECTOR backPow = VSub(myGeo.GetHitPoint(), pos_);		//めり込み量
-		VECTOR colNormal = myGeo.GetHitNormal();				//法線ベクトル
-
-		const float threshold = 0.3f;
-		VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
-
-		if (enablePrevPos.x > 0.0f)pos_.x = prevPos_.x;
-		if (enablePrevPos.y > 0.0f)pos_.y += backPow.y;
-		if (enablePrevPos.z > 0.0f)pos_.z = prevPos_.z;
-		
-
-		gravity_ = { 0.0f,0.0f,0.0f };
-	}
 
 	//敵の物の場合
 	if (_col.lock()->IsContainsTag(TAG::ENEMY)) {

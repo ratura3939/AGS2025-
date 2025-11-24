@@ -87,9 +87,6 @@ void Game::Init(void)
 
 	update_ = &Game::GameUpdate;
 
-	//判定
-	CollisionManager::CreateInstance();
-
 	//生成
 	//ステージ
 	stage_ = std::make_unique<StageManager>();
@@ -622,7 +619,7 @@ void Game::Release(void)
 	SoundManager& sndM = SoundManager::GetInstance();
 	sndM.Stop("NomalBgm");	//今まで流していたものを停止
 	sndM.Stop("BattleBgm");	//今まで流していたものを停止
-	CollisionManager::GetInstance().Destroy();
+	CollisionManager::GetInstance().DeleteAllCollider();
 }
 
 void Game::Reset(void)

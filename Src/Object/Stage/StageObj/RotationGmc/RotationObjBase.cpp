@@ -31,13 +31,13 @@ void RotationObjBase::HitCollider(std::weak_ptr<Collider> _col)
 	}
 	
 	//プレイヤーと当たっているとき
-	if (_col.lock()->IsContainsTag(Collider::COL_TAG::PLAYER)) {
+	if (_col.lock()->IsContainsTag(Collider::COL_TAG::PLAYER) || _col.lock()->IsContainsTag(Collider::COL_TAG::OBJECT) || _col.lock()->IsContainsTag(Collider::COL_TAG::ENEMY)) {
 		//プレイヤー位置
 		const VECTOR& colPos = _col.lock()->GetGeometry().GetPos();
 		const float normalY = collider_->GetGeometry().GetHitNormal().y;
 
 		//プレイヤーが上にいるとき
-		if(normalY>=1.0f&&!isAffectingNow_){
+		if (normalY >= 1.0f && !isAffectingNow_) {
 			//台に乗っているので
 			//回転の影響を与える処理
 

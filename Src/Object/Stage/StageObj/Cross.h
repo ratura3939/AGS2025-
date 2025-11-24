@@ -1,13 +1,13 @@
 #pragma once
-#include"NoneAfectAbilityObjBase.h"
+#include "NoneAfectAbilityObjBase.h"
 #include"../../Common/Collider.h"
 
-class Stage:
-	public NoneAfectAbilityObjBase
+class Cross :
+    public NoneAfectAbilityObjBase
 {
 public:
-	Stage(void);
-	~Stage(void)override;
+	Cross(const VECTOR& _pos);
+	~Cross(void)override;
 
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 

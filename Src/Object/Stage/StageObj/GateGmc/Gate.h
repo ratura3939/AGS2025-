@@ -1,10 +1,10 @@
 #pragma once
-#include "../GimmickObjBase.h"
+#include "../NoneAfectAbilityObjBase.h"
 
 #include"Fence.h"
 
 class Gate :
-    public GimmickObjBase
+    public NoneAfectAbilityObjBase
 {
 public:
     enum class GATE_STATE {
@@ -25,7 +25,7 @@ public:
     void SetState(const GATE_STATE& _state);
 
 private:
-    void SetParam(void)override;
+    void SetModel(void)override;
     void UpdateNomal(void)override;
 
     std::unique_ptr<Fence> fence_;

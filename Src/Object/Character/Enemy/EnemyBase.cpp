@@ -63,8 +63,6 @@ EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VE
 	state_ = ENEMY_STATE::END;
 
 	isLockTarget_ = false;
-
-	isActiveGravity_ = false;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -321,7 +319,6 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		move_ = &EnemyBase::MoveNomal;
 		moveSped_ = MOVE_POW;
 		uiCntl_->FindReset();
-		searchCnt_ = 0.0f;
 		searchRestartCnt_ = 0.0f;
 
 		serchCol_ = serchDebugCol;
@@ -331,6 +328,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 	case ENEMY_STATE::SEARCH:
 		update_ = &EnemyBase::UpdateSearch;
 		move_ = &EnemyBase::MoveSearch;
+		searchCnt_ = 0.0f;
 		moveSped_ = MOVE_POW;
 		//待機アニメーション
 		animController_->Play("idle", SPEED_ANIM);
@@ -352,7 +350,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		//死亡アニメーション
 		animController_->Play("dethStart", SPEED_ANIM,{"dethSus"});
 
-		//コライダー登録解除
+		//コライダー登録解除rrrrrrrr
 		//CollisionManager& colM = CollisionManager::GetInstance();
 		CollisionManager::GetInstance().MarkForDelete(collider_->GetManagementNumber());
 		CollisionManager::GetInstance().MarkForDelete(atkCollider_->GetManagementNumber());
@@ -466,7 +464,7 @@ void EnemyBase::Shout(void)
 	//ボス専用
 }
 
-void EnemyBase::HitCollider(std::weak_ptr<Collider> _col)
+void EnemyBase::DoHitCollider(std::weak_ptr<Collider>& _col)
 {
 	const float DmgEfcScl = 25.0f;
 	const float DmgEfcSpeed = 2.5f;

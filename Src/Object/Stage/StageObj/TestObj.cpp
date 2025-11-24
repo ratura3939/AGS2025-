@@ -9,14 +9,24 @@
 namespace {
 	const float SPHERE_RADIUS = 150.0f;	//コライダー半径
 	const std::string OBJ_NAME = "Moon";
-	const float ATTACK_POW_DEC_RATE = 30.0f;	//攻撃力減衰率
+	const float ATTACK_POW_DEC_RATE = 40.0f;	//攻撃力減衰率
 }
 
 void TestObj::HitCollider(std::weak_ptr<Collider> _col)
 {
 	//ステージタグが存在するとき
-	if(_col.lock()->IsContainsTag(Collider::COL_TAG::STAGE)){
-		SetPrevPos();
+	if (_col.lock()->IsContainsTag(Collider::COL_TAG::STAGE) && !isAffectingNow_) {
+		//SetPrevPos();
+
+		VECTOR colNormal = _col.lock()->GetGeometry().GetHitNormal();				//法線ベクトル
+
+		const float threshold = 0.3f;
+		VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
+
+		if (enablePrevPos.x > 0.0f)pos_.x = prevPos_.x;
+		if (enablePrevPos.y > 0.0f)pos_.y -= gravity_.y;
+		if (enablePrevPos.z > 0.0f)pos_.z = prevPos_.z;
+
 		//衝突した物体の法線方向に少し押し戻す
 		moveDir_ = collider_->GetGeometry().GetHitNormal();
 		moveSpeed_ = Utility::MagnitudeF(gravity_) * 0.5f;
@@ -39,7 +49,7 @@ void TestObj::SetParam(void)
 	isAffectAbilyty_ = true;
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TEST_MDL).handleId_;
 	pos_ = { 200.0f,1500.0f,500.0f };
-	scl_ = { 1.0f,1.0f ,1.0f };
+	scl_ = { 0.8f,0.8f ,0.8f };
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;

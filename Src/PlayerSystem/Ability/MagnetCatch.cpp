@@ -2,6 +2,7 @@
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/Camera.h"
 #include"../../Manager/Generic/InputManager.h"
+#include"../../Manager/Generic/ResourceManager.h"
 #include"../../Utility/Utility.h"
 #include"../../Object/Character/Player/PlayerChara.h"
 #include"../AbilityManager.h"
@@ -25,6 +26,17 @@ MagnetCatch::MagnetCatch(AbilityManager& _mng, PlayerChara& _master) :AbilityBas
 	relativePosZ_ = 0.0f;
 	isSetGoalPos_ = false;
 	direcStep_ = 0.0f;
+
+	SoundManager& sndM = SoundManager::GetInstance();
+	sndM.Add(SoundManager::TYPE::SE, "ConnectMagnet", ResourceManager::GetInstance().Load(ResourceManager::SRC::CONNECT_MAGNET).handleId_);
+
+	sndM.AdjustPitchRate(800.0f);
+	sndM.AdjustTimeRate(0.8f);
+	sndM.Add(SoundManager::TYPE::SE, "Magnet", ResourceManager::GetInstance().Load(ResourceManager::SRC::WAVE_MAGNET_SE).handleId_);
+	sndM.AdjustPitchRate();
+	sndM.AdjustTimeRate();
+
+	//sndM.AdjustVolume("Magnet", 80);
 }
 
 MagnetCatch::~MagnetCatch(void)
@@ -62,6 +74,8 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj)
 {
 	//初手のゴール位置設定
 	if (!isSetGoalPos_) {
+
+		SoundManager::GetInstance().Play("Magnet");
 		if (_obj.expired()) {
 			VECTOR screenPos = AbilityManager::RETICLE_POS;
 			VECTOR woldPos = ConvScreenPosToWorldPos(screenPos);
@@ -75,6 +89,9 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj)
 
 	//演出終了
 	if (direcStep_ > DIREC_MAX) {
+
+		SoundManager::GetInstance().Stop("Magnet");
+
 		//対象がないとき
 		if (_obj.expired()) {
 			manager_.ChangeState(AbilityManager::STATE::REDY);
@@ -88,6 +105,9 @@ void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj)
 			auto& camera=SceneManager::GetInstance().GetCamera();
 			camera.ChangeMode(Camera::MODE::MIRROR);
 			camera.SetLockPos(goalDirecPos_);
+
+			//サウンドの再生
+			SoundManager::GetInstance().Play("ConnectMagnet");
 
 			//キャラクターの設定
 			master_.ChangeLockState(true);

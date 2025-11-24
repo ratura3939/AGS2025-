@@ -63,6 +63,7 @@ void CollisionManager::DeleteCollider(void)
 		}
 		//削除
 		colliders_.erase(colliders_.begin() + deleteIdx);
+		colliderCounter_--;
 
 		for (int i = deleteCounter + 1; i < static_cast<int>(deleteColliderIdxs_.size()); i++) {
 			//削除した分インデックスをずらす
@@ -76,6 +77,11 @@ void CollisionManager::DeleteCollider(void)
 void CollisionManager::MarkForDelete(const int _colliderIdx)
 {
 	deleteColliderIdxs_.push_back(_colliderIdx);
+}
+
+void CollisionManager::DeleteAllCollider(void)
+{
+	colliders_.clear();
 }
 
 void CollisionManager::UpdateColliders(void)

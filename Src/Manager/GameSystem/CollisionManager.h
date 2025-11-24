@@ -19,6 +19,8 @@ public:
 	//削除予定リスト追加
 	void MarkForDelete(const int _colliderIdx);
 
+	void DeleteAllCollider(void);
+
 	//すべてのコライダーの衝突判定
 	void UpdateColliders(void);
 

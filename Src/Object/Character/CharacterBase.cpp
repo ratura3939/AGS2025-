@@ -116,6 +116,33 @@ void CharacterBase::Deth(void)
 	hp_ = 0;
 }
 
+void CharacterBase::HitCollider(std::weak_ptr<Collider> _col)
+{
+	using TAG = Collider::COL_TAG;
+	//ステージとの衝突
+	if (_col.lock()->IsContainsTag(TAG::STAGE)) {
+
+		Geometry& myGeo = collider_->GetGeometry();
+		float radius = myGeo.GetRadius();
+		//本来立つべき位置と現在位置の差分を取得
+		VECTOR hitPoint = myGeo.GetHitPoint();		//衝突位置
+		VECTOR backPow = VSub(myGeo.GetHitPoint(), pos_);		//めり込み量
+		VECTOR colNormal = myGeo.GetHitNormal();				//法線ベクトル
+
+		const float threshold = 0.3f;
+		VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
+
+		if (enablePrevPos.x > 0.0f)pos_.x = prevPos_.x;
+		if (enablePrevPos.y > 0.0f)pos_.y += backPow.y;
+		if (enablePrevPos.z > 0.0f)pos_.z = prevPos_.z;
+
+
+		gravity_ = { 0.0f,0.0f,0.0f };
+	}
+
+	DoHitCollider(_col);
+}
+
 void CharacterBase::DrawDebug(void)
 {
 }

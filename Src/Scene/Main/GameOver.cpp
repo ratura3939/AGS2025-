@@ -4,10 +4,11 @@
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/ResourceManager.h"
 #include"../../Manager/Generic/Camera.h"
+#include"../../Manager/GameSystem/CollisionManager.h"
 #include"../../Manager/Decoration/UIManager2d.h"
 #include"../../Manager/Decoration/SoundManager.h"
-#include"Title.h"
 #include"../../Object/Stage/StageManager.h"
+#include"Title.h"
 #include "GameOver.h"
 
 //ƒ[ƒJƒ‹’è”
@@ -100,7 +101,7 @@ void GameOver::Draw(void)
 
 void GameOver::Release(void)
 {
-	
+	CollisionManager::GetInstance().DeleteAllCollider();
 }
 
 void GameOver::Reset(void)

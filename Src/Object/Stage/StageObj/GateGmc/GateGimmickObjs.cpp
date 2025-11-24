@@ -1,9 +1,19 @@
+#include"../../../../Manager/Generic/ResourceManager.h"
+#include"../../../../Manager/Decoration/SoundManager.h"
 #include "GateGimmickObjs.h"
 
 GateGimmickObjs::GateGimmickObjs(const VECTOR& _switchPos, const VECTOR& _gatePos, const Quaternion& _gateQua)
 {
 	gate_ = std::make_unique<Gate>(_gatePos,_gateQua);
 	switchObj_ = std::make_unique<SwitchObj>(_switchPos);
+
+	SoundManager& sndM = SoundManager::GetInstance();
+	ResourceManager& rsM = ResourceManager::GetInstance();
+	sndM.Add(SoundManager::TYPE::SE, "MoveFence", rsM.Load(ResourceManager::SRC::FENCE_SE).handleId_);
+	sndM.Add(SoundManager::TYPE::SE, "PressSwitch", rsM.Load(ResourceManager::SRC::SWITCH_SE).handleId_);
+
+
+	sndM.AdjustVolume("MoveFence", 70.0f);
 }
 
 GateGimmickObjs::~GateGimmickObjs(void)
@@ -40,6 +50,9 @@ void GateGimmickObjs::UpdateNomal(void)
 
 	//Ø‚è‘Ö‚¦‚ªs‚í‚ê‚Ä‚¢‚½Žž
 	if (switchObj_->IsChangePressedTrg()) {
+		SoundManager& sndM = SoundManager::GetInstance();
+		sndM.Play("PressSwitch");
+		sndM.Play("MoveFence");
 
 		Gate::GATE_STATE gateState = Gate::GATE_STATE::CLOSE;
 

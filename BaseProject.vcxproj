@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Stage\StageObj\Cross.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\NoneAfectAbilityObjBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\RotationGmc\SpinDisc.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\RotationGmc\RotationObjBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\GateGimmickObjs.cpp" />
@@ -92,8 +94,11 @@
     <ClCompile Include="Src\Object\Stage\StageObj\TestObj2.cpp" />
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\SwitchObj.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\Stairs.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Stage\StageObj\Cross.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\NoneAfectAbilityObjBase.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\RotationGmc\SpinDisc.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\RotationGmc\RotationObjBase.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\GateGmc\GateGimmickObjs.h" />
@@ -167,6 +172,7 @@
     <ClInclude Include="Src\Object\Stage\StageObj\TestObj2.h" />
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\GateGmc\SwitchObj.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\Stairs.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\Model\BlurSkinPS.hlsl">

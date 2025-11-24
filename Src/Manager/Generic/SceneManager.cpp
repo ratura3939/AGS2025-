@@ -3,6 +3,7 @@
 #include "../../Common/Fader.h"
 #include "../../Application.h"
 #include "../../Scene/Main/Title.h"
+#include"../GameSystem/CollisionManager.h"
 #include"../Decoration/EffectManager.h"
 #include"../Decoration/SoundManager.h"
 #include"../Decoration/UIManager2d.h"
@@ -34,6 +35,9 @@ void SceneManager::Init(void)
 
 	//UIマネージャの生成
 	UIManager2d::CreateInstance();
+
+	//判定
+	CollisionManager::CreateInstance();
 
 	fader_ = new Fader();
 	fader_->Init();
@@ -159,6 +163,7 @@ void SceneManager::Destroy(void)
 	SoundManager::GetInstance().Destroy();
 	EffectManager::GetInstance().Destroy();
 	UIManager2d::GetInstance().Destroy();
+	CollisionManager::GetInstance().Destroy();
 
 	scenes_.clear();
 

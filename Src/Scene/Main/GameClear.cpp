@@ -6,6 +6,7 @@
 #include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/ResourceManager.h"
 #include"../../Manager/Generic/Camera.h"
+#include"../../Manager/GameSystem/CollisionManager.h"
 #include"../../Manager/Decoration/UIManager2d.h"
 #include"../../Manager/Decoration/SoundManager.h"
 #include"Title.h"
@@ -102,7 +103,7 @@ void GameClear::Draw(void)
 
 void GameClear::Release(void)
 {
-	
+	CollisionManager::GetInstance().DeleteAllCollider();
 }
 
 void GameClear::Reset(void)

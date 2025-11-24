@@ -1,13 +1,11 @@
 #pragma once
-#include "../GimmickObjBase.h"
+#include "../NoneAfectAbilityObjBase.h"
 class SwitchObj :
-    public GimmickObjBase
+    public NoneAfectAbilityObjBase
 {
 public:
     SwitchObj(const VECTOR& _pos);
     ~SwitchObj(void)override;
-
-    void Draw(void)override;
 
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 
@@ -15,7 +13,7 @@ public:
 	const bool IsPressFinish(void)const { return isPressFinish_; }
 
 private:
-    void SetParam(void)override;
+    void SetModel(void)override;
 	void UpdateNomal(void)override;
 
     int pressCounter_;

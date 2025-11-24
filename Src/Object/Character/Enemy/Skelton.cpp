@@ -64,8 +64,7 @@ void Skelton::SetParam(void)
 	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//“ªˆÊ’u
 	using TAG = Collider::COL_TAG;
 	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::ENEMY},
-		std::move(std::make_unique<Capsule>(headPos_, pos_, colRadius_))
-	, std::set<TAG>{TAG::STAGE, TAG::OBJECT});
+		std::move(std::make_unique<Capsule>(headPos_, pos_, colRadius_)));
 
 	//UŒ‚‚Ì”­¶ˆÊ’u(‘Š‘ÎÀ•W)
 	atkRelative_ = RELATIVE_ATTACK_POS;

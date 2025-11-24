@@ -71,6 +71,7 @@ void AttackManager::Attack(const std::string& _name, const std::string& _sndName
 	attackColliders_[_name].collider.lock()->AddTag(Collider::COL_TAG::PREATTACK);
 	attackColliders_[_name].isUsed = true;
 	attackColliders_[_name].counter = 0.0f;
+	attackColliders_[_name].isAllert = false;
 
 	//XVˆ—‚Ìİ’è
 	updateAtk_[_name] = &AttackManager::UpdatePreAttack;

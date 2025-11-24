@@ -71,6 +71,8 @@ public:
 		GATE_MDL,
 		FENCE_MDL,
 		TURN_TABLE_MDL,
+		CROSS_MDL,
+		STAIRS_MDL,
 
 		//音
 		TITLE_BGM,
@@ -97,7 +99,16 @@ public:
 		ATK_ALLERT_SE,
 		DODGE_SE,
 		JUST_DODGE_SE,
-		
+
+		ABILITY_SE,
+		TIME_LOCK_SE,
+		BREAK_TIME_LOCK_SE,
+
+		CONNECT_MAGNET,
+		WAVE_MAGNET_SE,
+
+		FENCE_SE,
+		SWITCH_SE,
 
 		//エフェクト
 		SWORD_EFC,
