@@ -23,8 +23,10 @@ void TestObj::HitCollider(std::weak_ptr<Collider> _col)
 		const float threshold = 0.3f;
 		VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
 
+		VECTOR backPow = VSub(_col.lock()->GetGeometry().GetHitPoint(), pos_);
+
 		if (enablePrevPos.x > 0.0f)pos_.x = prevPos_.x;
-		if (enablePrevPos.y > 0.0f)pos_.y -= gravity_.y;
+		if (enablePrevPos.y > 0.0f)pos_.y = prevPos_.y;
 		if (enablePrevPos.z > 0.0f)pos_.z = prevPos_.z;
 
 		//衝突した物体の法線方向に少し押し戻す
@@ -49,7 +51,7 @@ void TestObj::SetParam(void)
 	isAffectAbilyty_ = true;
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TEST_MDL).handleId_;
 	pos_ = { 200.0f,1500.0f,500.0f };
-	scl_ = { 0.8f,0.8f ,0.8f };
+	scl_ = { 0.6f,0.6f ,0.6f };
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;
