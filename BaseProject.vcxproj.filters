@@ -120,7 +120,7 @@
     <ClCompile Include="Src\Manager\GameSystem\AnimationController.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Stage\StageObj\Stage.cpp">
+    <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\Stage.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp">
@@ -267,10 +267,13 @@
     <ClCompile Include="Src\Object\Stage\StageObj\NoneAfectAbilityObjBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Stage\StageObj\Stairs.cpp">
+    <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\Stairs.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Stage\StageObj\Cross.cpp">
+    <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\Cross.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\InsideWall.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -350,7 +353,7 @@
     <ClInclude Include="Src\Manager\GameSystem\AnimationController.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Stage\StageObj\Stage.h">
+    <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\Stage.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h">
@@ -497,10 +500,13 @@
     <ClInclude Include="Src\Object\Stage\StageObj\NoneAfectAbilityObjBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Stage\StageObj\Stairs.h">
+    <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\Stairs.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Stage\StageObj\Cross.h">
+    <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\Cross.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\InsideWall.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

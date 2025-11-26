@@ -464,7 +464,7 @@ void EnemyBase::Shout(void)
 	//É{ÉXêÍóp
 }
 
-void EnemyBase::DoHitCollider(std::weak_ptr<Collider>& _col)
+void EnemyBase::DoHitCollider(const std::weak_ptr<Collider>& _col)
 {
 	const float DmgEfcScl = 25.0f;
 	const float DmgEfcSpeed = 2.5f;

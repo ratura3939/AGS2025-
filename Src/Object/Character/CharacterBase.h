@@ -75,7 +75,7 @@ public:
 protected:
 	virtual void DoInit(void)override = 0;
 	virtual void DoUpdate(void)override = 0;
-	virtual void DoHitCollider(std::weak_ptr<Collider>& _col) = 0;
+	virtual void DoHitCollider(const std::weak_ptr<Collider>& _col) = 0;
 
 	//必ず更新・初期化処理に入れること
 	//************************************************

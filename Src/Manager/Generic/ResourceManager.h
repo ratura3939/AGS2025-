@@ -62,6 +62,7 @@ public:
 		
 		//ƒ‚ƒfƒ‹
 		STAGE_MDL,
+		WALL_MDL,
 		OBJECTS_MDL,
 		PLAYER_MDL,
 		ENEMY_MDL,

@@ -19,7 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Object\Stage\StageObj\Cross.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\InsideWall.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\Cross.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\NoneAfectAbilityObjBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\RotationGmc\SpinDisc.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\RotationGmc\RotationObjBase.cpp" />
@@ -88,16 +89,17 @@
     <ClCompile Include="Src\UI\Player\PlayerHp.cpp" />
     <ClCompile Include="Src\UI\UIBase.cpp" />
     <ClCompile Include="Src\Utility\Utility.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageObj\Stage.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\Stage.cpp" />
     <ClCompile Include="Src\Manager\Decoration\UIManager2d.cpp" />
     <ClCompile Include="Src\Scene\Sub\SwitchControllerScene.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\TestObj2.cpp" />
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\SwitchObj.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageObj\Stairs.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\Stairs.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Object\Stage\StageObj\Cross.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\InsideWall.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\Cross.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\NoneAfectAbilityObjBase.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\RotationGmc\SpinDisc.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\RotationGmc\RotationObjBase.h" />
@@ -166,13 +168,13 @@
     <ClInclude Include="Src\UI\Player\PlayerHp.h" />
     <ClInclude Include="Src\UI\UIBase.h" />
     <ClInclude Include="Src\Utility\Utility.h" />
-    <ClInclude Include="Src\Object\Stage\StageObj\Stage.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\Stage.h" />
     <ClInclude Include="Src\Manager\Decoration\UIManager2d.h" />
     <ClInclude Include="Src\Scene\Sub\SwitchControllerScene.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\TestObj2.h" />
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\GateGmc\SwitchObj.h" />
-    <ClInclude Include="Src\Object\Stage\StageObj\Stairs.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\Stairs.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\Model\BlurSkinPS.hlsl">

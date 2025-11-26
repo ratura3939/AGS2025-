@@ -85,7 +85,7 @@ public:
     void SetAtkAllert(void);    //UŒ‚Šë‹@@’m
 
 	//“–‚½‚è”»’èŒãˆ—
-	void DoHitCollider(std::weak_ptr<Collider>& _col)override;
+	void DoHitCollider(const std::weak_ptr<Collider>& _col)override;
 
 private:
     void DoInit(void)override;

@@ -1,6 +1,6 @@
-#include"../../../Manager/Generic/ResourceManager.h"
-#include"../../../Manager/GameSystem/CollisionManager.h"
-#include"../../Common/Geometry/Model.h"
+#include"../../../../Manager/Generic/ResourceManager.h"
+#include"../../../../Manager/GameSystem/CollisionManager.h"
+#include"../../../Common/Geometry/Model.h"
 #include "Stairs.h"
 
 //ƒ[ƒJƒ‹’è”1

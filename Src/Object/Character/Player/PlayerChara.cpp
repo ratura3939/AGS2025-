@@ -232,7 +232,7 @@ void PlayerChara::Jump(void)
 
 void PlayerChara::DrawDebug(void)
 {
-	//DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
+	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
 	/*DrawFormatString(0, 120, 0xffffff, "GoalRot={%.1f,%.1f,%.1f}", goalQua_.x, goalQua_.y, goalQua_.z);
 	VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetLockPos();
 	float deg = static_cast<float>(Utility::AngleDeg(pos_, VSub(rockPos, pos_)));
@@ -279,7 +279,7 @@ void PlayerChara::SetAtkAllert(void)
 	allertTime_ = 0;
 }
 
-void PlayerChara::DoHitCollider(std::weak_ptr<Collider>& _col)
+void PlayerChara::DoHitCollider(const std::weak_ptr<Collider>& _col)
 {
 	const float DmgEfcScl = 25.0f;
 	const float DmgEfcSpeed = 2.5f;
@@ -429,12 +429,6 @@ void PlayerChara::Move(void)
 	if (state_ != STATE::DODGE) {
 		animController_->Play(DecideAnim(moveDir_), SPEED_ANIM);
 		SoundManager::GetInstance().Play(seName);
-	}
-
-	//テキトーな移動制限
-	if (Utility::MagnitudeF(pos_) > MOVE_MAX) {
-		SetPrevPos();
-		return;
 	}
 }
 

@@ -1,6 +1,6 @@
 #pragma once
-#include "NoneAfectAbilityObjBase.h"
-#include"../../Common/Collider.h"
+#include "../NoneAfectAbilityObjBase.h"
+#include"../../../Common/Collider.h"
 
 class Stairs :
     public NoneAfectAbilityObjBase

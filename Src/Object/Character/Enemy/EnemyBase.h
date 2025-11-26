@@ -98,7 +98,7 @@ public:
    
 
     //当たり判定後処理
-	void DoHitCollider(std::weak_ptr<Collider>& _col)override;
+	void DoHitCollider(const std::weak_ptr<Collider>& _col)override;
 
      //デバッグ用
     void SetColor(int _color);

@@ -1,6 +1,6 @@
-#include"../../../Manager/Generic/ResourceManager.h"
-#include"../../../Manager/GameSystem/CollisionManager.h"
-#include"../../Common/Geometry/Model.h"
+#include"../../../../Manager/Generic/ResourceManager.h"
+#include"../../../../Manager/GameSystem/CollisionManager.h"
+#include"../../../Common/Geometry/Model.h"
 #include "Stage.h"
 
 //ÉçÅ[ÉJÉãíËêî1
@@ -26,7 +26,7 @@ void Stage::HitCollider(std::weak_ptr<Collider> _col)
 void Stage::SetModel(void)
 {
 	ResourceManager& resM = ResourceManager::GetInstance();
-	modelId_ = resM.Load(ResourceManager::SRC::STAGE_MDL).handleId_;
+	modelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::STAGE_MDL);
 	pos_ = INIT_POS;
 	scl_ = INIT_SCL;
 
