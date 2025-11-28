@@ -428,6 +428,10 @@ void ResourceManager::ResorceStage(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stairs.mv1");
 	resourcesMap_.emplace(SRC::STAIRS_MDL, res);
 
+	//äKíi
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stairs_Low.mv1");
+	resourcesMap_.emplace(SRC::STAIRS_LOW_MDL, res);
+
 	//è\éöìπ
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Cross.mv1");
 	resourcesMap_.emplace(SRC::CROSS_MDL, res);

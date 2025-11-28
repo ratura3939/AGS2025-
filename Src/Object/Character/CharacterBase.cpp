@@ -125,12 +125,12 @@ void CharacterBase::HitCollider(std::weak_ptr<Collider> _col)
 		Geometry& myGeo = collider_->GetGeometry();
 		float radius = myGeo.GetRadius();
 		//本来立つべき位置と現在位置の差分を取得
-		VECTOR hitPoint = myGeo.GetHitPoint();		//衝突位置
-		VECTOR backPow = VSub(myGeo.GetHitPoint(), pos_);		//めり込み量
-		VECTOR colNormal = myGeo.GetHitNormal();				//法線ベクトル
+		const VECTOR hitPoint = myGeo.GetHitPoint();		//衝突位置
+		const VECTOR backPow = VSub(hitPoint, pos_);		//めり込み量
+		const VECTOR colNormal = myGeo.GetHitNormal();				//法線ベクトル
 
 		const float threshold = 0.3f;
-		VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
+		const VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
 
 		if (enablePrevPos.x > 0.0f)pos_.x = prevPos_.x;
 		if (enablePrevPos.y > 0.0f)pos_.y += backPow.y;

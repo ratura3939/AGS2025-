@@ -6,7 +6,7 @@
 //ローカル定数1
 namespace {
 	const std::string OBJ_NAME = "Stairs";
-	const VECTOR INIT_SCL = { 0.2f,0.2f,0.2f };
+	const VECTOR INIT_SCL = { 1.5f,1.5f,1.5f };
 }
 
 Stairs::Stairs(const VECTOR& _pos)
@@ -25,7 +25,7 @@ void Stairs::HitCollider(std::weak_ptr<Collider> _col)
 void Stairs::SetModel(void)
 {
 	ResourceManager& resM = ResourceManager::GetInstance();
-	modelId_ = resM.Load(ResourceManager::SRC::STAIRS_MDL).handleId_;
+	modelId_ = resM.Load(ResourceManager::SRC::STAIRS_LOW_MDL).handleId_;
 	scl_ = INIT_SCL;
 
 	//コライダー設定

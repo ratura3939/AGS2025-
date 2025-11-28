@@ -74,6 +74,7 @@ public:
 		TURN_TABLE_MDL,
 		CROSS_MDL,
 		STAIRS_MDL,
+		STAIRS_LOW_MDL,
 
 		//‰¹
 		TITLE_BGM,

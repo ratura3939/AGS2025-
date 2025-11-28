@@ -232,32 +232,7 @@ void PlayerChara::Jump(void)
 
 void PlayerChara::DrawDebug(void)
 {
-	DrawFormatString(0, 40, 0xffffff, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
-	/*DrawFormatString(0, 120, 0xffffff, "GoalRot={%.1f,%.1f,%.1f}", goalQua_.x, goalQua_.y, goalQua_.z);
-	VECTOR rockPos = SceneManager::GetInstance().GetCamera().GetLockPos();
-	float deg = static_cast<float>(Utility::AngleDeg(pos_, VSub(rockPos, pos_)));
-	if (pos_.x > rockPos.x)deg = 180.0f + (180.0f - deg);
-	DrawFormatString(0, 140, 0xffffff, "RockDeg={%.1f}", deg);
-
-	switch (state_)
-	{
-	case PlayerChara::STATE::NOMAL:
-		DrawString(0, 160,  "NOMAL", 0xffffff);
-		break;
-	case PlayerChara::STATE::GUARD:
-		DrawString(0, 160, "GUARD", 0xffffff);
-		break;
-	case PlayerChara::STATE::DODGE:
-		DrawString(0, 160, "DODGE", 0xffffff);
-		break;
-	case PlayerChara::STATE::ATTACK:
-		DrawString(0, 160, "ATTACK", 0xffffff);
-		break;
-	default:
-		break;
-	}
-
-	DrawCupcel();*/
+	DrawFormatString(0, 120, 0xff0000, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
 
 	//collider_->DrawDebugCollider();
 }

@@ -18,7 +18,7 @@ namespace {
 	const VECTOR TABLE_POS_2 = { -1800,300.0f,0.0f };
 	const VECTOR TABLE_POS_3 = { -1200,300.0f,800.0f };
 	const VECTOR CROSS_POS = { -3000,300.0f,0.0f };
-	const VECTOR SRAIRS_POS = { -1200,50.0f,2000.0f };
+	const VECTOR SRAIRS_POS = { -1200,0.0f,2000.0f };
 }
 
 void StageManager::Init(void)
@@ -29,8 +29,8 @@ void StageManager::Init(void)
 	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS));
 	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS_2));
 	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS_3));
-	/*gmkObjs_.push_back(std::make_shared<Cross>(CROSS_POS));
-	gmkObjs_.push_back(std::make_shared<Stairs>(SRAIRS_POS));*/
+	//gmkObjs_.push_back(std::make_shared<Cross>(CROSS_POS));
+	gmkObjs_.push_back(std::make_shared<Stairs>(SRAIRS_POS));
 	gmkObjs_.push_back(std::make_shared<TestObj>());
 	
 
