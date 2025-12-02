@@ -76,10 +76,12 @@ Title::Title(void)
 	selectDevice_[static_cast<int>(DEVICE::KEY)] = true;
 	selectDevice_[static_cast<int>(DEVICE::PAD)] = false;
 	selectExit_ = false;
+	postEffectScreen_ = -1;
 }
 
 Title::~Title(void)
 {
+	DeleteGraph(postEffectScreen_);
 }
 
 void Title::Init(void)
@@ -106,6 +108,14 @@ void Title::Init(void)
 
 	render_ = std::make_unique<PixelRenderer>(*material_);
 	render_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
+
+	postMaterial_ = std::make_unique<PixelMaterial>("Toji.cso", 0);
+	postMaterial_->AddTextureBuf(SceneManager::GetInstance().GetMainScreen());
+
+	postRenderer_ = std::make_unique<PixelRenderer>(*postMaterial_);
+	postRenderer_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
+
+	postEffectScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 
 	//音関係初期化
 	InitSound();
@@ -220,6 +230,14 @@ void Title::Draw(void)
 		//重ねてデバイスの描画
 		DrawDevice();
 	}
+
+	// ポストエフェクト
+	SetDrawScreen(postEffectScreen_);
+	ClearDrawScreen();
+	postMaterial_->SetTextureBuf(0, SceneManager::GetInstance().GetMainScreen());
+	postRenderer_->Draw();
+	SetDrawScreen(SceneManager::GetInstance().GetMainScreen());
+	DrawGraph(0,0,postEffectScreen_, true);
 }
 
 void Title::Release(void)

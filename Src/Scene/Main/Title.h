@@ -46,6 +46,11 @@ private:
 #pragma region shaderŠÖ˜A
 	std::unique_ptr<PixelMaterial>material_;
 	std::unique_ptr<PixelRenderer>render_;
+
+	std::unique_ptr<PixelMaterial>postMaterial_;
+	std::unique_ptr<PixelRenderer>postRenderer_;
+
+	int postEffectScreen_;
 #pragma endregion
 
 #pragma region ‚»‚Ì‘¼•Ï”

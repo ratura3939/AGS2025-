@@ -27,7 +27,7 @@ void InsideWall::HitCollider(std::weak_ptr<Collider> _col)
 void InsideWall::SetModel(void)
 {
 	ResourceManager& resM = ResourceManager::GetInstance();
-	modelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::WALL_MDL);
+	modelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::INSIDE_WALL_MDL);
 	pos_ = INIT_POS;
 	scl_ = INIT_SCL;
 
