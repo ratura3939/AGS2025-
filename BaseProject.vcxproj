@@ -96,6 +96,7 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\GateGmc\SwitchObj.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\Stairs.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\StageWall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\InsideWall.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\GateGmc\SwitchObj.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\Stairs.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\StageWall.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\Model\BlurSkinPS.hlsl">
