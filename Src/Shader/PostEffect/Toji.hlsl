@@ -9,7 +9,8 @@ cbuffer cbParam : register(b4)
 float4 main(PS_INPUT PSInput) : SV_TARGET
 {
    // Œ³‚ÌF‚ğæ“¾
-    float4 col = tex.Sample(texSampler, PSInput.uv);
+    float2 uv = { 1.0f, 1.0f };
+    float4 col = tex.Sample(texSampler, (uv - PSInput.uv));
 
     col = float4(1 - col.r, 1 - col.g, 1 - col.b, 1);
 

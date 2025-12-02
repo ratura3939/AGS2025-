@@ -6,7 +6,7 @@
 //ÉçÅ[ÉJÉãíËêî1
 namespace {
 	const std::string OBJ_NAME = "Stage";
-	const VECTOR INIT_POS = { 0.0f,1400.0f,0.0f };
+	const VECTOR INIT_POS = { 0.0f,0.0f,7000.0f };
 	const VECTOR INIT_SCL = { 0.75f,0.75f,0.75f };
 }
 

@@ -16,7 +16,7 @@ public:
 
 	static constexpr float CAMERA_NEAR = 40.0f;		//カメラクリップ：NEAR
 
-	static constexpr float CAMERA_FAR = 17000.0f;	//カメラクリップ：FAR
+	static constexpr float CAMERA_FAR = 19000.0f;	//カメラクリップ：FAR
 
 	//カメラ座標関連の定数---------------------------------------------------------------------
 	

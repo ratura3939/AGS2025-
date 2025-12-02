@@ -7,6 +7,7 @@
 #include"StageObj/StaticParts/Cross.h"
 #include"StageObj/StaticParts/Stairs.h"
 #include"StageObj/StaticParts/Stage.h"
+#include"StageObj/StaticParts/StageWall.h"
 #include"StageObj/StaticParts/InsideWall.h"
 #include "StageManager.h"
 
@@ -24,6 +25,7 @@ namespace {
 void StageManager::Init(void)
 {
 	gmkObjs_.push_back(std::make_shared<Stage>());
+	gmkObjs_.push_back(std::make_shared<StageWall>());
 	gmkObjs_.push_back(std::make_shared<InsideWall>());
 	gmkObjs_.push_back(std::make_shared<GateGimmickObjs>(GATE_SWITCH_POS, GATE_POS, Quaternion()));
 	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS));

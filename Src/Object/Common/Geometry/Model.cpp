@@ -79,5 +79,5 @@ void Model::RedyCollision(void)
 
 void Model::DebugDraw(void)
 {
-	DrawFormatString(0, 0, GetColor(255, 0, 255), "Model Collider: Pos(%.2f, %.2f, %.2f)", colPos_.x, colPos_.y, colPos_.z);
+	//DrawFormatString(0, 0, GetColor(255, 0, 255), "Model Collider: Pos(%.2f, %.2f, %.2f)", colPos_.x, colPos_.y, colPos_.z);
 }

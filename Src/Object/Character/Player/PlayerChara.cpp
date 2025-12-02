@@ -67,6 +67,8 @@ namespace {
 
 	const float GRAVITY_POW = 1.0f; //重力
 	const float JUMP_POW = 60.0f; //ジャンプ力
+
+	const VECTOR INIT_POSITION = { -7200.0f,0.0f,7350.0f };
 }
 
 
@@ -92,6 +94,7 @@ void PlayerChara::DoInit(void)
 	//モデル基礎情報
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;
 
+	pos_ = INIT_POSITION;
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT),0.0f);
 
