@@ -60,8 +60,9 @@ const bool Cube::IsHit(Capsule& _capsule)
 
 	if (isHit) {
 		//押し戻し方向
-		VECTOR nomal = Utility::VNormalize(local1);
-		_capsule.SetHitNormal(Utility::EpsilonToZero(nomal));
+		/*VECTOR nomal = Utility::VNormalize(local1);
+		_capsule.SetHitNormal(Utility::EpsilonToZero(nomal));*/
+		_capsule.SetHitNormal(VECTOR{0.0f,1.0f,0.0f});
 	}
 
 	return distSq <= (_capsule.GetRadius() * _capsule.GetRadius());
