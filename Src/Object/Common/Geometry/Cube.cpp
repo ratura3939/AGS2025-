@@ -159,15 +159,22 @@ void Cube::DebugDraw(void)
 	{
 		DrawLine3D(vertices[edges[i][0]], vertices[edges[i][1]], NORMAL_COLOR);
 	}
+
+	for (int i = 0; i < 8; ++i) {
+		DrawSphere3D(vertices[i], 8, 8, 0xff0000, 0xff0000, false);
+	}
 }
 
 void Cube::CalculateVertices(VECTOR outVertices[8])
 {
-	/*MATRIX rotMat;
-	rotMat = colRot_.ToMatrix();*/
+	MATRIX rotMat;
+	rotMat = colRot_.ToMatrix();
 
-	const VECTOR obbMinPos = GetCubeMinWorldPos();
-	const VECTOR obbMaxPos = GetCubeMaxWorldPos();
+	//const VECTOR obbMinPos = GetCubeMinWorldPos();
+	//const VECTOR obbMaxPos = GetCubeMaxWorldPos();
+
+	const VECTOR obbMinPos = GetCubeMinLocalPos();
+	const VECTOR obbMaxPos = GetCubeMaxLocalPos();
 
 	int idx = 0;
 	for (int x = 0; x <= 1; ++x)
@@ -181,11 +188,11 @@ void Cube::CalculateVertices(VECTOR outVertices[8])
 				local.y = (y == 0) ? obbMinPos.y : obbMaxPos.y;
 				local.z = (z == 0) ? obbMinPos.z : obbMaxPos.z;
 
-				/*VECTOR world = VTransform(local, rotMat);
-				world = VAdd(world, colPos_);*/
+				VECTOR world = VTransform(local, rotMat);
+				world = VAdd(world, colPos_);
 
-				//outVertices[idx++] = world;
-				outVertices[idx++] = local;
+				outVertices[idx++] = world;
+				//outVertices[idx++] = local;
 			}
 		}
 	}

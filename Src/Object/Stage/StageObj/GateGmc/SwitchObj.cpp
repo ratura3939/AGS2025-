@@ -11,7 +11,7 @@ namespace {
 	const std::string OBJ_NAME = "Switch";
 	const VECTOR INIT_POS = { 0.0f,0.0f,0.0f };
 	const VECTOR INIT_SCL = { 0.4f,0.4f,0.4f };
-	const VECTOR COLLIDER_BOX_SIZE = { 100.0f,100.0f,100.0f };
+	const VECTOR COLLIDER_BOX_SIZE = { 150.0f,150.0f,150.0f };
 	const float SWITCH_PRESS_DEPTH = 70.0f;
 	const float PRESS_POWEW = 1.5f;
 
