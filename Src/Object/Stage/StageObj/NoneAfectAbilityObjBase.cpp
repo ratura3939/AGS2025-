@@ -24,9 +24,9 @@ void NoneAfectAbilityObjBase::Draw(void)
 	//Œo‰ßŽžŠÔ
 	material_->SetConstBufPS(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
 	//•`‰æ
-	render_->Draw();
+	//render_->Draw();
 
-	collider_->DrawDebugCollider();
+	DrawDebugCollider();
 }
 
 void NoneAfectAbilityObjBase::DrawDebugCollider(void)

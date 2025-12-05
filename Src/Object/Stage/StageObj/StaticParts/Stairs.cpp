@@ -24,6 +24,7 @@ Stairs::~Stairs(void)
 
 void Stairs::HitCollider(std::weak_ptr<Collider> _col)
 {
+	//恐らくキューブ内のSetHitPosの問題によるものだと考えられる
 }
 
 void Stairs::SetModel(void)

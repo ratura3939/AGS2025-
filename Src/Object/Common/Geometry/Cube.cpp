@@ -60,9 +60,10 @@ const bool Cube::IsHit(Capsule& _capsule)
 
 	if (isHit) {
 		//押し戻し方向
-		/*VECTOR nomal = Utility::VNormalize(local1);
-		_capsule.SetHitNormal(Utility::EpsilonToZero(nomal));*/
-		_capsule.SetHitNormal(VECTOR{0.0f,1.0f,0.0f});
+		VECTOR nomal = Utility::VNormalize(local1);
+		_capsule.SetHitNormal(Utility::EpsilonToZero(nomal));
+
+		_capsule.SetHitPoint(VAdd(worldCenter, local2));
 	}
 
 	return distSq <= (_capsule.GetRadius() * _capsule.GetRadius());
@@ -164,6 +165,8 @@ void Cube::DebugDraw(void)
 	for (int i = 0; i < 8; ++i) {
 		DrawSphere3D(vertices[i], 8, 8, 0xff0000, 0xff0000, false);
 	}
+
+	DrawSphere3D(colPos_, 15, 8, 0x00ff55, 0x00ff55, false);
 }
 
 void Cube::CalculateVertices(VECTOR outVertices[8])
