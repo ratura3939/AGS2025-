@@ -235,7 +235,7 @@ void PlayerChara::Jump(void)
 
 void PlayerChara::DrawDebug(void)
 {
-	DrawFormatString(0, 120, 0xff0000, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}\nMag={%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z, Utility::MagnitudeF(pos_));
+	DrawFormatString(0, 120, 0xff0000, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}\nMag={%.1f}\nGtavity = {%.3f", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z, Utility::MagnitudeF(pos_),gravity_.y);
 
 	//collider_->DrawDebugCollider();
 }

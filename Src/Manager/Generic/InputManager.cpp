@@ -98,6 +98,12 @@ void InputManager::Update(void)
 
 void InputManager::Destroy(void)
 {
+	inputTable_.clear();
+	inputListForDisplay_.clear();
+	analpgInputTable_.clear();
+	currentInptuPeri_.clear();
+	lastInptuPeri_.clear();
+	mouseInputTable_.clear();
 	delete instance_;
 }
 

@@ -127,14 +127,20 @@ void CharacterBase::HitCollider(std::weak_ptr<Collider> _col)
 		//本来立つべき位置と現在位置の差分を取得
 		const VECTOR hitPoint = myGeo.GetHitPoint();		//衝突位置
 		const VECTOR backPow = VSub(hitPoint, pos_);		//めり込み量
-		const VECTOR colNormal = myGeo.GetHitNormal();				//法線ベクトル
+		VECTOR colNormal = myGeo.GetHitNormal();		//法線ベクトル
 
+		//法線方向閾値
 		const float threshold = 0.3f;
-		const VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
+		colNormal = Utility::EpsilonCustomThreshold(colNormal, threshold);
 
-		if (enablePrevPos.x > 0.0f)pos_.x = prevPos_.x;
-		if (enablePrevPos.y > 0.0f)pos_.y += backPow.y;
-		if (enablePrevPos.z > 0.0f)pos_.z = prevPos_.z;
+		//階段の上にいるとき
+		if (_col.lock()->IsContainsTag(TAG::STAIRS) && colNormal.y > 0.0f) {
+			colNormal = { 0.0f,1.0f,0.0f };
+		}
+
+		if (colNormal.x > 0.0f)pos_.x = prevPos_.x;
+		if (colNormal.y > 0.0f)pos_.y += backPow.y;
+		if (colNormal.z > 0.0f)pos_.z = prevPos_.z;
 
 
 		gravity_ = { 0.0f,0.0f,0.0f };

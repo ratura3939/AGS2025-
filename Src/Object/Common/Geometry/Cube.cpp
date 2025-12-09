@@ -10,6 +10,7 @@ namespace {
 
 Cube::Cube(const VECTOR& _pos, const Quaternion& _rot, const VECTOR& _halfSize)
 	: Geometry(_pos, _rot)
+	, testMemoryVec_(Utility::VECTOR_INIT)
 {
 	obb_.halfDiff = _halfSize;
 	UpdateObbAxis();
@@ -59,14 +60,18 @@ const bool Cube::IsHit(Capsule& _capsule)
 	bool isHit = distSq <= (_capsule.GetRadius() * _capsule.GetRadius());
 
 	if (isHit) {
-		//押し戻し方向
-		VECTOR nomal = Utility::VNormalize(local1);
-		_capsule.SetHitNormal(Utility::EpsilonToZero(nomal));
+		const VECTOR localHitPoint = testMemoryVec_;
+		const MATRIX rotMat = colRot_.ToMatrix();
+		const VECTOR worldHitPosition = VAdd(VTransform(localHitPoint, rotMat), colPos_);
+			
+		_capsule.SetHitPoint(worldHitPosition);
 
-		_capsule.SetHitPoint(VAdd(worldCenter, local2));
+		//押し戻し方向
+		VECTOR nomal = Utility::VNormalize(VTransform(localHitPoint, rotMat));
+		_capsule.SetHitNormal(Utility::EpsilonToZero(nomal));
 	}
 
-	return distSq <= (_capsule.GetRadius() * _capsule.GetRadius());
+	return isHit;
 }
 
 const bool Cube::IsHit(Cube& _cube)
@@ -247,6 +252,7 @@ const float Cube::ClosestPointDiff(const VECTOR& _startPos, const VECTOR& _endPo
 		float distance = Utility::SqrMagnitudeF(VSub(point, clamped));
 		if (distance < minDiff)
 		{
+			testMemoryVec_ = clamped;
 			minDiff = distance;
 			t = ft;
 		}

@@ -40,6 +40,7 @@ public:
 
 private:
 	Obb obb_;	//バウンディングボックス
+	VECTOR testMemoryVec_;
 
 	// クォータニオンから回転軸を計算
 	void UpdateObbAxis(void);

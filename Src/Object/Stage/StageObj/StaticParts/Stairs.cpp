@@ -25,6 +25,7 @@ Stairs::~Stairs(void)
 void Stairs::HitCollider(std::weak_ptr<Collider> _col)
 {
 	//恐らくキューブ内のSetHitPosの問題によるものだと考えられる
+	int a = 1;
 }
 
 void Stairs::SetModel(void)
@@ -36,6 +37,6 @@ void Stairs::SetModel(void)
 	stairsColliderQua_ = Quaternion::Euler(Utility::Deg2RadF(COLLIDER_DEG), 0.0f, 0.0f);
 
 	//コライダー設定
-	using COL_TYPE = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE}, std::move(std::make_unique<Cube>(pos_, stairsColliderQua_, COLLIDER_SIZE)));
+	using TAG = Collider::COL_TAG;
+	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::STAGE,TAG::STAIRS}, std::move(std::make_unique<Cube>(pos_, stairsColliderQua_, COLLIDER_SIZE)));
 }
