@@ -129,17 +129,23 @@ void CharacterBase::HitCollider(std::weak_ptr<Collider> _col)
 		const VECTOR backPow = VSub(hitPoint, pos_);		//めり込み量
 		VECTOR colNormal = myGeo.GetHitNormal();		//法線ベクトル
 
-		//法線方向閾値
-		const float threshold = 0.3f;
-		colNormal = Utility::EpsilonCustomThreshold(colNormal, threshold);
-
 		//階段の上にいるとき
 		if (_col.lock()->IsContainsTag(TAG::STAIRS) && colNormal.y > 0.0f) {
 			colNormal = { 0.0f,1.0f,0.0f };
 		}
 
+		//法線方向閾値
+		const float threshold = 0.3f;
+		colNormal = Utility::EpsilonCustomThreshold(colNormal, threshold);
+
+		
+
 		if (colNormal.x > 0.0f)pos_.x = prevPos_.x;
-		if (colNormal.y > 0.0f)pos_.y += backPow.y;
+		if (colNormal.y > 0.0f) {
+			pos_.y += backPow.y;
+			pos_.y += -gravity_.y;
+		}
+
 		if (colNormal.z > 0.0f)pos_.z = prevPos_.z;
 
 

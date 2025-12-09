@@ -14,6 +14,7 @@ public:
 private:
 	void SetModel(void)override;
 	
-	Quaternion stairsColliderQua_;
+	Quaternion stairsColliderQua_;	//コライダー用回転情報
+	VECTOR stairsColliderPos_;		//コライダー用座標
 };
 

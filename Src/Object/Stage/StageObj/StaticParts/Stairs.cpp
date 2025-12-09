@@ -9,8 +9,9 @@
 namespace {
 	const std::string OBJ_NAME = "Stairs";
 	const VECTOR INIT_SCL = { 1.5f,1.5f,1.5f };
-	const float COLLIDER_DEG = 60.0f;
-	const VECTOR COLLIDER_SIZE = { 280.0f,400.0f,250.0f };
+	const float COLLIDER_DEG = 55.0f;
+	const VECTOR COLLIDER_SIZE = { 280.0f,380.0f,250.0f };
+	const VECTOR COLLIDER_POS_OFFSET = { 0.0f,-40.0f,50.0f };
 }
 
 Stairs::Stairs(const VECTOR& _pos)
@@ -35,8 +36,9 @@ void Stairs::SetModel(void)
 	scl_ = INIT_SCL;
 
 	stairsColliderQua_ = Quaternion::Euler(Utility::Deg2RadF(COLLIDER_DEG), 0.0f, 0.0f);
+	stairsColliderPos_ = VAdd(pos_, Quaternion::PosAxis(rot_, COLLIDER_POS_OFFSET));
 
 	//コライダー設定
 	using TAG = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::STAGE,TAG::STAIRS}, std::move(std::make_unique<Cube>(pos_, stairsColliderQua_, COLLIDER_SIZE)));
+	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::STAGE,TAG::STAIRS}, std::move(std::make_unique<Cube>(stairsColliderPos_, stairsColliderQua_, COLLIDER_SIZE)));
 }
