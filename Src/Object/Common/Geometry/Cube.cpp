@@ -10,7 +10,7 @@ namespace {
 
 Cube::Cube(const VECTOR& _pos, const Quaternion& _rot, const VECTOR& _halfSize)
 	: Geometry(_pos, _rot)
-	, testMemoryVec_(Utility::VECTOR_INIT)
+	, localHitPos_(Utility::VECTOR_INIT)
 {
 	obb_.halfDiff = _halfSize;
 	UpdateObbAxis();
@@ -54,21 +54,36 @@ const bool Cube::IsHit(Capsule& _capsule)
 
 	// スラブ法で最近接点を見つける
 	// AABBとして処理する（OBBローカル空間内で）
-
 	float distSq = ClosestPointDiff(local1, local2);
 
 	bool isHit = distSq <= (_capsule.GetRadius() * _capsule.GetRadius());
 
 	if (isHit) {
-		const VECTOR localHitPoint = testMemoryVec_;
 		const MATRIX rotMat = colRot_.ToMatrix();
-		const VECTOR worldHitPosition = VAdd(VTransform(localHitPoint, rotMat), colPos_);
+		const VECTOR worldHitPosition = VAdd(VTransform(localHitPos_, rotMat), colPos_);
 			
 		_capsule.SetHitPoint(worldHitPosition);
 
 		//押し戻し方向
-		VECTOR nomal = Utility::VNormalize(VTransform(localHitPoint, rotMat));
-		_capsule.SetHitNormal(Utility::EpsilonToZero(nomal));
+		VECTOR normal = Utility::VNormalize(VSub(_capsule.GetPos(), colPos_));
+
+		const VECTOR up = VTransform({ 0.0f,1.0f,0.0f }, rotMat);
+		const VECTOR forward = VTransform({ 0.0f,0.0f,1.0f }, rotMat);
+
+		normal = GetTiltAdjustedNormal(normal);
+		
+		////傾いているとき（坂判定）
+		////Z方向に傾いているとき
+		//if (colRot_.x != 0.0f) {
+		//	nomal.z = 0.0f;
+		//	nomal.y = 1.0f;
+		//}
+		////X方向に傾いているとき
+		//if(colRot_.z != 0.0f) {
+		//	nomal.x = 0.0f;
+		//	nomal.y = 1.0f;
+		//}
+		_capsule.SetHitNormal(Utility::EpsilonToZero(normal));
 	}
 
 	return isHit;
@@ -252,7 +267,8 @@ const float Cube::ClosestPointDiff(const VECTOR& _startPos, const VECTOR& _endPo
 		float distance = Utility::SqrMagnitudeF(VSub(point, clamped));
 		if (distance < minDiff)
 		{
-			testMemoryVec_ = clamped;
+			localHitPos_ = clamped;
+			loaclDepthVec_ = VSub(point, clamped);
 			minDiff = distance;
 			t = ft;
 		}
@@ -279,4 +295,82 @@ const VECTOR Cube::GetCubeMinLocalPos(void)
 const VECTOR Cube::GetCubeMaxLocalPos(void)
 {
 	return obb_.halfDiff;
+}
+
+const VECTOR Cube::GetTiltAdjustedNormal(const VECTOR& _worldNormal)
+{
+	VECTOR retNormal = Utility::VECTOR_ZERO;
+
+	const VECTOR absLocalDiff = Utility::VAbs(loaclDepthVec_);
+
+	// 3. めり込み量が最も大きい軸（＝接触面）を特定
+	VECTOR localNormal = VGet(0.0f, 0.0f, 0.0f);
+
+	if (absLocalDiff.x > absLocalDiff.y && absLocalDiff.x > absLocalDiff.z) {
+		// X軸方向の壁に接触していると推定
+		localNormal.x = Utility::VSignF(localDiff.x);
+	}
+	else if (absY > absZ) {
+		// Y軸方向の床/天井に接触していると推定
+		localNormal.y = Utility::VSignF(localDiff.y);
+	}
+	else {
+		// Z軸方向の壁に接触していると推定
+		localNormal.z = Utility::VSignF(localDiff.z);
+	}
+
+	// 4. ローカル法線をワールド座標に変換
+	const MATRIX rotMat = colRot_.ToMatrix();
+	VECTOR worldNormal = VTransform(localNormal, rotMat);
+
+	// 5. 坂（階段）の判定と上書き (Y軸上向きへの固定)
+	VECTOR surfaceNormal;
+	const float SLOPE_Y_THRESHOLD = 0.95f; // OBBの上向き軸がほぼ水平でないか (約18度以上傾いているか)
+
+	// ローカルY軸が回転したワールド座標での法線（＝階段の上面法線）を取得
+	const VECTOR OBB_UP_WORLD = VTransform(VGet(0, 1, 0), rotMat);
+
+	// 接触面がローカルY軸（上面/底面）であった場合
+	if (localNormal.y != 0.0f) {
+		// OBBの上向き軸が傾いているかチェック (Y軸の投影がしきい値以下)
+		if (OBB_UP_WORLD.y < SLOPE_Y_THRESHOLD) {
+			// 傾いている床/坂に当たった！ → 押し戻しをワールドY軸上向きに固定
+			surfaceNormal = VGet(0.0f, 1.0f, 0.0f);
+		}
+		else {
+			// ほぼ水平な床/天井 → OBBの実際の法線を使用
+			surfaceNormal = worldNormal;
+		}
+	}
+	else {
+		// 接触面が側面 (X軸またはZ軸) の場合
+		// 坂ではないので、OBBの実際の壁の法線を使用
+		surfaceNormal = worldNormal;
+	}
+
+	// 6. プレイヤー側のロジックに合わせたインジケーター法線への変換
+	VECTOR indicatorNormal = VGet(0.0f, 0.0f, 0.0f);
+
+	// X軸押し戻し指示
+	if (surfaceNormal.x > threshold) {
+		retNormal.x = 1.0f;
+	}
+	else if (surfaceNormal.x < -threshold) {
+		retNormal.x = 1.0f; // 負方向への押し戻しでも、プレイヤーは prevPos_ に戻る
+	}
+
+	// Y軸押し戻し指示 (最重要: 坂登りのために Y > 0 のみチェック)
+	if (surfaceNormal.y > threshold) {
+		retNormal.y = 1.0f;
+	}
+
+	// Z軸押し戻し指示
+	if (surfaceNormal.z > threshold) {
+		retNormal.z = 1.0f;
+	}
+	else if (surfaceNormal.z < -threshold) {
+		retNormal.z = 1.0f;
+	}
+	}
+	return retNormal;
 }

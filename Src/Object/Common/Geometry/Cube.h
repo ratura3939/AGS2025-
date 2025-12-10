@@ -36,23 +36,29 @@ public:
 
 	//サイズ設定
 	void SetObbHalfDiff(const VECTOR& _halfDiff) { obb_.halfDiff = _halfDiff; }
+
 	const VECTOR& GetObbHalfDiff(void)const { return obb_.halfDiff; }
 
 private:
-	Obb obb_;	//バウンディングボックス
-	VECTOR testMemoryVec_;
-
 	// クォータニオンから回転軸を計算
 	void UpdateObbAxis(void);
 
 	const VECTOR& GetAxis(const CUBE_AXIS& _order)const;
 
+	// スラブ法で最近接点の距離を計算
 	const float ClosestPointDiff(const VECTOR& _startPos, const VECTOR& _endPos);
 
+	//ワールド座標系での最小・最大座標取得
 	const VECTOR GetCubeMinWorldPos(void);
 	const VECTOR GetCubeMaxWorldPos(void);
-
+	//ローカル座標系での最小・最大座標取得
 	const VECTOR GetCubeMinLocalPos(void);
 	const VECTOR GetCubeMaxLocalPos(void);
-};
 
+	//傾きを考慮した法線方向の取得
+	const VECTOR GetTiltAdjustedNormal(const VECTOR& _worldNormal);
+
+	Obb obb_;	//バウンディングボックス
+	VECTOR localHitPos_;	//ローカル当たり位置
+	VECTOR loaclDepthVec_;	//ローカルめり込み量
+};

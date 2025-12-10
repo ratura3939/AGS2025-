@@ -115,6 +115,13 @@ public:
 	static VECTOR Normalize(const Vector2& v);
 	static VECTOR VNormalize(const VECTOR& v);
 
+	//絶対値化
+	static VECTOR VAbs(const VECTOR& v);
+
+	//符号取得
+	static VECTOR SignF(VECTOR v);
+	static float SignF(float v);
+
 	// 2つのベクトルの間の角度
 	static double AngleDeg(const VECTOR& from, const VECTOR& to);
 

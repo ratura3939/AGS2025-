@@ -490,6 +490,28 @@ VECTOR Utility::VNormalize(const VECTOR& v)
     return VNorm(v);
 }
 
+VECTOR Utility::VAbs(const VECTOR& v)
+{
+    return VECTOR{ fabs(v.x),fabs(v.y) ,fabs(v.z) };
+}
+
+VECTOR Utility::SignF(VECTOR v)
+{
+    return VECTOR{ SignF(v.x),SignF(v.y), SignF(v.z) };
+}
+
+float Utility::SignF(float v)
+{
+	float ret = 0.0f;
+    if (v > 0.0f) {
+		ret = 1.0f;
+    }
+    else if (v < 0.0f) {
+		ret = -1.0f;
+    }
+    return ret;
+}
+
 double Utility::AngleDeg(const VECTOR& from, const VECTOR& to)
 {
     // sqrt(a) * sqrt(b) = sqrt(a * b) -- valid for real numbers
