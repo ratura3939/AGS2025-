@@ -23,6 +23,9 @@ void SoundManager::Add(const TYPE _type, const std::string _name, const int _dat
 	//入っていたら処理終了
 	if (sounds_.find(_name) != sounds_.end())return;
 
+	if (isNoPlaySound_) {
+		ChangeVolumeSoundMem(0, _data);
+	}
 
 	//再生するときデータの種類によって
 	//ループ再生か単発かを判断する
@@ -39,6 +42,8 @@ void SoundManager::Play(const std::string _name)
 {
 	//元データがないときは警告
 	if (sounds_.find(_name) == sounds_.end())assert("設定していない音声を再生しようとしています。");
+
+	if (isNoPlaySound_)return;
 
 	//流そうとしているのがBGMのとき
 	if (sounds_[_name].type == TYPE::BGM) {

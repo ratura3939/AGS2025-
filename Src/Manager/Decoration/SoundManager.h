@@ -88,6 +88,9 @@ public:
 	void AdjustTimeRate(const float _rate = 1.0f)const;
 
 	void Destroy(void);
+
+	void NoSound(void) { isNoPlaySound_ = true; }
+
 private:
 	//インスタンス用
 	static SoundManager* instance_;
@@ -99,6 +102,8 @@ private:
 	//再生間隔
 	std::unordered_map<std::string,int> intervales_;
 	std::unordered_map<std::string,int> counteres_;
+
+	bool isNoPlaySound_ = false;	//デバッグ用：再生不可フラグ
 
 	//コンストラクタ＆デストラクタ
 	SoundManager() = default;
