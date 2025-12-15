@@ -6,6 +6,7 @@
 
 namespace {
 	const int NORMAL_COLOR = 0xff00ff;
+	const float THRESHOLD = 0.2f;
 }
 
 Cube::Cube(const VECTOR& _pos, const Quaternion& _rot, const VECTOR& _halfSize)
@@ -302,21 +303,22 @@ const VECTOR Cube::GetTiltAdjustedNormal(const VECTOR& _worldNormal)
 	VECTOR retNormal = Utility::VECTOR_ZERO;
 
 	const VECTOR absLocalDiff = Utility::VAbs(loaclDepthVec_);
+	const VECTOR signLocalDiff = Utility::SignF(loaclDepthVec_);
 
 	// 3. めり込み量が最も大きい軸（＝接触面）を特定
 	VECTOR localNormal = VGet(0.0f, 0.0f, 0.0f);
 
 	if (absLocalDiff.x > absLocalDiff.y && absLocalDiff.x > absLocalDiff.z) {
 		// X軸方向の壁に接触していると推定
-		localNormal.x = Utility::VSignF(localDiff.x);
+		localNormal.x = signLocalDiff.x;
 	}
-	else if (absY > absZ) {
+	else if (absLocalDiff.y > absLocalDiff.z) {
 		// Y軸方向の床/天井に接触していると推定
-		localNormal.y = Utility::VSignF(localDiff.y);
+		localNormal.y = signLocalDiff.y;
 	}
 	else {
 		// Z軸方向の壁に接触していると推定
-		localNormal.z = Utility::VSignF(localDiff.z);
+		localNormal.z = signLocalDiff.z;
 	}
 
 	// 4. ローカル法線をワールド座標に変換
@@ -325,52 +327,40 @@ const VECTOR Cube::GetTiltAdjustedNormal(const VECTOR& _worldNormal)
 
 	// 5. 坂（階段）の判定と上書き (Y軸上向きへの固定)
 	VECTOR surfaceNormal;
-	const float SLOPE_Y_THRESHOLD = 0.95f; // OBBの上向き軸がほぼ水平でないか (約18度以上傾いているか)
+	const float SLOPE_Y_THRESHOLD = 0.45f; // OBBの上向き軸がほぼ水平でないか (約18度以上傾いているか)
 
-	// ローカルY軸が回転したワールド座標での法線（＝階段の上面法線）を取得
-	const VECTOR OBB_UP_WORLD = VTransform(VGet(0, 1, 0), rotMat);
+	// X軸回転のみなので、坂の面はZ軸の面になる
+	const VECTOR OBB_UP_WORLD = VTransform(VGet(0, 0, 1), rotMat);
+
+
 
 	// 接触面がローカルY軸（上面/底面）であった場合
-	if (localNormal.y != 0.0f) {
-		// OBBの上向き軸が傾いているかチェック (Y軸の投影がしきい値以下)
-		if (OBB_UP_WORLD.y < SLOPE_Y_THRESHOLD) {
-			// 傾いている床/坂に当たった！ → 押し戻しをワールドY軸上向きに固定
+	if (localNormal.z != 0.0f) {
+		// 坂となる面のローカル軸を定義 (例として Z軸の正方向の単位ベクトルを代表として使用)
+		const VECTOR SLOPE_LOCAL_AXIS = VGet(0.0f, 0.0f, 1.0f);
+
+		// 坂となる面が回転した後のワールド座標での法線を取得 (傾きチェック用)
+		// OBB_SLOPE_NORMAL_WORLDは、この坂の真のワールド法線を示す
+		const VECTOR OBB_SLOPE_NORMAL_WORLD = VTransform(SLOPE_LOCAL_AXIS, rotMat);
+
+		// 傾きチェック: OBB_SLOPE_NORMAL_WORLD.y がしきい値以下か (傾斜が急か)
+		// 坂の法線のY成分が小さい = 坂が傾いている (水平に近くない) 
+		if (OBB_SLOPE_NORMAL_WORLD.y < SLOPE_Y_THRESHOLD) {
+			// 傾いている坂に当たった！ → 押し戻しをワールドY軸上向きに固定
 			surfaceNormal = VGet(0.0f, 1.0f, 0.0f);
 		}
 		else {
-			// ほぼ水平な床/天井 → OBBの実際の法線を使用
+			// 傾いているがほぼ垂直な壁（回転角度が小さすぎる場合）
+			// 念のため、ここではworldNormal（OBBの実際の法線）を使用
 			surfaceNormal = worldNormal;
 		}
 	}
 	else {
-		// 接触面が側面 (X軸またはZ軸) の場合
+		// 接触面が側面 (X軸またはY軸) の場合
 		// 坂ではないので、OBBの実際の壁の法線を使用
 		surfaceNormal = worldNormal;
 	}
 
 	// 6. プレイヤー側のロジックに合わせたインジケーター法線への変換
-	VECTOR indicatorNormal = VGet(0.0f, 0.0f, 0.0f);
-
-	// X軸押し戻し指示
-	if (surfaceNormal.x > threshold) {
-		retNormal.x = 1.0f;
-	}
-	else if (surfaceNormal.x < -threshold) {
-		retNormal.x = 1.0f; // 負方向への押し戻しでも、プレイヤーは prevPos_ に戻る
-	}
-
-	// Y軸押し戻し指示 (最重要: 坂登りのために Y > 0 のみチェック)
-	if (surfaceNormal.y > threshold) {
-		retNormal.y = 1.0f;
-	}
-
-	// Z軸押し戻し指示
-	if (surfaceNormal.z > threshold) {
-		retNormal.z = 1.0f;
-	}
-	else if (surfaceNormal.z < -threshold) {
-		retNormal.z = 1.0f;
-	}
-	}
-	return retNormal;
+	return Utility::EpsilonCustomThreshold(surfaceNormal, THRESHOLD);
 }
