@@ -55,6 +55,13 @@ void StageManager::Draw(void)
 	}
 }
 
+void StageManager::DrawDebug(void)
+{
+	for (auto& obj : gmkObjs_) {
+		obj->DrawDebug();
+	}
+}
+
 void StageManager::SetAbilityColor(const FLOAT4& _color)
 {
 	for (auto& obj : gmkObjs_) {

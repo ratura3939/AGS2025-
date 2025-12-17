@@ -51,8 +51,6 @@ void GimmickObjBase::Draw(void)
 		screenPos_ = ConvWorldPosToScreenPos(pos_);
 		//DrawCircle(screenPos_.x, screenPos_.y, 10, screenPosColor_);
 	}
-
-	//DrawDebug();
 }
 
 void GimmickObjBase::DrawDebug(void) 

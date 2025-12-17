@@ -109,9 +109,10 @@ void Title::Init(void)
 	render_ = std::make_unique<PixelRenderer>(*material_);
 	render_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
 
-	postMaterial_ = std::make_unique<PixelMaterial>("Toji.cso", 0);
+	postMaterial_ = std::make_unique<PixelMaterial>("Toji.cso", 1);
+	postMaterial_->AddConstBuf(FLOAT4(0.0f, 0.0f, 0.0f, 0.0f)); //時間用
 	postMaterial_->AddTextureBuf(SceneManager::GetInstance().GetMainScreen());
-
+	step_ = 0.0f;
 	postRenderer_ = std::make_unique<PixelRenderer>(*postMaterial_);
 	postRenderer_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
 
@@ -232,9 +233,11 @@ void Title::Draw(void)
 	}
 
 	// ポストエフェクト
+	step_ += SceneManager::GetInstance().GetDeltaTime();
 	SetDrawScreen(postEffectScreen_);
 	ClearDrawScreen();
 	postMaterial_->SetTextureBuf(0, SceneManager::GetInstance().GetMainScreen());
+	postMaterial_->SetConstBuf(0, FLOAT4(step_, 1.0f, 0.0f, 0.0f));
 	postRenderer_->Draw();
 	SetDrawScreen(SceneManager::GetInstance().GetMainScreen());
 	DrawGraph(0,0,postEffectScreen_, true);
