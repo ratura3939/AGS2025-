@@ -12,7 +12,6 @@ public:
 	// ÉäÉ\Å[ÉXñº
 	enum class SRC
 	{
-		JINNAI_TEST,
 		//âÊëú
 		TITLE_LOGO,
 		SHADOW_LOGO,
@@ -77,6 +76,8 @@ public:
 		CROSS_MDL,
 		STAIRS_MDL,
 		STAIRS_LOW_MDL,
+		WOOD_BOARD_MDL,
+		BLOCK_MDL,
 
 		//âπ
 		TITLE_BGM,

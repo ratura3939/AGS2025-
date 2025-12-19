@@ -440,6 +440,14 @@ void ResourceManager::ResorceStage(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Cross.mv1");
 	resourcesMap_.emplace(SRC::CROSS_MDL, res);
 
+	//板
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Balcony.mv1");
+	resourcesMap_.emplace(SRC::WOOD_BOARD_MDL, res);
+
+	//ブロック
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stairs_Platform.mv1");
+	resourcesMap_.emplace(SRC::BLOCK_MDL, res);
+
 	//ノイズテクスチャ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Pattern/Noise2.png");
 	resourcesMap_.emplace(SRC::NOISE_STAGE, res);
