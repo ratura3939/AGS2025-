@@ -233,14 +233,14 @@ void Title::Draw(void)
 	}
 
 	// ポストエフェクト
-	step_ += SceneManager::GetInstance().GetDeltaTime();
-	SetDrawScreen(postEffectScreen_);
-	ClearDrawScreen();
-	postMaterial_->SetTextureBuf(0, SceneManager::GetInstance().GetMainScreen());
-	postMaterial_->SetConstBuf(0, FLOAT4(step_, 1.0f, 0.0f, 0.0f));
-	postRenderer_->Draw();
-	SetDrawScreen(SceneManager::GetInstance().GetMainScreen());
-	DrawGraph(0,0,postEffectScreen_, true);
+	//step_ += SceneManager::GetInstance().GetDeltaTime();
+	//SetDrawScreen(postEffectScreen_);
+	//ClearDrawScreen();
+	//postMaterial_->SetTextureBuf(0, SceneManager::GetInstance().GetMainScreen());
+	//postMaterial_->SetConstBuf(0, FLOAT4(step_, 1.0f, 0.0f, 0.0f));
+	//postRenderer_->Draw();
+	//SetDrawScreen(SceneManager::GetInstance().GetMainScreen());
+	//DrawGraph(0,0,postEffectScreen_, true);
 }
 
 void Title::Release(void)

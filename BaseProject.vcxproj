@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Stage\StageObj\AfectAbilityObjBase.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\Board.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\Block.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\InsideWall.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\Cross.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\NoneAfectAbilityObjBase.cpp" />
@@ -99,6 +102,9 @@
     <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\StageWall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Stage\StageObj\AfectAbilityObjBase.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\Board.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\Block.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\InsideWall.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\Cross.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\NoneAfectAbilityObjBase.h" />

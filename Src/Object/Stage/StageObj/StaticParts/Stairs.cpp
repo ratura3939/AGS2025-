@@ -5,12 +5,12 @@
 #include"../../../Common/Geometry/Cube.h"
 #include "Stairs.h"
 
-//ローカル定数1
+//ローカル定数
 namespace {
 	const std::string OBJ_NAME = "Stairs";
 	const VECTOR INIT_SCL = { 1.5f,1.5f,1.5f };
 	const float COLLIDER_DEG = 55.0f;
-	const VECTOR COLLIDER_SIZE = { 280.0f,380.0f,250.0f };
+	const VECTOR COLLIDER_SIZE = { 180.0f,250.0f,170.0f };
 	const VECTOR COLLIDER_POS_OFFSET = { 0.0f,-40.0f,50.0f };
 }
 
@@ -25,8 +25,6 @@ Stairs::~Stairs(void)
 
 void Stairs::HitCollider(std::weak_ptr<Collider> _col)
 {
-	//恐らくキューブ内のSetHitPosの問題によるものだと考えられる
-	int a = 1;
 }
 
 void Stairs::SetModel(void)
@@ -40,5 +38,6 @@ void Stairs::SetModel(void)
 
 	//コライダー設定
 	using TAG = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::STAGE,TAG::STAIRS}, std::move(std::make_unique<Cube>(stairsColliderPos_, stairsColliderQua_, COLLIDER_SIZE)));
+
+	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::STAGE,TAG::STAIRS}, std::move(std::make_unique<Cube>(stairsColliderPos_, stairsColliderQua_, Utility::VMul(COLLIDER_SIZE,scl_))));
 }
