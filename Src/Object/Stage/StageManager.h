@@ -11,6 +11,7 @@ public:
 	void Init(void);
 	void Update(void);
 	void Draw(void);
+	void DrawDebug(void);
 
 	void SetAbilityColor(const FLOAT4& _color);
 	std::vector<std::weak_ptr<GimmickObjBase>> GetAffectAbilityObjectes(void)const;

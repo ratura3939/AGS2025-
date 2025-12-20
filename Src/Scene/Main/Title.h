@@ -51,6 +51,7 @@ private:
 	std::unique_ptr<PixelRenderer>postRenderer_;
 
 	int postEffectScreen_;
+	float step_;
 #pragma endregion
 
 #pragma region ‚»‚Ì‘¼•Ï”

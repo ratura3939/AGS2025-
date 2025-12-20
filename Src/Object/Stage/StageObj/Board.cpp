@@ -2,17 +2,28 @@
 #include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../../Utility/Utility.h"
-#include"../../Common/Geometry/Sphere.h"
-#include "TestObj.h"
+#include"../../Common/Geometry/Cube.h"
+
+#include"../../../Renderer/ModelRenderer.h"
+#include "Board.h"
 
 //ローカル定数
 namespace {
-	const float SPHERE_RADIUS = 150.0f;	//コライダー半径
-	const std::string OBJ_NAME = "Moon";
-	const float ATTACK_POW_DEC_RATE = 40.0f;	//攻撃力減衰率
+	const std::string OBJ_NAME = "Board";
+	const VECTOR INIT_SCL = { 1.0f,1.0f,1.0f };
+	const VECTOR COLLIDER_SIZE = { 200.0f,20.0f,200.0f };
 }
 
-void TestObj::DoHitCollider(const std::weak_ptr<Collider>& _col)
+Board::Board(const VECTOR& _pos)
+{
+	pos_ = _pos;
+}
+
+Board::~Board(void)
+{
+}
+
+void Board::DoHitCollider(const std::weak_ptr<Collider>& _col)
 {
 	//ステージタグが存在するとき
 	if (_col.lock()->IsContainsTag(Collider::COL_TAG::STAGE) && !isAffectingNow_) {
@@ -35,25 +46,15 @@ void TestObj::DoHitCollider(const std::weak_ptr<Collider>& _col)
 
 		gravity_ = { 0.0f,0.0f,0.0f };
 	}
-
-	if(_col.lock()->IsContainsTag(Collider::COL_TAG::ATTACK)){
-		//攻撃に当たったときの処理
-		//攻撃からのベクトルを付与
-		moveDir_ = Utility::VNormalize(VSub(pos_, _col.lock()->GetGeometry().GetPos()));
-		moveSpeed_ += _col.lock()->GetPower() / ATTACK_POW_DEC_RATE;
-	}
 }
 
-void TestObj::SetModel(void)
+void Board::SetModel(void)
 {
-	//月
-	speciesName_ = OBJ_NAME;
-	isAffectAbilyty_ = true;
-	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TEST_MDL).handleId_;
-	pos_ = { 200.0f,1500.0f,500.0f };
-	scl_ = { 0.6f,0.6f ,0.6f };
+	ResourceManager& resM = ResourceManager::GetInstance();
+	modelId_ = resM.Load(ResourceManager::SRC::WOOD_BOARD_MDL).handleId_;
+	scl_ = INIT_SCL;
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::OBJECT}, std::move(std::make_unique<Sphere>(pos_, SPHERE_RADIUS)));
+	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::OBJECT}, std::move(std::make_unique<Cube>(pos_, quaRot_,Utility::VMul(COLLIDER_SIZE,scl_))));
 }

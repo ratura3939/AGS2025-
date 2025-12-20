@@ -28,6 +28,7 @@ public:
 	static constexpr float DEG_RIGHT = 90.0f;	//右方
 
 	static constexpr VECTOR CHARACTER_HEIGHT = { 0.0f,150.0f,0.0f };	//キャラクターの身長
+	static constexpr VECTOR CHARACTER_FOOT_COLLIDER_RELATIVE = { 0.0f,45.0f,0.0f };	//キャラクターの足元コライダー相対座標
 	static constexpr float CHARACTER_RADIUS = 50.0f;					//キャラクターの判定の大きさ
 
 	//移動制限(大まか)
@@ -93,6 +94,7 @@ protected:
 #pragma region モデル基礎制御
 	VECTOR headPos_; //頭辺りの座標
 	VECTOR centerPos_; //モデル中央辺りの座標
+	VECTOR footPos_; //足元辺りのコライダー用座標
 
 	VECTOR uiPos_; //UI表示位置
 	Quaternion characterRotY_;	//Y軸回転用

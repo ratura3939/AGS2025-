@@ -126,22 +126,35 @@ void CharacterBase::HitCollider(std::weak_ptr<Collider> _col)
 		float radius = myGeo.GetRadius();
 		//本来立つべき位置と現在位置の差分を取得
 		const VECTOR hitPoint = myGeo.GetHitPoint();		//衝突位置
-		const VECTOR backPow = VSub(hitPoint, pos_);		//めり込み量
+		VECTOR backPow = VSub(hitPoint, pos_);		//めり込み量
 		VECTOR colNormal = myGeo.GetHitNormal();			//法線ベクトル
 
 		//法線方向閾値
 		const float threshold = 0.3f;
 		colNormal = Utility::EpsilonCustomThreshold(colNormal, threshold);
 
-		////階段の上にいるとき
-		//if (_col.lock()->IsContainsTag(TAG::STAIRS) && colNormal.y > 0.0f) {
-		//	colNormal = { 0.0f,1.0f,0.0f };
-		//}
+		if(_col.lock()->IsContainsTag(TAG::STAIRS)){
+			
+			
+			// 振動対策:減衰処理
+			const float DAMPING_FACTOR = 0.4f;
+			backPow.y = backPow.y * DAMPING_FACTOR;
+		}
+
+		const VECTOR diff = Utility::VAbs(VSub(prevPos_, hitPoint));
 
 		if (colNormal.x > 0.0f)pos_.x = prevPos_.x;
 		if (colNormal.y > 0.0f) {
+			//// 振動対策1: 許容誤差（Tolerance）の導入
+			//const float JITTER_TOLERANCE = 6.0f; // 非常に小さい値（例: 0.01f）を設定
+
+			//if (backPow.y > JITTER_TOLERANCE) {
+			//	// 振動対策2: 減衰処理
+			//	const float DAMPING_FACTOR = 0.8f;
+			//	pos_.y += backPow.y * DAMPING_FACTOR;
+			//}
+			//pos_.y = hitPoint.y;
 			pos_.y += backPow.y;
-			pos_.y += -gravity_.y;
 		}
 
 		if (colNormal.z > 0.0f)pos_.z = prevPos_.z;
@@ -150,6 +163,7 @@ void CharacterBase::HitCollider(std::weak_ptr<Collider> _col)
 		gravity_ = { 0.0f,0.0f,0.0f };
 	}
 
+	//派生クラス側の処理
 	DoHitCollider(_col);
 }
 

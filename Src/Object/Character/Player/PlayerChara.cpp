@@ -66,7 +66,7 @@ namespace {
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 
 	const float GRAVITY_POW = 1.0f; //重力
-	const float JUMP_POW = 60.0f; //ジャンプ力
+	const float JUMP_POW = 30.0f; //ジャンプ力
 
 	const VECTOR INIT_POSITION = { -7200.0f,0.0f,7350.0f };
 }
@@ -102,9 +102,10 @@ void PlayerChara::DoInit(void)
 
 	//当たり判定
 	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
+	footPos_ = VAdd(pos_, CHARACTER_FOOT_COLLIDER_RELATIVE);	//足元コライダー位置
 	using COL_TYPE = Collider::COL_TAG;
 	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::PLAYER},
-		std::move(std::make_unique<Capsule>(headPos_, pos_, CHARACTER_RADIUS)));
+		std::move(std::make_unique<Capsule>(headPos_, footPos_, CHARACTER_RADIUS)));
 
 	//攻撃用当たり判定
 	power_ = ATK_POWER;
@@ -136,7 +137,6 @@ void PlayerChara::DoInit(void)
 
 void PlayerChara::DoUpdate(void)
 {
-	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
 	atkPos_ = VAdd(pos_, characterRotY_.PosAxis(ATK_LOCAL_POS));
 	uiPos_ = pos_;
 	uiPos_.y += 200.0f;
@@ -169,6 +169,9 @@ void PlayerChara::DoUpdate(void)
 
 	animController_->Update();
 	uiCntl_->Update();
+
+	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
+	footPos_ = VAdd(pos_, CHARACTER_FOOT_COLLIDER_RELATIVE);	//足元コライダー位置
 }
 
 const VECTOR PlayerChara::GetFocusPoint(void) const
@@ -235,9 +238,10 @@ void PlayerChara::Jump(void)
 
 void PlayerChara::DrawDebug(void)
 {
-	DrawFormatString(0, 120, 0xff0000, "pPos={%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}\nMag={%.1f}\nGtavity = {%.3f", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z, Utility::MagnitudeF(pos_),gravity_.y);
+	const VECTOR movedPow = VSub(pos_, prevPos_);
+	DrawFormatString(0, 120, 0xff0000, "pPos={%.1f,%.1f,%.1f}\nMovedPow = {%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}\nMag={%.1f}\nGtavity = {%.3f", pos_.x, pos_.y, pos_.z, movedPow.x, movedPow.y, movedPow.z, rot_.x, rot_.y, rot_.z, Utility::MagnitudeF(pos_),gravity_.y);
 
-	//collider_->DrawDebugCollider();
+	collider_->DrawDebugCollider();
 }
 
 float PlayerChara::GetToLockDeg(void)
