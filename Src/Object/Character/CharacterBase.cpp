@@ -120,13 +120,13 @@ void CharacterBase::HitCollider(std::weak_ptr<Collider> _col)
 {
 	using TAG = Collider::COL_TAG;
 	//ステージとの衝突
-	if (_col.lock()->IsContainsTag(TAG::STAGE)) {
+	if (_col.lock()->IsContainsAnyTag(std::set<TAG>{TAG::STAGE, TAG::OBJECT})) {
 
 		Geometry& myGeo = collider_->GetGeometry();
 		float radius = myGeo.GetRadius();
 		//本来立つべき位置と現在位置の差分を取得
 		const VECTOR hitPoint = myGeo.GetHitPoint();		//衝突位置
-		VECTOR backPow = VSub(hitPoint, pos_);		//めり込み量
+		VECTOR backPow = VSub(hitPoint, pos_);				//めり込み量
 		VECTOR colNormal = myGeo.GetHitNormal();			//法線ベクトル
 
 		//法線方向閾値

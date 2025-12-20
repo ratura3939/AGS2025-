@@ -81,7 +81,7 @@ const VECTOR& PlayerManager::GetPos(void)const
 	return character_->GetPos();
 }
 
-const Quaternion PlayerManager::GetQua(void)
+const Quaternion& PlayerManager::GetQua(void)
 {
 	return character_->GetQua();
 }
@@ -91,12 +91,12 @@ std::weak_ptr<PlayerChara> PlayerManager::GetPlayer(void)
 	return character_;
 }
 
-const VECTOR PlayerManager::GetFocusPoint(void)
+const VECTOR& PlayerManager::GetFocusPoint(void)
 {
 	return character_->GetFocusPoint();
 }
 
-const VECTOR PlayerManager::GetFollowPos4UseMagnet(void)
+const VECTOR& PlayerManager::GetFollowPos4UseMagnet(void)
 {
 	return ability_->GetFollowPos4UseMagnet(character_->GetPos());
 }

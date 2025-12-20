@@ -42,7 +42,8 @@ public:
 
 	//É^ÉOÇÃåüçı
 	const bool IsContainsTag(const COL_TAG& _tag)const { return tags_.contains(_tag); }
-	const bool IsContainsTag(const std::set<COL_TAG>& _tags);
+	const bool IsContainsAnyTag(const std::set<COL_TAG>& _tags);
+	const bool IsContainsAllTag(const std::set<COL_TAG>& _tags);
 	const bool IsContainsNoHitTag(const COL_TAG& _tag)const { return noHitTags_.contains(_tag); }
 	const bool IsContainsNoHitTag(const std::set<COL_TAG>& _tags);
 

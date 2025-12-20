@@ -14,9 +14,10 @@ namespace {
 	const VECTOR COLLIDER_POS_OFFSET = { 0.0f,-40.0f,50.0f };
 }
 
-Stairs::Stairs(const VECTOR& _pos)
+Stairs::Stairs(const VECTOR& _pos, const float _deg)
 {
 	pos_ = _pos;
+	quaRotLocal_= Quaternion::Euler(0.0f, Utility::Deg2RadF(_deg), 0.0f);
 }
 
 Stairs::~Stairs(void)
@@ -33,7 +34,7 @@ void Stairs::SetModel(void)
 	modelId_ = resM.Load(ResourceManager::SRC::STAIRS_LOW_MDL).handleId_;
 	scl_ = INIT_SCL;
 
-	stairsColliderQua_ = Quaternion::Euler(Utility::Deg2RadF(COLLIDER_DEG), 0.0f, 0.0f);
+	stairsColliderQua_ = Quaternion::Mult(quaRotLocal_,Quaternion::Euler(Utility::Deg2RadF(COLLIDER_DEG), 0.0f, 0.0f));
 	stairsColliderPos_ = VAdd(pos_, Quaternion::PosAxis(rot_, COLLIDER_POS_OFFSET));
 
 	//コライダー設定

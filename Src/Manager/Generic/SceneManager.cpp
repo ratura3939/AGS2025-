@@ -291,7 +291,9 @@ void SceneManager::DoChangeScene(void)
 	//解放
 	auto& resM = ResourceManager::GetInstance();
 	auto& sndM = SoundManager::GetInstance();
+	auto& efcM = EffectManager::GetInstance();
 	auto& uiM = UIManager2d::GetInstance();
+	auto& colM = CollisionManager::GetInstance();
 
 	//解放
 	for (auto& scene : scenes_) {
@@ -301,8 +303,9 @@ void SceneManager::DoChangeScene(void)
 	// リソースの全解放
 	resM.Release();
 	sndM.Release();
+	efcM.Release();
 	uiM.Relese();
-
+	colM.Reset();
 
 	//次のシーン初期化
 	nextScene_->Init();

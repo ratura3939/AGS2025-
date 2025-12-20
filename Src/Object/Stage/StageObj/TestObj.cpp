@@ -14,28 +14,6 @@ namespace {
 
 void TestObj::DoHitCollider(const std::weak_ptr<Collider>& _col)
 {
-	//ステージタグが存在するとき
-	if (_col.lock()->IsContainsTag(Collider::COL_TAG::STAGE) && !isAffectingNow_) {
-		//SetPrevPos();
-
-		VECTOR colNormal = _col.lock()->GetGeometry().GetHitNormal();				//法線ベクトル
-
-		const float threshold = 0.3f;
-		VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
-
-		VECTOR backPow = VSub(_col.lock()->GetGeometry().GetHitPoint(), pos_);
-
-		if (enablePrevPos.x > 0.0f)pos_.x = prevPos_.x;
-		if (enablePrevPos.y > 0.0f)pos_.y = prevPos_.y;
-		if (enablePrevPos.z > 0.0f)pos_.z = prevPos_.z;
-
-		//衝突した物体の法線方向に少し押し戻す
-		moveDir_ = collider_->GetGeometry().GetHitNormal();
-		moveSpeed_ = Utility::MagnitudeF(gravity_) * 0.5f;
-
-		gravity_ = { 0.0f,0.0f,0.0f };
-	}
-
 	if(_col.lock()->IsContainsTag(Collider::COL_TAG::ATTACK)){
 		//攻撃に当たったときの処理
 		//攻撃からのベクトルを付与

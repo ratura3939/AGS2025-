@@ -124,6 +124,13 @@ void CollisionManager::UseAttack(const std::string& _atkName)
 	atkMng_.lock()->UseAttackCollision(_atkName);
 }
 
+void CollisionManager::Reset(void)
+{
+	colliders_.clear();
+	colliderCounter_ = 0;
+	deleteColliderIdxs_.clear();
+}
+
 void CollisionManager::CollisionGeometry(std::weak_ptr<Collider> _col1, std::weak_ptr<Collider> _col2)
 {
 	//タイプの確認(双方)

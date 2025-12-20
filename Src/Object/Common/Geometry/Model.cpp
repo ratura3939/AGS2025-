@@ -2,6 +2,7 @@
 #include"../../../Utility/Utility.h"
 #include"Sphere.h"
 #include"Capsule.h"
+#include"Cube.h"
 #include "Model.h"
 
 Model::Model(const VECTOR& _pos, const Quaternion& _rot, const Quaternion& _rotLocal, const VECTOR& _scl, const int _modelId)
@@ -61,8 +62,32 @@ const bool Model::IsHit(Capsule& _capsule)
 
 const bool Model::IsHit(Cube& _cube)
 {
-    //出来ない
-    return false;
+	VECTOR cubeEdges[Cube::CUBE_VERTEX_NUM];
+    bool isHit = false;
+
+	//キューブの頂点計算
+	_cube.CalculateVertices(cubeEdges);
+
+    //辺の分だけ回す
+    for (int i = 0; i < Cube::CUBE_EDGE_NUM; ++i) {
+        VECTOR startPos = cubeEdges[Cube::EDGES_POINT[i][0]];
+        VECTOR endPos = cubeEdges[Cube::EDGES_POINT[i][1]];
+
+        MV1_COLL_RESULT_POLY hitCubeInfo = MV1CollCheck_Line(modelId_, -1, startPos, endPos);
+
+        isHit = hitCubeInfo.HitFlag >= 1;
+        if (isHit) {
+            VECTOR hitNormal = Utility::VNormalize(Utility::EpsilonNormal(hitCubeInfo.Normal));
+            //衝突したポリゴンを形成する三点から中点を算出
+            VECTOR hitPos = VAdd(VAdd(hitCubeInfo.Position[0], hitCubeInfo.Position[1]), hitCubeInfo.Position[2]);
+            hitPos = VScale(hitPos, 1.0f / 3.0f);
+
+			_cube.SetHitNormal(hitNormal);
+			_cube.SetHitPoint(hitPos);
+        }
+        if (isHit)break;
+    }
+    return isHit;
 }
 
 const bool Model::IsHit(Model& _model)

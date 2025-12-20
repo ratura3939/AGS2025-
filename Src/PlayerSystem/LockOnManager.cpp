@@ -38,7 +38,10 @@ void LockOnManager::Update(void)
 		//ロックオン時対象となる敵がいなかったら
 		if (nearTargetNum_ < 0) {
 			LockOff();
+			return;
 		}
+		Camera& camera = SceneManager::GetInstance().GetCamera();
+		camera.SetLockPos(targets_.GetPos(nearTargetNum_));	//ロックオン対象の設定
 	}
 
 	//カメラの注視点設定

@@ -14,9 +14,10 @@ namespace {
 	const VECTOR COLLIDER_SIZE = { 200.0f,20.0f,200.0f };
 }
 
-Board::Board(const VECTOR& _pos)
+Board::Board(const VECTOR& _pos, const VECTOR& _size)
 {
 	pos_ = _pos;
+	scl_ = _size;
 }
 
 Board::~Board(void)
@@ -25,34 +26,14 @@ Board::~Board(void)
 
 void Board::DoHitCollider(const std::weak_ptr<Collider>& _col)
 {
-	//ステージタグが存在するとき
-	if (_col.lock()->IsContainsTag(Collider::COL_TAG::STAGE) && !isAffectingNow_) {
-		//SetPrevPos();
-
-		VECTOR colNormal = _col.lock()->GetGeometry().GetHitNormal();				//法線ベクトル
-
-		const float threshold = 0.3f;
-		VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
-
-		VECTOR backPow = VSub(_col.lock()->GetGeometry().GetHitPoint(), pos_);
-
-		if (enablePrevPos.x > 0.0f)pos_.x = prevPos_.x;
-		if (enablePrevPos.y > 0.0f)pos_.y = prevPos_.y;
-		if (enablePrevPos.z > 0.0f)pos_.z = prevPos_.z;
-
-		//衝突した物体の法線方向に少し押し戻す
-		moveDir_ = collider_->GetGeometry().GetHitNormal();
-		moveSpeed_ = Utility::MagnitudeF(gravity_) * 0.5f;
-
-		gravity_ = { 0.0f,0.0f,0.0f };
-	}
+	
 }
 
 void Board::SetModel(void)
 {
 	ResourceManager& resM = ResourceManager::GetInstance();
-	modelId_ = resM.Load(ResourceManager::SRC::WOOD_BOARD_MDL).handleId_;
-	scl_ = INIT_SCL;
+	modelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::WOOD_BOARD_MDL);
+	//scl_ = INIT_SCL;
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;

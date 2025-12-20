@@ -27,11 +27,24 @@ void Collider::DeleteNoHitTag(const COL_TAG& _tag)
 	noHitTags_.erase(_tag);
 }
 
-const bool Collider::IsContainsTag(const std::set<COL_TAG>& _tags)
+const bool Collider::IsContainsAnyTag(const std::set<COL_TAG>& _tags)
 {
 	for (auto& tag : _tags) {
-		//ないものがあったら、そこで終了
-		if (!tags_.contains(tag))return false;
+		//あったら終了
+		if (tags_.contains(tag)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+const bool Collider::IsContainsAllTag(const std::set<COL_TAG>& _tags)
+{
+	for (auto& tag : _tags) {
+		//一つでもなかったら終了
+		if (!tags_.contains(tag)) {
+			return false;
+		}
 	}
 	return true;
 }

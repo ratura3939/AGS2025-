@@ -17,6 +17,16 @@ public:
 		VECTOR axis[static_cast<int>(CUBE_AXIS::MAX)];	//回転情報
 	};
 
+	static constexpr int CUBE_EDGE_NUM = 12;	//辺の数
+	static constexpr int CUBE_VERTEX_NUM = 8;	//頂点の数
+
+	// 12本のエッジのインデックス
+	static constexpr int EDGES_POINT[12][2] = {
+		{0,1},{0,2},{0,4}, {1,3},{1,5},
+		{2,3},{2,6}, {3,7},
+		{4,5},{4,6}, {5,7},{6,7}
+	};
+
     Cube(const VECTOR& _pos, const Quaternion& _rot, const VECTOR& _halfSize);
 	~Cube(void)override;
 

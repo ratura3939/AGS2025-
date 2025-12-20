@@ -16,27 +16,30 @@ AfectAbilityObjBase::~AfectAbilityObjBase(void)
 
 void AfectAbilityObjBase::HitCollider(std::weak_ptr<Collider> _col)
 {
-	////ステージタグが存在するとき
-	//if (_col.lock()->IsContainsTag(Collider::COL_TAG::STAGE) && !isAffectingNow_) {
-	//	//SetPrevPos();
+	//ステージタグが存在するとき
+	if (_col.lock()->IsContainsTag(Collider::COL_TAG::STAGE) && !isAffectingNow_) {
+		//SetPrevPos();
+		Geometry& myGeo = collider_->GetGeometry();
 
-	//	VECTOR colNormal = _col.lock()->GetGeometry().GetHitNormal();				//法線ベクトル
+		const VECTOR hitPoint = myGeo.GetHitPoint();
+		VECTOR backPow = VSub(hitPoint, pos_);
 
-	//	const float threshold = 0.3f;
-	//	VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
+		VECTOR colNormal = myGeo.GetHitNormal();				//法線ベクトル
 
-	//	VECTOR backPow = VSub(_col.lock()->GetGeometry().GetHitPoint(), pos_);
+		const float threshold = 0.3f;
+		VECTOR enablePrevPos = Utility::EpsilonCustomThreshold(colNormal, threshold);
 
-	//	if (enablePrevPos.x > 0.0f)pos_.x = prevPos_.x;
-	//	if (enablePrevPos.y > 0.0f)pos_.y = prevPos_.y;
-	//	if (enablePrevPos.z > 0.0f)pos_.z = prevPos_.z;
+		if (enablePrevPos.x > 0.0f)pos_.x = prevPos_.x;
+		if (enablePrevPos.y > 0.0f)pos_.y = prevPos_.y;
+		if (enablePrevPos.z > 0.0f)pos_.z = prevPos_.z;
 
-	//	//衝突した物体の法線方向に少し押し戻す
-	//	moveDir_ = collider_->GetGeometry().GetHitNormal();
-	//	moveSpeed_ = Utility::MagnitudeF(gravity_) * 0.5f;
+		//衝突した物体の法線方向に少し押し戻す
+		moveDir_ = collider_->GetGeometry().GetHitNormal();
+		//moveSpeed_ = Utility::MagnitudeF(gravity_) * 0.5f;
+		moveSpeed_ = backPow.y * 0.5f;
 
-	//	gravity_ = { 0.0f,0.0f,0.0f };
-	//}
+		gravity_ = { 0.0f,0.0f,0.0f };
+	}
 
 	DoHitCollider(_col);
 }

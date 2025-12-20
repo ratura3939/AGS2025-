@@ -141,6 +141,9 @@ void PlayerChara::DoUpdate(void)
 	uiPos_ = pos_;
 	uiPos_.y += 200.0f;
 	allertTime_++;
+	centerPos_ = headPos_;	//モデル中央
+	centerPos_.y /= 2.0f;
+
 	//ほかにアクション行動していないときのみ
 	if (state_ == STATE::NOMAL || lockState_ == LOCK_STATE::LOCKON) {
 		Move();
@@ -174,7 +177,7 @@ void PlayerChara::DoUpdate(void)
 	footPos_ = VAdd(pos_, CHARACTER_FOOT_COLLIDER_RELATIVE);	//足元コライダー位置
 }
 
-const VECTOR PlayerChara::GetFocusPoint(void) const
+const VECTOR& PlayerChara::GetFocusPoint(void) const
 {
 	return VAdd(pos_, focusPoint_);
 }
@@ -270,6 +273,10 @@ void PlayerChara::DoHitCollider(const std::weak_ptr<Collider>& _col)
 	const float COLLIDER_RADIUS_POW = 1.0f;
 
 	using TAG = Collider::COL_TAG;
+
+	if (_col.lock()->IsContainsTag(TAG::STAGE)) {
+		int a = 0;
+	}
 
 	//敵の物の場合
 	if (_col.lock()->IsContainsTag(TAG::ENEMY)) {

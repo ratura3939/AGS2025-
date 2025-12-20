@@ -29,6 +29,8 @@ public:
 	void UseAllert(const std::string& _atkName);
 	void UseAttack(const std::string& _atkName);
 
+	void Reset(void);
+
 private:
 	static CollisionManager* instance_;
 

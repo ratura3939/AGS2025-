@@ -56,5 +56,5 @@ void Fence::SetModel(void)
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;
-	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE, COL_TYPE::SWITCH}, std::move(std::make_unique<Cube>(colliderPos_, quaRot_, COLLIDER_SIZE)));
+	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::STAGE, COL_TYPE::SWITCH}, std::move(std::make_unique<Cube>(colliderPos_, quaRot_, COLLIDER_SIZE)), std::set<COL_TYPE>{COL_TYPE::STAGE});
 }

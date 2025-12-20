@@ -6,7 +6,7 @@ class Block :
     public NoneAfectAbilityObjBase
 {
 public:
-	Block(const VECTOR& _pos);
+	Block(const VECTOR& _pos, const VECTOR& _size);
 	~Block(void)override;
 
 	void HitCollider(std::weak_ptr<Collider> _col)override;

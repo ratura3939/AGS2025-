@@ -473,7 +473,7 @@ void EnemyBase::DoHitCollider(const std::weak_ptr<Collider>& _col)
 
 	using TAG = Collider::COL_TAG;
 	//プレイヤーの攻撃の場合
-	if (_col.lock()->IsContainsTag({ TAG::PLAYER,TAG::ATTACK })) {
+	if (_col.lock()->IsContainsAllTag({ TAG::PLAYER,TAG::ATTACK })) {
 		//ダメージ処理
 		Damage(_col.lock()->GetPower());
 		auto& efcM = EffectManager::GetInstance();

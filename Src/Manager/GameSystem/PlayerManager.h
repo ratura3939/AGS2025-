@@ -36,9 +36,9 @@ public:
 
 	//位置・回転取得
 	const VECTOR& GetPos(void)const;			//座標
-	const Quaternion GetQua(void);		//回転
-	const VECTOR GetFocusPoint(void);	//注視点
-	const VECTOR GetFollowPos4UseMagnet(void);
+	const Quaternion& GetQua(void);		//回転
+	const VECTOR& GetFocusPoint(void);	//注視点
+	const VECTOR& GetFollowPos4UseMagnet(void);
 
 	const bool IsAlive(void)const;
 	const bool IsUseAbility(void)const;

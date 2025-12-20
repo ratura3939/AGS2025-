@@ -2,6 +2,7 @@
 #include"../../../Utility/Utility.h"
 #include"Sphere.h"
 #include"Capsule.h"
+#include"Model.h"
 #include "Cube.h"
 
 namespace {
@@ -162,28 +163,21 @@ const bool Cube::IsHit(Cube& _cube)
 
 const bool Cube::IsHit(Model& _model)
 {
-	//出来ない
-	return false;
+	return _model.IsHit(*this);
 }
 
 void Cube::DebugDraw(void)
 {
-	VECTOR vertices[8];
+	VECTOR vertices[CUBE_VERTEX_NUM];
 	CalculateVertices(vertices);
 
-	// 12本のエッジのインデックス
-	static const int edges[12][2] = {
-		{0,1},{0,2},{0,4}, {1,3},{1,5},
-		{2,3},{2,6}, {3,7},
-		{4,5},{4,6}, {5,7},{6,7}
-	};
 
-	for (int i = 0; i < 12; ++i)
+	for (int i = 0; i < CUBE_EDGE_NUM; ++i)
 	{
-		DrawLine3D(vertices[edges[i][0]], vertices[edges[i][1]], NORMAL_COLOR);
+		DrawLine3D(vertices[EDGES_POINT[i][0]], vertices[EDGES_POINT[i][1]], NORMAL_COLOR);
 	}
 
-	for (int i = 0; i < 8; ++i) {
+	for (int i = 0; i < CUBE_VERTEX_NUM; ++i) {
 		DrawSphere3D(vertices[i], 8, 8, 0xff0000, 0xff0000, false);
 	}
 
@@ -194,9 +188,6 @@ void Cube::CalculateVertices(VECTOR outVertices[8])
 {
 	MATRIX rotMat;
 	rotMat = colRot_.ToMatrix();
-
-	//const VECTOR obbMinPos = GetCubeMinWorldPos();
-	//const VECTOR obbMaxPos = GetCubeMaxWorldPos();
 
 	const VECTOR obbMinPos = GetCubeMinLocalPos();
 	const VECTOR obbMaxPos = GetCubeMaxLocalPos();
@@ -217,7 +208,6 @@ void Cube::CalculateVertices(VECTOR outVertices[8])
 				world = VAdd(world, colPos_);
 
 				outVertices[idx++] = world;
-				//outVertices[idx++] = local;
 			}
 		}
 	}
@@ -345,7 +335,7 @@ const VECTOR Cube::GetTiltAdjustedNormal(const VECTOR& _worldNormal)
 
 		// 傾きチェック: OBB_SLOPE_NORMAL_WORLD.y がしきい値以下か (傾斜が急か)
 		// 坂の法線のY成分が小さい = 坂が傾いている (水平に近くない) 
-		if (OBB_SLOPE_NORMAL_WORLD.y < SLOPE_Y_THRESHOLD) {
+		if (fabs(OBB_SLOPE_NORMAL_WORLD.y) > SLOPE_Y_THRESHOLD) {
 			// 傾いている坂に当たった！ → 押し戻しをワールドY軸上向きに固定
 			surfaceNormal = VGet(0.0f, 1.0f, 0.0f);
 		}

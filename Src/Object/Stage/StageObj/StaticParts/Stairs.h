@@ -6,7 +6,7 @@ class Stairs :
     public NoneAfectAbilityObjBase
 {
 public:
-	Stairs(const VECTOR& _pos);
+	Stairs(const VECTOR& _pos, const float _deg = 0.0f);
 	~Stairs(void)override;
 
 	void HitCollider(std::weak_ptr<Collider> _col)override;

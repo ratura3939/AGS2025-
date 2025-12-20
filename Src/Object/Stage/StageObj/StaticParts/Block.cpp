@@ -11,9 +11,10 @@ namespace {
 	const VECTOR COLLIDER_SIZE = { 200.0f,260.0f,200.0f };
 }
 
-Block::Block(const VECTOR& _pos)
+Block::Block(const VECTOR& _pos, const VECTOR& _size)
 {
 	pos_ = _pos;
+	scl_ = _size;
 }
 
 Block::~Block(void)
@@ -27,8 +28,8 @@ void Block::HitCollider(std::weak_ptr<Collider> _col)
 void Block::SetModel(void)
 {
 	ResourceManager& resM = ResourceManager::GetInstance();
-	modelId_ = resM.Load(ResourceManager::SRC::BLOCK_MDL).handleId_;
-	scl_ = INIT_SCL;
+	modelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::BLOCK_MDL);
+	//scl_ = INIT_SCL;
 
 	//コライダー設定
 	using TAG = Collider::COL_TAG;

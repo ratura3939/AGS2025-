@@ -51,7 +51,7 @@ public:
     ~PlayerChara(void)override;
 
     //注視点の取得
-    const VECTOR GetFocusPoint(void)const;
+    const VECTOR& GetFocusPoint(void)const;
 
     /// <summary>
     /// ロックオン関係の状態変化
