@@ -47,6 +47,9 @@ namespace {
 	const int BTN_DIFF_Y = 100;
 
 	const float CAMERA_FOLLOW_DIFF_Y_ABILITY = 200.0f;	//能力使用時の注視点差分
+
+	const float LOCK_DISTANCE_MIN_NOMAL = 500.0f;		//ロックオン時に最低限離れておく距離
+	const float LOCK_DISTANCE_MIN_BOSS = 1000.0f;		//ロックオン時に最低限離れておく距離
 }
 
 Game::Game(void)
@@ -110,6 +113,7 @@ void Game::Init(void)
 	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
 	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
 	camera.SetGoalFocusPos(player_->GetFocusPoint());				//注視点
+	camera.SetLockOnDistanceMin(LOCK_DISTANCE_MIN_NOMAL);			//ロックオン最低距離
 
 	//音関係初期設定
 	InitSound();
@@ -426,11 +430,13 @@ void Game::DirectionUpdate(void)
 		}
 		//カメラ移動
 		else if (direcState_ == BOSS_DIRECTION::CAMERA_MOVE) {
+
+			auto& camera = SceneManager::GetInstance().GetCamera();
 			//ボスの生成
 			enemy_->CreateBoss(player_->GetPos());
+			camera.SetLockOnDistanceMin(LOCK_DISTANCE_MIN_BOSS);			//ロックオン最低距離
 
 			//カメラを自動移動に設定
-			auto& camera = SceneManager::GetInstance().GetCamera();
 			camera.ChangeMode(Camera::MODE::AUTO_MOVE);
 
 			//場所の設定(ボスの横ぐらい)

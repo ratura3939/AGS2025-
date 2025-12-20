@@ -43,6 +43,7 @@ Camera::Camera(void)
 
 	prevGoalPos_ = Utility::VECTOR_ZERO;
 	lockOnGoalPos_ = Utility::VECTOR_ZERO;
+	lockOnDistanceMin_ = 0.0f;
 }
 
 Camera::~Camera(void)
@@ -185,9 +186,9 @@ void Camera::SetBeforeDrawLockOn(void)
 	//離れる距離を数値化
 	float disMag = Utility::MagnitudeF(distance);
 	//最低限の値を下回っていたら
-	if (disMag <= ROCK_DISTANCE_MIN) {
+	if (disMag <= lockOnDistanceMin_) {
 		//最低限の値を入れる
-		disMag = ROCK_DISTANCE_MIN;
+		disMag = lockOnDistanceMin_;
 	}
 
 	//カメラ位置調整(カメラは後方位置に。Y方向は距離に応じて高さを変える。)

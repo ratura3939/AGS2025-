@@ -135,6 +135,9 @@ public:
 	//追従対象の設定
 	void SetFollow(const VECTOR _pos,const Quaternion _qua);
 
+	//ロックオン最低限距離設定
+	void SetLockOnDistanceMin(const float _distance) { lockOnDistanceMin_ = _distance; }
+
 	//座標設定
 	void SetPos(const VECTOR& pos,const VECTOR& focus);
 	void SetPos(const VECTOR& pos);
@@ -174,6 +177,7 @@ private:
 	VECTOR lockPos_;		//ロックオン対象の位置
 	VECTOR prevGoalPos_;	//前回の目標位置
 	VECTOR lockOnGoalPos_;	//目標位置(ロックオン)
+	float lockOnDistanceMin_;	//ロックオン時の最低距離
 
 	//カメラの注視点
 	VECTOR focusPos_;
