@@ -232,12 +232,12 @@ void Title::Draw(void)
 	}
 
 	// ポストエフェクト
-	SetDrawScreen(postEffectScreen_);
+	/*SetDrawScreen(postEffectScreen_);
 	ClearDrawScreen();
 	postMaterial_->SetTextureBuf(0, SceneManager::GetInstance().GetMainScreen());
 	postRenderer_->Draw();
 	SetDrawScreen(SceneManager::GetInstance().GetMainScreen());
-	DrawGraph(0,0,postEffectScreen_, true);
+	DrawGraph(0,0,postEffectScreen_, true);*/
 }
 
 void Title::Release(void)

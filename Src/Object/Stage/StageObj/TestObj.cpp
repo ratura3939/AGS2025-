@@ -50,7 +50,7 @@ void TestObj::SetParam(void)
 	speciesName_ = OBJ_NAME;
 	isAffectAbilyty_ = true;
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TEST_MDL).handleId_;
-	pos_ = { 200.0f,1500.0f,500.0f };
+	pos_ = { -7000.0f,1500.0f,-3500.0f };
 	scl_ = { 0.6f,0.6f ,0.6f };
 
 	//コライダー設定

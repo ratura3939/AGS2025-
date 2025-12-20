@@ -12,7 +12,7 @@ class AttackManager;
 class EnemyManager
 {
 public:
-	static constexpr int ENEMY_NUM = 4;			//“G‘”
+	static constexpr int ENEMY_NUM = 1;			//“G‘”
 
 	//UŒ‚“o˜^–¼(‚ä‚­‚ä‚­‚ÍŠO•”ƒf[ƒ^)
 	static const std::string ATTACK_NOMAL;

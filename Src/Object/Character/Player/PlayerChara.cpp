@@ -95,6 +95,7 @@ void PlayerChara::DoInit(void)
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;
 
 	//pos_ = INIT_POSITION;
+	//pos_ = { -6500.0f,0.0f,-3800.0f };
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT),0.0f);
 

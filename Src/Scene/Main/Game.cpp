@@ -543,7 +543,7 @@ void Game::Draw(void)
 	stage_->Draw();
 	enemy_->Draw();
 	player_->Draw();
-	player_->DrawDebug();
+	//player_->DrawDebug();
 
 	//メニューボタンの表示
 	UIManager2d::GetInstance().Draw(MENU_BTN);

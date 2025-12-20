@@ -15,9 +15,9 @@ namespace {
 	const int STAEGE_OBJ_NUM = 0;	//地形が格納されているインデックス
 	const VECTOR GATE_SWITCH_POS = { 500.0f,0.0f,0.0f };
 	const VECTOR GATE_POS = { 1200.0f,1200.0f,0.0f };
-	const VECTOR TABLE_POS = { -700,300.0f,0.0f };
-	const VECTOR TABLE_POS_2 = { -1800,300.0f,0.0f };
-	const VECTOR TABLE_POS_3 = { -1200,300.0f,800.0f };
+	const VECTOR TABLE_POS = { -7000,300.0f,-2900.0f };
+	const VECTOR TABLE_POS_2 = { -5900,300.0f,-1600.0f };
+	const VECTOR TABLE_POS_3 = { -6800,300.0f,-200.0f };
 	const VECTOR CROSS_POS = { -3000,300.0f,0.0f };
 	const VECTOR SRAIRS_POS = { -1200,0.0f,2000.0f };
 }
@@ -27,12 +27,12 @@ void StageManager::Init(void)
 	gmkObjs_.push_back(std::make_shared<Stage>());
 	gmkObjs_.push_back(std::make_shared<StageWall>());
 	gmkObjs_.push_back(std::make_shared<InsideWall>());
-	gmkObjs_.push_back(std::make_shared<GateGimmickObjs>(GATE_SWITCH_POS, GATE_POS, Quaternion()));
+	//gmkObjs_.push_back(std::make_shared<GateGimmickObjs>(GATE_SWITCH_POS, GATE_POS, Quaternion()));
 	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS));
 	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS_2));
 	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS_3));
 	//gmkObjs_.push_back(std::make_shared<Cross>(CROSS_POS));
-	gmkObjs_.push_back(std::make_shared<Stairs>(SRAIRS_POS));
+	//gmkObjs_.push_back(std::make_shared<Stairs>(SRAIRS_POS));
 	gmkObjs_.push_back(std::make_shared<TestObj>());
 	
 
