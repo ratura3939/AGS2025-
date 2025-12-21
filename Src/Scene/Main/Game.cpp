@@ -265,6 +265,22 @@ void Game::InitShader(void)
 	// ポストエフェクト用スクリーン
 	scanLineScreen_ = MakeScreen(
 		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+
+
+	//スキップ用
+	//PS
+	skipMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", 1);
+	//拡散光
+	skipMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
+
+	skipRender_ = std::make_unique<PixelRenderer>(*skipMaterial_);
+	skipRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
+	// ポストエフェクト用スクリーン
+	skipScreen_ = MakeScreen(
+		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+
+	skipCounter_ = 0;
+	isSkipEnd_ = false;
 }
 
 void Game::Update(void)

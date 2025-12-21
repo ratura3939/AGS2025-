@@ -19,9 +19,9 @@ namespace {
 
 	const VECTOR GATE_SWITCH_POS = { 500.0f,0.0f,0.0f };
 	const VECTOR GATE_POS = { 1200.0f,1200.0f,0.0f };
-	const VECTOR TABLE_POS = { -700,300.0f,0.0f };
-	const VECTOR TABLE_POS_2 = { -1800,300.0f,0.0f };
-	const VECTOR TABLE_POS_3 = { -1200,300.0f,800.0f };
+	const VECTOR TABLE_POS = { -7000,300.0f,-2900.0f };
+	const VECTOR TABLE_POS_2 = { -5900,300.0f,-1600.0f };
+	const VECTOR TABLE_POS_3 = { -6800,300.0f,-200.0f };
 	const VECTOR CROSS_POS = { -3000,300.0f,0.0f };
 	const VECTOR SRAIRS_POS = { 6800.0f,0.0f,4600.0f };
 
@@ -29,6 +29,7 @@ namespace {
 	const VECTOR BLOCK_SIZE = { 12.0f,1.5f,1.7f };
 	const VECTOR BLOCK_POS = { 6800.0f,0.0f,4000.0f };
 	const VECTOR BLOCK_POS_2 = { 6800.0f,0.0f,1900.0f };
+	const VECTOR BLOCK_POS_3 = { 6800.0f,0.0f,0.0f };
 	//É{Å[Éh
 	const VECTOR BOARD_POS = { 6800.0f,600.0f,5000.0f };
 	const VECTOR BOARD_SIZE = { 1.0f,1.0f,5.0f };
@@ -47,6 +48,7 @@ void StageManager::Init(void)
 	gmkObjs_.push_back(std::make_shared<Stairs>(SRAIRS_POS, 180.0f));
 	gmkObjs_.push_back(std::make_shared<Block>(BLOCK_POS, BLOCK_SIZE));
 	gmkObjs_.push_back(std::make_shared<Block>(BLOCK_POS_2, BLOCK_SIZE));
+	gmkObjs_.push_back(std::make_shared<Block>(BLOCK_POS_3, BLOCK_SIZE));
 	gmkObjs_.push_back(std::make_shared<Board>(BOARD_POS, BOARD_SIZE));
 	gmkObjs_.push_back(std::make_shared<TestObj>());
 	

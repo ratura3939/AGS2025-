@@ -133,6 +133,9 @@ private:
 	std::unique_ptr<PixelRenderer>dodgeRender_;
 	int dodgeScreen_;
 
+
+
+
 	bool isDrawPostEffect_;	//ポストエフェクトをかけるか
 #pragma endregion
 
@@ -160,5 +163,12 @@ private:
 
 	bool prevInputP_;			//デバッグ用トリガ
 	bool isEnemyUpdate_;
+
+	//ジャスト回避
+	std::unique_ptr<PixelMaterial>skipMaterial_;
+	std::unique_ptr<PixelRenderer>skipRender_;
+	int skipScreen_;
+	int skipCounter_;
+	bool isSkipEnd_;
 };
 
