@@ -553,7 +553,7 @@ void Game::Draw(void)
 	//メニューボタンの表示
 	UIManager2d::GetInstance().Draw(MENU_BTN);
 
-	DrawDebug();
+	//DrawDebug();
 
 	//ポストエフェクトをかけるとき
 	if (isDrawPostEffect_) {

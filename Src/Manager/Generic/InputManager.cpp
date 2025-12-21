@@ -6,6 +6,7 @@ InputManager* InputManager::instance_ = nullptr;
 
 namespace {
 	const int LB_NUM = 256;
+	const int RB_NUM = 512;
 }
 
 void InputManager::CreateInstance(void)
@@ -139,6 +140,8 @@ void InputManager::ResetInput(void)
 
 	inputTable_["push"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_Z },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_X  } };	//LT
 	inputTable_["pull"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_C },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A  } };	//RT
+
+	inputTable_["skip"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_J },{ PERIPHERAL_TYPE::GAMEPAD,RB_NUM  } };	//RT
 
 
 	//É|Å[ÉY
