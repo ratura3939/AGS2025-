@@ -119,5 +119,8 @@ private:
 
     //d—ÍŠÖŒW
 	float jumpPow_;
+
+    //V‚µ‚¢–Ú•W‰ñ“]‚ğİ’è‚·‚é‚©
+	bool SetNewGoalRot_;
 };
 

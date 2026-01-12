@@ -83,6 +83,7 @@ PlayerChara::PlayerChara(AttackManager& _atk)
 	afterMoveRad_ = 0.0f;
 	speciesName_ = CHARACTER_NAME;
 	jumpPow_ = 0.0f;
+	SetNewGoalRot_ = false;
 }
 
 PlayerChara::~PlayerChara(void)
@@ -154,9 +155,11 @@ void PlayerChara::DoUpdate(void)
 			afterMoveRad_ = GetToLockDeg();
 		}
 
-		//目標角度設定
-		SetGoalRot(afterMoveRad_);
-
+		if (SetNewGoalRot_) {
+			//目標角度設定
+			SetGoalRot(afterMoveRad_);
+		}
+		
 		Rotation();
 		if (allertTime_ > ALLERT_TIME) {
 			uiCntl_->ChangeAllert(false);
@@ -361,6 +364,8 @@ void PlayerChara::DrawUI(void)
 
 void PlayerChara::Move(void)
 {
+	SetNewGoalRot_ = false;
+
 	//移動を行わないとき
 	if (moveDir_ == MOVE_DIR::NONE || state_ == STATE::ATTACK) {
 		//通常なら
@@ -377,6 +382,9 @@ void PlayerChara::Move(void)
 	std::string seName = "Walk";
 
 	afterMoveRad_ = 0.0f;
+	if (moveDir_ != MOVE_DIR::NONE) {
+		SetNewGoalRot_ = true;
+	}
 
 	//移動方向
 	if (moveDir_ == MOVE_DIR::FORWARD) {
