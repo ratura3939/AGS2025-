@@ -4,6 +4,7 @@
 #include"../../../../Renderer/ModelMaterial.h"
 #include"../../../../Renderer/ModelRenderer.h"
 #include"../../../Common/Geometry/Model.h"
+#include"../../StageManager.h"
 #include "Gate.h"
 
 //ƒ[ƒJƒ‹’è”1
@@ -12,7 +13,7 @@ namespace {
 	const std::string OBJ_NAME = "Gate";
 	const VECTOR INIT_SCL = { 0.4f,0.4f,0.4f };
 	const VECTOR FENCE_RELATIVE_POS = { 0.0f,-1200.0f,0.0f };
-	const float FENCE_MOVE_MAX = 800.0f;
+	const float FENCE_MOVE_MAX = 800.0f * StageManager::INIT_MASTER_SCALE;
 }
 
 Gate::Gate(const VECTOR& _pos, const Quaternion& _qua)
@@ -34,6 +35,15 @@ void Gate::Draw(void)
 	material_->SetConstBufPS(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
 	//•`‰æ
 	render_->Draw();
+}
+
+void Gate::DrawDebug(void)
+{
+	collider_->DrawDebugCollider();
+	fence_->DrawDebug();
+
+	const VECTOR fPos = fence_->GetPos();
+	DrawFormatString(0, 300, 0xff0000, "Gate Pos={%.1f, %.1f, %.1f}\nFence Pos={%.1f, %.1f, %.1f}", pos_.x,pos_.y,pos_.z, fPos.x, fPos.y, fPos.z);
 }
 
 void Gate::HitCollider(std::weak_ptr<Collider> _col)

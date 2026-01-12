@@ -17,6 +17,7 @@ public:
     ~Gate(void)override;
 
     void Draw(void)override;
+	void DrawDebug(void)override;
 
     void HitCollider(std::weak_ptr<Collider> _col)override;
 

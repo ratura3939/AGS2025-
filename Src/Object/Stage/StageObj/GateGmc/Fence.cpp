@@ -4,6 +4,7 @@
 #include"../../../../Utility/Utility.h"
 #include"../../../Common/Geometry/Model.h"
 #include"../../../Common/Geometry/Cube.h"
+#include"../../StageManager.h"
 #include "Fence.h"
 
 //ローカル定数1
@@ -14,15 +15,14 @@ namespace {
 	const VECTOR INIT_SCL = { 0.4f,0.4f,0.4f };
 	const float MOVE_SPEED = 6.0f;
 
-	const VECTOR COLLIDER_SIZE = VECTOR{ 100.0f,400.0f,400.0f };
-	const VECTOR COLLIDER_DIFF_Y= VECTOR{ 0.0f,400.0f,0.0f };
+	const VECTOR COLLIDER_SIZE = VScale({ 100.0f,400.0f,400.0f },StageManager::INIT_MASTER_SCALE);
+	const VECTOR COLLIDER_DIFF_Y= VScale({ 0.0f,400.0f,0.0f },StageManager::INIT_MASTER_SCALE);
 }
 
 Fence::Fence(const VECTOR& _pos, const Quaternion& _rot)
 	: colliderPos_(Utility::VECTOR_ZERO)
 {
 	pos_ = _pos;
-
 }
 
 Fence::~Fence(void)
@@ -52,7 +52,7 @@ void Fence::SetModel(void)
 	modelId_ = resM.Load(ResourceManager::SRC::FENCE_MDL).handleId_;
 	scl_ = INIT_SCL;
 
-	colliderPos_ = VAdd(pos_, COLLIDER_DIFF_Y);
+	colliderPos_ = VAdd(VScale(pos_,StageManager::INIT_MASTER_SCALE), COLLIDER_DIFF_Y);
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;

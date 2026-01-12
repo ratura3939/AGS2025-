@@ -2,13 +2,14 @@
 #include"../../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../../Utility/Utility.h"
 #include"../../../Common/Geometry/Cube.h"
+#include"../../StageManager.h"
 #include "Block.h"
 
 //ÉçÅ[ÉJÉãíËêî
 namespace {
 	const std::string OBJ_NAME = "Block";
 	const VECTOR INIT_SCL = { 1.0f,1.0f,1.0f };
-	const VECTOR COLLIDER_SIZE = { 200.0f,260.0f,200.0f };
+	const VECTOR COLLIDER_SIZE = VScale({ 200.0f,260.0f,200.0f },StageManager::INIT_MASTER_SCALE);
 }
 
 Block::Block(const VECTOR& _pos, const VECTOR& _size)

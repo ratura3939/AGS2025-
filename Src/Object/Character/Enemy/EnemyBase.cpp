@@ -350,10 +350,12 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		//死亡アニメーション
 		animController_->Play("dethStart", SPEED_ANIM,{"dethSus"});
 
-		//コライダー登録解除rrrrrrrr
+		//コライダー登録解除
 		//CollisionManager& colM = CollisionManager::GetInstance();
 		CollisionManager::GetInstance().MarkForDelete(collider_->GetManagementNumber());
 		CollisionManager::GetInstance().MarkForDelete(atkCollider_->GetManagementNumber());
+
+		isActiveGravity_ = false;	//重力無効化
 
 		break;
 	case ENEMY_STATE::END:

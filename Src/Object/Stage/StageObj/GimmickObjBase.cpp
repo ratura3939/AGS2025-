@@ -1,3 +1,4 @@
+#include"../StageManager.h"
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../../Renderer/ModelRenderer.h"
 #include "GimmickObjBase.h"
@@ -21,6 +22,9 @@ void GimmickObjBase::DoInit(void)
 {
 	//各オブジェクトの設定
 	SetParam();
+	pos_ = VScale(pos_, StageManager::INIT_MASTER_SCALE);
+	scl_ = VScale(scl_, StageManager::INIT_MASTER_SCALE);
+
 	MV1SetPosition(modelId_, pos_);
 	MV1SetScale(modelId_, scl_);
 
@@ -52,7 +56,7 @@ void GimmickObjBase::Draw(void)
 		//DrawCircle(screenPos_.x, screenPos_.y, 10, screenPosColor_);
 	}
 
-	//DrawDebug();
+	DrawDebug();
 }
 
 void GimmickObjBase::DrawDebug(void) 

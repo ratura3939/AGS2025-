@@ -8,6 +8,9 @@
 class StageManager
 {
 public:
+
+	static constexpr float INIT_MASTER_SCALE = 1.0f;
+
 	void Init(void);
 	void Update(void);
 	void Draw(void);

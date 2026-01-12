@@ -3,11 +3,12 @@
 #include"../../../Renderer/ModelMaterial.h"
 #include"../../../Utility/Utility.h"
 #include"../../Common/Geometry/Sphere.h"
+#include"../StageManager.h"
 #include "TestObj.h"
 
 //ローカル定数
 namespace {
-	const float SPHERE_RADIUS = 150.0f;	//コライダー半径
+	const float SPHERE_RADIUS = 150.0f*StageManager::INIT_MASTER_SCALE;	//コライダー半径
 	const std::string OBJ_NAME = "Moon";
 	const float ATTACK_POW_DEC_RATE = 40.0f;	//攻撃力減衰率
 }

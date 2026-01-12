@@ -3,6 +3,7 @@
 #include"../../../../Utility/Utility.h"
 #include"../../../Common/Geometry/Model.h"
 #include"../../../Common/Geometry/Cube.h"
+#include"../../StageManager.h"
 #include "Stairs.h"
 
 //ÉçÅ[ÉJÉãíËêî
@@ -10,7 +11,7 @@ namespace {
 	const std::string OBJ_NAME = "Stairs";
 	const VECTOR INIT_SCL = { 1.5f,1.5f,1.5f };
 	const float COLLIDER_DEG = 55.0f;
-	const VECTOR COLLIDER_SIZE = { 180.0f,250.0f,170.0f };
+	const VECTOR COLLIDER_SIZE = VScale({ 180.0f,250.0f,170.0f },StageManager::INIT_MASTER_SCALE);
 	const VECTOR COLLIDER_POS_OFFSET = { 0.0f,-40.0f,50.0f };
 }
 

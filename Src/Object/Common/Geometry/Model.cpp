@@ -105,4 +105,5 @@ void Model::RedyCollision(void)
 void Model::DebugDraw(void)
 {
 	//DrawFormatString(0, 0, GetColor(255, 0, 255), "Model Collider: Pos(%.2f, %.2f, %.2f)", colPos_.x, colPos_.y, colPos_.z);
+	DrawSphere3D(colPos_, 1.0f, 16, GetColor(255, 0, 255), GetColor(255, 0, 255), FALSE);
 }
