@@ -17,6 +17,9 @@ public:
 
     void SetState(const LIBRA_PLATE_STATE& _state);
 
+	const float GetCurrentLoadWeight(void)const { return currentLoadWeight_; }
+	const float GetMoveOffset(void)const { return moveOffset_; }
+
 private:
     void SetModel(void)override;
     void UpdateNomal(void)override;

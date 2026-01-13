@@ -1,5 +1,8 @@
 #pragma once
+#include<memory>
 #include "../GimmickObjBase.h"
+#include"LibraPlate.h"
+
 class LibraGimmickObjs :
     public GimmickObjBase
 {
@@ -18,4 +21,7 @@ public:
 private:
     void SetParam(void)override;
     void UpdateNomal(void)override;
+
+	std::unique_ptr<LibraPlate> firstPlate_;
+	std::unique_ptr<LibraPlate> secondPlate_;
 };
