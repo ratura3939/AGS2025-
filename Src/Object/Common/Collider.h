@@ -20,6 +20,7 @@ public:
 		,PREATTACK	//攻撃前隙
 		,SWITCH     //スイッチ
 		,STAIRS		//階段
+		,LIBRA		//天秤
 	};
 
 	Collider(ActorBase& _master, const std::set<COL_TAG> _tags, std::unique_ptr<Geometry> _geo, const std::set<COL_TAG> _noHitTags = {});

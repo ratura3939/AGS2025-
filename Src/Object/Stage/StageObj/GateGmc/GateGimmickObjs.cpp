@@ -12,8 +12,8 @@ GateGimmickObjs::GateGimmickObjs(const VECTOR& _switchPos, const VECTOR& _gatePo
 	sndM.Add(SoundManager::TYPE::SE, "MoveFence", rsM.Load(ResourceManager::SRC::FENCE_SE).handleId_);
 	sndM.Add(SoundManager::TYPE::SE, "PressSwitch", rsM.Load(ResourceManager::SRC::SWITCH_SE).handleId_);
 
-
-	sndM.AdjustVolume("MoveFence", 70.0f);
+	const float VOLUME_PERCENT = 70.0f;
+	sndM.AdjustVolume("MoveFence", VOLUME_PERCENT);
 }
 
 GateGimmickObjs::~GateGimmickObjs(void)

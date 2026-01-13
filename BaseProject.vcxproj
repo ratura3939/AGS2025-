@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Stage\StageObj\LibraGmc\LibraPlate.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObj\LibraGmc\LibraGimmickObjs.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\AfectAbilityObjBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\Board.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\Block.cpp" />
@@ -102,6 +104,8 @@
     <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\StageWall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Stage\StageObj\LibraGmc\LibraPlate.h" />
+    <ClInclude Include="Src\Object\Stage\StageObj\LibraGmc\LibraGimmickObjs.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\AfectAbilityObjBase.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\Board.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\StaticParts\Block.h" />
