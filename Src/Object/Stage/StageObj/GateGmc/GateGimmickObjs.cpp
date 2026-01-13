@@ -25,7 +25,7 @@ void GateGimmickObjs::Draw(void)
 	gate_->Draw();
 	switchObj_->Draw();
 
-	gate_->DrawDebug();
+	//gate_->DrawDebug();
 }
 
 void GateGimmickObjs::HitCollider(std::weak_ptr<Collider> _col)
