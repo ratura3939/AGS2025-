@@ -38,6 +38,12 @@ public:
 	void AddAttackCollider(const std::string& _name, std::weak_ptr<Collider> _col, const bool _friendFire,
 		const float _totalTime, const float _start = 0.0f, const float _end = 0.0f);
 
+	/// <summary>
+	/// UŒ‚î•ñíœ
+	/// </summary>
+	/// <param name="_name"></param>
+	void DeleteAttackCollider(const std::string& _name);
+
 	void DeleteCollider(const std::string& _name);
 
 	/// <summary>

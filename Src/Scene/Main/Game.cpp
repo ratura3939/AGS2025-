@@ -50,6 +50,8 @@ namespace {
 
 	const float LOCK_DISTANCE_MIN_NOMAL = 500.0f;		//ロックオン時に最低限離れておく距離
 	const float LOCK_DISTANCE_MIN_BOSS = 1000.0f;		//ロックオン時に最低限離れておく距離
+
+	const int BGM_VOL = 80;
 }
 
 Game::Game(void)
@@ -646,7 +648,7 @@ void Game::Release(void)
 void Game::Reset(void)
 {
 	SoundManager& sndM = SoundManager::GetInstance();
-	sndM.AdjustVolume(SoundManager::TYPE::BGM, 80);	//前シーンに戻るのでBGMの音量を復活
+	sndM.AdjustVolume(SoundManager::TYPE::BGM, BGM_VOL);	//前シーンに戻るのでBGMの音量を復活
 	//とりあえずメニューからの復帰時は追従に
 	//メニュー開く直前に変える可能性大
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);

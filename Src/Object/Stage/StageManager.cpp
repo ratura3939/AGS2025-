@@ -25,15 +25,18 @@ namespace {
 	const VECTOR GATE_POS = { -311.0f,1800.0f,2923.0f };
 	//回転テーブル
 	const VECTOR TABLE_POS = { -7000,300.0f,-2900.0f };
-	const VECTOR TABLE_POS_2 = { -5900,300.0f,-2000.0f };
+	const VECTOR TABLE_POS_2 = { -6200,300.0f,-2000.0f };
 	const VECTOR TABLE_POS_3 = { -6800,300.0f,-1100.0f };
-	const VECTOR TABLE_POS_4 = { -5900,300.0f,-200.0f };
+	const VECTOR TABLE_POS_4 = { -6000,300.0f,-200.0f };
+	const VECTOR TABLE_POS_5 = { -6930,300.0f,700.0f };
 	//十字架
 	const VECTOR CROSS_POS = { -3000,300.0f,0.0f };
 	//階段
 	const VECTOR SRAIRS_POS = { 3570.0f,0.0f,-6280.0f };
 	const VECTOR SRAIRS_POS_2 = { 2380.0f,0.0f,-4800.0f };
 	const VECTOR SRAIRS_POS_3 = { 380.0f,0.0f,-4800.0f };
+	const VECTOR SRAIRS_POS_4 = { -4900.0f,0.0f,-3400.0f };
+	const VECTOR SRAIRS_POS_5 = { -6740.0f,0.0f,-4649.0f };
 
 	//ブロック
 	const VECTOR BLOCK_SIZE = { 12.0f,1.5f,1.7f };
@@ -71,10 +74,13 @@ void StageManager::Init(void)
 	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS_2));
 	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS_3));
 	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS_4));
+	gmkObjs_.push_back(std::make_shared<SpinDisc>(TABLE_POS_5));
 	//階段
 	gmkObjs_.push_back(std::make_shared<Stairs>(SRAIRS_POS, Quaternion::Euler(0.0f, Utility::Deg2RadF(-ROT_DEG_QUARTER), 0.0f)));
 	gmkObjs_.push_back(std::make_shared<Stairs>(SRAIRS_POS_2, Quaternion()));
 	gmkObjs_.push_back(std::make_shared<Stairs>(SRAIRS_POS_3, Quaternion()));
+	gmkObjs_.push_back(std::make_shared<Stairs>(SRAIRS_POS_4, Quaternion::Euler(0.0f, Utility::Deg2RadF(ROT_DEG_QUARTER), 0.0f)));
+	gmkObjs_.push_back(std::make_shared<Stairs>(SRAIRS_POS_5, Quaternion()));
 	//ブロック
 	gmkObjs_.push_back(std::make_shared<Block>(BLOCK_POS, BLOCK_SIZE, Quaternion::Euler(0.0f, Utility::Deg2RadF(ROT_DEG_QUARTER), 0.0f)));
 	gmkObjs_.push_back(std::make_shared<Block>(BLOCK_POS_2, BLOCK_SIZE, Quaternion::Euler(0.0f, Utility::Deg2RadF(ROT_DEG_QUARTER), 0.0f)));

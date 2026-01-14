@@ -354,6 +354,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		//CollisionManager& colM = CollisionManager::GetInstance();
 		CollisionManager::GetInstance().MarkForDelete(collider_->GetManagementNumber());
 		CollisionManager::GetInstance().MarkForDelete(atkCollider_->GetManagementNumber());
+		atkManager_.DeleteAttackCollider(speciesName_);
 
 		isActiveGravity_ = false;	//d—Í–³Œø‰»
 

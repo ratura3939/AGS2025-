@@ -83,6 +83,12 @@ void AttackManager::Attack(const std::string& _name, const std::string& _sndName
 	}
 }
 
+void AttackManager::DeleteAttackCollider(const std::string& _name)
+{
+	attackColliders_.erase(_name);
+	updateAtk_.erase(_name);
+}
+
 void AttackManager::DeleteCollider(const std::string& _name)
 {
 	attackColliders_.erase(_name);
