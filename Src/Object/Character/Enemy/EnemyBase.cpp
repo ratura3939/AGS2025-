@@ -177,8 +177,6 @@ void EnemyBase::UpdateSearch(void)
 
 void EnemyBase::UpdateBattle(void)
 {
-	//この内容は初期キャラ用。攻撃時には止まって攻撃する
-	//強いキャラクターは移動攻撃も想定するのでここの処理とは少し違っていくる
 	//プレイヤーとの距離
 	float distance = Utility::MagnitudeF(VSub(pPos_, pos_));
 
@@ -228,7 +226,6 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 		//一定の時間が過ぎていたら
 		if (stayCnt_ >= STAY_TIME) {
 			//行先の再設定
-			//行先の角度設定(characterRotYに変更すべし)
 			VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
 			float degRand = static_cast<float>(GetRand(static_cast<int>(Utility::CIRCLE_DEG)));
 			float radRand = Utility::Deg2RadF(degRand) - cameraRot.y;
@@ -273,9 +270,6 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 
 void EnemyBase::MoveSearch(const VECTOR& _pPos)
 {
-	//実装予定
-	//＜敵のひきつけ＞
-	//ほかのオブジェクトの使用による効果なので初期では作らない
 }
 
 void EnemyBase::MoveBattle(const VECTOR& _pPos)

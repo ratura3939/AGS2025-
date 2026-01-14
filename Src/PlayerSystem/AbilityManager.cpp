@@ -82,10 +82,6 @@ void AbilityManager::Draw(void)
 	}
 
 	abilities_[static_cast<int>(useAbility_)]->Draw();
-
-	//if (IsUseMagnet()) {
-	//	DrawSphere3D(GetFollowPos4UseMagnet(test_), 8, 8, 0xff0000, 0xff0000, false);
-	//}
 }
 
 void AbilityManager::ChangeAbility(const ABILITY_TYPE _type)

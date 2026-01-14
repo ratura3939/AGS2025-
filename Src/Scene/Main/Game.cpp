@@ -571,7 +571,7 @@ void Game::Draw(void)
 	//メニューボタンの表示
 	UIManager2d::GetInstance().Draw(MENU_BTN);
 
-	DrawDebug();
+	//DrawDebug();
 
 	//ポストエフェクトをかけるとき
 	if (isDrawPostEffect_) {
@@ -585,9 +585,6 @@ void Game::DrawScanLine(void)
 	int mainScreen = SceneManager::GetInstance().GetMainScreen();
 
 	SetDrawScreen(scanLineScreen_);
-
-	// 画面を初期化
-	//ClearDrawScreen();
 
 	DrawGraph(0, 0, mainScreen, false);
 	scanLineRender_->Draw();
@@ -605,9 +602,6 @@ void Game::DrawBlur(void)
 	blurMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
 
 	SetDrawScreen(blurScreen_);
-
-	// 画面を初期化
-	//ClearDrawScreen();
 
 	DrawGraph(0, 0, mainScreen, false);
 	blurRender_->Draw();
@@ -693,9 +687,7 @@ void Game::ChangeActionDirec(const ACTION_DIRECTION _direc)
 
 void Game::AttackDataInit(void)
 {
-	////攻撃の情報入れ
-	//atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD,false, false, PlayerManager::ATTACK_TIME);
-	//atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, true,false, EnemyManager::ATTACK_TIME, EnemyManager::ATTACK_TIME_START, EnemyManager::ATTACK_TIME_END);
+	
 }
 
 const int Game::DecideRockEnemy(void)
