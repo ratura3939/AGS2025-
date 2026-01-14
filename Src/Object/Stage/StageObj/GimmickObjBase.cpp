@@ -9,6 +9,7 @@ GimmickObjBase::GimmickObjBase(void)
 	, isTargeting_(false)
 	, screenPos_({ 0.0f,0.0f,0.0f })
 	, isAffectingNow_(false)
+	, isGravityActivePreAbility_(false)
 	, update_(&GimmickObjBase::UpdateNomal)
 {
 }
@@ -74,6 +75,11 @@ void GimmickObjBase::SetObjectRenderColor(const FLOAT4& _color)
 	material_->SetConstBufPS(0, _color);
 }
 
+std::weak_ptr<Collider> GimmickObjBase::GetCollider(void) const
+{
+	return collider_;
+}
+
 const VECTOR& GimmickObjBase::GetScreenPos(void) const
 {
 	return screenPos_;
@@ -93,9 +99,10 @@ void GimmickObjBase::SetIsAffecting(const bool _flag)
 {
 	isAffectingNow_ = _flag;
 	if (_flag) {
+		isGravityActivePreAbility_ = isActiveGravity_;
 		isActiveGravity_ = false;
 	}
-	else isActiveGravity_ = true;
+	else isActiveGravity_ = isGravityActivePreAbility_;
 }
 
 const bool GimmickObjBase::IsAffecting(void) const

@@ -4,8 +4,10 @@
 
 //ローカル定数
 namespace {
-	const VECTOR INIT_SCL = { 1.0f,1.0f,1.0f };
+	const VECTOR INIT_SCL = { 2.0f,2.0f,2.0f };
 	const float MOVE_SPEED = 2.0f;
+	const float PLATE_COLLIDER_HEIGHT = 50.0f;
+	const float MOVE_LIMIT = 280.0f;
 }
 
 LibraPlate::LibraPlate(const VECTOR& _pos, const Quaternion& _qua, const float _offset)
@@ -13,6 +15,7 @@ LibraPlate::LibraPlate(const VECTOR& _pos, const Quaternion& _qua, const float _
 	pos_ = _pos;
 	pos_.y += _offset;
 	quaRot_ = _qua;
+	moveOffset_ = _offset;
 }
 
 LibraPlate::~LibraPlate(void)
@@ -21,9 +24,16 @@ LibraPlate::~LibraPlate(void)
 
 void LibraPlate::HitCollider(std::weak_ptr<Collider> _col)
 {
-	//上に乗っているかの判定
+	using TAG = Collider::COL_TAG;
 
-	//積載量の更新
+	//上に乗っているかの判定
+	if (_col.lock()->IsContainsAnyTag(std::set<TAG>{TAG::OBJECT,TAG::PLAYER})) {
+		//プレート上だったら
+		if (pos_.y + PLATE_COLLIDER_HEIGHT < _col.lock()->GetGeometry().GetPos().y) {
+			//積載量の更新
+			currentLoadWeight_ += _col.lock()->GetWeight();
+		}
+	}
 }
 
 void LibraPlate::SetState(const LIBRA_PLATE_STATE& _state)
@@ -45,6 +55,9 @@ void LibraPlate::SetModel(void)
 
 void LibraPlate::UpdateNomal(void)
 {
+	currentLoadWeight_ = 0.0f;
+	prevPos_ = pos_;
+
 	//動かない
 	if (state_ == LIBRA_PLATE_STATE::STAY)return;
 
@@ -59,5 +72,20 @@ void LibraPlate::UpdateNomal(void)
 	{
 		pos_.y -= MOVE_SPEED;
 		moveOffset_ -= MOVE_SPEED;
+	}
+
+	//上限下限チェック
+	ClampMoveOffset();
+}
+
+void LibraPlate::ClampMoveOffset(void)
+{
+	if (moveOffset_ > MOVE_LIMIT) {
+		moveOffset_ = MOVE_LIMIT;
+		pos_.y = prevPos_.y;
+	}
+	else if (moveOffset_ < -MOVE_LIMIT) {
+		moveOffset_ = -MOVE_LIMIT;
+		pos_.y = prevPos_.y;
 	}
 }

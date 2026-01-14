@@ -11,6 +11,8 @@ namespace {
 	const float SPHERE_RADIUS = 150.0f*StageManager::INIT_MASTER_SCALE;	//コライダー半径
 	const std::string OBJ_NAME = "Moon";
 	const float ATTACK_POW_DEC_RATE = 40.0f;	//攻撃力減衰率
+	const VECTOR INIT_SCALE = { 0.6f,0.6f ,0.6f };	//初期スケール
+	const VECTOR INIT_POS = { -2500.0f,0.0f ,-5330.0f };	//初期スケール
 }
 
 void TestObj::DoHitCollider(const std::weak_ptr<Collider>& _col)
@@ -29,8 +31,8 @@ void TestObj::SetModel(void)
 	speciesName_ = OBJ_NAME;
 	isAffectAbilyty_ = true;
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TEST_MDL).handleId_;
-	pos_ = { 200.0f,1500.0f,500.0f };
-	scl_ = { 0.6f,0.6f ,0.6f };
+	pos_ = INIT_POS;
+	scl_ = INIT_SCALE;
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;

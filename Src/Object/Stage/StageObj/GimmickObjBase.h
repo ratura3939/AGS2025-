@@ -28,6 +28,9 @@ public:
 	/// <param name="_color"></param>
 	virtual void SetObjectRenderColor(const FLOAT4& _color);
 
+	//コライダー取得
+	std::weak_ptr<Collider> GetCollider(void)const;
+
 	//位置設定
 	const VECTOR& GetScreenPos(void)const;
 
@@ -72,6 +75,7 @@ protected:
 	bool isAffectAbilyty_;	//能力の影響を受けるか
 	bool isAffectingNow_;	//現在影響を受けているか
 	bool isTargeting_;		//対象として選択されているか
+	bool isGravityActivePreAbility_; //能力影響前の重力有効状態保存用
 
 	VECTOR screenPos_;		//スクリーン上での位置
 

@@ -1,13 +1,14 @@
 #pragma once
+
 #include "../NoneAfectAbilityObjBase.h"
 #include"../../../Common/Collider.h"
 
-class Block :
+class WallSingle :
     public NoneAfectAbilityObjBase
 {
 public:
-	Block(const VECTOR& _pos, const VECTOR& _size, const Quaternion& _qua);
-	~Block(void)override;
+	WallSingle(const VECTOR& _pos, const Quaternion& _qua);
+	~WallSingle(void)override;
 
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 

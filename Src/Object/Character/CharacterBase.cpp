@@ -155,12 +155,11 @@ void CharacterBase::HitCollider(std::weak_ptr<Collider> _col)
 			//}
 			//pos_.y = hitPoint.y;
 			pos_.y += backPow.y;
+
+			gravity_ = { 0.0f,0.0f,0.0f };
 		}
 
 		if (colNormal.z > 0.0f)pos_.z = prevPos_.z;
-
-
-		gravity_ = { 0.0f,0.0f,0.0f };
 	}
 
 	//”h¶ƒNƒ‰ƒX‘¤‚Ìˆ—

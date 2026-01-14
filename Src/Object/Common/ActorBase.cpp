@@ -14,6 +14,7 @@ ActorBase::ActorBase(void)
 	, quaRotLocal_(Quaternion::Euler(Utility::VECTOR_ZERO))
 	, speciesName_("")
 	, power_(0.0f)
+	, weight_(0.0f)
 	, gravity_(Utility::VECTOR_ZERO)
 	, isActiveGravity_(true)
 	, prevPos_(Utility::VECTOR_ZERO)
@@ -103,6 +104,11 @@ void ActorBase::AddExternalVec(const VECTOR& _vec)
 const float ActorBase::GetPower(void) const
 {
 	return power_;
+}
+
+const float ActorBase::GetWeight(void) const
+{
+	return weight_;
 }
 
 const std::string& ActorBase::GetSpeciesName(void) const

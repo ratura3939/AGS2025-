@@ -569,7 +569,7 @@ void Game::Draw(void)
 	//メニューボタンの表示
 	UIManager2d::GetInstance().Draw(MENU_BTN);
 
-	//DrawDebug();
+	DrawDebug();
 
 	//ポストエフェクトをかけるとき
 	if (isDrawPostEffect_) {
@@ -748,7 +748,7 @@ void Game::DrawDebug(void)
 	//	DrawString(0, 140, "NOW_SLOW", 0xffffff);
 	//}
 	//enemy_->DrawDebug();
-	atkMng_->DrawDebug();
+	//atkMng_->DrawDebug();
 	//stage_->DrawDebug();
 	player_->DrawDebug();
 }

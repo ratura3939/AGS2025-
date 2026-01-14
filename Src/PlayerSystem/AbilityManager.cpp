@@ -250,14 +250,24 @@ void AbilityManager::UseAbility(void)
 	selectObj_.lock()->ResetGravity();
 	selectObj_.lock()->SetIsAffecting(true);
 
+	//マグネット時はプレイヤーとの当たり判定を除外
+	if(useAbility_==ABILITY_TYPE::MAGNET){
+		selectObj_.lock()->GetCollider().lock()->AddNoHitTag(Collider::COL_TAG::PLAYER);
+	}
+
 	update_ = &AbilityManager::UpdateUse;
 
 }
 
 void AbilityManager::EndUsingAbility(void)
 {
+
 	//使用終了
 	if (!selectObj_.expired()) {
+		//マグネット時はプレイヤーとの当たり判定を戻す
+		if (useAbility_ == ABILITY_TYPE::MAGNET) {
+			selectObj_.lock()->GetCollider().lock()->DeleteNoHitTag(Collider::COL_TAG::PLAYER);
+		}
 		selectObj_.lock()->FinishAffect();
 		selectObj_.lock()->SetIsAffecting(false);
 		selectObj_.reset();
@@ -267,6 +277,8 @@ void AbilityManager::EndUsingAbility(void)
 
 	//付与色をなくす
 	stage_.SetAbilityColor(NONE_COLOR);
+
+	
 
 	update_ = &AbilityManager::UpdateEnd;
 

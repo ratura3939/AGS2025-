@@ -80,6 +80,11 @@ const float Collider::GetPower(void)const
 	return master_.GetPower();
 }
 
+const float Collider::GetWeight(void)const
+{
+	return master_.GetWeight();
+}
+
 const std::string& Collider::GetMasterName(void)
 {
 	return master_.GetSpeciesName();

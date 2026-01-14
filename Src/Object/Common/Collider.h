@@ -63,6 +63,9 @@ public:
 	//UŒ‚—Í‚Ìæ“¾
 	const float GetPower(void)const;
 
+	//d‚³‚Ìæ“¾
+	const float GetWeight(void)const;
+
 	//‚¿å‚Ì–¼‘O‚ğæ“¾
 	const std::string& GetMasterName(void);
 

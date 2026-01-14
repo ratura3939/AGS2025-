@@ -41,7 +41,10 @@ public:
 	void AddExternalVec(const VECTOR& _vec);	
 
 	//攻撃力の取得
-	const float GetPower(void)const;	
+	const float GetPower(void)const;
+
+	//重さの取得
+	const float GetWeight(void)const;
 
 	//個体名取得
 	const std::string& GetSpeciesName(void)const;
@@ -77,6 +80,8 @@ protected:
 
 	std::shared_ptr<Collider> collider_;	//コライダー
 	float power_;			//攻撃力
+
+	float weight_;		//重さ
 
 	VECTOR gravity_;		//重力ベクトル
 	bool isActiveGravity_;	//重力が有効か

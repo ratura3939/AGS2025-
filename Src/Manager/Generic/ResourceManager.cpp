@@ -396,10 +396,13 @@ void ResourceManager::ResorceStage(void)
 	//ステージ(土台)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage_sakata.mv1");
 	resourcesMap_.emplace(SRC::STAGE_MDL, res);
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Ground.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "GroundSecond.mv1");
 	resourcesMap_.emplace(SRC::STAGE_GROUND_MDL, res);
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Wall.mv1");
 	resourcesMap_.emplace(SRC::STAGE_WALL_MDL, res);
+
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "WallSingle.mv1");
+	resourcesMap_.emplace(SRC::WALL_SINGLE_MDL, res);
 
 	//ステージ(壁)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "InsideWall.mv1");

@@ -14,10 +14,11 @@ namespace {
 	const VECTOR COLLIDER_SIZE = { 200.0f,20.0f,200.0f };
 }
 
-Board::Board(const VECTOR& _pos, const VECTOR& _size)
+Board::Board(const VECTOR& _pos, const VECTOR& _size, const Quaternion& _qua)
 {
 	pos_ = _pos;
 	scl_ = _size;
+	quaRot_ = _qua;
 }
 
 Board::~Board(void)

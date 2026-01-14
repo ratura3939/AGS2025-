@@ -12,10 +12,11 @@ namespace {
 	const VECTOR COLLIDER_SIZE = VScale({ 200.0f,260.0f,200.0f },StageManager::INIT_MASTER_SCALE);
 }
 
-Block::Block(const VECTOR& _pos, const VECTOR& _size)
+Block::Block(const VECTOR& _pos, const VECTOR& _size, const Quaternion& _qua)
 {
 	pos_ = _pos;
 	scl_ = _size;
+	quaRot_ = _qua;
 }
 
 Block::~Block(void)

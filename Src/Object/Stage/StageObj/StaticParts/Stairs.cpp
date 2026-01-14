@@ -15,10 +15,10 @@ namespace {
 	const VECTOR COLLIDER_POS_OFFSET = { 0.0f,-40.0f,50.0f };
 }
 
-Stairs::Stairs(const VECTOR& _pos, const float _deg)
+Stairs::Stairs(const VECTOR& _pos, const Quaternion& _qua)
 {
 	pos_ = _pos;
-	quaRotLocal_= Quaternion::Euler(0.0f, Utility::Deg2RadF(_deg), 0.0f);
+	quaRotLocal_= _qua;
 }
 
 Stairs::~Stairs(void)
@@ -32,7 +32,7 @@ void Stairs::HitCollider(std::weak_ptr<Collider> _col)
 void Stairs::SetModel(void)
 {
 	ResourceManager& resM = ResourceManager::GetInstance();
-	modelId_ = resM.Load(ResourceManager::SRC::STAIRS_LOW_MDL).handleId_;
+	modelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::STAIRS_LOW_MDL);
 	scl_ = INIT_SCL;
 
 	stairsColliderQua_ = Quaternion::Mult(quaRotLocal_,Quaternion::Euler(Utility::Deg2RadF(COLLIDER_DEG), 0.0f, 0.0f));

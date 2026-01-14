@@ -1,5 +1,9 @@
 #include "LibraGimmickObjs.h"
 
+namespace {
+	
+}
+
 LibraGimmickObjs::LibraGimmickObjs(const VECTOR& _firstLibraPos, const VECTOR& _secondLibraPos, const Quaternion& _gateQua)
 {
 	firstPlate_ = std::make_unique<LibraPlate>(_firstLibraPos, _gateQua,0.0f);
@@ -36,28 +40,48 @@ void LibraGimmickObjs::SetParam(void)
 
 void LibraGimmickObjs::UpdateNomal(void)
 {
-	//プレート移動量を絶対値取得
-	//限界値に達していたら動かない（STAYに）→終了
-	if (fabs(firstPlate_->GetMoveOffset()) >= 200.0f)
-	{
-		firstPlate_->SetState(LibraPlate::LIBRA_PLATE_STATE::STAY);
-		secondPlate_->SetState(LibraPlate::LIBRA_PLATE_STATE::STAY);
-		return;
-	}
+	//プレート移動量を値取得
+	const float firstPlateMove = firstPlate_->GetMoveOffset();
 
 	//積載量比較
 	const float firstWeight = firstPlate_->GetCurrentLoadWeight();
 	const float secondWeight = secondPlate_->GetCurrentLoadWeight();
 
+	using PLATE_STATE = LibraPlate::LIBRA_PLATE_STATE;
+	PLATE_STATE firstState = PLATE_STATE::STAY;
+	PLATE_STATE secondState = PLATE_STATE::STAY;
+
 	//重いほうをDOWN、軽いほうをUPに設定
 	if (firstWeight > secondWeight)
 	{
-		firstPlate_->SetState(LibraPlate::LIBRA_PLATE_STATE::DOWN);
-		secondPlate_->SetState(LibraPlate::LIBRA_PLATE_STATE::UP);
+		firstState = PLATE_STATE::DOWN;
+		secondState = PLATE_STATE::UP;
 	}
 	else if (firstWeight < secondWeight)
 	{
-		firstPlate_->SetState(LibraPlate::LIBRA_PLATE_STATE::UP);
-		secondPlate_->SetState(LibraPlate::LIBRA_PLATE_STATE::DOWN);
+		firstState = PLATE_STATE::UP;
+		secondState = PLATE_STATE::DOWN;
 	}
+	else {
+		//同じ重さなら釣り合うように
+
+		//一つ目が上がっていたら下げる
+		if (firstPlateMove > 0.0f) {
+			firstState = PLATE_STATE::DOWN;
+			secondState = PLATE_STATE::UP;
+		}
+		else if(firstPlateMove < 0.0f) {
+			firstState = PLATE_STATE::UP;
+			secondState = PLATE_STATE::DOWN;
+		}
+	}
+
+	//設定
+	firstPlate_->SetState(firstState);
+	secondPlate_->SetState(secondState);
+
+	//天秤の動作処理
+	firstPlate_->Update();
+	secondPlate_->Update();
+
 }

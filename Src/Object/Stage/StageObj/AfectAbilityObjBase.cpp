@@ -6,6 +6,11 @@
 #include"../../../Utility/Utility.h"
 #include "AfectAbilityObjBase.h"
 
+
+namespace {
+	const float AFECT_OBJ_WEIGHT = 5.0f;
+}
+
 AfectAbilityObjBase::AfectAbilityObjBase(void)
 {
 }
@@ -56,4 +61,6 @@ void AfectAbilityObjBase::SetParam(void)
 	//デバッグ
 	isDrawScreenPosCircle_ = true;
 	screenPosColor_ = 0xff0000;
+
+	weight_ = AFECT_OBJ_WEIGHT;
 }

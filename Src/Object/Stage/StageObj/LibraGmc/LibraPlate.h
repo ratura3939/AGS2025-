@@ -24,6 +24,8 @@ private:
     void SetModel(void)override;
     void UpdateNomal(void)override;
 
+	void ClampMoveOffset(void); //移動オフセットの制限
+
 	LIBRA_PLATE_STATE state_;   //現在の状態
 	float currentLoadWeight_;   //現在の載っている重さ
 	float moveOffset_;		    //移動オフセット

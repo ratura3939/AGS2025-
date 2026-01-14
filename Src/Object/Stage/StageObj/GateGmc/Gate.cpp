@@ -11,16 +11,16 @@
 namespace {
 	const float UV_SCALING_NOISE = 10.0f;
 	const std::string OBJ_NAME = "Gate";
-	const VECTOR INIT_SCL = { 0.4f,0.4f,0.4f };
-	const VECTOR FENCE_RELATIVE_POS = { 0.0f,-1200.0f,0.0f };
+	const VECTOR INIT_SCL = { 0.6f,0.6f,0.6f };
+	const VECTOR FENCE_RELATIVE_POS = { 0.0f,-1800.0f,0.0f };
 	const float FENCE_MOVE_MAX = 800.0f * StageManager::INIT_MASTER_SCALE;
 }
 
 Gate::Gate(const VECTOR& _pos, const Quaternion& _qua)
 {
 	pos_ = _pos;
-	fence_ = std::make_unique<Fence>(VAdd(pos_, FENCE_RELATIVE_POS), quaRot_);
 	quaRot_ = _qua;
+	fence_ = std::make_unique<Fence>(VAdd(pos_, FENCE_RELATIVE_POS), quaRot_);
 }
 
 Gate::~Gate(void)

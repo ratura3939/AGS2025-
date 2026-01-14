@@ -65,10 +65,12 @@ namespace {
 	float ATK_POWER = 30.0f;
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 
+	const float CHARACTER_WEIGHT = 1.0f; //重さ
 	const float GRAVITY_POW = 1.0f; //重力
 	const float JUMP_POW = 30.0f; //ジャンプ力
 
-	const VECTOR INIT_POSITION = { -7200.0f,0.0f,7350.0f };
+	const VECTOR INIT_POSITION = { 4271.0f,0.0f,-6142.0f };
+	//const VECTOR INIT_POSITION = { -7600.0f,0.0f,7600.0f };
 }
 
 
@@ -95,7 +97,7 @@ void PlayerChara::DoInit(void)
 	//モデル基礎情報
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;
 
-	//pos_ = INIT_POSITION;
+	pos_ = INIT_POSITION;
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT),0.0f);
 
@@ -124,7 +126,11 @@ void PlayerChara::DoInit(void)
 	//注視点の設定
 	focusPoint_ = FOCUS_NOMAL;
 
+	//HP設定
 	hp_ = PALYER_HP;
+
+	//重さ設定
+	weight_ = CHARACTER_WEIGHT;
 
 	//アニメ初期化
 	animController_ = std::make_unique<AnimationController>(modelId_);
@@ -238,7 +244,8 @@ void PlayerChara::Damage(const float _pow)
 
 void PlayerChara::Jump(void)
 {
-	if (jumpPow_ > 0.0f)return;
+	//if (jumpPow_ > 0.0f)return;
+	if (gravity_.y != 0.0f)return;
   	jumpPow_ = JUMP_POW;
 }
 
