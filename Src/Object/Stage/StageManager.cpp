@@ -39,13 +39,13 @@ namespace {
 	const VECTOR SRAIRS_POS_5 = { -6740.0f,0.0f,-4649.0f };
 
 	//ブロック
-	const VECTOR BLOCK_SIZE = { 12.0f,1.5f,1.7f };
-	const VECTOR BLOCK_SIZE_FOR_LIBRA = { 12.0f,2.0f,1.7f };
+	const VECTOR BLOCK_SIZE = { 11.0f,1.5f,1.7f };
+	const VECTOR BLOCK_SIZE_FOR_LIBRA = { 11.0f,2.0f,1.7f };
 	const VECTOR BLOCK_POS = { 3000.0f,0.0f,-6280.0f };
 	const VECTOR BLOCK_POS_2 = { 1000.0f,0.0f,-6280.0f };
 	const VECTOR BLOCK_POS_3 = { -1000.0f,0.0f,-6280.0f };
 	const VECTOR BLOCK_POS_4 = { -4800.0f,0.0f,-6261.0f };
-	const VECTOR BLOCK_POS_5 = { -7045.0f,0.0f,-4033.0f };
+	const VECTOR BLOCK_POS_5 = { -6805.0f,0.0f,-4033.0f };
 	const VECTOR BLOCK_POS_6 = { -6284.0f,0.0f,1829.0f };
 	//ボード
 	const VECTOR BOARD_POS = { 2000.0f,500.0f,-6350.0f };

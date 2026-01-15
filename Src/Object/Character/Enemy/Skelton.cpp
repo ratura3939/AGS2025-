@@ -22,6 +22,8 @@ namespace {
     const int ANIM_DETH_START = 29;      //死亡開始
     const int ANIM_DETH_SUSTANABLE = 28; //死亡持続
 #pragma endregion
+
+	const float UI_DEVIATION_Y = 300.0f* EnemyBase::CHARA_SCALE; //UI表示位置補正Y
 }
 
 Skelton::Skelton(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)
@@ -87,7 +89,7 @@ void Skelton::SetParam(void)
 	InitAnim();
 	animController_->Play("idle", SPEED_ANIM);
 
-	uiDeviationY_ = 250.0f;
+	uiDeviationY_ = UI_DEVIATION_Y;
 	maxHp_ = ENEMY_HP;
 
 	//位置設定

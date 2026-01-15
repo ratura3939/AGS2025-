@@ -16,7 +16,7 @@ public:
     //その他パラメータ類
     static constexpr float MOVE_POW = 3.0f;     //移動量
     static constexpr float MOVE_POW_FIND = 5.0f;//移動量(発見時)
-    static constexpr float CHARA_SCALE = 0.7f;  //サイズ
+    static constexpr float CHARA_SCALE = 1.0f;  //サイズ
     static constexpr float ENEMY_HP = 70.0f;
 
 #pragma endregion
