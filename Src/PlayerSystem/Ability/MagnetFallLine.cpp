@@ -1,12 +1,15 @@
 #include"../../Manager/Generic/ResourceManager.h"
 #include "MagnetFallLine.h"
 
+namespace {
+	const float SIZE_Y_MAX = 20.0f; //Y方向の最大サイズ
+}
+
 MagnetFallLine::MagnetFallLine(void)
 	: ActorBase()
 	, material_(nullptr)
 	, renderer_(nullptr)
 	, modelInitSizeY_(0.0f)
-	, distanceYToFallPoint_(0.0f)
 	, nearFallPoint_(0.0f)
 	, preNearFallPoint_(0.0f)
 {
@@ -45,6 +48,17 @@ void MagnetFallLine::DoInit(void)
 void MagnetFallLine::DoUpdate(void)
 {
 	preNearFallPoint_ = nearFallPoint_;
+	//落下地点が深くなったか
+	//nearFallPoint_ == 0.0fのとき当たり判定が行われていない　＞　つまり深くなっている
+	bool isLergerFallDipth = nearFallPoint_ == 0.0f;
+
+	//初期化
+	nearFallPoint_ = 0.0f;
+
+	if (isLergerFallDipth) {
+		//とりあえず大きくして判定をとるようにする
+
+	}
 }
 
 void MagnetFallLine::ChangeSizeYToFallPoint(void)

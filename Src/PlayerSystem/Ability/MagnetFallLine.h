@@ -26,7 +26,6 @@ private:
 	std::unique_ptr<ModelRenderer> renderer_;
 
 	float modelInitSizeY_;		    //モデルの初期Yサイズ
-    float distanceYToFallPoint_;    //モデルから落下地点までの距離
 	float nearFallPoint_;           //一番近い落下地点
 	float preNearFallPoint_;        //一番近い落下地点
 };
