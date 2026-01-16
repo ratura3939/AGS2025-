@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\PlayerSystem\Ability\MagnetFallLine.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\LibraGmc\LibraPlate.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\LibraGmc\LibraGimmickObjs.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\AfectAbilityObjBase.cpp" />
@@ -105,6 +106,7 @@
     <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\WallSingle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\PlayerSystem\Ability\MagnetFallLine.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\LibraGmc\LibraPlate.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\LibraGmc\LibraGimmickObjs.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\AfectAbilityObjBase.h" />
@@ -202,6 +204,18 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0_level_9_3</ShaderModel>
     </FxCompile>
     <FxCompile Include="Src\Shader\Model\BlurSkinVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\Model\MagnetLinePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\Model\MagnetLineVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>

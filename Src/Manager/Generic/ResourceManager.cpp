@@ -241,6 +241,10 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "ConnectMagnet.mp3");
 	resourcesMap_.emplace(SRC::CONNECT_MAGNET, res);
 
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "System/MagnetLineCylinder.mv1");
+	resourcesMap_.emplace(SRC::MAGNET_LINE_MDL, res);
+
+
 	//エフェクト
 	//剣
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "SwordEfc.efkefc");

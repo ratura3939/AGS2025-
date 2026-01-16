@@ -80,6 +80,7 @@ public:
 		,WOOD_BOARD_MDL
 		,BLOCK_MDL
 		,LIBRA_PLATE_MDL
+		,MAGNET_LINE_MDL
 
 		//‰¹
 		,TITLE_BGM
