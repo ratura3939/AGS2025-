@@ -2,6 +2,7 @@
 #include<DxLib.h>
 #include"../../../Common/Quaternion.h"
 
+class Line;
 class Sphere;
 class Capsule;
 class Cube;
@@ -14,6 +15,7 @@ public:
 
 #pragma region “–‚½‚è”»’èŠeŽí
 	virtual const bool IsHit(Geometry& _geo) = 0;
+	virtual const bool IsHit(Line& _line) = 0;
 	virtual const bool IsHit(Sphere& _sphere) = 0;
 	virtual const bool IsHit(Capsule& _capsule) = 0;
 	virtual const bool IsHit(Cube& _capsule) = 0;

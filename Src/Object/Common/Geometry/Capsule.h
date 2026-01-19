@@ -9,6 +9,7 @@ class Capsule :
     ~Capsule(void) override;
 
     const bool IsHit(Geometry& _geo)override;
+    const bool IsHit(Line& _line)override;
     const bool IsHit(Sphere& _sphere)override;
     const bool IsHit(Capsule& _capsule)override;
     const bool IsHit(Cube& _cube)override;

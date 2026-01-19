@@ -1,5 +1,6 @@
 ﻿#include<algorithm>
 #include"../../../Utility/Utility.h"
+#include"Line.h"
 #include"Sphere.h"
 #include"Capsule.h"
 #include"Model.h"
@@ -26,6 +27,11 @@ const bool Cube::IsHit(Geometry& _geo)
 {
 	UpdateObbAxis();
 	return _geo.IsHit(*this);
+}
+
+const bool Cube::IsHit(Line& _line)
+{
+	return false;
 }
 
 const bool Cube::IsHit(Sphere& _sphere)

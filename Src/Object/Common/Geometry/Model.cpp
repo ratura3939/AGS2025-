@@ -1,5 +1,6 @@
 #include<DxLib.h>
 #include"../../../Utility/Utility.h"
+#include"Line.h"
 #include"Sphere.h"
 #include"Capsule.h"
 #include"Cube.h"
@@ -20,6 +21,11 @@ Model::~Model(void)
 const bool Model::IsHit(Geometry& _geo)
 {
     return _geo.IsHit(*this);
+}
+
+const bool Model::IsHit(Line& _line)
+{
+    return false;
 }
 
 const bool Model::IsHit(Sphere& _sphere)

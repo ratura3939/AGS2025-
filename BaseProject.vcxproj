@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Geometry\Line.cpp" />
     <ClCompile Include="Src\PlayerSystem\Ability\MagnetFallLine.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\LibraGmc\LibraPlate.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\LibraGmc\LibraGimmickObjs.cpp" />
@@ -106,6 +107,7 @@
     <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\WallSingle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Common\Geometry\Line.h" />
     <ClInclude Include="Src\PlayerSystem\Ability\MagnetFallLine.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\LibraGmc\LibraPlate.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\LibraGmc\LibraGimmickObjs.h" />

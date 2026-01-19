@@ -1,3 +1,4 @@
+#include"Line.h"
 #include"Sphere.h"
 #include"Cube.h"
 #include"Model.h"
@@ -22,6 +23,11 @@ Capsule::~Capsule(void)
 const bool Capsule::IsHit(Geometry& _geo)
 {
 	return _geo.IsHit(*this);
+}
+
+const bool Capsule::IsHit(Line& _line)
+{
+	return false;
 }
 
 const bool Capsule::IsHit(Sphere& _sphere)

@@ -1,4 +1,5 @@
 ﻿#include"../../../Utility/Utility.h"
+#include"Line.h"
 #include"Capsule.h"
 #include"Cube.h"
 #include"Model.h"
@@ -18,6 +19,39 @@ Sphere::~Sphere(void)
 const bool Sphere::IsHit(Geometry& _geo)
 {
 	return _geo.IsHit(*this);
+}
+
+const bool Sphere::IsHit(Line& _line)
+{
+	const VECTOR start = _line.GetStartPos();
+	const VECTOR end = _line.GetEndPos();
+
+	const VECTOR line = _line.GetLine();
+	const VECTOR startToSphere = VSub(colPos_, start);
+
+	//球体の中心から線分への射影がどれ程の割合かを求める
+	float projectFactor = VDot(startToSphere, line) / VDot(line, line);
+	projectFactor = std::max(0.0f, std::min(1.0f, projectFactor)); // クランプ
+
+	//線分上の球体に最も近い点
+	const VECTOR closestPoint = VAdd(start, VScale(line, projectFactor));
+
+	VECTOR diff = Utility::VAbs(VSub(colPos_, closestPoint));
+	float diffSqr = VDot(diff, diff);
+
+	//衝突判定
+	if(diffSqr <= (radius_ * radius_))
+	{
+		//法線方向（とりあえず逆ベクトルに）
+		const VECTOR retNomal = (VScale(line, -1.0f));
+		_line.SetHitNormal(retNomal);
+		//衝突位置(少し雑)
+		_line.SetHitPoint(VAdd(closestPoint,VScale(retNomal,radius_)));
+
+		return true;
+	}
+
+	return false;
 }
 
 const bool Sphere::IsHit(Sphere& _sphere)
