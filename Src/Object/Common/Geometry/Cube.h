@@ -59,6 +59,10 @@ private:
 	// スラブ法で最近接点の距離を計算
 	const float ClosestPointDiff(const VECTOR& _startPos, const VECTOR& _endPos);
 
+
+
+	const VECTOR WorldToLocal(const VECTOR& _worldPos);
+
 	//ワールド座標系での最小・最大座標取得
 	const VECTOR GetCubeMinWorldPos(void);
 	const VECTOR GetCubeMaxWorldPos(void);

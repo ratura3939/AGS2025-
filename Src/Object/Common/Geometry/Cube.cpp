@@ -31,7 +31,14 @@ const bool Cube::IsHit(Geometry& _geo)
 
 const bool Cube::IsHit(Line& _line)
 {
-	return false;
+	bool isHit = false;
+
+	//Lineに関するそれぞれをローカル座標に
+	VECTOR startLocal = WorldToLocal(_line.GetStartPos());
+	VECTOR endLocal = WorldToLocal(_line.GetEndPos());
+	VECTOR lineVecLocal = VSub(endLocal, startLocal);
+
+	return isHit;
 }
 
 const bool Cube::IsHit(Sphere& _sphere)
@@ -45,20 +52,8 @@ const bool Cube::IsHit(Capsule& _capsule)
 	VECTOR worldCenter = colPos_;
 
 	// カプセル線分をOBBのローカル空間に変換
-	VECTOR rel1 = VSub(_capsule.GetPosTop(), worldCenter);
-	VECTOR rel2 = VSub(_capsule.GetPosBottom(), worldCenter);
-
-	VECTOR local1 = {
-		VDot(rel1, obb_.axis[0]),
-		VDot(rel1, obb_.axis[1]),
-		VDot(rel1, obb_.axis[2])
-	};
-
-	VECTOR local2 = {
-		VDot(rel2, obb_.axis[0]),
-		VDot(rel2, obb_.axis[1]),
-		VDot(rel2, obb_.axis[2])
-	};
+	VECTOR local1 = WorldToLocal(_capsule.GetPosTop());
+	VECTOR local2 = WorldToLocal(_capsule.GetPosBottom());
 
 	// スラブ法で最近接点を見つける
 	// AABBとして処理する（OBBローカル空間内で）
@@ -272,6 +267,19 @@ const float Cube::ClosestPointDiff(const VECTOR& _startPos, const VECTOR& _endPo
 	}
 
 	return minDiff;
+}
+
+const VECTOR Cube::WorldToLocal(const VECTOR& _worldPos)
+{
+	VECTOR loacalPos = VSub(_worldPos, colPos_);
+
+	VECTOR retPos = {
+		VDot(loacalPos, obb_.axis[0]),
+		VDot(loacalPos, obb_.axis[1]),
+		VDot(loacalPos, obb_.axis[2])
+	};
+
+	return retPos;
 }
 
 const VECTOR Cube::GetCubeMinWorldPos(void)
