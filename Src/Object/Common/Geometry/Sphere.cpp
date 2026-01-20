@@ -23,35 +23,43 @@ const bool Sphere::IsHit(Geometry& _geo)
 
 const bool Sphere::IsHit(Line& _line)
 {
+	bool isHit = false;
+
 	const VECTOR start = _line.GetStartPos();
 	const VECTOR end = _line.GetEndPos();
 
-	const VECTOR line = _line.GetLine();
+	const VECTOR lineVec = _line.GetLineVec();
 	const VECTOR startToSphere = VSub(colPos_, start);
 
-	//球体の中心から線分への射影がどれ程の割合かを求める
-	float projectFactor = VDot(startToSphere, line) / VDot(line, line);
-	projectFactor = std::max(0.0f, std::min(1.0f, projectFactor)); // クランプ
+	//解の公式を活用して判定
+	const float a = VDot(lineVec, lineVec);
+	const float b = -2.0f * VDot(startToSphere, lineVec);
+	const float c = VDot(startToSphere, startToSphere) - (radius_ * radius_);
+	//判別式
+	//discriminant==0 : 1解(接触)
+	//discriminant>0  : 2解(交差)
+	//discriminant<0  : 解なし(非接触)
+	const float discriminant = (b * b) - (4.0f * a * c);
 
-	//線分上の球体に最も近い点
-	const VECTOR closestPoint = VAdd(start, VScale(line, projectFactor));
+	//解が存在するか
+	if (discriminant >= 0) {
+		const float sqrtDiscriminant = sqrtf(discriminant);
 
-	VECTOR diff = Utility::VAbs(VSub(colPos_, closestPoint));
-	float diffSqr = VDot(diff, diff);
-
-	//衝突判定
-	if(diffSqr <= (radius_ * radius_))
-	{
-		//法線方向（とりあえず逆ベクトルに）
-		const VECTOR retNomal = (VScale(line, -1.0f));
-		_line.SetHitNormal(retNomal);
-		//衝突位置(少し雑)
-		_line.SetHitPoint(VAdd(closestPoint,VScale(retNomal,radius_)));
-
-		return true;
+		//2解(衝突点が線分の何割目にあるか)を求める(t1=手前、t2=奥)
+		const float t1 = (-b - sqrtDiscriminant) / (2.0f * a);
+		const float t2 = (-b + sqrtDiscriminant) / (2.0f * a);
+	
+		//線分上に解が存在するか(今回のゲームの仕様上手前の点のみ採用)
+		if ((t1 >= 0.0f && t1 <= 1.0f)) {
+			//設定
+			const VECTOR hitPoint = VAdd(start, VScale(lineVec, t1));
+			_line.SetHitPoint(hitPoint);
+			_line.SetHitNormal(VNorm(VSub(hitPoint, colPos_)));
+			isHit = true;
+		}
 	}
 
-	return false;
+	return isHit;
 }
 
 const bool Sphere::IsHit(Sphere& _sphere)

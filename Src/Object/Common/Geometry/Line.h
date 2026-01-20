@@ -18,7 +18,7 @@ public:
 
 	const VECTOR& GetStartPos(void)const { return startPos_; }
 	const VECTOR& GetEndPos(void)const { return endPos_; }
-	const VECTOR& GetLine(void)const { return VSub(endPos_, startPos_); }
+	const VECTOR& GetLineVec(void)const { return VSub(endPos_, startPos_); }
 	const float GetLength(void)const { return length_; }
 
 	void DebugDraw(void) override;

@@ -25,7 +25,15 @@ const bool Model::IsHit(Geometry& _geo)
 
 const bool Model::IsHit(Line& _line)
 {
-    return false;
+    MV1_COLL_RESULT_POLY hitLineInfo = MV1CollCheck_Line(modelId_, -1, _line.GetPos(), _line.GetEndPos());
+    bool isHit = hitLineInfo.HitFlag >= 1;
+
+    if (isHit) {
+        _line.SetHitPoint(hitLineInfo.HitPosition);
+		_line.SetHitNormal(Utility::VNormalize(Utility::EpsilonNormal(hitLineInfo.Normal)));
+    }
+
+    return isHit;
 }
 
 const bool Model::IsHit(Sphere& _sphere)

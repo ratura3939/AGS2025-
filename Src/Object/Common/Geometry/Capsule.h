@@ -4,7 +4,13 @@
 class Capsule :
     public Geometry
 {
-    public:
+public:
+	//線分とカプセル球体部分の当たり判定結果
+    struct CollisionInfoLineToCapsuleParts {
+		bool isHit;            //当たったかどうか
+		float closestRateLine; //線分上の最近接点の割合(0～1)
+    };
+
     Capsule(VECTOR& _posTop, VECTOR& _posBottom, const float _radius);
     ~Capsule(void) override;
 
@@ -22,6 +28,10 @@ class Capsule :
 	void DebugDraw(void) override;
 
 private:
+    const CollisionInfoLineToCapsuleParts CheckLineToSphere(const VECTOR& _lineStart, const VECTOR& _lineEnd, const VECTOR& _lineVec, const VECTOR& _center);
+    const CollisionInfoLineToCapsuleParts CheckLineToCylinder(const VECTOR& _lineStart, const VECTOR& _lineEnd, const VECTOR& _lineVec);
+    void ReflectHitInfoFromCapsuleParts(const CollisionInfoLineToCapsuleParts& _capsulePartInfo, float& _min);
+
 	float radius_;  //半径
     VECTOR& posTop_;    //カプセル上端位置
 	VECTOR& posBottom_; //カプセル下端位置
