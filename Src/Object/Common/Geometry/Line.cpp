@@ -24,6 +24,7 @@ const bool Line::IsHit(Geometry& _geo)
 
 const bool Line::IsHit(Line& _line)
 {
+    //Œã‰ñ‚µ
     return false;
 }
 

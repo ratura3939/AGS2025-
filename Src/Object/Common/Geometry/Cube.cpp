@@ -44,6 +44,7 @@ const bool Cube::IsHit(Line& _line)
 	CUBE_DIR hitDir = CUBE_DIR::NONE;	//XYZのうちどの軸で当たったか
 	float hitSide = 0.0f;	//当たった面の位置(1.0=正の面、-1.0=負の面)
 
+	//スラブ法計算
 	IntersectSlab(startLocal, lineVecLocal, tmin, tmax, hitDir, hitSide);
 
 	//衝突があった
@@ -51,6 +52,7 @@ const bool Cube::IsHit(Line& _line)
 		VECTOR hitPoint = VAdd(_line.GetStartPos(), VScale(_line.GetLineVec(), tmin));
 		_line.SetHitPoint(hitPoint);
 		_line.SetHitNormal(GetTiltAdjustedNormal(VScale(obb_.axis[static_cast<int>(hitDir)], hitSide)));
+		isHit = true;
 	}
 
 	return isHit;
