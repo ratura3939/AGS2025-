@@ -11,6 +11,13 @@ public:
 		,MAX
 	};
 
+	enum class CUBE_DIR {
+		NONE
+		,X
+		,Y
+		,Z
+	};
+
 	//バウンディングボックス
 	struct Obb{
 		VECTOR halfDiff;		//大きさ
@@ -59,8 +66,11 @@ private:
 	// スラブ法で最近接点の距離を計算
 	const float ClosestPointDiff(const VECTOR& _startPos, const VECTOR& _endPos);
 
+	//スラブ法の補助関数
+	bool IntersectSlab(const VECTOR& _start, const VECTOR& _dir, float& _tmin, float& _tmax, CUBE_DIR& _hitDir, float& _hitSide);
+	void SetUseVectorInfo(const CUBE_DIR& _useCubeDir, const VECTOR& _startVec, const VECTOR& _dirVec, const VECTOR& _localCubeMin, const VECTOR& _localCubeMax, float& _useStart, float& _useDir, float& _useMin, float& _useMax);
 
-
+	//ワールド座標をCubeのローカル座標に変換
 	const VECTOR WorldToLocal(const VECTOR& _worldPos);
 
 	//ワールド座標系での最小・最大座標取得
