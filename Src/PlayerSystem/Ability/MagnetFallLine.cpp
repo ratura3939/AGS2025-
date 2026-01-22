@@ -27,13 +27,21 @@ MagnetFallLine::~MagnetFallLine(void)
 
 void MagnetFallLine::Draw(void)
 {
-	//renderer_->Draw();
+	renderer_->Draw();
 
 	collider_->GetGeometry().DebugDraw();
 
 	VECTOR fallPoinSpherePos = pos_;
 	fallPoinSpherePos.y = nearFallPointY_;
 	DrawSphere3D(fallPoinSpherePos, 40, 8, 0x00ff00, 0x00ff00, false);
+
+	DrawFormatString(100, 450, 0xffffff, "ModelScaleY: %.1f", scl_.y);
+
+	//モデル
+	VECTOR maxPoint = MV1GetMeshMaxPosition(modelId_, 0);
+	VECTOR minPoint = MV1GetMeshMinPosition(modelId_, 0);
+	DrawSphere3D(maxPoint, 40, 8, 0xffffff, 0x00ff00, false);
+	DrawSphere3D(minPoint, 40, 8, 0xff00ff, 0x00ff00, false);
 }
 
 void MagnetFallLine::Release(void)
@@ -62,6 +70,9 @@ void MagnetFallLine::DoInit(void)
 
 	modelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::MAGNET_LINE_MDL);
 	material_ = std::make_unique<ModelMaterial>("MagnetLineVS.cso", 0,"MagnetLinePS.cso", 0);
+
+	quaRot_ = Quaternion::Euler(Utility::Deg2RadF(180.0f), 0.0f, 0.0f);
+
 	//追加テクスチャ挿入
 	material_->SetTextureBuf(ModelMaterial::SUB_TEX_1, resM.Load(ResourceManager::SRC::LOCKON_IMG).handleId_);
 
@@ -84,7 +95,7 @@ void MagnetFallLine::DoUpdate(void)
 
 	//落下地点が変わったか
 	if (preNearFallPointY_ != nearFallPointY_) {
-		ChangeSizeYToFallPoint();
+		//ChangeSizeYToFallPoint();
 	}
 
 	//前回の落下地点保存
