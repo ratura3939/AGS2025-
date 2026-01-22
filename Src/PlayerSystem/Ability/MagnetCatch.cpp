@@ -6,6 +6,7 @@
 #include"../../Utility/Utility.h"
 #include"../../Object/Character/Player/PlayerChara.h"
 #include"../AbilityManager.h"
+#include"MagnetFallLine.h"
 #include "MagnetCatch.h"
 
 namespace {
@@ -18,7 +19,10 @@ namespace {
 	const float MAX_RELATIVE_Z = 500.0f;	//相対座標の最大値
 }
 
-MagnetCatch::MagnetCatch(AbilityManager& _mng, PlayerChara& _master) :AbilityBase(_mng), master_(_master)
+MagnetCatch::MagnetCatch(AbilityManager& _mng, PlayerChara& _master)
+	: AbilityBase(_mng)
+	, master_(_master)
+	, fallLine_(std::make_unique<MagnetFallLine>())
 {
 	startDirecPos_ = Utility::VECTOR_ZERO;
 	goalDirecPos_ = Utility::VECTOR_ZERO;
@@ -37,6 +41,8 @@ MagnetCatch::MagnetCatch(AbilityManager& _mng, PlayerChara& _master) :AbilityBas
 	sndM.AdjustTimeRate();
 
 	//sndM.AdjustVolume("Magnet", 80);
+
+	fallLine_->Init();
 }
 
 MagnetCatch::~MagnetCatch(void)
@@ -68,6 +74,10 @@ void MagnetCatch::UpdateUse(std::weak_ptr<GimmickObjBase> _obj)
 	startDirecPos_ = masterPos;
 	goalDirecPos_= newObjPos;
 	nowPos_= newObjPos;
+
+	//落下ラインの更新
+	fallLine_->SetPos(newObjPos);
+	fallLine_->Update();
 }
 
 void MagnetCatch::UpdateDirection(std::weak_ptr<GimmickObjBase> _obj)
@@ -131,10 +141,12 @@ void MagnetCatch::Draw(void)
 		DrawLine3D(startDirecPos_, nowPos_, debugCol);
 		DrawSphere3D(startDirecPos_, debugScl, divNum, debugCol, debugCol, false);
 		DrawSphere3D(nowPos_, debugScl, divNum, debugCol, debugCol, false);
-	}
 
-	//デバッグ
-	//DrawFormatString(50, 300, 0xff0000, "GOAL={%.1f,%.1f,%.1f}", goalDirecPos_.x, goalDirecPos_.y, goalDirecPos_.z);
+		//使用時のみ落下ラインを描画
+		if (state == AbilityManager::STATE::USE) {
+			fallLine_->Draw();
+		}
+	}
 }
 
 void MagnetCatch::ResetAbility(void)

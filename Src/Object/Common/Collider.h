@@ -21,6 +21,7 @@ public:
 		,SWITCH     //スイッチ
 		,STAIRS		//階段
 		,LIBRA		//天秤
+		,FALL_LINE	//落下地点表示線
 	};
 
 	Collider(ActorBase& _master, const std::set<COL_TAG> _tags, std::unique_ptr<Geometry> _geo, const std::set<COL_TAG> _noHitTags = {});

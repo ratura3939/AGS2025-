@@ -25,8 +25,11 @@ private:
 	std::unique_ptr<ModelMaterial> material_;
 	std::unique_ptr<ModelRenderer> renderer_;
 
-	float modelInitSizeY_;		    //モデルの初期Yサイズ
-	float nearFallPoint_;           //一番近い落下地点
-	float preNearFallPoint_;        //一番近い落下地点
+	float modelInitSizeVecY_;		    //モデルの初期Yサイズ
+	float nearFallPointY_;           //一番近い落下地点
+	float preNearFallPointY_;        //一番近い落下地点
+
+	VECTOR lineStartPos_;         //線の始点位置
+	VECTOR lineEndPos_;           //線の終点位置
 };
 

@@ -36,6 +36,8 @@ void Board::SetModel(void)
 	modelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::WOOD_BOARD_MDL);
 	//scl_ = INIT_SCL;
 
+	speciesName_ = OBJ_NAME;
+
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;
 	collider_ = std::make_shared<Collider>(*this, std::set<COL_TYPE>{COL_TYPE::OBJECT}, std::move(std::make_unique<Cube>(pos_, quaRot_,Utility::VMul(COLLIDER_SIZE,scl_))));

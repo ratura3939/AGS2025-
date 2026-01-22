@@ -24,8 +24,8 @@ public:
 	void DebugDraw(void) override;
 
 private:
-	VECTOR startPos_;	//始点
-	VECTOR endPos_;		//終点
+	const VECTOR& startPos_;	//始点
+	const VECTOR& endPos_;	//終点
 	float length_;		//長さ
 };
 

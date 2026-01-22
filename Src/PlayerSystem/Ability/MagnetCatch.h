@@ -3,6 +3,7 @@
 
 class GimmickObjBase;
 class PlayerChara;
+class MagnetFallLine;
 
 //マグネット使用中の注視点は特有なものなので、GameSceneまで伝える処理を単体で作る
 class MagnetCatch :
@@ -23,6 +24,7 @@ private:
     void MakeChangeRelativePosition(void);
 
     PlayerChara& master_;   //使用者
+	std::unique_ptr<MagnetFallLine> fallLine_; //落下ライン
 
     VECTOR startDirecPos_;  //能力演出開始位置
     VECTOR goalDirecPos_;   //能力演出終了位置

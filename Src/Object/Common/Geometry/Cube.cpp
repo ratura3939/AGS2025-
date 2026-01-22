@@ -31,30 +31,29 @@ const bool Cube::IsHit(Geometry& _geo)
 
 const bool Cube::IsHit(Line& _line)
 {
-	bool isHit = false;
-
 	//Lineに関するそれぞれをローカル座標に
 	VECTOR startLocal = WorldToLocal(_line.GetStartPos());
 	VECTOR endLocal = WorldToLocal(_line.GetEndPos());
 	VECTOR lineVecLocal = VSub(endLocal, startLocal);
 
 	//スラブ法で判定
-	float tmin = -1.0f;
-	float tmax = -1.0f;
+	float tmin = 0.0f;
+	float tmax = 1.0f;
 	CUBE_DIR hitDir = CUBE_DIR::NONE;	//XYZのうちどの軸で当たったか
 	float hitSide = 0.0f;	//当たった面の位置(1.0=正の面、-1.0=負の面)
 
 	//スラブ法計算
-	IntersectSlab(startLocal, lineVecLocal, tmin, tmax, hitDir, hitSide);
+	bool isHit= IntersectSlab(startLocal, lineVecLocal, tmin, tmax, hitDir, hitSide);
 
-	//衝突があった
-	if (tmin >= 0.0f && tmin <= 1.0f) {
-		VECTOR hitPoint = VAdd(_line.GetStartPos(), VScale(_line.GetLineVec(), tmin));
-		_line.SetHitPoint(hitPoint);
-		_line.SetHitNormal(GetTiltAdjustedNormal(VScale(obb_.axis[static_cast<int>(hitDir)], hitSide)));
-		isHit = true;
+	if (isHit) {
+		//衝突があった
+		if (tmin >= 0.0f && tmin <= 1.0f) {
+			VECTOR hitPoint = VAdd(_line.GetStartPos(), VScale(_line.GetLineVec(), tmin));
+			_line.SetHitPoint(hitPoint);
+			_line.SetHitNormal(GetTiltAdjustedNormal(VScale(obb_.axis[static_cast<int>(hitDir) - 1], hitSide)));
+		}
 	}
-
+	
 	return isHit;
 }
 
@@ -292,9 +291,8 @@ bool Cube::IntersectSlab(const VECTOR& _start, const VECTOR& _dir, float& _tmin,
 	const VECTOR localBoxMin = GetCubeMinLocalPos();
 	const VECTOR localBoxMax = GetCubeMaxLocalPos();
 
-	bool result = false;
 
-	for (int i = static_cast<int>(CUBE_DIR::X); i >= static_cast<int>(CUBE_DIR::Z); i++) {
+	for (int i = static_cast<int>(CUBE_DIR::X); i <= static_cast<int>(CUBE_DIR::Z); i++) {
 		//判定に使う情報をセット
 		float start;
 		float dir;
@@ -305,7 +303,7 @@ bool Cube::IntersectSlab(const VECTOR& _start, const VECTOR& _dir, float& _tmin,
 		if (fabs(dir) < 1e-6f) {
 			// 線分がスラブに平行
 			if (start < boxMin || start > boxMax) {
-				result = false;; // スラブ外
+				return false;; // スラブ外
 			}
 		}
 		else {
@@ -316,19 +314,22 @@ bool Cube::IntersectSlab(const VECTOR& _start, const VECTOR& _dir, float& _tmin,
 			float tNear = std::min(t1, t2);
 			float tFar = std::max(t1, t2);
 
+			// 入りの更新
 			if(tNear>_tmin){
+				_tmin = tNear;
 				_hitDir = static_cast<CUBE_DIR>(i);
 				_hitSide = (t1 < t2) ? -1.0f : 1.0f;
 			}
 
-			_tmin = std::max(_tmin, tNear);
+			// 出の更新
+			_tmax = std::min(_tmax, tFar);
 
 			if(_tmin>_tmax){
 				return false;
 			}
 		}
 	}
-	return false;
+	return true;
 }
 
 void Cube::SetUseVectorInfo(const CUBE_DIR& _useCubeDir, const VECTOR& _startVec, const VECTOR& _dirVec, const VECTOR& _localCubeMin, const VECTOR& _localCubeMax, float& _useStart, float& _useDir, float& _useMin, float& _useMax)

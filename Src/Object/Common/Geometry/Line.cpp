@@ -50,4 +50,5 @@ const bool Line::IsHit(Model& _model)
 
 void Line::DebugDraw(void)
 {
+    DrawCapsule3D(startPos_, endPos_, 3, 8, 0x00ffff, 0x00ffff, false);
 }

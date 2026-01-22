@@ -26,7 +26,7 @@ void NoneAfectAbilityObjBase::Draw(void)
 	//•`‰æ
 	render_->Draw();
 
-	//DrawDebugCollider();
+	DrawDebugCollider();
 }
 
 void NoneAfectAbilityObjBase::DrawDebugCollider(void)

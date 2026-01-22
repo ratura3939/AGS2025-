@@ -253,6 +253,7 @@ void AbilityManager::UseAbility(void)
 	//マグネット時はプレイヤーとの当たり判定を除外
 	if(useAbility_==ABILITY_TYPE::MAGNET){
 		selectObj_.lock()->GetCollider().lock()->AddNoHitTag(Collider::COL_TAG::PLAYER);
+		selectObj_.lock()->GetCollider().lock()->AddNoHitTag(Collider::COL_TAG::FALL_LINE);
 	}
 
 	update_ = &AbilityManager::UpdateUse;
@@ -267,6 +268,7 @@ void AbilityManager::EndUsingAbility(void)
 		//マグネット時はプレイヤーとの当たり判定を戻す
 		if (useAbility_ == ABILITY_TYPE::MAGNET) {
 			selectObj_.lock()->GetCollider().lock()->DeleteNoHitTag(Collider::COL_TAG::PLAYER);
+			selectObj_.lock()->GetCollider().lock()->DeleteNoHitTag(Collider::COL_TAG::FALL_LINE);
 		}
 		selectObj_.lock()->FinishAffect();
 		selectObj_.lock()->SetIsAffecting(false);
