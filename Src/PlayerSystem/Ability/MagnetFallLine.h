@@ -25,7 +25,6 @@ private:
 	std::unique_ptr<ModelMaterial> material_;
 	std::unique_ptr<ModelRenderer> renderer_;
 
-	float modelInitSizeVecY_;		    //モデルの初期Yサイズ
 	float nearFallPointY_;           //一番近い落下地点
 	float preNearFallPointY_;        //一番近い落下地点
 

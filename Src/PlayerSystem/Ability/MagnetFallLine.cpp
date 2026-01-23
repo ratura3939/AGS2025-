@@ -6,13 +6,13 @@
 
 namespace {
 	const float LINE_FALL_VEC_Y = 100000.0f; //ラインのY方向の長さ
+	const float MODEL_SIZE_Y = 200.0f;      //モデルのY方向の大きさ
 }
 
 MagnetFallLine::MagnetFallLine(void)
 	: ActorBase()
 	, material_(nullptr)
 	, renderer_(nullptr)
-	, modelInitSizeVecY_(0.0f)
 	, nearFallPointY_(0.0f)
 	, preNearFallPointY_(0.0f)
 	, lineStartPos_(Utility::VECTOR_INIT)
@@ -34,14 +34,6 @@ void MagnetFallLine::Draw(void)
 	VECTOR fallPoinSpherePos = pos_;
 	fallPoinSpherePos.y = nearFallPointY_;
 	DrawSphere3D(fallPoinSpherePos, 40, 8, 0x00ff00, 0x00ff00, false);
-
-	DrawFormatString(100, 450, 0xffffff, "ModelScaleY: %.1f", scl_.y);
-
-	//モデル
-	VECTOR maxPoint = MV1GetMeshMaxPosition(modelId_, 0);
-	VECTOR minPoint = MV1GetMeshMinPosition(modelId_, 0);
-	DrawSphere3D(maxPoint, 40, 8, 0xffffff, 0x00ff00, false);
-	DrawSphere3D(minPoint, 40, 8, 0xff00ff, 0x00ff00, false);
 }
 
 void MagnetFallLine::Release(void)
@@ -78,8 +70,6 @@ void MagnetFallLine::DoInit(void)
 
 	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
 
-	modelInitSizeVecY_ = MV1GetMeshMaxPosition(modelId_, 0).y - MV1GetMeshMinPosition(modelId_, 0).y;
-
 	using TAG = Collider::COL_TAG;
 	collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::FALL_LINE}, std::make_unique<Line>(pos_,quaRot_,lineStartPos_,lineEndPos_), std::set<TAG>{TAG::PLAYER, TAG::ENEMY});
 	CollisionManager::GetInstance().AddCollider(collider_);
@@ -95,7 +85,7 @@ void MagnetFallLine::DoUpdate(void)
 
 	//落下地点が変わったか
 	if (preNearFallPointY_ != nearFallPointY_) {
-		//ChangeSizeYToFallPoint();
+		ChangeSizeYToFallPoint();
 	}
 
 	//前回の落下地点保存
@@ -109,6 +99,6 @@ void MagnetFallLine::ChangeSizeYToFallPoint(void)
 	const float fallDistanceY = nearFallPointY_ - lineStartPos_.y;
 
 	//スケール変更
-	scl_.y = fallDistanceY / modelInitSizeVecY_;
+	scl_.y = fallDistanceY / MODEL_SIZE_Y;
 	MV1SetScale(modelId_, scl_);
 }
