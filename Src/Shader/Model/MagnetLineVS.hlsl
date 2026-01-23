@@ -37,7 +37,7 @@ VS_OUTPUT main(VS_INPUT VSInput)
 
 	// UV座標
     ret.uv.x = VSInput.uv0.x;
-    ret.uv.y = VSInput.uv0.y;
+    ret.uv.y = VSInput.uv0.y * 5.0f;
 	// 法線(モデルローカル座標より)
 	//ret.normal = VSInput.norm;
 	
