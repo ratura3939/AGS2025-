@@ -5,8 +5,8 @@
 #include "MagnetFallLine.h"
 
 namespace {
-	const float LINE_FALL_VEC_Y = 100000.0f; //ラインのY方向の長さ
-	const float MODEL_SIZE_Y = 200.0f;      //モデルのY方向の大きさ
+	const float LINE_FALL_VEC_Y = 100000.0f;	//ラインのY方向の長さ
+	const float MODEL_SIZE_Y = 200.0f;			//モデルのY方向の大きさ
 }
 
 MagnetFallLine::MagnetFallLine(void)
