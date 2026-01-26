@@ -95,6 +95,7 @@ private:
     void DrawUI(void)override;
     void Move(void);    //ˆÚ“®ˆ—
     const std::string DecideAnim(const MOVE_DIR _dir)const;
+	void DrawShadow(void); //‰e•`‰æ
 
     AttackManager& atkMng_;
 

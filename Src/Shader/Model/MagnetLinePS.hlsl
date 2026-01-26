@@ -13,15 +13,23 @@ SamplerState fallSampler : register(s11);   //ガイドラインテクスチャ
 // 定数バッファ：スロット4番目(b4と書く)
 cbuffer cbParam : register(b4)
 {
-    float4 g_color; //各参考
+    float g_time;       //経過時間
+    float3 dmy_time;    //ダミー
 }
 
 float4 main(PS_INPUT PSInput) : SV_TARGET
 {
     //モデルを上下反転させてるためY軸を反転
     float2 uv = PSInput.uv;
-    uv.y = 1.0f - uv.y;
+    uv.y = 1.0f - uv.y - g_time * 0.01f;
     
-    float4 noiseCol = fallTex.Sample(diffuseMapSampler, uv);
-    return noiseCol;
+    float4 texCol = fallTex.Sample(diffuseMapSampler, uv);
+    
+    if (texCol.a < 0.1f)
+    {
+        discard;
+    }
+   
+    
+    return texCol;
 }

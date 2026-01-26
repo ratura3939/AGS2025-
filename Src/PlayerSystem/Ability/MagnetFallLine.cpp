@@ -1,4 +1,5 @@
 #include"../../Manager/Generic/ResourceManager.h"
+#include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/GameSystem/CollisionManager.h"
 #include"../../Object/Common/Geometry/Line.h"
 #include"../../Utility/Utility.h"
@@ -61,7 +62,9 @@ void MagnetFallLine::DoInit(void)
 	ResourceManager& resM = ResourceManager::GetInstance();
 
 	modelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::MAGNET_LINE_MDL);
-	material_ = std::make_unique<ModelMaterial>("MagnetLineVS.cso", 0,"MagnetLinePS.cso", 0);
+	material_ = std::make_unique<ModelMaterial>("MagnetLineVS.cso", 0,"MagnetLinePS.cso", 1);
+
+	material_->SetConstBufPS(0, FLOAT4{ 0.0f, 0.0f, 0.0f, 0.0f });
 
 	quaRot_ = Quaternion::Euler(Utility::Deg2RadF(180.0f), 0.0f, 0.0f);
 
@@ -82,6 +85,8 @@ void MagnetFallLine::DoUpdate(void)
 	lineStartPos_.y += MV1GetMeshMinPosition(modelId_, 0).y;
 	lineEndPos_ = lineStartPos_;
 	lineEndPos_.y -= LINE_FALL_VEC_Y;
+
+	material_->SetConstBufPS(0, FLOAT4{ SceneManager::GetInstance().GetTotalTime(), 0.0f, 0.0f, 0.0f });;
 
 	//—Ž‰º’n“_‚ª•Ï‚í‚Á‚½‚©
 	if (preNearFallPointY_ != nearFallPointY_) {
