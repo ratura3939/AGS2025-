@@ -46,6 +46,11 @@ void ActorBase::Update(void)
 	externalVec_ = Utility::VECTOR_ZERO;
 }
 
+const int ActorBase::GetModelID(void) const
+{
+	return modelId_;
+}
+
 void ActorBase::SetPos(const VECTOR& _pos)
 {
 	pos_ = _pos;

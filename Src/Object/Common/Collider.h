@@ -61,6 +61,9 @@ public:
 	//‚¿å‚É‘Î‚µ‚ÄŠO•”‚©‚ç‚Ì‰e‹¿(ˆÚ“®—Ê)‚ğ—^‚¦‚é
 	void AddExternalVecToMaster(const VECTOR& _vec);
 
+	//ƒ‚ƒfƒ‹ID‚Ìæ“¾
+	const int GetMasterModelID(void)const;
+
 	//UŒ‚—Í‚Ìæ“¾
 	const float GetPower(void)const;
 

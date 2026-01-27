@@ -18,6 +18,8 @@ public:
 	virtual void Draw(void) = 0;
 	virtual void Release(void) = 0;
 
+	const int GetModelID(void)const;
+
 	//à íuê›íË
 	void SetPos(const VECTOR& _pos);
 	void SetPrevPos(void);

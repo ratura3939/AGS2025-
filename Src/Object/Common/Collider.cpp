@@ -75,6 +75,11 @@ void Collider::AddExternalVecToMaster(const VECTOR& _vec)
 	master_.AddExternalVec(_vec);
 }
 
+const int Collider::GetMasterModelID(void) const
+{
+	return master_.GetModelID();
+}
+
 const float Collider::GetPower(void)const
 {
 	return master_.GetPower();

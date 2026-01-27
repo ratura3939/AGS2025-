@@ -20,31 +20,31 @@ public:
     /// ロックオン時状態にあるかどうか
     /// </summary>
     enum class LOCK_STATE {
-        NOMAL,  //通常
-        LOCKON, //ロックオン
-        MAX
+        NOMAL   //通常
+        ,LOCKON //ロックオン
+        ,MAX
     };
 
     /// <summary>
     /// プレイヤー行動状態
     /// </summary>
     enum class STATE {
-        NOMAL,
-        GUARD,
-        DODGE,
-        JUST_DODGE,
-        ATTACK,
+        NOMAL
+        ,GUARD
+        ,DODGE
+        ,JUST_DODGE
+        ,ATTACK
     };
 
     /// <summary>
     /// 移動方向
     /// </summary>
     enum class MOVE_DIR {
-        NONE,
-        FORWARD,
-        LEFT,
-        RIGHT,
-        BACK
+        NONE
+        ,FORWARD
+        ,LEFT
+        ,RIGHT
+        ,BACK
     };
 
     PlayerChara(AttackManager& _atk);
@@ -60,15 +60,18 @@ public:
     void ChangeLockState(const bool _state);
 
     //状態関係
-    const STATE GetState(void)const;    //取得
-	const LOCK_STATE& GetLockState(void)const; //ロックオン状態取得
-    void SetState(const STATE& _state); //設定(PlayerManagerからの受付)
-    void PlayAnim(const std::string _anim); //アニメーションの再生(外部<マネージャ・当たり判定>より)
-    const bool IsLock(void);        //ロックオン状態か
+    const STATE GetState(void)const;            //取得
+	const LOCK_STATE& GetLockState(void)const;  //ロックオン状態取得
+    void SetState(const STATE& _state);         //設定(PlayerManagerからの受付)
+    void PlayAnim(const std::string _anim);     //アニメーションの再生(外部<マネージャ・当たり判定>より)
+    const bool IsLock(void);                    //ロックオン状態か
 
     //スロー判定
     void SetIsSlow(const bool _flag){ isSlow_ = _flag; }
     const bool IsSlow(void)const { return isSlow_; }
+
+    //カメラ前方に強制的に向かせるか
+	void SetIsForceFacingCamera(const bool _flag) { isForceFacingCamera = _flag; }
 
     void Damage(const float _pow)override;
 
@@ -99,14 +102,16 @@ private:
 
     AttackManager& atkMng_;
 
-    LOCK_STATE lockState_; //ロックオン状態
-    STATE state_;       //状態
+    LOCK_STATE lockState_;  //ロックオン状態
+    STATE state_;           //状態
 
-    VECTOR focusPoint_; //注視点
+    VECTOR focusPoint_;     //注視点
+
+	bool isForceFacingCamera;    //カメラの前方方向に向かせるか
 
     //入力受付変数
-    MOVE_DIR moveDir_;  //移動方向
-    bool isDush_;       //走る
+    MOVE_DIR moveDir_;      //移動方向
+    bool isDush_;           //走る
 
     float afterMoveRad_;    //移動後のキャラクター角度
 

@@ -57,6 +57,9 @@ void PlayerManager::Update(AttackManager& _atk)
 
 	//プレイヤーからの入力
 	UserInput(_atk);
+	//カメラ前方に強制的に向かせるか
+	bool isForceFacingCamera = !ability_->IsPlayerAnyInput() || character_->GetLockState() == PlayerChara::LOCK_STATE::LOCKON;
+	character_->SetIsForceFacingCamera(isForceFacingCamera);
 	//キャラクター更新
 	character_->Update();
 	//ロックオン更新
@@ -198,7 +201,6 @@ void PlayerManager::UserInput(AttackManager& _atk)
 			//能力使用準備
 			nextState = AbilityManager::STATE::REDY;
 		}
-
 		//状態遷移
 		ability_->ChangeState(nextState);
 	}

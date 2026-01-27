@@ -31,7 +31,7 @@ namespace {
 AbilityManager::AbilityManager(StageManager& _stage, PlayerChara& _master)
 	: master_(_master)
 	, stage_(_stage)
-	, isPlayerAnyInput_(false)
+	, isPlayerAnyInput_(true)
 {
 	useAbility_ = ABILITY_TYPE::MAGNET;
 	state_ = STATE::END;
@@ -91,10 +91,6 @@ void AbilityManager::Draw(void)
 void AbilityManager::ChangeAbility(const ABILITY_TYPE _type)
 {
 	useAbility_ = _type;
-	isPlayerAnyInput_ = false;
-	if (_type == ABILITY_TYPE::LOCK_TIME) {
-		isPlayerAnyInput_ = true;
-	}
 }
 
 FLOAT4 AbilityManager::GetAbilityColor(const ABILITY_TYPE _type)
@@ -258,6 +254,10 @@ void AbilityManager::UseAbility(void)
 
 	update_ = &AbilityManager::UpdateUse;
 
+	//マグネットの時はプレイヤーの入力を無効化
+	if(useAbility_==ABILITY_TYPE::MAGNET){
+		isPlayerAnyInput_ = false;
+	}
 }
 
 void AbilityManager::EndUsingAbility(void)
@@ -280,9 +280,9 @@ void AbilityManager::EndUsingAbility(void)
 	//付与色をなくす
 	stage_.SetAbilityColor(NONE_COLOR);
 
-	
-
 	update_ = &AbilityManager::UpdateEnd;
 
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
+	//プレイヤーの入力を有効化
+	isPlayerAnyInput_ = true;
 }
