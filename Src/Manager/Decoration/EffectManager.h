@@ -65,6 +65,9 @@ public:
 	//消去処理
 	void Destroy(void);
 
+	//エフェクトが再生中かどうか
+	const bool IsEffectPlay(const std::string _master, const std::string& _name);
+
 private:
 	//インスタンス用
 	static EffectManager* instance_;

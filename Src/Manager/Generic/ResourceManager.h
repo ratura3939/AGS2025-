@@ -121,6 +121,7 @@ public:
 		//エフェクト
 		,SWORD_EFC
 		,DAMAGE_EFC
+		,CHARGE_ATK_EFC
 
 		,TEST_MDL
 		,TEST_MDL_2

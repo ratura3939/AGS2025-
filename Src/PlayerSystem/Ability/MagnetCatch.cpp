@@ -144,7 +144,7 @@ void MagnetCatch::Draw(void)
 
 		//Žg—pŽž‚Ì‚Ý—Ž‰ºƒ‰ƒCƒ“‚ð•`‰æ
 		if (state == AbilityManager::STATE::USE) {
-			fallLine_->Draw();
+			//fallLine_->Draw();
 		}
 	}
 }

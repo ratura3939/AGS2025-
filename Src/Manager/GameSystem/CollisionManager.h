@@ -17,7 +17,7 @@ public:
 	void AddCollider(std::weak_ptr<Collider> _col);
 	
 	//削除予定リスト追加
-	void MarkForDelete(const int _colliderIdx);
+	void MarkForDelete(std::weak_ptr<Collider> _col);
 
 	void DeleteAllCollider(void);
 
@@ -50,8 +50,6 @@ private:
 	bool isSlow_;	//スロー演出するか
 
 	std::vector<std::weak_ptr<Collider>> colliders_;
-
-	int colliderCounter_;	//管理番号カウンター
-	std::vector<int> deleteColliderIdxs_;	//削除予定コライダーインデックス
+	std::vector<std::weak_ptr<Collider>> deleteList_;	//削除予定コライダーインデックス
 };
 

@@ -61,7 +61,7 @@ namespace {
 #pragma endregion
 
 	//UŒ‚ŠÖ˜A
-	float ATK_SCALE = 70.0f;
+	float ATK_SCALE = 80.0f;
 	float ATK_POWER = 30.0f;
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//UŒ‚‘Š‘ÎÀ•W
 
@@ -100,7 +100,7 @@ void PlayerChara::DoInit(void)
 	//ƒ‚ƒfƒ‹Šî‘bî•ñ
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;
 
-	pos_ = INIT_POSITION;
+	//pos_ = INIT_POSITION;
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT),0.0f);
 

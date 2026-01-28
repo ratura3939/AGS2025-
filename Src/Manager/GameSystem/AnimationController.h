@@ -25,6 +25,7 @@ public:
 		PLAY_TYPE type;	//再生タイプ
 		int idx;		//アニメーション番号
 		float total;	//総再生時間
+		bool mustPlayOnce;	//再生保障
 	};
 
 
@@ -37,7 +38,8 @@ public:
 	/// <param name="_name">登録名</param>
 	/// <param name="_attach">アニメーション番号</param>
 	/// <param name="_type">再生タイプ</param>
-	void Add(const std::string& _name,const int _attach, const PLAY_TYPE _type);
+	/// <param name="_isLock">一回の再生を保障するかどうか</param>
+	void Add(const std::string& _name, const int _attach, const PLAY_TYPE _type, const bool _isLock = false);
 	/// <summary>
 	/// 再生開始処理
 	/// </summary>
@@ -63,6 +65,8 @@ public:
 	/// <param name="_percent">0％～100％</param>
 	void ChangeSpeedRate(const float _percent);
 
+	void UnAnimLock(void) { isAnimLock_ = false; }
+
 private:
 	//アニメーション更新処理
 	void UpdateNomalAnim(void);
@@ -79,7 +83,9 @@ private:
 	int attachAnim_;//実際の再生しているもの
 	float speedAnim;//再生速度
 	float counter_;	//更新カウンター
-	float speedRate_;
+	float speedRate_;	//速度割合
+
+	bool isAnimLock_; //アニメーションロック中かどうか
 
 	std::vector<std::string> nextAnim_;	//次に再生するアニメーション(LOOP以外に適用)<最終以外にLOOＰを入れないこと>
 

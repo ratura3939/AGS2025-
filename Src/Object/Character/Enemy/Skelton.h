@@ -10,5 +10,8 @@ public:
 private:
     void InitAnim(void)override;
     void SetParam(void)override;
+
+	void UpdateBattle(void)override;
+	void DamageReaction(void)override;
 };
 

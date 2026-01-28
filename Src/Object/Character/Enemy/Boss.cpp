@@ -5,6 +5,7 @@
 #include"../../../Manager/GameSystem/CollisionManager.h"
 #include"../../../Manager/GameSystem/EnemyManager.h"
 #include"../../../Manager/Decoration/SoundManager.h"
+#include"../../../Manager/Decoration/EffectManager.h"
 #include"../../../Utility/Utility.h"
 #include"../../../UI/EnemyUIController.h"
 #include"../../../Renderer/ModelMaterial.h"
@@ -16,21 +17,23 @@
 //ローカル定数
 namespace {
 #pragma region アニメーション関連
-	const int BOSS_IDLE = 1;
-	const int BOSS_WALK = 2;
-	const int BOSS_PRE_PUNCH = 5;
-	const int BOSS_PUNCH = 6;
+	const int BOSS_IDLE = 1;		//待機
+	const int BOSS_WALK = 2;		//歩行
+	const int BOSS_PRE_PUNCH = 5;	//攻撃前
+	const int BOSS_PUNCH = 6;		//攻撃
 	const int BOSS_PRE_SHOUT = 9;
 	const int BOSS_SHOUT = 10;
 	const int BOSS_DETH = 12;
 #pragma endregion
 
-	const float BOSS_HP = 300.0f;
-	const float BOSS_RADIUS = 400.0f;
+	const float BOSS_HP = 300.0f;		//HP
+	const float BOSS_RADIUS = 400.0f;	//大きさ
 
-	const float BOSS_ATTACK_SCALE = 500.0f;
+	const float BOSS_ATTACK_SCALE = 500.0f;	//攻撃の大きさ
 
-	const float BOSS_ATTACK_RELATIVE_Y = 75.0f;
+	const float BOSS_ATTACK_RELATIVE_Y = 75.0f;	
+
+	const int ATK_CHARGE_CNT_MAX = 30; //攻撃チャージ最大値
 }
 
 Boss::Boss(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)
@@ -52,7 +55,7 @@ void Boss::InitAnim(void)
 {
 	animController_->Add("idle", BOSS_IDLE, AnimationController::PLAY_TYPE::LOOP);
 	animController_->Add("preAttack", BOSS_PRE_PUNCH, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("attack", BOSS_PUNCH, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("attack", BOSS_PUNCH, AnimationController::PLAY_TYPE::NOMAL,true);
 	animController_->Add("preShout", BOSS_PRE_SHOUT, AnimationController::PLAY_TYPE::NOMAL);
 	animController_->Add("shout", BOSS_SHOUT, AnimationController::PLAY_TYPE::NOMAL);
 	animController_->Add("walk", BOSS_WALK, AnimationController::PLAY_TYPE::LOOP);
@@ -105,6 +108,8 @@ void Boss::SetParam(void)
 
 	CollisionManager::GetInstance().AddCollider(atkCollider_);	//当たり判定登録
 
+	atkChargeCntMax_ = ATK_CHARGE_CNT_MAX;
+
 	//アニメーション初期化
 	animController_ = std::make_unique<AnimationController>(modelId_);
 	InitAnim();
@@ -142,35 +147,78 @@ void Boss::SetParam(void)
 
 void Boss::UpdateBattle(void)
 {
-	//この内容は初期キャラ用。攻撃時には止まって攻撃する
-	//強いキャラクターは移動攻撃も想定するのでここの処理とは少し違っていくる
-	//プレイヤーとの距離
+	auto& efcM = EffectManager::GetInstance();
 	float distance = Utility::MagnitudeF(VSub(pPos_, pos_));
-
-	//移動処理
-	//移動処理
-	if (distance >= atkDistance_) {
-		(this->*move_)(pPos_);
-	}
-	else {
-		OderGoalRot(pPos_);	//回転の設定だけは行う
-	}
-
 
 	//カウンタ増加(ゲーム更新スピード)
 	intervalCnt_ += SceneManager::GetInstance().GetUpdateSpeedRate_();
 
-	//判定
-	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
-	if (distance <= atkDistance_ && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
-		//攻撃の準備時間
-
-		//準備時間が終わったら攻撃する
-		atkManager_.Attack(speciesName_,"SwingSword");
-		animController_->Play("attack", SPEED_ANIM);
-		stopTime_ = atkManager_.GetTotalTime(EnemyManager::ATTACK_NOMAL);
-		intervalCnt_ = 0.0f;
+	//移動処理
+	if (!isStay_) {
+		if (distance >= ATTACK_DISTANCE) {
+			(this->*move_)(pPos_);
+		}
 	}
+	else {
+		//攻撃チャージ中
+		OderGoalRot(pPos_);	//回転の設定だけは行う
+
+		atkChargeCnt_++;
+		//一定時間経過したら
+		if (atkChargeCntMax_ < atkChargeCnt_) {
+			//攻撃する
+			atkManager_.Attack(speciesName_, "SwingSword");
+			animController_->Play("attack", SPEED_ANIM);
+			stopTime_ = atkManager_.GetTotalTime(EnemyManager::ATTACK_NOMAL);
+			intervalCnt_ = 0.0f;
+			atkChargeCnt_ = 0;
+			isStay_ = false;
+		}
+		return;
+	}
+
+	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
+	if (distance <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
+		const float ChargeAtkEfcScale = 80.0f;
+		const float ChargeAtkEfcSpeed = 0.4f;
+
+		//攻撃チャージ
+		efcM.Play(GetSpeciesName(), "Charge", centerPos_, rot_, ChargeAtkEfcScale, ChargeAtkEfcSpeed);
+		animController_->Play("preAttack", SPEED_ANIM);
+		//攻撃チャージ中のためステイに
+		isStay_ = true;
+		atkChargeCnt_ = 0;
+	}
+
+	////この内容は初期キャラ用。攻撃時には止まって攻撃する
+	////強いキャラクターは移動攻撃も想定するのでここの処理とは少し違っていくる
+	////プレイヤーとの距離
+	//float distance = Utility::MagnitudeF(VSub(pPos_, pos_));
+
+	////移動処理
+	////移動処理
+	//if (distance >= atkDistance_) {
+	//	(this->*move_)(pPos_);
+	//}
+	//else {
+	//	OderGoalRot(pPos_);	//回転の設定だけは行う
+	//}
+
+
+	////カウンタ増加(ゲーム更新スピード)
+	//intervalCnt_ += SceneManager::GetInstance().GetUpdateSpeedRate_();
+
+	////判定
+	////プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
+	//if (distance <= atkDistance_ && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
+	//	//攻撃の準備時間
+
+	//	//準備時間が終わったら攻撃する
+	//	atkManager_.Attack(speciesName_,"SwingSword");
+	//	animController_->Play("attack", SPEED_ANIM);
+	//	stopTime_ = atkManager_.GetTotalTime(EnemyManager::ATTACK_NOMAL);
+	//	intervalCnt_ = 0.0f;
+	//}
 }
 
 void Boss::MoveBattle(const VECTOR& _pPos)

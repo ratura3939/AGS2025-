@@ -34,8 +34,7 @@ void CollisionManager::Destroy(void)
 }
 
 CollisionManager::CollisionManager(void)
-	: colliderCounter_(0)
-	, isSlow_(false)
+	: isSlow_(false)
 {
 }
 
@@ -45,38 +44,37 @@ CollisionManager::~CollisionManager(void)
 
 void CollisionManager::AddCollider(std::weak_ptr<Collider> _col)
 {
-	//管理番号付与→追加→カウンタ増加
-	_col.lock()->SetManagementNumber(colliderCounter_);
 	colliders_.push_back(_col);
-	colliderCounter_++;
 }
 
 void CollisionManager::DeleteCollider(void)
 {
-	//削除予定リストに入っているものを削除
-	for (int deleteCounter = 0; deleteCounter < static_cast<int>(deleteColliderIdxs_.size()); deleteCounter++) {
-		const int deleteIdx = deleteColliderIdxs_[deleteCounter];
+	std::erase_if(colliders_, 
+		[this](std::weak_ptr<Collider> wp) {
+			// 1. lockして実体を確認
+			auto sp = wp.lock();
 
-		//削除以降の管理番号を一つ手前に
-		for (int idx = deleteIdx + 1; idx < static_cast<int>(colliders_.size()); idx++) {
-			colliders_[idx].lock()->DecreaseManagementNuber();
-		}
-		//削除
-		colliders_.erase(colliders_.begin() + deleteIdx);
-		colliderCounter_--;
+			// 2. 実体がなければ(expired)削除対象
+			if (!sp) return true;
 
-		for (int i = deleteCounter + 1; i < static_cast<int>(deleteColliderIdxs_.size()); i++) {
-			//削除した分インデックスをずらす
-			if (deleteColliderIdxs_[i] > deleteIdx) {
-				deleteColliderIdxs_[i]--;
+			// 3. 削除予約リスト(deleteList_)にある実体と一致すれば削除対象
+			for (const auto& delWp : deleteList_) {
+				if (delWp.lock() == sp) {
+					return true;
+				}
 			}
+
+			return false; // それ以外は残す
 		}
-	}
+	);
+
+	// 予約リストを空にする
+	deleteList_.clear();
 }
 
-void CollisionManager::MarkForDelete(const int _colliderIdx)
+void CollisionManager::MarkForDelete(std::weak_ptr<Collider> _col)
 {
-	deleteColliderIdxs_.push_back(_colliderIdx);
+	deleteList_.push_back(_col);
 }
 
 void CollisionManager::DeleteAllCollider(void)
@@ -110,8 +108,6 @@ void CollisionManager::UpdateColliders(void)
 
 	//削除予定リストに入っているものを削除
 	DeleteCollider();
-	//削除予定リストクリア
-	deleteColliderIdxs_.clear();
 }
 
 void CollisionManager::UseAllert(const std::string& _atkName)
@@ -127,8 +123,7 @@ void CollisionManager::UseAttack(const std::string& _atkName)
 void CollisionManager::Reset(void)
 {
 	colliders_.clear();
-	colliderCounter_ = 0;
-	deleteColliderIdxs_.clear();
+	deleteList_.clear();
 }
 
 void CollisionManager::CollisionGeometry(std::weak_ptr<Collider> _col1, std::weak_ptr<Collider> _col2)

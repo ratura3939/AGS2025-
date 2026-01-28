@@ -109,6 +109,7 @@ protected:
     virtual void SetParam(void) = 0;    //各敵の固有情報
     virtual void InitAnim(void)override;
     void InitUI(void)override;
+	virtual void DamageReaction(void); //ダメージリアクション
 
 #pragma region 各種状態更新
 
@@ -155,6 +156,9 @@ protected:
 
     float searchRestartCnt_;    //疑い再開カウンタ
     float searchCnt_;   //疑いカウンタ
+
+	int atkChargeCnt_;      //攻撃チャージカウンタ
+	int atkChargeCntMax_;   //攻撃チャージカウンタ最大値
 
     bool isAlive_;     //削除していいか
     ENEMY_STATE state_;//状態

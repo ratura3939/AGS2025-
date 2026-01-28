@@ -30,6 +30,8 @@ namespace {
 EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)
 	: atkManager_(_atk)
 	, pPos_(_pPos)
+	, atkChargeCnt_(0)
+	, atkChargeCntMax_(0)
 {
 	speciesName_ = "Enemy" + std::to_string(_num);
 	serchCol_ = serchDebugCol;
@@ -111,6 +113,11 @@ void EnemyBase::InitUI(void)
 	uiCntl_ = std::make_unique<EnemyUIController>(uiPos_,state_);
 	uiCntl_->Init(speciesName_);
 	uiCntl_->CreateUI(speciesName_, hp_, maxHp_);
+}
+
+void EnemyBase::DamageReaction(void)
+{
+	//ノーリアクション
 }
 
 void EnemyBase::UpdateNomal(void)
@@ -202,6 +209,12 @@ void EnemyBase::UpdateBattle(void)
 
 	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
 	if (distance <= ATTACK_DISTANCE && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
+		const float ChargeAtkEfcScale = 40.0f;
+		const float ChargeAtkEfcSpeed = 0.3f;
+
+		auto& efcM = EffectManager::GetInstance();
+		efcM.Play(GetSpeciesName(), "Charge", centerPos_, rot_, ChargeAtkEfcScale, ChargeAtkEfcSpeed);
+
 		//攻撃する
 		atkManager_.Attack(speciesName_,"SwingSword");
 		animController_->Play("attack", SPEED_ANIM);
@@ -286,10 +299,12 @@ void EnemyBase::MoveBattle(const VECTOR& _pPos)
 		stopTime_--;
 		return;
 	}
+
 	//移動(前方方向)
 	pos_=VAdd(pos_, VScale(GetForward(), moveSped_* SceneManager::GetInstance().GetUpdateSpeedRate_()));
 	animController_->Play("dush", SPEED_ANIM);
 
+	//目標の回転設定
 	OderGoalRot(_pPos);
 }
 
@@ -320,6 +335,8 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		moveSped_ = MOVE_POW;
 		uiCntl_->FindReset();
 		searchRestartCnt_ = 0.0f;
+		//目的地設定のため
+		isStay_ = true;
 
 		serchCol_ = serchDebugCol;
 		alertCol_ = serchDebugCol2;
@@ -341,19 +358,20 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		update_ = &EnemyBase::UpdateBattle;
 		move_ = &EnemyBase::MoveBattle;
 		moveSped_ = MOVE_POW_FIND;
-		
+		isStay_ = false;
 
 		serchCol_ = alertDebugCol;
 		break;
 	case ENEMY_STATE::DETH:
 		update_ = &EnemyBase::UpdateDeth;
 		//死亡アニメーション
+		animController_->UnAnimLock();	//アニメーションロック解除
 		animController_->Play("dethStart", SPEED_ANIM,{"dethSus"});
 
 		//コライダー登録解除
 		//CollisionManager& colM = CollisionManager::GetInstance();
-		CollisionManager::GetInstance().MarkForDelete(collider_->GetManagementNumber());
-		CollisionManager::GetInstance().MarkForDelete(atkCollider_->GetManagementNumber());
+		CollisionManager::GetInstance().MarkForDelete(collider_);
+		CollisionManager::GetInstance().MarkForDelete(atkCollider_);
 		atkManager_.DeleteAttackCollider(speciesName_);
 
 		isActiveGravity_ = false;	//重力無効化
@@ -442,6 +460,9 @@ void EnemyBase::SetIsLocked(const bool _flag)
 
 void EnemyBase::Damage(const float _pow)
 {
+	//ダメージリアクション(派生クラス別)
+	DamageReaction();
+
 	//攻撃力分減らす
 	hp_ -= static_cast<int>(_pow);
 	//戦闘状態ではなかったら

@@ -135,11 +135,13 @@ std::vector<std::weak_ptr<EnemyBase>> EnemyManager::GetEnemys(void)
 
 const VECTOR& EnemyManager::GetPos(const int _num)
 {
+	if (_num < 0 || _num >= static_cast<int>(characters_.size()))return Utility::VECTOR_ZERO;
 	return characters_[_num]->GetPos();
 }
 
 const Quaternion& EnemyManager::GetQua(const int _num)
 {
+	if (_num < 0 || _num >= static_cast<int>(characters_.size()))return Quaternion();
 	return characters_[_num]->GetQua();
 }
 
@@ -251,6 +253,8 @@ void EnemyManager::LokedOn(const int _num)
 
 void EnemyManager::CreateBoss(const VECTOR& _pPos)
 {
+	characters_.clear();
+
 	VECTOR pos = INIT_1;
 	auto boss = std::make_shared<Boss>(pos, 0, atkMng_, _pPos);
 	boss->Init();

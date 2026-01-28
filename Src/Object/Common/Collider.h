@@ -73,15 +73,6 @@ public:
 	//持ち主の名前を取得
 	const std::string& GetMasterName(void);
 
-	//管理番号の設定
-	void SetManagementNumber(const int _num);
-
-	//管理番号の整列時に使用
-	void DecreaseManagementNuber(void);
-
-	//管理番号の取得
-	const int GetManagementNumber(void)const;
-
 	//デバッグ
 	void DrawDebugCollider(void);
 
@@ -100,8 +91,5 @@ protected:
 
 	//衝突判定を行うか
 	bool isCollision_;
-
-	//マネージャでの管理番号
-	int colliderManagementNumber_;
 };
 

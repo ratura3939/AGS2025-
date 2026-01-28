@@ -15,6 +15,8 @@ AnimationController::AnimationController(int& _model):modelId_(_model)
 	counter_ = -1.0f;
 	speedRate_ = 1.0f;
 
+	isAnimLock_ = false;
+
 	finishAnim_ = &AnimationController::FinishAnimNomal;
 	updateAnim_ = &AnimationController::UpdateNomalAnim;
 
@@ -25,7 +27,7 @@ AnimationController::~AnimationController(void)
 {
 }
 
-void AnimationController::Add(const std::string& _name, const int _attach, const PLAY_TYPE _type)
+void AnimationController::Add(const std::string& _name, const int _attach, const PLAY_TYPE _type, const bool _isLock)
 {
 	//すでに要素がある時
 	if (animDatas_.contains(_name)) {
@@ -38,7 +40,10 @@ void AnimationController::Add(const std::string& _name, const int _attach, const
 	AnimationInfo anim = {};
 	anim.type = _type;
 	anim.idx = _attach;
-	
+	anim.mustPlayOnce = _isLock;
+	if (_type == PLAY_TYPE::LOOP) {
+		anim.mustPlayOnce = false;
+	}
 
 	//総再生時間を取得するためには一回アタッチする必要がある
 	attachAnim_ = MV1AttachAnim(modelId_, anim.idx);
@@ -55,6 +60,9 @@ void AnimationController::Add(const std::string& _name, const int _attach, const
 
 void AnimationController::Play(const std::string& _name, const float _speed, const std::vector<std::string> _next)
 {
+	//アニメーションロック中は再生しない
+	if (isAnimLock_)return;
+
 	//要素がないとき
 	if (!animDatas_.contains(_name)) {
 		//エラー防止
@@ -118,6 +126,9 @@ void AnimationController::Play(const std::string& _name, const float _speed, con
 	if (activeAnim_.type == PLAY_TYPE::RETURN) {
 		counter_ = activeAnim_.total;
 	}
+
+	//保障
+	isAnimLock_= animDatas_[_name].mustPlayOnce;
 
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(modelId_, attachAnim_, counter_);
@@ -190,6 +201,9 @@ void AnimationController::UpdateReturnAnim(void)
 
 void AnimationController::FinishAnimNomal(void)
 {
+	//アニメーションロック解除
+	isAnimLock_ = false;
+
 	//次に再生されている物が設定されているとき
 	if (!nextAnim_.empty()) {
 		//配列の最前列を再生
@@ -204,10 +218,14 @@ void AnimationController::FinishAnimNomal(void)
 
 void AnimationController::FinishAnimLoop(void)
 {
+	//アニメーションロック解除
+	isAnimLock_ = false;
 	counter_ = 0.0f;
 }
 
 void AnimationController::FinishAnimReturn(void)
 {
+	//アニメーションロック解除
+	isAnimLock_ = false;
 	counter_ = activeAnim_.total;
 }

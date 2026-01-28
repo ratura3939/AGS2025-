@@ -8,7 +8,6 @@ Collider::Collider(ActorBase& _master, const std::set<COL_TAG> _tags, std::uniqu
 	, noHitTags_(_noHitTags)
 	, isCollision_(true)
 {
-	colliderManagementNumber_ = -1;
 }
 
 Collider::~Collider(void)
@@ -93,19 +92,4 @@ const float Collider::GetWeight(void)const
 const std::string& Collider::GetMasterName(void)
 {
 	return master_.GetSpeciesName();
-}
-
-void Collider::SetManagementNumber(const int _num)
-{
-	colliderManagementNumber_ = _num;
-}
-
-void Collider::DecreaseManagementNuber(void)
-{
-	colliderManagementNumber_--;
-}
-
-const int Collider::GetManagementNumber(void) const
-{
-	return colliderManagementNumber_;
 }

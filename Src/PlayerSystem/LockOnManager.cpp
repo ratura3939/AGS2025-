@@ -57,6 +57,7 @@ void LockOnManager::LockOn(void)
 {
 	//–³‘Ê‚Èˆ—‚ğ‚µ‚È‚¢‚½‚ß
 	if (isLockOn_)return;
+	if (nearTargetNum_ < 0)return;
 
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	camera.SetLockPos(targets_.GetPos(nearTargetNum_));	//ƒƒbƒNƒIƒ“‘ÎÛ‚Ìİ’è

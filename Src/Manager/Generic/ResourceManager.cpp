@@ -252,6 +252,9 @@ void ResourceManager::InitGame(void)
 	//ダメージ
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Damage.efkefc");
 	resourcesMap_.emplace(SRC::DAMAGE_EFC, res);
+	//攻撃チャージ
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Charge.efk");
+	resourcesMap_.emplace(SRC::CHARGE_ATK_EFC, res);
 }
 
 void ResourceManager::InitClear(void)

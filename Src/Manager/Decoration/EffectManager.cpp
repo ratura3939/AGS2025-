@@ -80,38 +80,61 @@ void EffectManager::SyncEffect(const std::string _master,const std::string& _nam
 
 void EffectManager::Update(void)
 {
-	//削除項目記憶用
-	std::map<std::string, std::map<std::string, std::vector<int>>>deleteField = {};//<所有者・止めるエフェクト詳細>
-	std::map<std::string, std::vector<int>>deleteIdx = {};	//止めるエフェクト詳細<エフェクト名/停止する番号>
 
 	//master=first:所有者/second:止めるエフェクト詳細
 	for (auto& master : effectPlay_) {
 		//data=first:エフェクト名/second:再生データ
 		for (auto& data : master.second) {
-			//動的配列カウンタ用
-			int cnt = 0;
-			//再生データ個数分
-			for (auto& efc : data.second) {
-				if (IsEffekseer3DEffectPlaying(efc) == -1) {
-					deleteIdx[data.first].push_back(cnt);
-				}
-				//カウンタ増加
-				cnt++;
-			}
+			std::erase_if(data.second,
+				[](int handle) {
+					//再生が終了しているものを削除
+					return IsEffekseer3DEffectPlaying(handle) == -1;
+				});
 		}
-		//所有者と削除データを保存
-		deleteField.emplace(master.first, deleteIdx);
-	}
 
-	//削除
-	//master=first:所有者/second:止めるエフェクト詳細
-	for (auto& master : deleteField) {
-		//idx=first:エフェクト名/second:停止番号
-		for (auto& idx : master.second) {
-			//削除
-			effectPlay_[master.first][idx.first];
-		}
+		//エフェクトが一つもない名前を削除
+		std::erase_if(master.second, 
+			[](const auto& item) {
+				return item.second.empty();
+			});
 	}
+	//エフェクトが一つもない所有者を削除
+	std::erase_if(effectPlay_, [](const auto& item) {
+		return item.second.empty();
+		});
+
+	////削除項目記憶用
+	//std::map<std::string, std::map<std::string, std::vector<int>>>deleteField = {};//<所有者・止めるエフェクト詳細>
+	//std::map<std::string, std::vector<int>>deleteIdx = {};	//止めるエフェクト詳細<エフェクト名/停止する番号>
+
+	////master=first:所有者/second:止めるエフェクト詳細
+	//for (auto& master : effectPlay_) {
+	//	//data=first:エフェクト名/second:再生データ
+	//	for (auto& data : master.second) {
+	//		//動的配列カウンタ用
+	//		int cnt = 0;
+	//		//再生データ個数分
+	//		for (auto& efc : data.second) {
+	//			if (IsEffekseer3DEffectPlaying(efc) == -1) {
+	//				deleteIdx[data.first].push_back(cnt);
+	//			}
+	//			//カウンタ増加
+	//			cnt++;
+	//		}
+	//	}
+	//	//所有者と削除データを保存
+	//	deleteField.emplace(master.first, deleteIdx);
+	//}
+
+	////削除
+	////master=first:所有者/second:止めるエフェクト詳細
+	//for (auto& master : deleteField) {
+	//	//idx=first:エフェクト名/second:停止番号
+	//	for (auto& idx : master.second) {
+	//		//削除
+	//		effectPlay_[master.first][idx.first];
+	//	}
+	//}
 }
 
 void EffectManager::Release(void)
@@ -125,4 +148,17 @@ void EffectManager::Destroy(void)
 {
 	Release();
 	delete instance_;
+}
+
+const bool EffectManager::IsEffectPlay(const std::string _master, const std::string& _name)
+{
+	//配列内に入っていないものを停止しようとしたら警告
+	if (effectPlay_.find(_master) == effectPlay_.end()) {
+		return false;
+	}
+
+	if (effectPlay_[_master].find(_name) == effectPlay_[_master].end()) {
+		return false;
+	}
+	return true;
 }

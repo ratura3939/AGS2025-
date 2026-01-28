@@ -215,6 +215,8 @@ void Game::InitEffect(void)
 	efcM.Add("Sword", rsM.Load(ResourceManager::SRC::SWORD_EFC).handleId_);
 	//ダメージ
 	efcM.Add("Damage", rsM.Load(ResourceManager::SRC::DAMAGE_EFC).handleId_);
+	//攻撃チャージ
+	efcM.Add("Charge", rsM.Load(ResourceManager::SRC::CHARGE_ATK_EFC).handleId_);
 }
 
 void Game::InitShader(void)
