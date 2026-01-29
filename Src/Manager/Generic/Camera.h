@@ -12,7 +12,7 @@ class Camera
 {
 public:
 	//カメラの描画域(Near,Far)関連の定数------------------------------------------------------
-	static constexpr float SPEED = 10.0f;			//カメラスピード
+	static constexpr float SPEED = 15.0f;			//カメラスピード
 
 	static constexpr float CAMERA_NEAR = 40.0f;		//カメラクリップ：NEAR
 
