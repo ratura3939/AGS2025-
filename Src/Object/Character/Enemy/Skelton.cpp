@@ -28,7 +28,7 @@ namespace {
 #pragma endregion
 
 	const float UI_DEVIATION_Y = 300.0f* EnemyBase::CHARA_SCALE; //UI表示位置補正Y
-	const int ATK_CHARGE_CNT_MAX = 30; //攻撃チャージ最大値
+	const int ATK_CHARGE_CNT_MAX = 40; //攻撃チャージ最大値
 }
 
 Skelton::Skelton(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)

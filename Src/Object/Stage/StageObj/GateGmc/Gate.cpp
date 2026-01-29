@@ -30,6 +30,7 @@ Gate::~Gate(void)
 void Gate::Draw(void)
 {
 	fence_->Draw();
+	fence_->DrawDebug();
 
 	//Œo‰ßŽžŠÔ
 	material_->SetConstBufPS(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
