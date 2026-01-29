@@ -445,7 +445,7 @@ void EnemyBase::DrawDebug(void)
 
 const bool EnemyBase::IsAlive(void) const
 {
-	return isAlive_;
+	return state_ != ENEMY_STATE::DETH && state_ != ENEMY_STATE::END;
 }
 
 const void EnemyBase::SetAnimSpeedRate(const float _percent)

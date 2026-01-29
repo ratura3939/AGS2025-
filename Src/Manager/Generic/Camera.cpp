@@ -275,9 +275,9 @@ void Camera::SetBeforeDrawReset(void)
 		isReset_ = true;
 		angles_ = Utility::VECTOR_ZERO;
 
-		VECTOR axY = { 0.0f,1.0f,0.0f };
-
-		rot_.ToAngleAxis(&angles_.y, &axY);
+		VECTOR finishEuler = rot_.ToEuler();
+		angles_.x = finishEuler.x;
+		angles_.y = finishEuler.y;
 
 		return;
 	}
@@ -289,9 +289,13 @@ void Camera::SetBeforeDrawReset(void)
 
 	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.8f);
 
-	VECTOR axY = { 0.0f,1.0f,0.0f };
+	//VECTOR axY = { 0.0f,1.0f,0.0f };
 
-	rot_.ToAngleAxis(&angles_.y, &axY);
+	//rot_.ToAngleAxis(&angles_.y, &axY);
+
+	VECTOR currentEuler = rot_.ToEuler();
+	angles_.x = currentEuler.x;
+	angles_.y = currentEuler.y;
 
 	//カメラの上方向
 	cameraUp_ = rot_.GetUp();
@@ -429,11 +433,33 @@ void Camera::ChangeMode(MODE mode)
 		break;
 
 	case MODE::RESET:
+	{
 		stepReset_ = 0.0f;
 		start_.pos = pos_;
 		start_.quaRot = rot_;
-		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(RELATIVE_F2C_POS_FOLLOW));
-		goal_.quaRot = followObject_.quaRot;
+		goalFocusPos_ = followObject_.pos;
+
+		//現在のキャラクターの向きから Y軸回転（ヨー）のみを抽出
+		float charaYaw;
+		VECTOR axisY = { 0.0f, 1.0f, 0.0f };
+		followObject_.quaRot.ToAngleAxis(&charaYaw, &axisY);
+
+		//現在のカメラの高さ(angles_.x)と「キャラの向き(charaYaw)」を合成
+		Quaternion goalRotY = Quaternion::AngleAxis(charaYaw, Utility::AXIS_Y);
+		Quaternion goalRotX = Quaternion::AngleAxis(angles_.x, Utility::AXIS_X);
+
+		//水平回転を先に適応し、その後に現在の高さを適応
+		goal_.quaRot = goalRotY.Mult(goalRotX);
+
+		VECTOR goalRelative = RELATIVE_F2C_POS_FOLLOW;
+		goalRelative.y = pos_.y;
+		goal_.pos = VAdd(followObject_.pos, goal_.quaRot.PosAxis(goalRelative));
+
+		//回転の同期
+		VECTOR currentEuler = rot_.ToEuler();
+		angles_.x = currentEuler.x;
+		angles_.y = currentEuler.y;
+	}
 		break;
 
 	case MODE::AUTO_MOVE:
