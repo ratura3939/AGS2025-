@@ -88,12 +88,6 @@ void InputManager::Update(void)
 			}
 		}
 		currentInptuPeri_[keyvalue.first] = inputTypes;
-		/*if (!currentInptuPeri_[keyvalue.first].empty())
-		{
-			pressed = true;
-		}
-		currentInput_[keyvalue.first] = pressed;*/
-		
 	}
 
 	//マウス位置初期化
@@ -224,7 +218,7 @@ const bool InputManager::IsInputRecord(const std::string& _eventCode, const INPU
 		inputRecord = lastInptuPeri_[_eventCode];
 	}
 
-	auto cntl = SceneManager::GetInstance().GetController();
+	auto& cntl = SceneManager::GetInstance().GetController();
 	bool currentFlag = false;	//何かしら入力があったか
 
 	//指定のコードで入力があった機種の経歴分回す
@@ -253,6 +247,69 @@ const bool InputManager::IsInputRecord(const std::string& _eventCode, const INPU
 		}
 	}
 	return currentFlag;
+}
+
+InputManager::MoveInput InputManager::GetPadMoveInput(void)
+{
+	MoveInput result = { 0.0f, 0.0f, 0.0f };
+
+	int analogX = 0, analogY = 0;
+	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+
+	// 既存の閾値を使用
+	// analogX, analogY は -32768 ~ 32767 の範囲
+	float magnitude = sqrt(static_cast<float>(analogX * analogX + analogY * analogY));
+
+	// デッドゾーン判定（既存の ANALOG_STHICK_THRESHOLD を使用）
+	if (magnitude > ANALOG_STHICK_THRESHOLD) {
+		// -1.0 ~ 1.0 に正規化
+		const float ANALOG_MAX = 32767.0f;
+		result.x = analogX / ANALOG_MAX;
+		result.y = -analogY / ANALOG_MAX;  // Y軸反転
+		result.magnitude = magnitude / ANALOG_MAX;
+
+		// 1.0を超えないようにクランプ
+		if (result.magnitude > 1.0f) {
+			result.x /= result.magnitude;
+			result.y /= result.magnitude;
+			result.magnitude = 1.0f;
+		}
+	}
+
+	return result;
+}
+
+InputManager::MoveInput InputManager::GetKeyMoveInput(void)
+{
+	MoveInput result = { 0.0f,0.0f,0.0f };
+
+	const float movePow = 1.0f;
+
+	if (IsPressed("up")) {
+		result.y += movePow;
+	}
+	if (IsPressed("down")) {
+		result.y -= movePow;
+	}
+	if (IsPressed("left")) {
+		result.x -= movePow;
+	}
+	if (IsPressed("right")) {
+		result.x += movePow;
+	}
+
+	//入力があったとき
+	if(result.x != 0.0f || result.y != 0.0f) {
+		//正規化
+		float magnitude = sqrt(result.x * result.x + result.y * result.y);
+		if (magnitude > 0.0f) {
+			result.x /= magnitude;
+			result.y /= magnitude;
+			result.magnitude = 1.0f;
+		}
+	}
+	
+	return result;
 }
 
 
@@ -289,6 +346,36 @@ bool InputManager::IsTrigerrUp(const std::string& _eventCode, bool _isDistinguis
 bool InputManager::IsPressed(const std::string& _eventCode, bool _isDistinguish)
 {
 	return IsInputRecord(_eventCode, INPUT_RECORD::CURRENT,_isDistinguish);
+}
+
+InputManager::MoveInput InputManager::GetMoveInput(bool _isDistinguish)
+{
+	MoveInput result = { 0.0f,0.0f,0.0f };
+
+	auto& cntl = SceneManager::GetInstance().GetController();
+
+	//入力を両者受け付ける場合
+	if(!_isDistinguish || cntl == SceneManager::CNTL::NONE) {
+		//とりあえずPAD優先
+		result = GetPadMoveInput();
+		if (result.magnitude == 0.0f) {
+			//キーボード操作
+			result = GetKeyMoveInput();
+		}
+	}
+	else {
+		//どちらか片方のみ
+		//PADのとき
+		if(cntl == SceneManager::CNTL::PAD) {
+			result = GetPadMoveInput();
+		}
+		//KEYのとき
+		else if (cntl == SceneManager::CNTL::KEY) {
+			result = GetKeyMoveInput();
+		}
+	}
+
+	return result;
 }
 
 InputManager::InputManager(void)

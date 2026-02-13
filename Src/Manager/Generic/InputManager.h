@@ -46,6 +46,9 @@ public:
 		end
 	};
 
+	/// <summary>
+	/// マウス入力種別
+	/// </summary>
 	enum class MOUSE_INPUT {
 		L_CLICK,//左クリック
 		R_CLICK,//右クリック
@@ -57,6 +60,7 @@ public:
 		MAX
 	};
 
+	//入力履歴種別
 	enum class INPUT_RECORD {
 		CURRENT,
 		LAST
@@ -76,6 +80,13 @@ public:
 		MAX
 	};
 
+	//移動入力情報
+	struct MoveInput {
+		float x;
+		float y;
+		float magnitude;
+	};
+
 	// インスタンスを明示的に生成
 	static void CreateInstance(void);
 
@@ -88,19 +99,6 @@ public:
 	// リソースの破棄
 	void Destroy(void);
 
-private:
-	//キー対応初期化
-	void ResetInput(void);
-	//アナログキーの入力判別の関数定義
-	void AnalogInputFuncInit(void);
-
-	//マウスホイールの入力判別の関数定義
-	void MouseInputFuncInit(void);
-
-	//コードの現在又は１フレーム前の入力を渡す
-	const bool IsInputRecord(const std::string& _eventCode,const INPUT_RECORD& _record, const bool _isDistinguish);
-
-public:
 	/// <summary>
 	/// キーのダウントリガ
 	/// </summary>
@@ -115,11 +113,37 @@ public:
 	/// <returns></returns>
 	bool IsTrigerrUp(const std::string& _eventCode, bool _isDistinguish = true);
 
+	/// <summary>
+	/// 押されているかどうか
+	/// </summary>
+	/// <param name="_eventCode">登録名</param>
+	/// <param name="_isDistinguish">入力を設定しているほうしか受け付けないか</param>
+	/// <returns></returns>
 	bool IsPressed(const std::string& _eventCode, bool _isDistinguish = true);
 
-private:
-	static InputManager* instance_;
+	/// <summary>
+	/// 移動方向の取得(単純な４方向ではなく細かくほしいとき)
+	/// </summary>
+	/// <param name="_isDistinguish"></param>
+	/// <returns></returns>
+	MoveInput GetMoveInput(bool _isDistinguish = true);
 
+private:
+	//キー対応初期化
+	void ResetInput(void);
+	//アナログキーの入力判別の関数定義
+	void AnalogInputFuncInit(void);
+
+	//マウスホイールの入力判別の関数定義
+	void MouseInputFuncInit(void);
+
+	//コードの現在又は１フレーム前の入力を渡す
+	const bool IsInputRecord(const std::string& _eventCode, const INPUT_RECORD& _record, const bool _isDistinguish);
+
+	MoveInput GetPadMoveInput(void);
+	MoveInput GetKeyMoveInput(void);
+
+	static InputManager* instance_;
 
 	/// <summary>
 	/// 入力紐づけ(機器・対応コード)

@@ -220,7 +220,7 @@ Camera& SceneManager::GetCamera(void) const
 	return *camera_;
 }
 
-const SceneManager::CNTL SceneManager::GetController(void) const
+const SceneManager::CNTL& SceneManager::GetController(void) const
 {
 	return cntl_;
 }

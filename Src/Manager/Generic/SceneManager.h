@@ -80,7 +80,7 @@ public:
 	Camera& GetCamera(void) const;
 
 	//‘€ìí•Ê‚Ìæ“¾Eİ’è
-	const CNTL GetController(void)const;
+	const CNTL& GetController(void)const;
 	void SetController(const CNTL _cntl);
 	void SwitchController(void);	//Ø‚èŠ·‚¦
 
