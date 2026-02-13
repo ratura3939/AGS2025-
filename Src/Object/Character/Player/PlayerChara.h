@@ -82,6 +82,7 @@ public:
     //入力受付
     void InputDash(const bool _flag) { isDush_ = _flag; }
     void InputMoveDir(const MOVE_DIR _dir) { moveDir_ = _dir; }
+	void InputMoveVec(const VECTOR& _vec) { inputDir_ = _vec; }
 
     float GetToLockDeg(void);   //ロックオン角度
 
@@ -110,6 +111,7 @@ private:
 	bool isForceFacingCamera;    //カメラの前方方向に向かせるか
 
     //入力受付変数
+	VECTOR inputDir_;       //移動入力方向
     MOVE_DIR moveDir_;      //移動方向
     bool isDush_;           //走る
 

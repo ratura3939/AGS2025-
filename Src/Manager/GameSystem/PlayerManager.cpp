@@ -123,23 +123,33 @@ void PlayerManager::UserInput(AttackManager& _atk)
 #pragma region 移動
 	//移動
 	//入力
-	//入力があったら対応した移動方向をセット
-	if (ins.IsPressed("up")) {
-		character_->InputMoveDir(PlayerChara::MOVE_DIR::FORWARD);
-	}
-	else if (ins.IsPressed("left")) {
-		character_->InputMoveDir(PlayerChara::MOVE_DIR::LEFT);
-	}
-	else if (ins.IsPressed("down")) {
-		character_->InputMoveDir(PlayerChara::MOVE_DIR::BACK);
-	}
-	else if (ins.IsPressed("right")) {
-		character_->InputMoveDir(PlayerChara::MOVE_DIR::RIGHT);
+	auto moveVec = ins.GetMoveInput();
+	if (moveVec.x != 0.0f || moveVec.y != 0.0f) {
+		character_->InputMoveVec(VECTOR(moveVec.x, moveVec.y, 0.0f));
 	}
 	//移動していないとき
 	else {
 		character_->InputMoveDir(PlayerChara::MOVE_DIR::NONE);
 	}
+
+	////入力があったら対応した移動方向をセット
+	//if (ins.IsPressed("up")) {
+	//	character_->InputMoveDir(PlayerChara::MOVE_DIR::FORWARD);
+	//}
+	//else if (ins.IsPressed("left")) {
+	//	character_->InputMoveDir(PlayerChara::MOVE_DIR::LEFT);
+	//}
+	//else if (ins.IsPressed("down")) {
+	//	character_->InputMoveDir(PlayerChara::MOVE_DIR::BACK);
+	//}
+	//else if (ins.IsPressed("right")) {
+	//	character_->InputMoveDir(PlayerChara::MOVE_DIR::RIGHT);
+	//}
+	////移動していないとき
+	//else {
+	//	character_->InputMoveDir(PlayerChara::MOVE_DIR::NONE);
+	//}
+	
 	//ダッシュ
 	character_->InputDash(ins.IsPressed("dash"));
 

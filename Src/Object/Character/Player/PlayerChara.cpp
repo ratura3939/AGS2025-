@@ -396,6 +396,10 @@ void PlayerChara::Move(void)
 		SetNewGoalRot_ = true;
 	}
 
+
+	//ƒƒ‚0213
+	//ˆÚ“®“ü—Í•û–@‚Ì•Ï‰»‚É‚æ‚è‚±‚±‚ç•Ó‚ğ‚¢‚¶‚ç‚È‚¯‚ê‚Î‚È‚ç‚È‚¢
+
 	//ˆÚ“®•ûŒü
 	if (moveDir_ == MOVE_DIR::FORWARD) {
 		dir = cameraRot.GetForward();
