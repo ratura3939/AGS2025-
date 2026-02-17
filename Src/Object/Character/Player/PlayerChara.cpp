@@ -100,7 +100,7 @@ void PlayerChara::DoInit(void)
 	//モデル基礎情報
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_MDL).handleId_;
 
-	pos_ = INIT_POSITION;
+	//pos_ = INIT_POSITION;
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT),0.0f);
 
@@ -260,6 +260,39 @@ void PlayerChara::DrawDebug(void)
 	collider_->DrawDebugCollider();
 }
 
+void PlayerChara::InputMoveVec(const VECTOR& _inputVec)
+{
+	if (abs(_inputVec.x) < 0.01f && abs(_inputVec.y) < 0.01f) {
+		// 入力がほぼゼロの場合
+		//isMoving_ = false;
+		inputDir_ = Utility::VECTOR_ZERO;
+		return;
+	}
+
+	//isMoving_ = true;
+
+	// カメラの向きを考慮した移動方向の計算
+	auto& camera = SceneManager::GetInstance().GetCamera();
+	VECTOR camForward = camera.GetRot().GetForward();
+	VECTOR camRight = camera.GetRot().GetRight();
+
+	// Y軸方向を無視（水平面のみ）
+	camForward.y = 0.0f;
+	camRight.y = 0.0f;
+	camForward = VNorm(camForward);
+	camRight = VNorm(camRight);
+
+	// 入力方向をワールド座標に変換
+	// y: 前後（前が正）、x: 左右（右が正）
+	inputDir_ = VAdd(
+		VScale(camForward, _inputVec.y),
+		VScale(camRight, _inputVec.x)
+	);
+
+	// 念のため正規化
+	inputDir_ = VNorm(inputDir_);
+}
+
 float PlayerChara::GetToLockDeg(void)
 {//ロックオン特有の角度設定
 	VECTOR lockPos = SceneManager::GetInstance().GetCamera().GetLockPos();			//ロックオン対象位置
@@ -388,12 +421,12 @@ void PlayerChara::Move(void)
 
 	InputManager& ins = InputManager::GetInstance();
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera().GetRot();
-	VECTOR dir = Utility::VECTOR_ZERO;
 	std::string seName = "Walk";
 
 	afterMoveRad_ = 0.0f;
 	if (moveDir_ != MOVE_DIR::NONE) {
 		SetNewGoalRot_ = true;
+		afterMoveRad_ = atan2f(inputDir_.x, inputDir_.z);
 	}
 
 
@@ -401,22 +434,22 @@ void PlayerChara::Move(void)
 	//移動入力方法の変化によりここら辺をいじらなければならない
 
 	//移動方向
-	if (moveDir_ == MOVE_DIR::FORWARD) {
-		dir = cameraRot.GetForward();
-		afterMoveRad_ = Utility::Deg2RadF(DEG_FORWARD);
-	}
-	if (moveDir_ == MOVE_DIR::LEFT) {
-		dir = cameraRot.GetLeft();
-		afterMoveRad_ = Utility::Deg2RadF(DEG_LEFT);
-	}
-	if (moveDir_ == MOVE_DIR::BACK) {
-		dir = cameraRot.GetBack();
-		afterMoveRad_ = Utility::Deg2RadF(DEG_BACK);
-	}
-	if (moveDir_ == MOVE_DIR::RIGHT) {
-		dir = cameraRot.GetRight();
-		afterMoveRad_ = Utility::Deg2RadF(DEG_RIGHT);
-	}
+	//if (moveDir_ == MOVE_DIR::FORWARD) {
+	//	dir = cameraRot.GetForward();
+	//	afterMoveRad_ = Utility::Deg2RadF(DEG_FORWARD);
+	//}
+	//if (moveDir_ == MOVE_DIR::LEFT) {
+	//	dir = cameraRot.GetLeft();
+	//	afterMoveRad_ = Utility::Deg2RadF(DEG_LEFT);
+	//}
+	//if (moveDir_ == MOVE_DIR::BACK) {
+	//	dir = cameraRot.GetBack();
+	//	afterMoveRad_ = Utility::Deg2RadF(DEG_BACK);
+	//}
+	//if (moveDir_ == MOVE_DIR::RIGHT) {
+	//	dir = cameraRot.GetRight();
+	//	afterMoveRad_ = Utility::Deg2RadF(DEG_RIGHT);
+	//}
 
 	//速度設定
 	float speed = MOVE_POW;
@@ -428,12 +461,12 @@ void PlayerChara::Move(void)
 	//ロックオンの時
 	if (lockState_ == LOCK_STATE::LOCKON)speed = MOVE_POW;
 
-	dir.y = 0.0f; //上下成分を消す
+	// 移動方向のY成分を消す
+	VECTOR moveDir = inputDir_;
+	moveDir.y = 0.0f;
+	moveDir = VNorm(moveDir);
 	//移動処理
-	pos_ = VAdd(pos_, VScale(dir, speed));
-	//上下の移動が起きない様に
-	//ゆくゆくは重力とステージの当たり判定で処理する
-	//pos_.y = 0.0f;
+	pos_ = VAdd(pos_, VScale(moveDir, speed));
 
 	//アニメーション
 	//回避中は回避アニメーションを再生しているため他はしない
@@ -549,4 +582,12 @@ void PlayerChara::DrawShadow(void)
 
 	//// Ｚバッファを無効にする
 	//SetUseZBuffer3D(FALSE);
+}
+
+void PlayerChara::CalcMoveDirFromInput(void)
+{
+}
+
+void PlayerChara::CalcMoveDirAtLockon(void)
+{
 }
