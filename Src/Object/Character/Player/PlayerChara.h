@@ -82,6 +82,7 @@ public:
     //入力受付
     void InputDash(const bool _flag) { isDush_ = _flag; }
     void InputMoveDir(const MOVE_DIR _dir) { moveDir_ = _dir; }
+	const MOVE_DIR& GetInputMoveDir(void)const { return moveDir_; }
     void InputMoveVec(const VECTOR& _inputVec);
 
     float GetToLockDeg(void);   //ロックオン角度
@@ -100,8 +101,8 @@ private:
     void Move(void);    //移動処理
     const std::string DecideAnim(const MOVE_DIR _dir)const;
 	void DrawShadow(void); //影描画
-	void CalcMoveDirFromInput(void); //入力から移動方向を算出
-	void CalcMoveDirAtLockon(void); //ロックオン状態のときの移動方向を算出
+    const MOVE_DIR CalcMoveDirFromInput(const float _x, const float _y); //入力から移動方向を算出
+    const MOVE_DIR CalcMoveDirAtLockon(const float _x, const float _y); //ロックオン状態のときの移動方向を算出
 
     AttackManager& atkMng_;
 

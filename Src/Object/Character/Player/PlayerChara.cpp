@@ -291,6 +291,20 @@ void PlayerChara::InputMoveVec(const VECTOR& _inputVec)
 
 	// 念のため正規化
 	inputDir_ = VNorm(inputDir_);
+
+	// moveDir_ の算出
+	MOVE_DIR newMoveDir = MOVE_DIR::NONE;
+
+	if (lockState_ == LOCK_STATE::LOCKON) {
+		// ロックオン時はキャラクター基準で判定
+		newMoveDir = CalcMoveDirAtLockon(_inputVec.x, _inputVec.y);
+	}
+	else {
+		// 通常時はカメラ基準で判定
+		newMoveDir = CalcMoveDirFromInput(_inputVec.x, _inputVec.y);
+	}
+
+	InputMoveDir(newMoveDir);
 }
 
 float PlayerChara::GetToLockDeg(void)
@@ -584,10 +598,51 @@ void PlayerChara::DrawShadow(void)
 	//SetUseZBuffer3D(FALSE);
 }
 
-void PlayerChara::CalcMoveDirFromInput(void)
+const PlayerChara::MOVE_DIR PlayerChara::CalcMoveDirFromInput(const float _x, const float _y)
 {
+	// どちらの成分が強いか判定
+	if (abs(_y) > abs(_x)) {
+		// 前後が主
+		return (_y > 0.0f) ? MOVE_DIR::FORWARD : MOVE_DIR::BACK;
+	}
+	else {
+		// 左右が主
+		return (_x > 0.0f) ? MOVE_DIR::RIGHT : MOVE_DIR::LEFT;
+	}
 }
 
-void PlayerChara::CalcMoveDirAtLockon(void)
+const PlayerChara::MOVE_DIR PlayerChara::CalcMoveDirAtLockon(const float _x, const float _y)
 {
+	// カメラとキャラクターの向きの関係を判定
+	auto cameraForward = SceneManager::GetInstance().GetCamera().GetRot().GetForward();
+	auto playerForward = characterRotY_.GetForward();
+
+	cameraForward.y = 0.0f;
+	playerForward.y = 0.0f;
+	cameraForward = VNorm(cameraForward);
+	playerForward = VNorm(playerForward);
+
+	float dotCameraToPlayer = VDot(cameraForward, playerForward);
+	bool isReverse = (dotCameraToPlayer < 0.0f);  // キャラクターが反転しているか
+
+	// 入力を反転させるかどうか
+	float adjustedY = isReverse ? -_y : _y;
+	float adjustedX = isReverse ? -_x : _x;
+
+	// 調整後の入力で判定
+	const float THRESHOLD = 0.5f;
+
+	// 左右判定が強い場合
+	if (abs(adjustedX) > abs(adjustedY)) {
+		return (adjustedX > 0.0f) ? MOVE_DIR::RIGHT : MOVE_DIR::LEFT;
+	}
+	// 前後判定が強い場合
+	else {
+		if (adjustedY < -THRESHOLD) {
+			return MOVE_DIR::BACK;  // 後ろ
+		}
+		else {
+			return MOVE_DIR::FORWARD;  // 前
+		}
+	}
 }

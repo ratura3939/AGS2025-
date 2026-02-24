@@ -244,50 +244,68 @@ void PlayerManager::DoDudge(void)
 	//回避音出す
 	SoundManager::GetInstance().Play("Dodge");
 
-	//カメラとキャラクターの前方同士の内積
-	auto cFor = SceneManager::GetInstance().GetCamera().GetRot().GetForward();
-	auto pFor = character_->GetForward();
-	bool isReverse = false;
+	////カメラとキャラクターの前方同士の内積
+	//auto cFor = SceneManager::GetInstance().GetCamera().GetRot().GetForward();
+	//auto pFor = character_->GetForward();
+	//bool isReverse = false;
 
-	float CtoP = Utility::DotF(cFor, pFor);
-	if (CtoP < 0.0f) {
-		//キャラクターの向きが反転している。
-		isReverse = true;
+	//float CtoP = Utility::DotF(cFor, pFor);
+	//if (CtoP < 0.0f) {
+	//	//キャラクターの向きが反転している。
+	//	isReverse = true;
+	//}
+
+	////プレイヤーからの入力総まとめ
+	//InputManager& ins = InputManager::GetInstance();
+
+
+	//if (!isReverse) {
+	//	//反転していない場合
+	//	if (ins.IsPressed("left")) {
+	//		//対応するアニメーション
+	//		character_->PlayAnim("dodL");
+	//	}
+	//	else if (ins.IsPressed("right")) {
+	//		//対応するアニメーション
+	//		character_->PlayAnim("dodR");
+	//	}
+	//	else if (ins.IsPressed("down")) {
+	//		//対応するアニメーション
+	//		character_->PlayAnim("dodB");
+	//	}
+	//}
+	//else {
+	//	if (ins.IsPressed("left")) {
+	//		//対応するアニメーション
+	//		character_->PlayAnim("dodR");
+	//	}
+	//	else if (ins.IsPressed("right")) {
+	//		//対応するアニメーション
+	//		character_->PlayAnim("dodL");
+	//	}
+	//	else if (ins.IsPressed("up")) {
+	//		//対応するアニメーション
+	//		character_->PlayAnim("dodB");
+	//	}
+	//}
+
+	auto moveVec = character_->GetInputMoveDir();
+	using CHARA_DIR = PlayerChara::MOVE_DIR;
+
+	if(moveVec == CHARA_DIR::LEFT) {
+		character_->PlayAnim("dodL");
 	}
-
-	//プレイヤーからの入力総まとめ
-	InputManager& ins = InputManager::GetInstance();
-
-
-	if (!isReverse) {
-		//反転していない場合
-		if (ins.IsPressed("left")) {
-			//対応するアニメーション
-			character_->PlayAnim("dodL");
-		}
-		else if (ins.IsPressed("right")) {
-			//対応するアニメーション
-			character_->PlayAnim("dodR");
-		}
-		else if (ins.IsPressed("down")) {
-			//対応するアニメーション
-			character_->PlayAnim("dodB");
-		}
+	else if (moveVec == CHARA_DIR::RIGHT) {
+		character_->PlayAnim("dodR");
+	}
+	else if (moveVec == CHARA_DIR::BACK) {
+		character_->PlayAnim("dodB");
 	}
 	else {
-		if (ins.IsPressed("left")) {
-			//対応するアニメーション
-			character_->PlayAnim("dodR");
-		}
-		else if (ins.IsPressed("right")) {
-			//対応するアニメーション
-			character_->PlayAnim("dodL");
-		}
-		else if (ins.IsPressed("up")) {
-			//対応するアニメーション
-			character_->PlayAnim("dodB");
-		}
+		//念のために前に回避入力があったときのアニメーションを出す
+		character_->PlayAnim("dodB");
 	}
+
 
 	//時間の設定
 	RedyStateCount(LIMIT_AVOID_STATE);
