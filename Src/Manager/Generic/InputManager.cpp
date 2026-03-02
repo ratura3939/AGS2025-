@@ -254,7 +254,13 @@ InputManager::MoveInput InputManager::GetPadMoveInput(void)
 	MoveInput result = { 0.0f, 0.0f, 0.0f };
 
 	int analogX = 0, analogY = 0;
-	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+	//アナログ
+	XINPUT_STATE xinputState = {};
+	GetJoypadXInputState(DX_INPUT_PAD1, &xinputState);
+
+	//移動はLスティックのみで見ている(Y軸は前方向が-値になってしまうので事前に-(-)しておく)
+	analogX = xinputState.ThumbLX;
+	analogY = -xinputState.ThumbLY;
 
 	// 既存の閾値を使用
 	// analogX, analogY は -32768 ~ 32767 の範囲
