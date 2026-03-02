@@ -12,7 +12,7 @@ class InputManager
 {
 
 public:
-	static constexpr int ANALOG_STHICK_THRESHOLD = 500;	//スティック閾値
+	static constexpr int ANALOG_STHICK_THRESHOLD = 1000;	//スティック閾値
 	static constexpr int ANALOG_TRIGGER_THRESHOLD = 128;	//トリガー閾値
 	static constexpr int KEY_ALL = 256;	//キー種総数
 

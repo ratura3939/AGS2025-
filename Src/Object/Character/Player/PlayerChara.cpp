@@ -440,7 +440,7 @@ void PlayerChara::Move(void)
 	afterMoveRad_ = 0.0f;
 	if (moveDir_ != MOVE_DIR::NONE) {
 		SetNewGoalRot_ = true;
-		afterMoveRad_ = atan2f(inputDir_.x, inputDir_.z);
+		afterMoveRad_ = atan2f(inputDir_.z, inputDir_.x);
 	}
 
 

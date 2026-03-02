@@ -33,7 +33,7 @@ void SceneManager::Init(void)
 	SoundManager::CreateInstance();
 	EffectManager::CreateInstance();
 
-	//SoundManager::GetInstance().NoSound(); //デバッグ用：音声再生不可
+	SoundManager::GetInstance().NoSound(); //デバッグ用：音声再生不可
 
 	//UIマネージャの生成
 	UIManager2d::CreateInstance();
