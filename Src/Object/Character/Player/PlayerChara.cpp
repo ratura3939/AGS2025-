@@ -292,6 +292,11 @@ void PlayerChara::InputMoveVec(const VECTOR& _inputVec)
 	// 念のため正規化
 	inputDir_ = VNorm(inputDir_);
 
+	// キャラクターの目標角度を計算（ロックオンしていない時用）
+	afterMoveRad_ = 0.0f;
+	// 入力角度 = キャラクターが向くべき角度
+	afterMoveRad_ = atan2f(_inputVec.x, _inputVec.y);
+
 	// moveDir_ の算出
 	MOVE_DIR newMoveDir = MOVE_DIR::NONE;
 
@@ -437,33 +442,9 @@ void PlayerChara::Move(void)
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera().GetRot();
 	std::string seName = "Walk";
 
-	afterMoveRad_ = 0.0f;
 	if (moveDir_ != MOVE_DIR::NONE) {
 		SetNewGoalRot_ = true;
-		afterMoveRad_ = atan2f(inputDir_.x, inputDir_.z);
 	}
-
-
-	//メモ0213
-	//移動入力方法の変化によりここら辺をいじらなければならない
-
-	//移動方向
-	//if (moveDir_ == MOVE_DIR::FORWARD) {
-	//	dir = cameraRot.GetForward();
-	//	afterMoveRad_ = Utility::Deg2RadF(DEG_FORWARD);
-	//}
-	//if (moveDir_ == MOVE_DIR::LEFT) {
-	//	dir = cameraRot.GetLeft();
-	//	afterMoveRad_ = Utility::Deg2RadF(DEG_LEFT);
-	//}
-	//if (moveDir_ == MOVE_DIR::BACK) {
-	//	dir = cameraRot.GetBack();
-	//	afterMoveRad_ = Utility::Deg2RadF(DEG_BACK);
-	//}
-	//if (moveDir_ == MOVE_DIR::RIGHT) {
-	//	dir = cameraRot.GetRight();
-	//	afterMoveRad_ = Utility::Deg2RadF(DEG_RIGHT);
-	//}
 
 	//速度設定
 	float speed = MOVE_POW;
