@@ -12,9 +12,10 @@ namespace {
 }
 
 Camera::Camera(void)
-	:
-	mode_(MODE::NONE)
-	, c2fRelative_(Utility::VECTOR_ZERO)
+	:mode_(MODE::NONE)
+	,c2fRelative_(Utility::VECTOR_ZERO)
+	,idealPos_(Utility::VECTOR_ZERO)
+	,adjustedPos_(Utility::VECTOR_ZERO)
 {
 	currentMode_ = MODE::NONE;
 	pos_ = Utility::VECTOR_ZERO;
@@ -60,6 +61,7 @@ void Camera::Init(void)
 
 void Camera::Update(void)
 {
+	collider_->Update();
 }
 
 void Camera::SetBeforeDraw(void)
@@ -106,6 +108,13 @@ void Camera::SetBeforeDraw(void)
 	case MODE::MIRROR:
 		SetBeforeDrawMirror();
 		break;
+	}
+
+	// FOLLOW・LOCKON・NONE時にレイキャストによるカメラ位置補正を適用
+	if (mode_ == MODE::FOLLOW || mode_ == MODE::LOCKON || mode_ == MODE::NONE) {
+		/*collider_->UpdateRayCast();
+		pos_ = Utility::Lerp(pos_, adjustedPos_, lerpStep_);*/
+		pos_ = Utility::Lerp(pos_, idealPos_, lerpStep_);
 	}
 
 	//カメラの設定(位置と注視点による制御)
@@ -158,7 +167,8 @@ void Camera::SetBeforeDrawFollow(void)
 		lerpStep_ = NO_LERP;
 	}
 
-	pos_ = Utility::Lerp(pos_, gPos, lerpStep_);
+	//pos_ = Utility::Lerp(pos_, gPos, lerpStep_);
+	idealPos_ = gPos;
 
 	//注視点までの距離ベクトルを回転させ相対座標を生成
 	VECTOR relativeTPos = rot_.PosAxis(RELATIVE_C2T_POS);
@@ -214,7 +224,8 @@ void Camera::SetBeforeDrawLockOn(void)
 	prevGoalPos_ = lockOnGoalPos_;
 	lockOnGoalPos_ = VAdd(focusPos_, relativeCPos);
 
-	pos_ = Utility::Lerp(pos_, lockOnGoalPos_, lerpStep_);
+	//pos_ = Utility::Lerp(pos_, lockOnGoalPos_, lerpStep_);
+	idealPos_ = lockOnGoalPos_;
 
 	//ある程度の高さは保つ
 	if (pos_.y < UNDER_LIMIT_Y)pos_.y = UNDER_LIMIT_Y;
@@ -367,6 +378,7 @@ void Camera::SetBeforeDrawMirror(void)
 
 void Camera::Draw(void)
 {
+	collider_->Draw();
 }
 
 void Camera::Release(void)
@@ -423,6 +435,7 @@ void Camera::ChangeMode(MODE mode)
 		break;
 
 	case MODE::FOLLOW:
+		adjustedPos_ = pos_;
 		break;
 
 	case MODE::SHAKE:
@@ -514,6 +527,11 @@ void Camera::SetGoalPos(const VECTOR& _goal)
 const VECTOR& Camera::GetLockPos(void) const
 {
 	return lockPos_;
+}
+
+void Camera::ResetCollider(void)
+{
+	collider_->SetCollider();
 }
 
 const Camera::MODE& Camera::GetMode(void) const

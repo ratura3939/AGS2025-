@@ -158,8 +158,6 @@ private:
 	using InputTable_t = std::unordered_map<std::string, std::vector<InputCode>>;
 	InputTable_t inputTable_;	//イベントと入力の対応表
 
-	std::vector<std::string>inputListForDisplay_;	//キーコンフィグ用(前期実装未定)
-
 	//スティック関係は少し別種なのでこちらで扱う(基本的にRスティックやトリガー用)
 	using AnalogInputTable_t = std::unordered_map<ANALOG_INPUT_TYPE, std::function<bool(const XINPUT_STATE&)>>;
 	AnalogInputTable_t analpgInputTable_;

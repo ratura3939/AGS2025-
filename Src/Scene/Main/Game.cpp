@@ -570,6 +570,8 @@ void Game::Draw(void)
 	enemy_->Draw();
 	player_->Draw();
 
+	SceneManager::GetInstance().GetCamera().Draw();
+
 	//メニューボタンの表示
 	UIManager2d::GetInstance().Draw(MENU_BTN);
 

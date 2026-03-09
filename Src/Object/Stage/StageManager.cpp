@@ -110,7 +110,9 @@ void StageManager::Update(void)
 void StageManager::Draw(void)
 {
 	for (auto& obj : gmkObjs_) {
-		obj->Draw();
+		if (obj->GetIsDraw()) {
+			obj->Draw();
+		}
 	}
 }
 

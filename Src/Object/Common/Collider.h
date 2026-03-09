@@ -22,6 +22,7 @@ public:
 		,STAIRS		//階段
 		,LIBRA		//天秤
 		,FALL_LINE	//落下地点表示線
+		,NOT_TRANS	//透過不可
 	};
 
 	Collider(ActorBase& _master, const std::set<COL_TAG> _tags, std::unique_ptr<Geometry> _geo, const std::set<COL_TAG> _noHitTags = {});
@@ -57,6 +58,9 @@ public:
 
 	//衝突判定の使用設定
 	void SetUseThis(const bool _isUse) { isCollision_ = _isUse; }
+
+	//持ち主の描画設定
+	void SetMasterIsDraw(const bool _isDraw);
 
 	//持ち主に対して外部からの影響(移動量)を与える
 	void AddExternalVecToMaster(const VECTOR& _vec);

@@ -286,8 +286,6 @@ void SceneManager::ResetDeltaTime(void)
 
 void SceneManager::DoChangeScene(void)
 {	
-
-
 	//解放
 	auto& resM = ResourceManager::GetInstance();
 	auto& sndM = SoundManager::GetInstance();
@@ -306,6 +304,9 @@ void SceneManager::DoChangeScene(void)
 	efcM.Release();
 	uiM.Relese();
 	colM.Reset();
+
+	//リソース解放後,カメラのコライダーをを再度付与
+	camera_->ResetCollider();
 
 	//次のシーン初期化
 	nextScene_->Init();

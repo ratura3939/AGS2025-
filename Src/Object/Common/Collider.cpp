@@ -69,6 +69,11 @@ void Collider::DrawDebugCollider(void)
 	geometry_->DebugDraw();
 }
 
+void Collider::SetMasterIsDraw(const bool _isDraw)
+{
+	master_.SetIsDraw(_isDraw);
+}
+
 void Collider::AddExternalVecToMaster(const VECTOR& _vec)
 {
 	master_.AddExternalVec(_vec);

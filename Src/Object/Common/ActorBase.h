@@ -51,6 +51,10 @@ public:
 	//個体名取得
 	const std::string& GetSpeciesName(void)const;
 
+	//描画設定
+	void SetIsDraw(const bool _isDraw) { isDraw_ = _isDraw; }
+	const bool GetIsDraw(void)const { return isDraw_; }
+
 protected:
 	//派生クラス用
 	virtual void DoInit(void) = 0;		//初期化
@@ -89,6 +93,8 @@ protected:
 	bool isActiveGravity_;	//重力が有効か
 
 	VECTOR externalVec_;	//外部の影響による移動量
+
+	bool isDraw_;		//描画するか
 
 private:
 	void UpdateRotQuat(void);	//基礎情報の更新

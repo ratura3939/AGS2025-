@@ -121,6 +121,10 @@ public:
 	const VECTOR& GetLockPos(void)const;
 	const VECTOR& GetGoalPos(void)const { return goalDirecPos_; }
 	const VECTOR& GetC2FRelativeVec(void)const { return c2fRelative_; }
+	const VECTOR& GetFocusPos(void)const { return focusPos_; }
+	const VECTOR& GetFollowPos(void)const { return followObject_.pos; }
+	const VECTOR& GetIdealPos(void)const { return idealPos_; }
+	void SetAdjustedPos(const VECTOR& _pos) { adjustedPos_ = _pos; }
 
 	//回転取得
 	const Quaternion& GetRot(void)const;
@@ -149,6 +153,8 @@ public:
 	//カメラを初期位置に戻す
 	void SetDefault(void);
 
+	//再度カメラコライダーをセットする
+	void ResetCollider(void);
 
 	const MODE& GetMode(void)const;
 	const bool IsFinishShake(void) { return finishShake_; }	//画面揺れ終了判別
@@ -185,6 +191,11 @@ private:
 	
 	//移動目標位置
 	VECTOR goalDirecPos_;
+
+	// カメラの理想位置（追従計算で確定）
+	VECTOR idealPos_;
+	// CameraColliderから受け取った補正後の目標位置
+	VECTOR adjustedPos_;
 
 	//カメラの上方向
 	VECTOR cameraUp_;

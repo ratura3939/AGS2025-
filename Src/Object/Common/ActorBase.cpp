@@ -19,6 +19,7 @@ ActorBase::ActorBase(void)
 	, isActiveGravity_(true)
 	, prevPos_(Utility::VECTOR_ZERO)
 	, externalVec_(Utility::VECTOR_ZERO)
+	, isDraw_(true)
 {
 }
 
