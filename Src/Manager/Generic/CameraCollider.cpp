@@ -33,6 +33,7 @@ void CameraCollider::Draw(void)
 	DrawFormatString(0, 120, 0xff0000,"COL:START={%.1f,%.1f,%.1f}", lineStart_.x, lineStart_.y, lineStart_.z);
 	DrawFormatString(0, 160, 0xff0000,"COL:END  ={%.1f,%.1f,%.1f}", lineEnd_.x, lineEnd_.y, lineEnd_.z);
 	DrawFormatString(0, 300, 0xff0000,"ADJUST   ={%.1f,%.1f,%.1f}", test.x, test.y, test.z);
+	DrawFormatString(0, 340, 0xff0000,"isHitWall= %d", isHitWall_);
 
     //DrawCapsule3D(lineStart_, lineEnd_, 10, 8, 0x00ff00, 0x00ff00, false);
 }
@@ -49,12 +50,13 @@ void CameraCollider::HitCollider(std::weak_ptr<Collider> _col)
     using TAG = Collider::COL_TAG;
 
     //const VECTOR& hitPoint = collider_->GetGeometry().GetHitPoint();
-    const VECTOR& hitPoint = camera_.GetPos();
+    const VECTOR& hitPoint = collider_->GetGeometry().GetHitPoint();
     const VECTOR& rayStart = camera_.GetFollowPos();
 
     //透過不可の壁ジェクトなら
     if (hitObject->IsContainsTag(TAG::NOT_TRANS)) {
         float dist = VSize(VSub(hitPoint, rayStart));
+
         //一番近い衝突店を保存
         if (dist < minHitDistance_) {
             minHitDistance_ = dist;
@@ -74,7 +76,7 @@ void CameraCollider::HitCollider(std::weak_ptr<Collider> _col)
 
 void CameraCollider::UpdateRayCast(void)
 {
-    const VECTOR& rayStart = VAdd(camera_.GetFollowPos(), LINE_START_OFFSET);
+    const VECTOR rayStart = VAdd(camera_.GetFollowPos(), LINE_START_OFFSET);
     const VECTOR& rayEnd = camera_.GetIdealPos();
 
     VECTOR adjustedPos = rayEnd;
@@ -114,7 +116,7 @@ void CameraCollider::DoInit(void)
 
 	using TAG = Collider::COL_TAG;
     using TAG = Collider::COL_TAG;
-    collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::FALL_LINE}, std::make_unique<Line>(pos_, quaRot_, lineStart_, lineEnd_), std::set<TAG>{TAG::PLAYER, TAG::ENEMY});
+    collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::FALL_LINE}, std::make_unique<Line>(lineStart_, quaRot_, lineStart_, lineEnd_), std::set<TAG>{TAG::PLAYER, TAG::ENEMY});
     SetCollider();
 }
 
