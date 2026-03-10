@@ -115,15 +115,13 @@ void SceneManager::Update(void)
 	}
 	else
 	{
+		// カメラ更新
+		camera_->Update();
 		//最新のシーンだけを更新
   		scenes_.back()->Update();
 		SoundManager::GetInstance().Update();
 		EffectManager::GetInstance().Update();
 	}
-
-	// カメラ更新
-	camera_->Update();
-
 }
 
 void SceneManager::Draw(void)

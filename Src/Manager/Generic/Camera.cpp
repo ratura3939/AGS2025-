@@ -111,6 +111,10 @@ void Camera::SetBeforeDraw(void)
 		break;
 	}
 
+	auto idea = idealPos_;
+
+	collider_->UpdateLineEnd();
+
 	// FOLLOW・LOCKON・NONE時にレイキャストによるカメラ位置補正を適用
 	if (mode_ == MODE::FOLLOW || mode_ == MODE::LOCKON || mode_ == MODE::NONE) {
 		collider_->UpdateRayCast();

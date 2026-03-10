@@ -23,6 +23,7 @@ public:
 
     void HitCollider(std::weak_ptr<Collider> _col)override;
     void UpdateRayCast(void);
+    void UpdateLineEnd(void);
 
     void SetCollider(void);
 
