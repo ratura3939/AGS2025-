@@ -122,8 +122,8 @@ void InputManager::ResetInput(void)
 	inputTable_["subRight"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::RIGHT) },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::RS_RIGHT) } };
 
 	//各コマンド<PADは複数個所で兼用あり>
-	inputTable_["action"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_RETURN } ,{ PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::L_CLICK)},{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_B } };//Bボタン(Aボタン：任天堂)
-	inputTable_["dash"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LSHIFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };							//Aボタン(Bボタン：任天堂)
+	inputTable_["action"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_RETURN } ,{ PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::L_CLICK)},{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_A } };//Aボタン(Bボタン：任天堂)
+	inputTable_["dash"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_LSHIFT },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_B } };							//Bボタン(Aボタン：任天堂)
 	inputTable_["ability"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_Q },{ PERIPHERAL_TYPE::GAMEPAD,LB_NUM } };							//Aボタン(Bボタン：任天堂)
 	inputTable_["attack"] = { { PERIPHERAL_TYPE::MOUSE,static_cast<int>(MOUSE_INPUT::L_CLICK) },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_C } };		//Xボタン(Yボタン：任天堂)
 	inputTable_["jump"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_SPACE },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_X } };							//Yボタン(Xボタン：任天堂)

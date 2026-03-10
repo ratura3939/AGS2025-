@@ -339,6 +339,10 @@ void PlayerChara::DoHitCollider(const std::weak_ptr<Collider>& _col)
 
 	using TAG = Collider::COL_TAG;
 
+	if (_col.lock()->IsContainsTag(TAG::STAGE)) {
+		int a = 0;
+	}
+
 	//“G‚Ì•¨‚Ìê‡
 	if (_col.lock()->IsContainsTag(TAG::ENEMY)) {
 		//UŒ‚”­¶Ò‚Ì–¼‘O‚ğæ“¾

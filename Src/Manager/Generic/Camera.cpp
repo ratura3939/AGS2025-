@@ -9,7 +9,6 @@ namespace {
 	const float LERP_SPEED = 0.1f;
 	const float LERP_MAX = 1.0f;
 	const float HALF_DISTANCE = 0.5f;
-	const float WALL_LERP_SPEED = 1.0f;
 }
 
 Camera::Camera(void)
@@ -113,8 +112,7 @@ void Camera::SetBeforeDraw(void)
 
 	// FOLLOW・LOCKON・NONE時にレイキャストによるカメラ位置補正を適用
 	if (mode_ == MODE::FOLLOW || mode_ == MODE::LOCKON || mode_ == MODE::NONE) {
-		collider_->UpdateRayCast();
-		pos_ = Utility::Lerp(pos_, adjustedPos_, WALL_LERP_SPEED);
+		pos_ = Utility::Lerp(pos_, idealPos_, lerpStep_);
 	}
 
 	//カメラの設定(位置と注視点による制御)
@@ -237,8 +235,6 @@ void Camera::SetBeforeDrawLockOn(void)
 
 void Camera::SetBeforeDrawShake(void)
 {
-	// 一定時間カメラを揺らす
-	//stepShake_ -= SceneManager::GetInstance().GetDeltaTime();
 
 	stepShake_ -= 0.01f;
 
@@ -378,7 +374,6 @@ void Camera::SetBeforeDrawMirror(void)
 
 void Camera::Draw(void)
 {
-	collider_->Draw();
 }
 
 void Camera::Release(void)
