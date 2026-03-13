@@ -202,6 +202,7 @@ private:
 
 	//カメラの回転
 	Quaternion rot_;
+	
 
 	//回転スピード
 	float rotSpeed_;

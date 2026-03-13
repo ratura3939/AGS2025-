@@ -20,6 +20,7 @@ CameraCollider::CameraCollider(Camera& _camera)
 	, lineStart_(Utility::VECTOR_ZERO)
 	, lineEnd_(Utility::VECTOR_ZERO)
 {
+	testCnt_ = 0;
 }
 
 CameraCollider::~CameraCollider(void)
@@ -34,7 +35,6 @@ void CameraCollider::Draw(void)
 
 	DrawFormatString(0, 120, 0xff0000,"COL:START={%.1f,%.1f,%.1f}", lineStart_.x, lineStart_.y, lineStart_.z);
 	DrawFormatString(0, 160, 0xff0000,"COL:END  ={%.1f,%.1f,%.1f}", lineEnd_.x, lineEnd_.y, lineEnd_.z);
-	DrawFormatString(0, 300, 0xff0000,"ADJUST   ={%.1f,%.1f,%.1f}", test.x, test.y, test.z);
 	DrawFormatString(0, 380, 0xff0000,"IDEAL    ={%.1f,%.1f,%.1f}", ideal.x, ideal.y, ideal.z);
 
     //DrawCapsule3D(lineStart_, lineEnd_, 10, 8, 0x00ff00, 0x00ff00, false);
@@ -94,24 +94,10 @@ void CameraCollider::UpdateRayCast(void)
         if (distFromFocus < MIN_CAMERA_DISTANCE) {
             adjustedPos = VAdd(rayStart, VScale(Utility::VNormalize(VSub(rayEnd, rayStart)), MIN_CAMERA_DISTANCE));
         }
-
-        auto colEnd = collider_->GetGeometry().GetPos();
-        auto colEnd2 = lineEnd_;
-    }
-    else {
-        int a = 0;
-		auto colEnd = collider_->GetGeometry().GetPos();
-        auto colEnd2 = lineEnd_;
     }
 
     // Cameraに補正後の目標位置を渡す
     camera_.SetAdjustedPos(adjustedPos);
-	test = adjustedPos;
-
-    // フレームごとに衝突情報をリセット
-    isHitWall_ = false;
-    minHitDistance_ = FLT_MAX;
-    closestHitPoint_ = Utility::VECTOR_ZERO;
 }
 
 void CameraCollider::UpdateLineEnd(void)
@@ -166,4 +152,10 @@ void CameraCollider::DoUpdate(void)
     lineStart_ = VAdd(camera_.GetFollowPos(), LINE_START_OFFSET);
     //lineEnd_ = camera_.GetPos();
     //lineEnd_ = camera_.GetIdealPos();
+    UpdateLineEnd();
+
+    // フレームごとに衝突情報をリセット
+    isHitWall_ = false;
+    minHitDistance_ = FLT_MAX;
+    closestHitPoint_ = Utility::VECTOR_ZERO;
 }

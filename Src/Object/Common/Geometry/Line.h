@@ -25,7 +25,7 @@ public:
 
 private:
 	const VECTOR& startPos_;	//始点
-	const VECTOR& endPos_;	//終点
-	float length_;		//長さ
+	const VECTOR& endPos_;		//終点
+	float length_;				//長さ
 };
 

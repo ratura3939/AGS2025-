@@ -32,9 +32,6 @@ const bool Model::IsHit(Line& _line)
         _line.SetHitPoint(hitLineInfo.HitPosition);
 		_line.SetHitNormal(Utility::VNormalize(Utility::EpsilonNormal(hitLineInfo.Normal)));
     }
-    else {
-        int a = 0;
-    }
 
     return isHit;
 }
