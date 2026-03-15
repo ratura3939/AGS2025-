@@ -28,20 +28,6 @@ float4 main(PS_INPUT PSInput) : SV_TARGET
     red.r -= abs(sin(uv.y * 60.0f + g_time * 1.0f)) * 0.05f;
     red.r -= abs(sin(uv.y * 100.0f - g_time * 2.0f)) * 0.15f;
 
-	// 一定エリア処理
-	// ------------------------------------------------------------------------------
-	// 一定エリア以外、間隔を空けて、縞々模様(下地)を作る(色の減算で色を暗くする)
-	//srcCol.rgb -= (1.0f - isArea) * abs(sin(uv.y *  60.0f + g_time * 1.0f)) * 0.05f;
-	//srcCol.rgb -= (1.0f - isArea) * abs(sin(uv.y * 100.0f - g_time * 2.0f)) * 0.15f;
-
-	// 特定範囲だけ明るくする(色の加算で明るくする)
-	//srcCol.rgb += isArea * 0.5f;
-	// ------------------------------------------------------------------------------
-
-	// 下地だけ
-	//srcCol.rgb -= abs(sin(uv.y *  60.0f + g_time * 1.0f)) * 0.10f;
-	//srcCol.rgb -= abs(sin(uv.y * 100.0f - g_time * 2.0f)) * 0.15f;
-
     return float4(red, 1.0f);
 
 }

@@ -241,8 +241,6 @@ void Boss::MoveBattle(const VECTOR& _pPos)
 
 	//•ûŒü‚Ìİ’è
 	SetGoalRot(static_cast<float>(rad) - cameraRot.y);
-
-	debugRot_ = Utility::Deg2RadF(rad);
 }
 
 void Boss::DrawUI(void)

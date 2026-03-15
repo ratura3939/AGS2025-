@@ -33,8 +33,6 @@ void SceneManager::Init(void)
 	SoundManager::CreateInstance();
 	EffectManager::CreateInstance();
 
-	SoundManager::GetInstance().NoSound(); //デバッグ用：音声再生不可
-
 	//UIマネージャの生成
 	UIManager2d::CreateInstance();
 
@@ -115,15 +113,13 @@ void SceneManager::Update(void)
 	}
 	else
 	{
+		// カメラ更新
+		camera_->Update();
 		//最新のシーンだけを更新
   		scenes_.back()->Update();
 		SoundManager::GetInstance().Update();
 		EffectManager::GetInstance().Update();
 	}
-
-	// カメラ更新
-	camera_->Update();
-
 }
 
 void SceneManager::Draw(void)

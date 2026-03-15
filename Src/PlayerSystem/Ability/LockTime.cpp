@@ -14,6 +14,11 @@ namespace {
 	const int CHANGE_BEAT_INTERVAL_NUM = 4;		//何拍で間隔が変わるか
 	const int CHANGE_BEAT_SPEED_RATE = 2;		//間隔を何倍にするか
 
+	//効果音の音量調整
+	const int COUNT_SOUND_VOLUME = 60;
+	const int FINISH_SOUND_VOLUME = 40;
+	const int FINISH_SOUND_PITICH_RATE = 600;
+
 	//デバッグ用
 	const FLOAT4 ABILITY_COLOR_DEBUG = { 1.0f,0.0f,1.0f,1.0f };
 }
@@ -26,12 +31,13 @@ LockTime::LockTime(AbilityManager& _mng) :AbilityBase(_mng)
 	lockObject_ = false;
 	SoundManager& sndM = SoundManager::GetInstance();
 	sndM.Add(SoundManager::TYPE::SE, "LockCount", ResourceManager::GetInstance().Load(ResourceManager::SRC::TIME_LOCK_SE).handleId_);
-	sndM.AdjustVolume("LockCount", 60);
+	sndM.AdjustVolume("LockCount", COUNT_SOUND_VOLUME);
 
-	sndM.AdjustPitchRate(600.0f);
+	sndM.AdjustPitchRate(FINISH_SOUND_PITICH_RATE);
 
 	sndM.Add(SoundManager::TYPE::SE, "BreakLock", ResourceManager::GetInstance().Load(ResourceManager::SRC::BREAK_TIME_LOCK_SE).handleId_);
-	sndM.AdjustVolume("LockCount", 40);
+	sndM.AdjustVolume("BreakLock", FINISH_SOUND_VOLUME);
+
 	sndM.AdjustPitchRate();
 	
 }

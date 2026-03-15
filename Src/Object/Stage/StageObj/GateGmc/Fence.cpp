@@ -15,7 +15,7 @@ namespace {
 	const VECTOR INIT_SCL = { 0.6f,0.6f,0.6f };
 	const float MOVE_SPEED = 6.0f;
 
-	const VECTOR COLLIDER_SIZE = VScale({ 200.0f,400.0f,600.0f },StageManager::INIT_MASTER_SCALE);
+	const VECTOR COLLIDER_SIZE = VScale({ 100.0f,400.0f,600.0f },StageManager::INIT_MASTER_SCALE);
 	const VECTOR COLLIDER_DIFF_Y= VScale({ 0.0f,400.0f,0.0f },StageManager::INIT_MASTER_SCALE);
 }
 

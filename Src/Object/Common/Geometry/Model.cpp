@@ -25,7 +25,7 @@ const bool Model::IsHit(Geometry& _geo)
 
 const bool Model::IsHit(Line& _line)
 {
-    MV1_COLL_RESULT_POLY hitLineInfo = MV1CollCheck_Line(modelId_, -1, _line.GetPos(), _line.GetEndPos());
+    MV1_COLL_RESULT_POLY hitLineInfo = MV1CollCheck_Line(modelId_, -1, _line.GetStartPos(), _line.GetEndPos());
     bool isHit = hitLineInfo.HitFlag >= 1;
 
     if (isHit) {

@@ -15,6 +15,7 @@ public:
 		PLAYER		//プレイヤー
 		,ENEMY		//敵
 		,STAGE		//ステージ
+		,WALL		//壁
 		,OBJECT		//オブジェクト
 		,ATTACK		//攻撃
 		,PREATTACK	//攻撃前隙

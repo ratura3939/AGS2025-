@@ -23,9 +23,10 @@ public:
 
     void HitCollider(std::weak_ptr<Collider> _col)override;
     void UpdateRayCast(void);
+    void UpdateLineEnd(void);
 
     void SetCollider(void);
-
+    
 private:
     void DoInit(void)override;
     void DoUpdate(void)override;
@@ -37,7 +38,7 @@ private:
 	VECTOR lineStart_;
 	VECTOR lineEnd_;
 
-    VECTOR test;
+    int testCnt_;
 
     // 最近接衝突点（STAGEタグ）
     VECTOR closestHitPoint_;

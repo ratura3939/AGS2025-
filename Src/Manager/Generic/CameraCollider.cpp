@@ -29,12 +29,6 @@ CameraCollider::~CameraCollider(void)
 void CameraCollider::Draw(void)
 {
 	//描画の必要なし
-
-	DrawFormatString(0, 120, 0xff0000,"COL:START={%.1f,%.1f,%.1f}", lineStart_.x, lineStart_.y, lineStart_.z);
-	DrawFormatString(0, 160, 0xff0000,"COL:END  ={%.1f,%.1f,%.1f}", lineEnd_.x, lineEnd_.y, lineEnd_.z);
-	DrawFormatString(0, 300, 0xff0000,"ADJUST   ={%.1f,%.1f,%.1f}", test.x, test.y, test.z);
-
-    //DrawCapsule3D(lineStart_, lineEnd_, 10, 8, 0x00ff00, 0x00ff00, false);
 }
 
 void CameraCollider::Release(void)
@@ -55,11 +49,12 @@ void CameraCollider::HitCollider(std::weak_ptr<Collider> _col)
     //透過不可の壁ジェクトなら
     if (hitObject->IsContainsTag(TAG::NOT_TRANS)) {
         float dist = VSize(VSub(hitPoint, rayStart));
+
+        isHitWall_ = true;
         //一番近い衝突店を保存
         if (dist < minHitDistance_) {
             minHitDistance_ = dist;
             closestHitPoint_ = hitPoint;
-            isHitWall_ = true;
         }
     }
     else {
@@ -94,12 +89,11 @@ void CameraCollider::UpdateRayCast(void)
 
     // Cameraに補正後の目標位置を渡す
     camera_.SetAdjustedPos(adjustedPos);
-	test = adjustedPos;
+}
 
-    // フレームごとに衝突情報をリセット
-    isHitWall_ = false;
-    minHitDistance_ = FLT_MAX;
-    closestHitPoint_ = Utility::VECTOR_ZERO;
+void CameraCollider::UpdateLineEnd(void)
+{
+	lineEnd_ = camera_.GetIdealPos();
 }
 
 void CameraCollider::SetCollider(void)
@@ -110,7 +104,8 @@ void CameraCollider::SetCollider(void)
 void CameraCollider::DoInit(void)
 {
 	lineStart_ = VAdd(camera_.GetFollowPos(),LINE_START_OFFSET);
-	lineEnd_ = camera_.GetPos();
+	//lineEnd_ = camera_.GetPos();
+	lineEnd_ = camera_.GetIdealPos();
 
 	using TAG = Collider::COL_TAG;
     using TAG = Collider::COL_TAG;
@@ -146,5 +141,12 @@ void CameraCollider::DoUpdate(void)
 
     //当たり判定位置更新
     lineStart_ = VAdd(camera_.GetFollowPos(), LINE_START_OFFSET);
-    lineEnd_ = camera_.GetPos();
+    //lineEnd_ = camera_.GetPos();
+    //lineEnd_ = camera_.GetIdealPos();
+    UpdateLineEnd();
+
+    // フレームごとに衝突情報をリセット
+    isHitWall_ = false;
+    minHitDistance_ = FLT_MAX;
+    closestHitPoint_ = Utility::VECTOR_ZERO;
 }

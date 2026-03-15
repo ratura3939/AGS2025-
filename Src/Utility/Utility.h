@@ -34,6 +34,7 @@ public:
 	static constexpr VECTOR DIR_U = { 0.0f, 1.0f, 0.0f };
 	static constexpr VECTOR DIR_D = { 0.0f, -1.0f, 0.0f };
 
+	//イプシロン関連
 	static constexpr float EPSILON_MIN = 0.000001f;
 	static constexpr float EPSILON_MAX = 0.99f;
 	static constexpr float EOSILON_NORMAL_SQRT = 1e-15F;

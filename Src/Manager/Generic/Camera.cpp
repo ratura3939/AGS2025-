@@ -66,7 +66,6 @@ void Camera::Update(void)
 
 void Camera::SetBeforeDraw(void)
 {
-
 	//クリップ距離を設定する(SetDrawScreenでリセットされる)
 	SetCameraNearFar(CAMERA_NEAR, CAMERA_FAR);
 
@@ -164,8 +163,6 @@ void Camera::SetBeforeDrawFollow(void)
 	if (fabs(Utility::MagnitudeF(gPos) - Utility::MagnitudeF(pos_)) <= 10.0f) {
 		lerpStep_ = NO_LERP;
 	}
-
-	//pos_ = Utility::Lerp(pos_, gPos, lerpStep_);
 	idealPos_ = gPos;
 
 	//注視点までの距離ベクトルを回転させ相対座標を生成

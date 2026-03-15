@@ -16,15 +16,7 @@
 #include "EnemyBase.h"
 
 namespace {
-
 	constexpr VECTOR forward={0.0f,0.0f,100.0f};
-
-	//デバッグ用
-	constexpr int serchDebugCol = 0x6495ef;
-	constexpr int alertDebugCol = 0xff0000;
-
-	constexpr int serchDebugCol2 = 0xffff00;
-	constexpr int alertDebugCol2 = 0xffdd88;
 }
 
 EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)
@@ -34,16 +26,10 @@ EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VE
 	, atkChargeCntMax_(0)
 {
 	speciesName_ = "Enemy" + std::to_string(_num);
-	serchCol_ = serchDebugCol;
-	alertCol_ = serchDebugCol2;
-	color_ = 0xffffff;
-
 	update_ = &EnemyBase::UpdateNomal;
 	move_ = &EnemyBase::MoveNomal;
 
 	moveOneTime_ = -1.0f;
-
-	debugRot_ = -1.0;
 
 	pos_ = _pos;
 	preStayPos_ = Utility::VECTOR_INIT;
@@ -100,6 +86,26 @@ void EnemyBase::DoUpdate(void)
 	uiPos_.y = uiDeviationY_;
 
 	uiCntl_->Update();
+}
+
+void EnemyBase::SetNextGoalPos(void)
+{
+	//行先の角度設定
+	VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
+	float degRand = static_cast<float>(GetRand(static_cast<int>(Utility::CIRCLE_DEG)));
+	float radRand = Utility::Deg2RadF(degRand) - cameraRot.y;
+	//クォータニオンに変換
+	Quaternion quaGoal = Quaternion::AngleAxis((double)cameraRot.y + radRand, Utility::AXIS_Y);
+	//キャラクター回転も設定
+	SetGoalRot(radRand);
+	characterRotY_ = quaGoal;
+
+	//移動量を範囲付きのランダムで生成
+	moveOneTime_ = static_cast<float>(GetRand(static_cast<int>(MOVE_RANDOM_MAX))) + MOVE_RANDOM_MIN;
+	//ステイ状態の解除
+	isStay_ = false;
+	//前回停止位置の更新
+	preStayPos_ = pos_;
 }
 
 void EnemyBase::InitAnim(void)
@@ -177,9 +183,6 @@ void EnemyBase::UpdateSearch(void)
 		//通常に戻る
 		ChangeState(ENEMY_STATE::NOMAL);
 	}
-
-	//デバッグ
-	debugRot_ = deg;
 }
 
 void EnemyBase::UpdateBattle(void)
@@ -241,22 +244,7 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 		//一定の時間が過ぎていたら
 		if (stayCnt_ >= STAY_TIME) {
 			//行先の再設定
-			//行先の角度設定(characterRotYに変更すべし)
-			VECTOR cameraRot = SceneManager::GetInstance().GetCamera().GetRot().ToEuler();	//カメラ角度
-			float degRand = static_cast<float>(GetRand(static_cast<int>(Utility::CIRCLE_DEG)));
-			float radRand = Utility::Deg2RadF(degRand) - cameraRot.y;
-			//クォータニオンに変換
-			Quaternion quaGoal= Quaternion::AngleAxis((double)cameraRot.y + radRand, Utility::AXIS_Y);
-			//キャラクター回転も設定
-			SetGoalRot(radRand);
-			characterRotY_ = quaGoal;
-
-			//移動量を範囲付きのランダムで生成
-			moveOneTime_ = static_cast<float>(GetRand(static_cast<int>(MOVE_RANDOM_MAX))) + MOVE_RANDOM_MIN;
-			//ステイ状態の解除
-			isStay_ = false;
-			//前回停止位置の更新
-			preStayPos_ = pos_;
+			SetNextGoalPos();
 		}
 		else {
 			//引き続きステイ
@@ -286,9 +274,6 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 
 void EnemyBase::MoveSearch(const VECTOR& _pPos)
 {
-	//実装予定
-	//＜敵のひきつけ＞
-	//ほかのオブジェクトの使用による効果なので初期では作らない
 }
 
 void EnemyBase::MoveBattle(const VECTOR& _pPos)
@@ -319,8 +304,6 @@ void EnemyBase::OderGoalRot(const VECTOR _pPos) {
 
 	//方向の設定
 	SetGoalRot(static_cast<float>(rad) - cameraRot.y);
-
-	debugRot_ = Utility::Deg2RadF(rad);
 }
 
 void EnemyBase::ChangeState(const ENEMY_STATE _state)
@@ -337,9 +320,6 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		searchRestartCnt_ = 0.0f;
 		//目的地設定のため
 		isStay_ = true;
-
-		serchCol_ = serchDebugCol;
-		alertCol_ = serchDebugCol2;
 		break;
 
 	case ENEMY_STATE::SEARCH:
@@ -350,8 +330,6 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		//待機アニメーション
 		animController_->Play("idle", SPEED_ANIM);
 
-		serchCol_ = serchDebugCol;
-		alertCol_ = alertDebugCol2;
 		break;
 
 	case ENEMY_STATE::BATTLE:
@@ -359,8 +337,6 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		move_ = &EnemyBase::MoveBattle;
 		moveSped_ = MOVE_POW_FIND;
 		isStay_ = false;
-
-		serchCol_ = alertDebugCol;
 		break;
 	case ENEMY_STATE::DETH:
 		update_ = &EnemyBase::UpdateDeth;
@@ -409,11 +385,6 @@ void EnemyBase::DrawUI(void)
 	if (isLockTarget_) {
 		uiCntl_->Draw(EnemyUIController::ENEMY_UI::TARGETTING);
 	}
-}
-
-void EnemyBase::SetColor(int _color)
-{
-	color_ = _color;
 }
 
 void EnemyBase::SetPos(VECTOR _pos)
@@ -506,5 +477,11 @@ void EnemyBase::DoHitCollider(const std::weak_ptr<Collider>& _col)
 
 		//攻撃なのでフラグをオフに
 		_col.lock()->SetUseThis(false);
+	}
+
+	//通常移動時、壁とぶつかったら
+	if (state_ == ENEMY_STATE::NOMAL && _col.lock()->IsContainsTag(TAG::WALL)) {
+		pos_ = prevPos_;	//前回位置に戻す
+		SetNextGoalPos();
 	}
 }
