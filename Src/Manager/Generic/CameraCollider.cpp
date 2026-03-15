@@ -30,14 +30,6 @@ CameraCollider::~CameraCollider(void)
 void CameraCollider::Draw(void)
 {
 	//•`‰æ‚Ì•K—v‚È‚µ
-
-	auto& ideal = camera_.GetIdealPos();
-
-	DrawFormatString(0, 120, 0xff0000,"COL:START={%.1f,%.1f,%.1f}", lineStart_.x, lineStart_.y, lineStart_.z);
-	DrawFormatString(0, 160, 0xff0000,"COL:END  ={%.1f,%.1f,%.1f}", lineEnd_.x, lineEnd_.y, lineEnd_.z);
-	DrawFormatString(0, 380, 0xff0000,"IDEAL    ={%.1f,%.1f,%.1f}", ideal.x, ideal.y, ideal.z);
-
-    //DrawCapsule3D(lineStart_, lineEnd_, 10, 8, 0x00ff00, 0x00ff00, false);
 }
 
 void CameraCollider::Release(void)

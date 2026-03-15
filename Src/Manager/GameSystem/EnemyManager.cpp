@@ -170,9 +170,6 @@ int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
 		}
 	}
 
-	//デバッグ用
-	if (nearNum != -1)characters_[nearNum]->SetColor(0xffffff);
-
 	return nearNum;
 }
 

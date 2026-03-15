@@ -171,14 +171,11 @@ protected:
 
 	float colRadius_; //当たり判定の半径
 
-    //デバッグ用
-    int color_;
-    int serchCol_;
-    int alertCol_;
-    double debugRot_;
-
 private:
     void DoInit(void)override;
     void DoUpdate(void)override;
+
+	//行先の設定
+	void SetNextGoalPos(void);
 };
 
