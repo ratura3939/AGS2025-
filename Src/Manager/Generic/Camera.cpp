@@ -111,7 +111,8 @@ void Camera::SetBeforeDraw(void)
 
 	// FOLLOW・LOCKON・NONE時にレイキャストによるカメラ位置補正を適用
 	if (mode_ == MODE::FOLLOW || mode_ == MODE::LOCKON || mode_ == MODE::NONE) {
-		pos_ = Utility::Lerp(pos_, idealPos_, lerpStep_);
+		collider_->UpdateRayCast();
+		pos_ = Utility::Lerp(pos_, adjustedPos_, WALL_LERP_SPEED);
 	}
 
 	//カメラの設定(位置と注視点による制御)
