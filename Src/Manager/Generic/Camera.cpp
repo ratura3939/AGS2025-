@@ -8,7 +8,7 @@
 namespace {
 	const float LERP_SPEED = 0.1f;
 	const float LERP_MAX = 1.0f;
-	const float HALF_DISTANCE = 0.5f;
+	const float WALL_LERP_SPEED = 1.0f;
 }
 
 Camera::Camera(void)
