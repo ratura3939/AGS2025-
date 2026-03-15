@@ -575,7 +575,6 @@
     <FxCompile Include="Src\Shader\PostEffect\JustDodgePS.hlsl" />
     <FxCompile Include="Src\Shader\PostEffect\NomalTexPS.hlsl" />
     <FxCompile Include="Src\Shader\Model\NoiseWavePS.hlsl" />
-    <FxCompile Include="Src\Shader\PostEffect\Toji.hlsl" />
     <FxCompile Include="Src\Shader\Model\MagnetLinePS.hlsl" />
     <FxCompile Include="Src\Shader\Model\MagnetLineVS.hlsl" />
   </ItemGroup>

@@ -36,10 +36,6 @@ float4 main(PS_INPUT PSInput) : SV_TARGET
 
 	// 最終色：時間に応じて赤がフェードイン・アウト
 	float4 gray = float4(0.5, 0.5, 0.5, 1.0) * edge * wave;
-	
-
-	// 元のテクスチャ色と加算（または合成）
-	//srcCol += redColor;
 
 	float directions = 16.0f;
 
@@ -62,18 +58,6 @@ float4 main(PS_INPUT PSInput) : SV_TARGET
 		}
 		srcCol /= (directions * quality);
 	}
-	
-	/*for (float rad = 0.0f; rad < twoPi; rad += twoPi / directions)
-	{
-		for (int i = 1; i <= quality; ++i)
-		{
-			float dist = g_rate * (i / quality) * wave;
-
-			srcCol += tex.Sample(texSampler,
-				uv + float2(cos(rad), sin(rad)) * dist);
-		}
-	}
-	srcCol /= (directions * quality);*/
 
 	if (srcCol.a < 0.01f)
 	{
