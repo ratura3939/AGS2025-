@@ -6,20 +6,21 @@
 #include "CameraCollider.h"
 
 namespace {
-	const float SPHERE_RADIUS = 15.0f;
-	const VECTOR LINE_START_OFFSET = { 0.0f,50.0f, 0.0f };
+    const float SPHERE_RADIUS = 15.0f;
+    const VECTOR LINE_START_OFFSET = { 0.0f,50.0f, 0.0f };
 }
 
 CameraCollider::CameraCollider(Camera& _camera)
-	: camera_(_camera)
+    : camera_(_camera)
     , hideColliders_()
     , preHideColliders_()
-	, closestHitPoint_(Utility::VECTOR_ZERO)
-	, minHitDistance_(FLT_MAX)
-	, isHitWall_(false)
-	, lineStart_(Utility::VECTOR_ZERO)
-	, lineEnd_(Utility::VECTOR_ZERO)
+    , closestHitPoint_(Utility::VECTOR_ZERO)
+    , minHitDistance_(FLT_MAX)
+    , isHitWall_(false)
+    , lineStart_(Utility::VECTOR_ZERO)
+    , lineEnd_(Utility::VECTOR_ZERO)
 {
+    testCnt_ = 0;
 }
 
 CameraCollider::~CameraCollider(void)
@@ -28,7 +29,7 @@ CameraCollider::~CameraCollider(void)
 
 void CameraCollider::Draw(void)
 {
-	//描画の必要なし
+    //描画の必要なし
 }
 
 void CameraCollider::Release(void)
@@ -43,7 +44,7 @@ void CameraCollider::HitCollider(std::weak_ptr<Collider> _col)
     using TAG = Collider::COL_TAG;
 
     //const VECTOR& hitPoint = collider_->GetGeometry().GetHitPoint();
-    const VECTOR& hitPoint = camera_.GetPos();
+    const VECTOR& hitPoint = collider_->GetGeometry().GetHitPoint();
     const VECTOR& rayStart = camera_.GetFollowPos();
 
     //透過不可の壁ジェクトなら
@@ -59,7 +60,7 @@ void CameraCollider::HitCollider(std::weak_ptr<Collider> _col)
     }
     else {
         //OBJECTまたはSTAGEなら
-        if (hitObject->IsContainsAnyTag(std::set<TAG>{TAG::OBJECT,TAG::STAGE})) {
+        if (hitObject->IsContainsAnyTag(std::set<TAG>{TAG::OBJECT, TAG::STAGE})) {
             //衝突物を非表示に
             hitObject->SetMasterIsDraw(false);
             hideColliders_.push_back(_col);
@@ -69,7 +70,7 @@ void CameraCollider::HitCollider(std::weak_ptr<Collider> _col)
 
 void CameraCollider::UpdateRayCast(void)
 {
-    const VECTOR& rayStart = VAdd(camera_.GetFollowPos(), LINE_START_OFFSET);
+    const VECTOR rayStart = VAdd(camera_.GetFollowPos(), LINE_START_OFFSET);
     const VECTOR& rayEnd = camera_.GetIdealPos();
 
     VECTOR adjustedPos = rayEnd;
@@ -93,7 +94,7 @@ void CameraCollider::UpdateRayCast(void)
 
 void CameraCollider::UpdateLineEnd(void)
 {
-	lineEnd_ = camera_.GetIdealPos();
+    lineEnd_ = camera_.GetIdealPos();
 }
 
 void CameraCollider::SetCollider(void)
@@ -103,13 +104,13 @@ void CameraCollider::SetCollider(void)
 
 void CameraCollider::DoInit(void)
 {
-	lineStart_ = VAdd(camera_.GetFollowPos(),LINE_START_OFFSET);
-	//lineEnd_ = camera_.GetPos();
-	lineEnd_ = camera_.GetIdealPos();
+    lineStart_ = VAdd(camera_.GetFollowPos(), LINE_START_OFFSET);
+    //lineEnd_ = camera_.GetPos();
+    lineEnd_ = camera_.GetIdealPos();
 
-	using TAG = Collider::COL_TAG;
     using TAG = Collider::COL_TAG;
-    collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::FALL_LINE}, std::make_unique<Line>(pos_, quaRot_, lineStart_, lineEnd_), std::set<TAG>{TAG::PLAYER, TAG::ENEMY});
+    using TAG = Collider::COL_TAG;
+    collider_ = std::make_shared<Collider>(*this, std::set<TAG>{TAG::FALL_LINE}, std::make_unique<Line>(lineStart_, quaRot_, lineStart_, lineEnd_), std::set<TAG>{TAG::PLAYER, TAG::ENEMY});
     SetCollider();
 }
 
@@ -122,21 +123,21 @@ void CameraCollider::DoUpdate(void)
         //hideColliders_に同じものがあるか探す
         for (auto& hitCol : hideColliders_) {
             //同じものがあれば、それ以上検索は不要
-			if (hitCol.lock() == preCol.lock()) {
+            if (hitCol.lock() == preCol.lock()) {
                 isStillHide = true;
                 break;
             }
         }
-		//同じものがなければ、表示に戻す
+        //同じものがなければ、表示に戻す
         if (!isStillHide) {
             if (auto col = preCol.lock()) {
                 col->SetMasterIsDraw(true);
             }
-		}
+        }
     }
 
     //調べ終わったらpreを更新
-	preHideColliders_ = hideColliders_;
+    preHideColliders_ = hideColliders_;
     hideColliders_.clear();
 
     //当たり判定位置更新
