@@ -34,6 +34,12 @@ namespace {
 	const float BOSS_ATTACK_RELATIVE_Y = 75.0f;	
 
 	const int ATK_CHARGE_CNT_MAX = 30; //攻撃チャージ最大値
+
+	const float SHOUT_SPEED_RATE = 0.8f;	//叫びのアニメーションスピード
+
+	//シェーダーバッファ数
+	const int NUM_CONST_BUF_VS = 2;
+	const int NUM_CONST_BUF_PS = 3;
 }
 
 Boss::Boss(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)
@@ -47,7 +53,7 @@ Boss::~Boss(void)
 
 void Boss::Shout(void)
 {
-	animController_->Play("preShout", 0.8f, { "shout" });
+	animController_->Play("preShout", SHOUT_SPEED_RATE, { "shout" });
 	SoundManager::GetInstance().Play("shout");
 }
 
@@ -129,7 +135,7 @@ void Boss::SetParam(void)
 	InitUI();
 
 	//モデル描画クラス生成
-	material_ = std::make_unique<ModelMaterial>("BlurSkinVS.cso", 2, "BlurSkinPS.cso", 3);
+	material_ = std::make_unique<ModelMaterial>("BlurSkinVS.cso", NUM_CONST_BUF_VS, "BlurSkinPS.cso", NUM_CONST_BUF_PS);
 	//VS
 
 	intervalCnt_ = 0.0f;

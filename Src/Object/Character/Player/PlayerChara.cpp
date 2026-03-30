@@ -71,6 +71,8 @@ namespace {
 
 	const VECTOR INIT_POSITION = { 4271.0f,0.0f,-6142.0f };
 	//const VECTOR INIT_POSITION = { -7600.0f,0.0f,7600.0f };
+
+	const float UI_DIFF_Y = 200.0f; //UIï\é¶à íuÇÃYé≤ÇÃç∑
 }
 
 
@@ -149,7 +151,7 @@ void PlayerChara::DoUpdate(void)
 {
 	atkPos_ = VAdd(pos_, characterRotY_.PosAxis(ATK_LOCAL_POS));
 	uiPos_ = pos_;
-	uiPos_.y += 200.0f;
+	uiPos_.y += UI_DIFF_Y;
 	allertTime_++;
 	centerPos_ = headPos_;	//ÉÇÉfÉãíÜâõ
 	centerPos_.y /= 2.0f;
@@ -410,7 +412,7 @@ void PlayerChara::InitUI(void)
 {
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	uiPos_ = pos_;
-	uiPos_.y += 200.0f;
+	uiPos_.y += UI_DIFF_Y;
 	uiCntl_ = std::make_unique<PlayerUIController>(uiPos_, PALYER_HP);
 	uiCntl_->Init(UI_NAME);
 }

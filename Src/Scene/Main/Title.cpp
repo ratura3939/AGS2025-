@@ -43,6 +43,8 @@ namespace {
 
 	//「決定してください」
 	const float ENTER_STR_EXTEND = 0.2f;		//拡大率
+
+	const int GRAY_RATE = 180;				//グレースケールの色の濃さ
 #pragma endregion
 
 #pragma region コントローラー選択時
@@ -108,15 +110,6 @@ void Title::Init(void)
 
 	render_ = std::make_unique<PixelRenderer>(*material_);
 	render_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-
-	postMaterial_ = std::make_unique<PixelMaterial>("Toji.cso", 1);
-	postMaterial_->AddConstBuf(FLOAT4(0.0f, 0.0f, 0.0f, 0.0f)); //時間用
-	postMaterial_->AddTextureBuf(SceneManager::GetInstance().GetMainScreen());
-	step_ = 0.0f;
-	postRenderer_ = std::make_unique<PixelRenderer>(*postMaterial_);
-	postRenderer_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-
-	postEffectScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 
 	//音関係初期化
 	InitSound();
@@ -235,16 +228,6 @@ void Title::Draw(void)
 		//重ねてデバイスの描画
 		DrawDevice();
 	}
-
-	// ポストエフェクト
-	//step_ += SceneManager::GetInstance().GetDeltaTime();
-	//SetDrawScreen(postEffectScreen_);
-	//ClearDrawScreen();
-	//postMaterial_->SetTextureBuf(0, SceneManager::GetInstance().GetMainScreen());
-	//postMaterial_->SetConstBuf(0, FLOAT4(step_, 1.0f, 0.0f, 0.0f));
-	//postRenderer_->Draw();
-	//SetDrawScreen(SceneManager::GetInstance().GetMainScreen());
-	//DrawGraph(0,0,postEffectScreen_, true);
 }
 
 void Title::Release(void)
@@ -379,7 +362,7 @@ void Title::DrawDevice(void)
 	int screenHY = Application::SCREEN_SIZE_Y / 2;
 
 	//うっすら背景黒くする
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, GRAY_RATE);
 	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 

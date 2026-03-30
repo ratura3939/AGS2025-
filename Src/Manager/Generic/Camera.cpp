@@ -10,6 +10,7 @@ namespace {
 	const float LERP_MAX = 1.0f;
 	const float HALF_DISTANCE = 0.5f;
 	const float WALL_LERP_SPEED = 1.0f;
+	const VECTOR SHAKE_DIR = { 0.7f, 0.7f ,0.0f };
 }
 
 Camera::Camera(void)
@@ -250,8 +251,10 @@ void Camera::SetBeforeDrawShake(void)
 	// -1.0fÅ`1.0f
 	float f = sinf(stepShake_ * SPEED_SHAKE);
 
+	const float SHAKE_DIGIT_SCALE = 1000.0f;
+
 	// -1000.0fÅ`1000.0f
-	f *= 1000.0f;
+	f *= SHAKE_DIGIT_SCALE;
 
 	// -1000 or 1000
 	int d = static_cast<int>(f);
@@ -437,7 +440,7 @@ void Camera::ChangeMode(MODE mode)
 	case MODE::SHAKE:
 		finishShake_ = false;
 		stepShake_ = TIME_SHAKE;
-		shakeDir_ = VNorm({ 0.7f, 0.7f ,0.0f });
+		shakeDir_ = VNorm(SHAKE_DIR);
 		defaultPos_ = pos_;
 		break;
 

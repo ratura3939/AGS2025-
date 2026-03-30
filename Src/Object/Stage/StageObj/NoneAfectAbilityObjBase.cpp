@@ -9,6 +9,12 @@
 //ローカル定数1
 namespace {
 	const float UV_SCALING_NOISE = 10.0f;
+
+	int BLACK = 0x000000;
+
+	//シェーダーバッファ数
+	const int NUM_CONST_BUF_VS = 0;
+	const int NUM_CONST_BUF_PS = 3;
 }
 
 NoneAfectAbilityObjBase::NoneAfectAbilityObjBase(void)
@@ -42,7 +48,7 @@ void NoneAfectAbilityObjBase::SetParam(void)
 	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
 
 	//shader設定
-	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", 0, "NoiseWavePS.cso", 3);
+	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", NUM_CONST_BUF_VS, "NoiseWavePS.cso", NUM_CONST_BUF_PS);
 	//追加テクスチャ挿入
 	material_->SetTextureBuf(ModelMaterial::SUB_TEX_1, resM.Load(ResourceManager::SRC::NOISE_STAGE).handleId_);
 	//付与色
@@ -56,5 +62,5 @@ void NoneAfectAbilityObjBase::SetParam(void)
 
 	//デバッグ
 	isDrawScreenPosCircle_ = false;
-	screenPosColor_ = 0x000000;
+	screenPosColor_ = BLACK;
 }

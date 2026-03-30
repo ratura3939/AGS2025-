@@ -51,7 +51,25 @@ namespace {
 	const float LOCK_DISTANCE_MIN_NOMAL = 500.0f;		//ロックオン時に最低限離れておく距離
 	const float LOCK_DISTANCE_MIN_BOSS = 1000.0f;		//ロックオン時に最低限離れておく距離
 
-	const int BGM_VOL = 80;
+	const int BGM_VOL = 80;	//BGMの音量
+	const int WALK_SE_VOL = 60;	//歩くSEの音量
+	const int DODGE_SE_VOL = 45;	//回避SEの音量
+	const int JUST_DODGE_SE_VOL = 80;	//ジャスト回避SEの音量
+
+	const float WARNING_UI_ACC = 10.0f;	//WARNINGのUIの加速量
+	const float WARNING_UI_MAX_ALPHA = 255.0f;	//WARNINGのUIの最大アルファ値
+	const float WARNING_UI_MIN_ALPHA = 0.0f;	//WARNINGのUIの最小アルファ値
+
+	//ポストエフェクトバッファ数
+	const int SCAN_LINE_NUM_BUFF_PS = 2;
+	const int BLUR_NUM_BUFF_PS = 3;
+	const int DODGE_NUM_BUFF_PS = 3;
+
+	const float DODGE_EFFECT_RADIUS = 0.4f;
+	const float DODGE_EFFECT_RATE = 0.02f;
+
+	const int WALK_SE_INTERVAL = 20;	//歩くSEの再生間隔
+	const int RUN_SE_INTERVAL = 10;		//走るSEの再生間隔
 }
 
 Game::Game(void)
@@ -129,7 +147,7 @@ void Game::Init(void)
 	//「WARNING」画像
 	uiM.Add(WARNING_STR_IMG, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(WARNING_STR_IMG, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
-	uiM.SetUIDirectionPram(WARNING_STR_IMG, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 10.0f, 255.0f, 0.0f);
+	uiM.SetUIDirectionPram(WARNING_STR_IMG, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, WARNING_UI_ACC, WARNING_UI_MAX_ALPHA, WARNING_UI_MIN_ALPHA);
 
 	//メニューボタン
 	uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
@@ -164,13 +182,13 @@ void Game::InitSound(void)
 	//SE
 	//歩く
 	sndM.Add(SoundManager::TYPE::SE, "Walk",
-		rsM.Load(ResourceManager::SRC::WALK_SE).handleId_,20);
-	sndM.AdjustVolume("Walk",60);
+		rsM.Load(ResourceManager::SRC::WALK_SE).handleId_, WALK_SE_INTERVAL);
+	sndM.AdjustVolume("Walk", WALK_SE_VOL);
 
 	//走る
 	sndM.Add(SoundManager::TYPE::SE, "Dush",
-		rsM.Load(ResourceManager::SRC::RUN_SE).handleId_,10);
-	sndM.AdjustVolume("Dush", 60);
+		rsM.Load(ResourceManager::SRC::RUN_SE).handleId_, RUN_SE_INTERVAL);
+	sndM.AdjustVolume("Dush", WALK_SE_VOL);
 
 	//剣を振る
 	sndM.Add(SoundManager::TYPE::SE, "SwingSword",
@@ -188,7 +206,7 @@ void Game::InitSound(void)
 	//ボス足音
 	sndM.Add(SoundManager::TYPE::SE, "Impact",
 		rsM.Load(ResourceManager::SRC::BOSS_IMPACT_SE).handleId_);
-	sndM.AdjustVolume("Impact", 60);
+	sndM.AdjustVolume("Impact", WALK_SE_VOL);
 
 	//攻撃警告音
 	sndM.Add(SoundManager::TYPE::SE, "Allert",
@@ -197,12 +215,12 @@ void Game::InitSound(void)
 	//回避音
 	sndM.Add(SoundManager::TYPE::SE, "Dodge",
 		rsM.Load(ResourceManager::SRC::DODGE_SE).handleId_);
-	sndM.AdjustVolume("Dodge", 45);
+	sndM.AdjustVolume("Dodge", DODGE_SE_VOL);
 
 	//ジャスト回避音
 	sndM.Add(SoundManager::TYPE::SE, "JustDodge",
 		rsM.Load(ResourceManager::SRC::JUST_DODGE_SE).handleId_);
-	sndM.AdjustVolume("JustDodge", 80);
+	sndM.AdjustVolume("JustDodge", JUST_DODGE_SE_VOL);
 
 }
 
@@ -223,7 +241,7 @@ void Game::InitShader(void)
 {
 	//ブラー
 	//PS
-	blurMaterial_ = std::make_unique<PixelMaterial>("Blur.cso", 3);
+	blurMaterial_ = std::make_unique<PixelMaterial>("Blur.cso", BLUR_NUM_BUFF_PS);
 	//拡散光
 	blurMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
 	//時間
@@ -239,13 +257,13 @@ void Game::InitShader(void)
 
 	//ブラー(回避用)
 	//PS
-	dodgeMaterial_ = std::make_unique<PixelMaterial>("JustDodgePS.cso", 3);
+	dodgeMaterial_ = std::make_unique<PixelMaterial>("JustDodgePS.cso", DODGE_NUM_BUFF_PS);
 	//拡散光
 	dodgeMaterial_->AddConstBuf({ 1.0f,1.0f,1.0f,1.0f });
 	//時間
 	dodgeMaterial_->AddConstBuf({ 0.0f,0.0f ,0.0f,0.0f });
 	//画面X・Y・強さ・半径
-	dodgeMaterial_->AddConstBuf({ Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y ,0.02f,0.4f });
+	dodgeMaterial_->AddConstBuf({ Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y ,DODGE_EFFECT_RATE,DODGE_EFFECT_RADIUS });
 
 	dodgeMaterial_->SetTextureBuf(11, ResourceManager::GetInstance().Load(ResourceManager::SRC::FOCUS_IMG).handleId_);
 
@@ -258,7 +276,7 @@ void Game::InitShader(void)
 
 	//走査線
 	//PS
-	scanLineMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", 2);
+	scanLineMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", SCAN_LINE_NUM_BUFF_PS);
 	//拡散光
 	scanLineMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
 	//時間
@@ -269,22 +287,6 @@ void Game::InitShader(void)
 	// ポストエフェクト用スクリーン
 	scanLineScreen_ = MakeScreen(
 		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
-
-
-	//スキップ用
-	//PS
-	skipMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", 1);
-	//拡散光
-	skipMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
-
-	skipRender_ = std::make_unique<PixelRenderer>(*skipMaterial_);
-	skipRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	// ポストエフェクト用スクリーン
-	skipScreen_ = MakeScreen(
-		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
-
-	skipCounter_ = 0;
-	isSkipEnd_ = false;
 }
 
 void Game::Update(void)

@@ -9,6 +9,12 @@
 
 namespace {
 	const float AFECT_OBJ_WEIGHT = 5.0f;
+
+	const int RED = 0xff0000;
+
+	//シェーダーバッファ数
+	const int NUM_CONST_BUF_VS = 0;
+	const int NUM_CONST_BUF_PS = 1;
 }
 
 AfectAbilityObjBase::AfectAbilityObjBase(void)
@@ -56,11 +62,11 @@ void AfectAbilityObjBase::SetParam(void)
 
 	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
 	//shader設定
-	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", 0, "StdModelPS.cso", 1);
+	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", NUM_CONST_BUF_VS, "StdModelPS.cso", NUM_CONST_BUF_PS);
 	material_->AddConstBufPS(NOMAL_COLOR);
 	//デバッグ
 	isDrawScreenPosCircle_ = true;
-	screenPosColor_ = 0xff0000;
+	screenPosColor_ = RED;
 
 	weight_ = AFECT_OBJ_WEIGHT;
 }
