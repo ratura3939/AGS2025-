@@ -2,6 +2,7 @@
 #include"../Manager/Generic/Camera.h"
 #include"../Manager/GameSystem/EnemyManager.h"
 #include"../Manager/GameSystem/PlayerManager.h"
+#include"../Manager/Decoration/SoundManager.h"
 #include"../Scene/Main/Game.h"
 #include "LockOnManager.h"
 
@@ -64,6 +65,7 @@ void LockOnManager::LockOn(void)
 	master_.RedyLockOn();
 	targets_.LokedOn(nearTargetNum_);
 	camera.ChangeMode(Camera::MODE::LOCKON);
+	SoundManager::GetInstance().Play("RockOn");
 
 	isLockOn_ = true;
 }
