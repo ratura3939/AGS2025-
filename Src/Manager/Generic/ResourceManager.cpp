@@ -62,10 +62,10 @@ void ResourceManager::InitTitle(void)
 	resourcesMap_.emplace(SRC::TITLE_BACK_BTN, res);
 
 	//ステージ
-	ResorceStage();
+	ResourceStage();
 
 	// デバイスアイコン
-	ResorceDeviceIcon();
+	ResourceDeviceIcon();
 
 	//矢印
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_ArrowDown.png");
@@ -105,7 +105,7 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::BOSS_MDL, res);
 
 	//ステージ
-	ResorceStage();
+	ResourceStage();
 
 	//UI
 	//メニューボタン
@@ -141,7 +141,7 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::PLATE_IMG, res);
 	//スケルトン×
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "SkeltonCounter.png");
-	resourcesMap_.emplace(SRC::SKELTON_IMG, res);
+	resourcesMap_.emplace(SRC::SKELETON_IMG, res);
 	//ゴーレム×
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "GolemCounter.png");
 	resourcesMap_.emplace(SRC::GOLEM_IMG, res);
@@ -159,7 +159,7 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::FOCUS_IMG, res);
 	//集中線
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "DudgeAllertp.png");
-	resourcesMap_.emplace(SRC::ATK_ALLERT_IMG, res);
+	resourcesMap_.emplace(SRC::ATK_ALERT_IMG, res);
 
 	//マグネット
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_Magnet.png");
@@ -211,7 +211,7 @@ void ResourceManager::InitGame(void)
 
 	//攻撃警告音
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Allert.mp3");
-	resourcesMap_.emplace(SRC::ATK_ALLERT_SE, res);
+	resourcesMap_.emplace(SRC::ATK_ALERT_SE, res);
 
 	//回避時
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "Dodge_3.mp3");
@@ -263,10 +263,10 @@ void ResourceManager::InitClear(void)
 
 	//ロゴ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameClear.png");
-	resourcesMap_.emplace(SRC::GAMECLAR_LOGO, res);
+	resourcesMap_.emplace(SRC::GAMECLEAR_LOGO, res);
 
 	//ステージ
-	ResorceStage();
+	ResourceStage();
 
 	//ゲームやめるボタン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "StopGameBtn.png");
@@ -292,7 +292,7 @@ void ResourceManager::InitGameOver(void)
 	resourcesMap_.emplace(SRC::GAMEOVER_LOGO, res);
 
 	//ステージ
-	ResorceStage();
+	ResourceStage();
 
 	//ゲームやめるボタン
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "StopGameBtn.png");
@@ -364,7 +364,7 @@ void ResourceManager::InitSwitchCntl(void)
 	resourcesMap_.emplace(SRC::SWITCH_BTN, res);
 }
 
-void ResourceManager::ResorceDeviceIcon(void)
+void ResourceManager::ResourceDeviceIcon(void)
 {
 	Resource res;
 	// PAD
@@ -379,13 +379,13 @@ void ResourceManager::ResorceDeviceIcon(void)
 	resourcesMap_.emplace(SRC::CANCEL_SE, res);
 	//カーソル動き
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "MoveCursur.mp3");
-	resourcesMap_.emplace(SRC::MOVE_CURSUR_SE, res);
+	resourcesMap_.emplace(SRC::MOVE_CURSOR_SE, res);
 	//選択
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "EnterController.mp3");
 	resourcesMap_.emplace(SRC::ENTER_CNTL_SE, res);
 }
 
-void ResourceManager::ResorceStage(void)
+void ResourceManager::ResourceStage(void)
 {
 	Resource res;
 

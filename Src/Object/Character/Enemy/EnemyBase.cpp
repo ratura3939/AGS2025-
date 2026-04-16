@@ -201,7 +201,7 @@ void EnemyBase::UpdateBattle(void)
 	}
 	
 	//カウンタ増加(ゲーム更新スピード)
-	intervalCnt_+=SceneManager::GetInstance().GetUpdateSpeedRate_();	
+	intervalCnt_+=SceneManager::GetInstance().GetUpdateSpeedRate();	
 
 	//判定
 	//プレイヤーが戦闘状態範囲度外にでたら
@@ -249,13 +249,13 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 		else {
 			//引き続きステイ
 			//カウンタ増加(ゲーム更新スピード)
-			stayCnt_+= SceneManager::GetInstance().GetUpdateSpeedRate_();
+			stayCnt_+= SceneManager::GetInstance().GetUpdateSpeedRate();
 			return;
 		}
 	}
 	
 	//移動(前方方向)
-	pos_ = VAdd(pos_, VScale(GetForward(), moveSped_* SceneManager::GetInstance().GetUpdateSpeedRate_()));
+	pos_ = VAdd(pos_, VScale(GetForward(), moveSped_* SceneManager::GetInstance().GetUpdateSpeedRate()));
 	animController_->Play("walk", SPEED_ANIM);
 
 	//判定
@@ -286,7 +286,7 @@ void EnemyBase::MoveBattle(const VECTOR& _pPos)
 	}
 
 	//移動(前方方向)
-	pos_=VAdd(pos_, VScale(GetForward(), moveSped_* SceneManager::GetInstance().GetUpdateSpeedRate_()));
+	pos_=VAdd(pos_, VScale(GetForward(), moveSped_* SceneManager::GetInstance().GetUpdateSpeedRate()));
 	animController_->Play("dush", SPEED_ANIM);
 
 	//目標の回転設定

@@ -23,12 +23,12 @@ bool EnemyTargetting::Init(const std::string& _master)
 
 	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ANNOUNCE_LOCKON_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UI_DIMENSION::DIMENSION_3);
 	uiM.SetUIInfo(noticeStr_, drawFollowPos_, 100.0f);
-	uiM.SetUIDirectionPram(noticeStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 10.0f, 255.0f, 0.0f);
+	uiM.SetUIDirectionParam(noticeStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 10.0f, 255.0f, 0.0f);
 
 
 	uiM.Add(lockStr_, rsM.Load(ResourceManager::SRC::LOCKON_IMG ).handleId_, UIManager2d::UI_DIRECTION_2D::UP_DOWN, UI_DIMENSION::DIMENSION_3);
 	uiM.SetUIInfo(lockStr_, drawFollowPos_,100.0f);
-	uiM.SetUIDirectionPram(lockStr_, UIManager2d::UI_DIRECTION_GROUP::MOVE, 3.0f, 40.0f, 0.0f);
+	uiM.SetUIDirectionParam(lockStr_, UIManager2d::UI_DIRECTION_GROUP::MOVE, 3.0f, 40.0f, 0.0f);
 
 
 	return true;

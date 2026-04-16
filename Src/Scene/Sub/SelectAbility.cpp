@@ -156,7 +156,7 @@ void SelectAbility::ChangeSelectAbility(const int _prev, const int _next)
 	//拡大設定
 	float nAccScale = fabs(uiM.GetDrawScale(nextSelect_) - SELECT_ABILITY_EX) / FINISH_CHANGE_TIME;	//指定フレーム数で完了するように加速度設定
 	uiM.PushUIDirection(nextSelect_, UIManager2d::UI_DIRECTION_2D::ZOOM_IN);
-	uiM.SetUIDirectionPram(nextSelect_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, nAccScale, SELECT_ABILITY_EX, NOT_SELECT_ABILITY_EX);
+	uiM.SetUIDirectionParam(nextSelect_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, nAccScale, SELECT_ABILITY_EX, NOT_SELECT_ABILITY_EX);
 
 	//移動(X軸のみ)設定
 	//移動の目標値は必ず画面中央なので移動量はその位置と比較する
@@ -176,18 +176,18 @@ void SelectAbility::ChangeSelectAbility(const int _prev, const int _next)
 		nAccMove = drawPosMovePowRight / FINISH_CHANGE_TIME;
 	}
 	
-	uiM.SetUIDirectionPram(nextSelect_, UIManager2d::UI_DIRECTION_GROUP::MOVE, nAccMove, drawPosMovePowRight, -drawPosMovePowLeft);
+	uiM.SetUIDirectionParam(nextSelect_, UIManager2d::UI_DIRECTION_GROUP::MOVE, nAccMove, drawPosMovePowRight, -drawPosMovePowLeft);
 
 	//透明度
 	float nAccAlpha = fabs(uiM.GetDrawAlpha(nextSelect_) - SELECT_ABILITY_ALPHA);
 	uiM.PushUIDirection(nextSelect_, UIManager2d::UI_DIRECTION_2D::GRAD_AP);
-	uiM.SetUIDirectionPram(nextSelect_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, nAccAlpha, SELECT_ABILITY_ALPHA, NOT_SELECT_ABILITY_ALPHA);
+	uiM.SetUIDirectionParam(nextSelect_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, nAccAlpha, SELECT_ABILITY_ALPHA, NOT_SELECT_ABILITY_ALPHA);
 
 	//選択→非選択の更新設定
 	//縮小設定
 	float pAccScale = fabs(uiM.GetDrawScale(prevSelect_) - NOT_SELECT_ABILITY_EX) / FINISH_CHANGE_TIME;
 	uiM.PushUIDirection(prevSelect_, UIManager2d::UI_DIRECTION_2D::ZOOM_OUT);
-	uiM.SetUIDirectionPram(prevSelect_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, pAccScale, SELECT_ABILITY_EX, NOT_SELECT_ABILITY_EX);
+	uiM.SetUIDirectionParam(prevSelect_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, pAccScale, SELECT_ABILITY_EX, NOT_SELECT_ABILITY_EX);
 	//移動(X軸のみ)設定
 	drawPosMovePowLeft = 0.0f;
 	drawPosMovePowRight = 0.0f;
@@ -218,11 +218,11 @@ void SelectAbility::ChangeSelectAbility(const int _prev, const int _next)
 		pAccMove = drawPosMovePowRight / FINISH_CHANGE_TIME;
 	}
 	
-	uiM.SetUIDirectionPram(prevSelect_, UIManager2d::UI_DIRECTION_GROUP::MOVE, pAccMove, drawPosMovePowRight, -drawPosMovePowLeft);
+	uiM.SetUIDirectionParam(prevSelect_, UIManager2d::UI_DIRECTION_GROUP::MOVE, pAccMove, drawPosMovePowRight, -drawPosMovePowLeft);
 
 	float pAccAlpha = fabs(uiM.GetDrawAlpha(prevSelect_) - NOT_SELECT_ABILITY_ALPHA);
 	uiM.PushUIDirection(prevSelect_, UIManager2d::UI_DIRECTION_2D::GRAD_DISAP);
-	uiM.SetUIDirectionPram(prevSelect_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, pAccAlpha, SELECT_ABILITY_ALPHA, NOT_SELECT_ABILITY_ALPHA);
+	uiM.SetUIDirectionParam(prevSelect_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, pAccAlpha, SELECT_ABILITY_ALPHA, NOT_SELECT_ABILITY_ALPHA);
 }
 
 void SelectAbility::ResetUiInfo(void)

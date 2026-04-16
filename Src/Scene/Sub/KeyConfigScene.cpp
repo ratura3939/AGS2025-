@@ -38,18 +38,18 @@ void KeyConfigScene::Init(void)
 	//操作説明の画像
 	if (cntl == SceneManager::CNTL::PAD) {
 		//PADの場合
-		uiM.Add(CONFIG_IMG, rsM.Load(ResourceManager::SRC::DESCRIPTION_PAD).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+		uiM.Add(CONFIG_IMG, rsM.Load(ResourceManager::SRC::DESCRIPTION_PAD).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
 	}
 	else {
 		//キーボードの場合
-		uiM.Add(CONFIG_IMG, rsM.Load(ResourceManager::SRC::DESCRIPTION_KEY).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+		uiM.Add(CONFIG_IMG, rsM.Load(ResourceManager::SRC::DESCRIPTION_KEY).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
 	}
 	uiM.SetUIInfo(CONFIG_IMG, VECTOR{ screenSize.x / 2.0f,screenSize.y / 2.0f,0.0f }, IMG_EX_SB_SCENE);
 
 	//戻るボタン
 	uiM.Add(BACK_BTN, rsM.Load(ResourceManager::SRC::BACK_BTN).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(BACK_BTN, VECTOR{ static_cast<float>(BTN_DIFF_X_SB_SCENE),static_cast<float>(screenSize.y - BTN_DIFF_Y_SB_SCENE),0.0f }, BTN_EX_MAX_SB_SCENE);
-	uiM.SetUIDirectionPram(BACK_BTN, UI_GROUP::ZOOM, BTN_EX_ACC_SB_SCENE, BTN_EX_MAX_SB_SCENE, BTN_EX_MIN_SB_SCENE);
+	uiM.SetUIDirectionParam(BACK_BTN, UI_GROUP::ZOOM, BTN_EX_ACC_SB_SCENE, BTN_EX_MAX_SB_SCENE, BTN_EX_MIN_SB_SCENE);
 }
 
 void KeyConfigScene::Update(void)

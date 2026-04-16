@@ -138,7 +138,7 @@ void Skelton::UpdateBattle(void)
 	float distance = Utility::MagnitudeF(VSub(pPos_, pos_));
 
 	//カウンタ増加(ゲーム更新スピード)
-	intervalCnt_ += SceneManager::GetInstance().GetUpdateSpeedRate_();
+	intervalCnt_ += SceneManager::GetInstance().GetUpdateSpeedRate();
 
 	//移動処理
 	if (!isStay_) {

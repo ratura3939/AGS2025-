@@ -19,7 +19,7 @@ bool NoticeDodge::Init(const std::string& _master)
 
 	noticeStr_ = _master + "AtkNotice";
 
-	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ATK_ALLERT_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_3);
+	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ATK_ALERT_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UI_DIMENSION::DIMENSION_3);
 	uiM.SetUIInfo(noticeStr_, drawFollowPos_);
 	//uiM.SetUIDirectionPram(noticeStr_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, SUSPECT_EXT_ACC, SUSPECT_EXT_MAX, 1.0f);
 	return false;

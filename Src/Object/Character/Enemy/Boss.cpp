@@ -157,7 +157,7 @@ void Boss::UpdateBattle(void)
 	float distance = Utility::MagnitudeF(VSub(pPos_, pos_));
 
 	//カウンタ増加(ゲーム更新スピード)
-	intervalCnt_ += SceneManager::GetInstance().GetUpdateSpeedRate_();
+	intervalCnt_ += SceneManager::GetInstance().GetUpdateSpeedRate();
 
 	//移動処理
 	if (!isStay_) {
@@ -235,7 +235,7 @@ void Boss::MoveBattle(const VECTOR& _pPos)
 		return;
 	}
 	//移動(前方方向)
-	pos_ = VAdd(pos_, VScale(GetForward(), moveSped_ * SceneManager::GetInstance().GetUpdateSpeedRate_()));
+	pos_ = VAdd(pos_, VScale(GetForward(), moveSped_ * SceneManager::GetInstance().GetUpdateSpeedRate()));
 	animController_->Play("walk", SPEED_ANIM);
 
 	//回転

@@ -147,10 +147,10 @@ void Game::Init(void)
 	//「WARNING」画像
 	uiM.Add(WARNING_STR_IMG, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(WARNING_STR_IMG, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
-	uiM.SetUIDirectionPram(WARNING_STR_IMG, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, WARNING_UI_ACC, WARNING_UI_MAX_ALPHA, WARNING_UI_MIN_ALPHA);
+	uiM.SetUIDirectionParam(WARNING_STR_IMG, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, WARNING_UI_ACC, WARNING_UI_MAX_ALPHA, WARNING_UI_MIN_ALPHA);
 
 	//メニューボタン
-	uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
+	uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(MENU_BTN, VECTOR{ static_cast<float>(Application::SCREEN_SIZE_X - BTN_DIFF_X),static_cast<float>(Application::SCREEN_SIZE_Y - BTN_DIFF_Y),0.0f }, BTN_EX);
 }
 
@@ -210,7 +210,7 @@ void Game::InitSound(void)
 
 	//攻撃警告音
 	sndM.Add(SoundManager::TYPE::SE, "Allert",
-		rsM.Load(ResourceManager::SRC::ATK_ALLERT_SE).handleId_);
+		rsM.Load(ResourceManager::SRC::ATK_ALERT_SE).handleId_);
 
 	//回避音
 	sndM.Add(SoundManager::TYPE::SE, "Dodge",
@@ -731,9 +731,9 @@ void Game::StartSlow(void)
 	ChangeActionDirec(ACTION_DIRECTION::JUST_DODGE);	//演出
 	isSlowEffect_ = true;
 	//更新スピードを50％に設定
-	scM.SetUpdateSpeedRate_(SLOW_SPEED_PERCENT);
+	scM.SetUpdateSpeedRate(SLOW_SPEED_PERCENT);
 	//敵もそれに対応
-	enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
+	enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent());
 }
 
 void Game::EndSlow(void)
@@ -742,8 +742,8 @@ void Game::EndSlow(void)
 	isSlowEffect_ = false;
 	ChangeActionDirec(ACTION_DIRECTION::NOMAL);
 	//更新処理を100％にもどす
-	scM.SetUpdateSpeedRate_(NOMAL_SPEED_PERCENT);
-	enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent_());
+	scM.SetUpdateSpeedRate(NOMAL_SPEED_PERCENT);
+	enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent());
 }
 
 

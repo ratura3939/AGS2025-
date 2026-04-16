@@ -85,18 +85,18 @@ public:
 	void SwitchController(void);	//切り換え
 
 	//更新処理のスピード倍率
-	void SetUpdateSpeedRate_(const float _percent);	//設定
+	void SetUpdateSpeedRate(const float _percent);	//設定
 	/// <summary>
 	/// 倍率単体を取得(インクリメントならこれを使用)
 	/// </summary>
 	/// <returns>倍率</returns>
-	const float GetUpdateSpeedRate_(void)const;
+	const float GetUpdateSpeedRate(void)const;
 	/// <summary>
 	/// 倍率単体<%表記>を取得(インクリメントならこれを使用)
 	/// </summary>
 	/// <param name=""></param>
 	/// <returns></returns>
-	const float GetUpdateSpeedRatePercent_(void)const;
+	const float GetUpdateSpeedRatePercent(void)const;
 	/// <summary>
 	/// 倍率を含めて計算したものを返却
 	/// </summary>

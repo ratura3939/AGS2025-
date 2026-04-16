@@ -173,7 +173,7 @@ void PlayerChara::DoUpdate(void)
 		
 		Rotation();
 		if (allertTime_ > ALLERT_TIME) {
-			uiCntl_->ChangeAllert(false);
+			uiCntl_->ChangeAlert(false);
 		}
 	}
 
@@ -327,7 +327,7 @@ float PlayerChara::GetToLockDeg(void)
 
 void PlayerChara::SetAtkAllert(void)
 {
-	uiCntl_->ChangeAllert(true);
+	uiCntl_->ChangeAlert(true);
 	allertTime_ = 0;
 }
 

@@ -42,7 +42,7 @@ void UIManager2d::Add(const std::string& _name, const int _imgHndl, const UI_DIR
 	infoes_.emplace(_name, info);
 
 	//通常描画なら演出追加の必要はない
-	if (_type == UI_DIRECTION_2D::NOMAL)return;
+	if (_type == UI_DIRECTION_2D::NORMAL)return;
 
 	//演出処理の追加
 	PushUIDirection(_name, _type);
@@ -110,7 +110,7 @@ void UIManager2d::PopUIDirection(const std::string& _name, UI_DIRECTION_GROUP _g
 	int foundCnt_ = 0;
 	for (auto& direcInfo : direcInfoes_[_name]) {
 		if (GetDirectionGroup(direcInfo.type) == _group)break;
-		if (direcInfo.type == UI_DIRECTION_2D::NOMAL)haveNomal = true;
+		if (direcInfo.type == UI_DIRECTION_2D::NORMAL)haveNomal = true;
 		foundCnt_++;
 	}
 
@@ -127,7 +127,7 @@ void UIManager2d::SetUIInfo(const std::string& _name, const VECTOR _pos, const f
 	infoes_[_name].alpha = _alpha;
 }
 
-void UIManager2d::SetUIDirectionPram(const std::string& _name, const UI_DIRECTION_GROUP _group, const float _acc, const float _max, const float _min)
+void UIManager2d::SetUIDirectionParam(const std::string& _name, const UI_DIRECTION_GROUP _group, const float _acc, const float _max, const float _min)
 {
 	for (auto& info:direcInfoes_[_name]) {
 		
@@ -157,7 +157,7 @@ void UIManager2d::SetPos(const std::string& _name, const VECTOR& _pos)
 {
 	//動きのエフェクトがあるかを検出
 	bool isMoveDirec = false;
-	UI_DIRECTION_2D moveType = UI_DIRECTION_2D::NOMAL;
+	UI_DIRECTION_2D moveType = UI_DIRECTION_2D::NORMAL;
 	for (auto& info : direcInfoes_[_name]) {
 		if (GetDirectionGroup(info.type) == UI_DIRECTION_GROUP::MOVE) {
 			isMoveDirec = true;
@@ -251,7 +251,7 @@ void UIManager2d::Draw(const std::vector<std::string> _names)
 	}
 }
 
-void UIManager2d::Relese(void)
+void UIManager2d::Release(void)
 {
 	images_.clear();
 	infoes_.clear();
@@ -261,7 +261,7 @@ void UIManager2d::Relese(void)
 
 void UIManager2d::Destroy(void)
 {
-	Relese();
+	Release();
 	delete instance_;
 }
 

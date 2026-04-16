@@ -6,7 +6,7 @@ PlayerUIController::PlayerUIController(VECTOR& _followPos, const int _hp):Charac
 {
 	hpDrawPos_ = { 100.0f,80.0f,0.0f };
 	hp_ = std::make_unique<PlayerHp>(hpDrawPos_, _hp);
-	isAllert_ = false;
+	isAlert_ = false;
 	dodge_ = std::make_unique<NoticeDodge>(_followPos);
 }
 
@@ -28,7 +28,7 @@ void PlayerUIController::Update(void)
 void PlayerUIController::Draw(void)
 {
 	hp_->Draw();
-	if (isAllert_) {
+	if (isAlert_) {
 		dodge_->Draw();
 	}
 }

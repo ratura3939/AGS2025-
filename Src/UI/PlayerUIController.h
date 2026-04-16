@@ -12,7 +12,7 @@ class PlayerUIController :
 public:
     enum class PlayerUI {
         HP,
-        ALLERT,
+        ALERT,
     };
 
     PlayerUIController(VECTOR& _followPos,const int _hp);
@@ -24,14 +24,14 @@ public:
     void Release(void)override;
 
     void SetDrawPos(const VECTOR _pos)override;
-    void ChangeAllert(const bool _flag) { isAllert_ = _flag; }
+    void ChangeAlert(const bool _flag) { isAlert_ = _flag; }
 
     void Damage(void);
 private:
     std::unique_ptr<PlayerHp>hp_;
     std::unique_ptr<NoticeDodge>dodge_;
 
-    bool isAllert_;
+    bool isAlert_;
 
     VECTOR hpDrawPos_;
 };

@@ -47,21 +47,21 @@ void SwitchControllerScene::Init(void)
 	VECTOR screenSize = { static_cast<float>(Application::SCREEN_SIZE_X),static_cast<float>(Application::SCREEN_SIZE_Y),0.0f };
 
 	//切り替え確認画像
-	uiM.Add(SWITCH_IMG, rsM.Load(ResourceManager::SRC::CONFIRM_SWITCH).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(SWITCH_IMG, rsM.Load(ResourceManager::SRC::CONFIRM_SWITCH).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(SWITCH_IMG, VECTOR{ screenSize.x / 2.0f,screenSize.y / 2.0f - IMG_SW_DIFF_Y,0.0f }, IMG_EX_SB_SCENE);
 
 	//切り替えるボタン
 	uiM.Add(SWITCH_BTN, rsM.Load(ResourceManager::SRC::SWITCH_BTN).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(SWITCH_BTN, VECTOR{ screenSize.x / 2.0f,screenSize.y - BTN_DIFF_Y_SB_SCENE,0.0f }, BTN_EX_MAX_SB_SCENE);
-	uiM.SetUIDirectionPram(SWITCH_BTN, UI_GROUP::ZOOM, BTN_EX_ACC_SB_SCENE, BTN_EX_MAX_SB_SCENE, BTN_EX_MIN_SB_SCENE);
+	uiM.SetUIDirectionParam(SWITCH_BTN, UI_GROUP::ZOOM, BTN_EX_ACC_SB_SCENE, BTN_EX_MAX_SB_SCENE, BTN_EX_MIN_SB_SCENE);
 
 	//戻るボタン
 	uiM.Add(BACK_BTN, rsM.Load(ResourceManager::SRC::BACK_BTN).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(BACK_BTN, VECTOR{ BTN_DIFF_X_SB_SCENE,screenSize.y - BTN_DIFF_Y_SB_SCENE,0.0f }, BTN_EX_MAX_SB_SCENE);
-	uiM.SetUIDirectionPram(BACK_BTN, UI_GROUP::ZOOM, BTN_EX_ACC_SB_SCENE, BTN_EX_MAX_SB_SCENE, BTN_EX_MIN_SB_SCENE);
+	uiM.SetUIDirectionParam(BACK_BTN, UI_GROUP::ZOOM, BTN_EX_ACC_SB_SCENE, BTN_EX_MAX_SB_SCENE, BTN_EX_MIN_SB_SCENE);
 
 	//切り替え完了通知
-	uiM.Add(FINISH_SW, rsM.Load(ResourceManager::SRC::FINISH_SWITCH).handleId_, UI_DIREC::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(FINISH_SW, rsM.Load(ResourceManager::SRC::FINISH_SWITCH).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(FINISH_SW, VECTOR{ screenSize.x - BTN_DIFF_X_SB_SCENE,Application::SCREEN_SIZE_Y - BTN_DIFF_Y_SB_SCENE,0.0f }, STRING_EX);
 }
 

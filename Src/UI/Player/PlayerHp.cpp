@@ -35,18 +35,18 @@ bool PlayerHp::Init(const std::string& _master)
 		std::string empty = emptyStr_.c_str() + i;
 		std::string broken = brokenStr_.c_str() + i;
 
-		uiM.Add(nomal, rsM.Load(ResourceManager::SRC::HEART_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
+		uiM.Add(nomal, rsM.Load(ResourceManager::SRC::HEART_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UI_DIMENSION::DIMENSION_2);
 		uiM.SetUIInfo(nomal, pos, HP_EX);
 		//ãÛÇÃHP
-		uiM.Add(empty, rsM.Load(ResourceManager::SRC::HEART_EMPTY_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
+		uiM.Add(empty, rsM.Load(ResourceManager::SRC::HEART_EMPTY_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UI_DIMENSION::DIMENSION_2);
 		uiM.SetUIInfo(empty, pos, HP_EX);
 		//Ç–Ç—äÑÇÍHP(óéÇøÇƒÇ§Ç¡Ç∑ÇÁè¡Ç¶ÇƒÇ¢Ç≠)
 		uiM.Add(broken, rsM.Load(ResourceManager::SRC::HEART_BROKEN_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::GRAD_DISAP, UI_DIMENSION::DIMENSION_2);
 		uiM.SetUIInfo(broken, pos, HP_EX);
-		uiM.SetUIDirectionPram(broken, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 3.0f, 255.0f, 0.0f);
+		uiM.SetUIDirectionParam(broken, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 3.0f, 255.0f, 0.0f);
 
 		uiM.PushUIDirection(broken, UIManager2d::UI_DIRECTION_2D::MOVE_DOWN);
-		uiM.SetUIDirectionPram(broken, UIManager2d::UI_DIRECTION_GROUP::MOVE, 1.0f, 50.0f, 0.0f);
+		uiM.SetUIDirectionParam(broken, UIManager2d::UI_DIRECTION_GROUP::MOVE, 1.0f, 50.0f, 0.0f);
 
 		pos.x += HP_DISTANCE;
 	}

@@ -18,7 +18,7 @@ public:
 		,PAD_IMG
 		,KEYBOARD_IMG
 		,GAMEOVER_LOGO
-		,GAMECLAR_LOGO
+		,GAMECLEAR_LOGO
 		,TITLE_BACK_BTN
 		,BACK_GAME_BTN
 		,MENU_BTN
@@ -48,11 +48,11 @@ public:
 		,LOCKON_IMG
 		,ANNOUNCE_LOCKON_IMG
 		,PLATE_IMG
-		,SKELTON_IMG
+		,SKELETON_IMG
 		,GOLEM_IMG
 		,NUMBER_IMGS
 		,WARNING_IMG
-		,ATK_ALLERT_IMG
+		,ATK_ALERT_IMG
 		,RETRY_IMG
 		,CHECK_CONFIG_IMG
 		,SWITCH_OPERATOR_IMG
@@ -93,7 +93,7 @@ public:
 		,GAMEOVER_BGM
 
 		,CANCEL_SE
-		,MOVE_CURSUR_SE
+		,MOVE_CURSOR_SE
 		,ENTER_CNTL_SE
 		,WALK_SE
 		,RUN_SE
@@ -104,7 +104,7 @@ public:
 		,BOSS_IMPACT_SE
 		,BOSS_SHOUT_SE
 
-		,ATK_ALLERT_SE
+		,ATK_ALERT_SE
 		,DODGE_SE
 		,JUST_DODGE_SE
 
@@ -148,8 +148,8 @@ private:
 	void InitSwitchCntl(void);
 
 	//大まかなリソースのまとまり
-	void ResorceDeviceIcon(void);
-	void ResorceStage(void);
+	void ResourceDeviceIcon(void);
+	void ResourceStage(void);
 
 public:
 	// 解放(シーン切替時に一旦解放)

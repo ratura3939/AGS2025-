@@ -9,7 +9,7 @@ class UIManager2d
 public:
 	//UIの演出
 	enum class UI_DIRECTION_2D {
-		NOMAL,		//通常
+		NORMAL,		//通常
 		MOVE_UP,	//上移動
 		MOVE_DOWN,	//下移動
 		MOVE_LEFT,	//左移動
@@ -117,7 +117,7 @@ public:
 	/// <param name="_acc">加速度</param>
 	/// <param name="_max">最大値(詳細は各項目の更新処理参照)</param>
 	/// <param name="_min">最小値(詳細は各項目の更新処理参照)</param>
-	void SetUIDirectionPram(const std::string& _name, const UI_DIRECTION_GROUP _group, const float _acc, const float _max, const float _min);
+	void SetUIDirectionParam(const std::string& _name, const UI_DIRECTION_GROUP _group, const float _acc, const float _max, const float _min);
 
 	//パラメータ再設定
 	void SetPos(const std::string& _name,const VECTOR& _pos);	//位置
@@ -136,7 +136,7 @@ public:
 	void Draw(const std::vector<std::string> _names);	//複数
 
 	//解放
-	void Relese(void);
+	void Release(void);
 
 	//消去
 	void Destroy(void);

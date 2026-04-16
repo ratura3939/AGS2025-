@@ -26,19 +26,19 @@ bool EnemyCount::Init(const std::string& _master)
 	SkeltonConterStr_ = _master + "SkeltonIcon";
 
 	//プレート
-	uiM.Add(plateStr_, rsM.Load(ResourceManager::SRC::PLATE_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(plateStr_, rsM.Load(ResourceManager::SRC::PLATE_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(plateStr_, drawFollowPos_, SCALE_PALTE_NUM);
 	//数字
 	auto numPos = drawFollowPos_;
 	numPos.x += POS_AJUST;
 	uiM.Add(numberStr_, -1, UIManager2d::UI_DIRECTION_2D::UP_DOWN, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(numberStr_, numPos, SCALE_PALTE_NUM);
-	uiM.SetUIDirectionPram(numberStr_, UIManager2d::UI_DIRECTION_GROUP::MOVE, 2.0f, 20.0f, -20.0f);			//詳細設定
+	uiM.SetUIDirectionParam(numberStr_, UIManager2d::UI_DIRECTION_GROUP::MOVE, 2.0f, 20.0f, -20.0f);			//詳細設定
 
 	//アイコン×
 	auto iconPos = drawFollowPos_;
 	iconPos.x -= POS_AJUST/2;
-	uiM.Add(SkeltonConterStr_, rsM.Load(ResourceManager::SRC::SKELTON_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NOMAL, UI_DIMENSION::DIMENSION_2);
+	uiM.Add(SkeltonConterStr_, rsM.Load(ResourceManager::SRC::SKELETON_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(SkeltonConterStr_, iconPos, SCALE_SKEL);
 
 	golemIcon_ = rsM.Load(ResourceManager::SRC::GOLEM_IMG).handleId_;
