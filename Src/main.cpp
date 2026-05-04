@@ -8,28 +8,21 @@
 int WINAPI WinMain(
 	_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	_In_ LPSTR lpCmdLine, _In_ int nCmdShow)
-{
+{	
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);	//メモリリーク検出
 
-	// メモリリーク検出
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	Application::CreateInstance();	//インスタンスの生成
 
-	// インスタンスの生成
-	Application::CreateInstance();
+	Application& instance = Application::GetInstance();	//インスタンスの取得
 
-	// インスタンスの取得
-	Application& instance = Application::GetInstance();
-
-	if (instance.IsInitFail())
-	{
-		// 初期化失敗
-		return -1;
+	//初期化失敗の判定
+	if (instance.IsInitFail()){
+		return -1;	//失敗
 	}
 
-	// 実行
-	instance.Run();
-
-	// 解放
-	instance.Destroy();
+	instance.Run();		//実行
+	
+	instance.Destroy();	// 解放
 
 	return 0;
 

@@ -3,27 +3,25 @@
 
 class Application
 {
-
 public:
-
 	// スクリーンサイズ
-	static constexpr int SCREEN_SIZE_X = 1920;
-	static constexpr int SCREEN_SIZE_Y = 1080;
+	static constexpr int SCREEN_SIZE_X = 1920;	//横
+	static constexpr int SCREEN_SIZE_Y = 1080;	//縦
 
-	static constexpr float FRAME_RATE = 1000.0f / 60.0f;
-	static constexpr float DEFAULT_FPS = 60.0f;
+	static constexpr float FRAME_RATE = 1000.0f / 60.0f;	//フレームレート
+	static constexpr float DEFAULT_FPS = 60.0f;				//デフォルトFPS
 
 	// データパス関連
 	//-------------------------------------------
-	static const std::string PATH_IMAGE;
-	static const std::string PATH_UI;
-	static const std::string PATH_MODEL;
-	static const std::string PATH_CHARACTER;
-	static const std::string PATH_STAGE;
-	static const std::string PATH_EFFECT;
-	static const std::string PATH_BGM;
-	static const std::string PATH_SE;
-	static const std::string PATH_SHADER;
+	static const std::string PATH_IMAGE;	//画像
+	static const std::string PATH_UI;		//UI
+	static const std::string PATH_MODEL;	//モデル
+	static const std::string PATH_CHARACTER;//キャラクターモデル
+	static const std::string PATH_STAGE;	//ステージモデル
+	static const std::string PATH_EFFECT;	//エフェクト
+	static const std::string PATH_BGM;		//BGM
+	static const std::string PATH_SE;		//SE
+	static const std::string PATH_SHADER;	//シェーダー
 	//-------------------------------------------
 
 	// 明示的にインステンスを生成する
@@ -52,31 +50,20 @@ public:
 	const int GetWindowHeight(void) { return height_; }
 
 private:
-
-	//フレーム固定用
-	int currentFrame_;	//現在のフレームを保存
-	int lastFrame_;		//最後に実行したフレームを保存
-
-	// 静的インスタンス
-	static Application* instance_;
-
-	// 初期化失敗
-	bool isInitFail_;
-
-	// 解放失敗
-	bool isReleaseFail_;
-
-	int width_;
-	int height_;
-
-	// デフォルトコンストラクタをprivateにして、
-	// 外部から生成できない様にする
+	//コンストラクタ・デストラクタ
 	Application(void);
-
-	// コピーコンストラクタも同様
 	Application(const Application&);
-
-	// デストラクタも同様
 	~Application(void) = default;
 
+	static Application* instance_;	// 静的インスタンス
+
+	//フレーム固定用
+	int currentFrame_;		//現在のフレームを保存
+	int lastFrame_;			//最後に実行したフレームを保存
+
+	bool isInitFail_;		//初期化失敗判定
+	bool isReleaseFail_;	//解放失敗
+
+	int width_;				//ウィンドウ横
+	int height_;			//ウィンドウ縦
 };

@@ -20,50 +20,48 @@ public:
 	/// 周辺機器種別
 	/// </summary>
 	enum class PERIPHERAL_TYPE {
-		//キーマウ操作
-		KEYBOARD,
-		MOUSE,
-		//PAD操作
-		GAMEPAD,
-		X_ANALOG,
-		MAX
+		KEYBOARD	//キーボード
+		,MOUSE		//マウス
+		,GAMEPAD	//ゲームパッド
+		,X_ANALOG	//アナログ入力(XINPUT)
+		,MAX
 	};
 
 	/// <summary>
 	/// アナログ入力種別
 	/// </summary>
 	enum class ANALOG_INPUT_TYPE {
-		LS_UP,		//左スティックの上
-		LS_DOWN,	//左スティックの下
-		LS_RIGHT,	//左スティックの右
-		LS_LEFT,	//左スティックの左
-		LT,			//左トリガー
-		RS_UP,		//右スティックの上
-		RS_DOWN,	//右スティックの下
-		RS_RIGHT,	//右スティックの右
-		RS_LEFT,	//右スティックの左
-		RT,			//右トリガー
-		end
+		LS_UP		//左スティックの上
+		,LS_DOWN	//左スティックの下
+		,LS_RIGHT	//左スティックの右
+		,LS_LEFT	//左スティックの左
+		,LT			//左トリガー
+		,RS_UP		//右スティックの上
+		,RS_DOWN	//右スティックの下
+		,RS_RIGHT	//右スティックの右
+		,RS_LEFT	//右スティックの左
+		,RT			//右トリガー
+		,MAX
 	};
 
 	/// <summary>
 	/// マウス入力種別
 	/// </summary>
 	enum class MOUSE_INPUT {
-		L_CLICK,//左クリック
-		R_CLICK,//右クリック
-		M_CLICK,//ホイールクリック
-		UP,		//上移動
-		DOWN,	//下移動
-		LEFT,	//左移動
-		RIGHT,	//右移動
-		MAX
+		L_CLICK		//左クリック
+		,R_CLICK	//右クリック
+		,M_CLICK	//ホイールクリック
+		,UP			//上移動
+		,DOWN		//下移動
+		,LEFT		//左移動
+		,RIGHT		//右移動
+		,MAX
 	};
 
 	//入力履歴種別
 	enum class INPUT_RECORD {
-		CURRENT,
-		LAST
+		CURRENT
+		,LAST
 	};
 
 
@@ -71,20 +69,20 @@ public:
 	// DxLib定数、DX_INPUT_PAD1等に対応
 	enum class JOYPAD_NO
 	{
-		KEY_PAD1,			// キー入力とパッド１入力
-		PAD1,				// パッド１入力
-		PAD2,				// パッド２入力
-		PAD3,				// パッド３入力
-		PAD4,				// パッド４入力
-		INPUT_KEY = 4096,	// キー入力
-		MAX
+		KEY_PAD1			// キー入力とパッド１入力
+		,PAD1				// パッド１入力
+		,PAD2				// パッド２入力
+		,PAD3				// パッド３入力
+		,PAD4				// パッド４入力
+		,INPUT_KEY = 4096	// キー入力
+		,MAX
 	};
 
 	//移動入力情報
 	struct MoveInput {
 		float x;
 		float y;
-		float magnitude;
+		float magnitude;	//倒した量(0.0f~1.0f)
 	};
 
 	// インスタンスを明示的に生成
@@ -140,8 +138,13 @@ private:
 	//コードの現在又は１フレーム前の入力を渡す
 	const bool IsInputRecord(const std::string& _eventCode, const INPUT_RECORD& _record, const bool _isDistinguish);
 
-	MoveInput GetPadMoveInput(void);
-	MoveInput GetKeyMoveInput(void);
+	//移動入力の取得
+	MoveInput GetPadMoveInput(void);	//パッド
+	MoveInput GetKeyMoveInput(void);	//キーボード
+
+	InputManager(void);
+	InputManager(const InputManager& manager) = default;
+	~InputManager(void);
 
 	static InputManager* instance_;
 
@@ -162,28 +165,17 @@ private:
 	using AnalogInputTable_t = std::unordered_map<ANALOG_INPUT_TYPE, std::function<bool(const XINPUT_STATE&)>>;
 	AnalogInputTable_t analpgInputTable_;
 
-	//<登録名,押下状態>
-	using InputData_t = std::unordered_map<std::string, bool>;
-	//InputData_t currentInput_;	//イベントに対応するボタンが押されているか
-	//InputData_t lastInput_;		//イベントに対応するボタンが押されているか(１フレーム前)
-
 	//押されたとき何で押されたかを覚えておく
 	using InputPeriTypeData_t = std::unordered_map<std::string, std::vector<PERIPHERAL_TYPE>>;
-	InputPeriTypeData_t currentInptuPeri_;
-	InputPeriTypeData_t lastInptuPeri_;
+	InputPeriTypeData_t currentInptuPeri_;	//同フレームでの入力機種
+	InputPeriTypeData_t lastInptuPeri_;		//１フレーム前の入力機種
 
 
 	//マウスホイールに関して
-	int mouseState_;		//マウスの入力状態
-	Vector2 mousePos_;		//マウス位置
+	int mouseState_;			//マウスの入力状態
+	Vector2 mousePos_;			//マウス位置
 	Vector2 centerMousePos_;	//マウス位置(１フレーム前)
 
 	using MouseInputTable_t = std::unordered_map<MOUSE_INPUT, std::function<bool(void)>>;
-	MouseInputTable_t mouseInputTable_;
-
-	// デフォルトコンストラクタをprivateにして、
-	// 外部から生成できない様にする
-	InputManager(void);
-	InputManager(const InputManager& manager) = default;
-	~InputManager(void);
+	MouseInputTable_t mouseInputTable_;	//マウス入力の関数テーブル
 };

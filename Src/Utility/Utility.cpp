@@ -13,7 +13,6 @@ int Utility::Round(float v)
 
 std::vector<std::string> Utility::Split(std::string& line, char delimiter)
 {
-
     std::istringstream stream(line);
     std::string field;
     std::vector<std::string> result;

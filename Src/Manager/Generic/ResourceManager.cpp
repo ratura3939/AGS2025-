@@ -6,10 +6,17 @@
 
 ResourceManager* ResourceManager::instance_ = nullptr;
 
+namespace {
+	//数字画像
+	const int NUMBER_IMGS_X = 4;	//分割数(X)
+	const int NUMBER_IMGS_Y = 2;	//分割数(Y)
+	const int NUMBER_SIZE_X = 240;	//分割後Xサイズ
+	const int NUMBER_SIZE_Y = 350;	//分割後Yサイズ
+}
+
 void ResourceManager::CreateInstance(void)
 {
-	if (instance_ == nullptr)
-	{
+	if (instance_ == nullptr){
 		instance_ = new ResourceManager();
 	}
 	instance_->Init();
@@ -23,12 +30,12 @@ ResourceManager& ResourceManager::GetInstance(void)
 void ResourceManager::Init(SceneManager::SCENE_ID _scene)
 {
 	//シーンごとのリソースと生成する可能性がある追加シーンのリソース
-	switch (_scene)
-	{
+	switch (_scene){
 	case SceneManager::SCENE_ID::TITLE:
 		InitTitle();
 		break;
 	case SceneManager::SCENE_ID::GAME:
+		//ゲームシーンには、ポーズシーン及びそこからの派生シーンも含む
 		InitGame();
 		InitPouse();
 		InitKeyConfig();
@@ -147,7 +154,7 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::GOLEM_IMG, res);
 	
 	//数字
-	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + "PlateNumber.png", 4, 2, 240, 350);
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_UI + "PlateNumber.png", NUMBER_IMGS_X, NUMBER_IMGS_Y, NUMBER_SIZE_X, NUMBER_SIZE_Y);
 	resourcesMap_.emplace(SRC::NUMBER_IMGS, res);
 
 	//WARNING
@@ -469,12 +476,13 @@ void ResourceManager::ResourceStage(void)
 
 void ResourceManager::Release(void)
 {
-	for (auto& p : loadedMap_)
-	{
+	//リソース解放
+	for (auto& p : loadedMap_){
 		p.second->Release();
 		delete p.second;
 	}
 
+	//それぞれクリア
 	loadedMap_.clear();
 	resourcesMap_.clear();
 }
@@ -488,25 +496,25 @@ void ResourceManager::Destroy(void)
 
 Resource ResourceManager::Load(SRC src)
 {
-	Resource* res = _Load(src);
-	if (res == nullptr)
-	{
-		return Resource();
+	Resource* res = _Load(src);	//読み込み
+	//空の場合
+	if (res == nullptr){
+		return Resource();	//空を返す
 	}
-	Resource ret = *res;
+
 	return *res;
 }
 
 int ResourceManager::LoadModelDuplicate(SRC src)
 {
-	Resource* res = _Load(src);
-	if (res == nullptr)
-	{
-		return -1;
+	Resource* res = _Load(src);	//読み込み
+	//空の場合
+	if (res == nullptr){
+		return -1;	//エラーを返す
 	}
 
-	int duId = MV1DuplicateModel(res->handleId_);
-	res->duplicateModelIds_.push_back(duId);
+	int duId = MV1DuplicateModel(res->handleId_);	//複製
+	res->duplicateModelIds_.push_back(duId);		//複製IDを保存
 
 	return duId;
 }
@@ -517,24 +525,22 @@ ResourceManager::ResourceManager(void)
 
 Resource* ResourceManager::_Load(SRC src)
 {
-	const auto& lPair = loadedMap_.find(src);
-	if (lPair != loadedMap_.end())
-	{
-		return lPair->second;
+	const auto& lPair = loadedMap_.find(src);	//読み込み済みを取得
+	//読み込み済みの場合
+	if (lPair != loadedMap_.end()){
+		return lPair->second;	//それを返す
 	}
 
-	const auto& rPair = resourcesMap_.find(src);
-	if (rPair == resourcesMap_.end())
-	{
-		// 登録されていない
-		return nullptr;
+	const auto& rPair = resourcesMap_.find(src);	//事前登録を取得
+	//事前登録されていない場合
+	if (rPair == resourcesMap_.end()){
+		return nullptr;		//空を返す
 	}
 
-	rPair->second.Load();
+	rPair->second.Load();	//対象の読み込み
 
-	// 念のためコピーコンストラクタ
-	Resource* ret = new Resource(rPair->second);
-	loadedMap_.emplace(src, ret);
+	Resource* ret = new Resource(rPair->second);	//念のためコピーコンストラクタ
+	loadedMap_.emplace(src, ret);					//読み込み済みに追加
 
 	return ret;
 }

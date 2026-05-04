@@ -56,15 +56,12 @@ Resource::~Resource(void)
 void Resource::Load(void)
 {
 
-	switch (resType_)
-	{
+	switch (resType_){
 	case Resource::TYPE::IMG:
-		// 画像
 		handleId_ = LoadGraph(path_.c_str());
 		break;
 
-	case Resource::TYPE::IMGS:
-		// 複数画像
+	case Resource::TYPE::IMGS:	
 		handleIds_ = new int[numX_ * numY_];
 		LoadDivGraph(
 			path_.c_str(),
@@ -80,7 +77,6 @@ void Resource::Load(void)
 		break;
 
 	case Resource::TYPE::MODEL:
-		// モデル
 		handleId_ = MV1LoadModel(path_.c_str());
 		break;
 
@@ -89,7 +85,6 @@ void Resource::Load(void)
 		break;
 
 	case Resource::TYPE::EFFEKSEER:
-
 		handleId_ = LoadEffekseerEffect(path_.c_str());
 		break;
 
@@ -101,43 +96,36 @@ void Resource::LoadCsv(void)
 {
 	std::ifstream ifs = std::ifstream(path_.c_str());
 
-	if (!ifs)
-	{
+	if (!ifs){
 		return;
 	}
 
-	int chipNo = 0;
-	//列の先頭から保存する
-	int x = 0;
+	int chipNo = 0;	//一文字の情報
 	
-
 	//行格納用領域
 	std::string line;
-	while (getline(ifs, line))	//行がある間
-	{
+
+	//行がある間処理
+	while (getline(ifs, line)){		
 		//Split関数戻り値受け取り用
 		std::vector<std::string> strSplit;
 
-		strSplit = Utility::Split(line, ',');	//関数の呼び出し
+		strSplit = Utility::Split(line, ',');	//一行をカンマで分割
 
-		//一文字の情報
-		std::string chipData;
 		//分割したマップデータを格納する
-		for (int x = 0; x < strSplit.size(); x++)
-		{
-			chipNo = stoi(strSplit[x]);
+		for (int x = 0; x < strSplit.size(); x++){
+			chipNo = stoi(strSplit[x]);		//文字列を数値に変換
 			dmcHndIdX_.push_back(chipNo);	//配列内に格納
 		}
+
 		dmcHandleIds_.push_back(dmcHndIdX_);	//配列内に格納
-		dmcHndIdX_.clear();
+		dmcHndIdX_.clear();						//次の行の格納に備えて配列を空にする
 	}
 }
 
 void Resource::Release(void)
 {
-
-	switch (resType_)
-	{
+	switch (resType_){
 	case Resource::TYPE::IMG:
 		DeleteGraph(handleId_);
 		break;
@@ -145,8 +133,7 @@ void Resource::Release(void)
 	case Resource::TYPE::IMGS:
 	{
 		int num = numX_ * numY_;
-		for (int i = 0; i < num; i++)
-		{
+		for (int i = 0; i < num; i++){
 			DeleteGraph(handleIds_[i]);
 		}
 		delete[] handleIds_;
@@ -154,41 +141,33 @@ void Resource::Release(void)
 		break;
 
 	case Resource::TYPE::CSV:
-	
+		dmcHandleIds_.clear();
 		break;
 
 	case Resource::TYPE::MODEL:
 	{
 		MV1DeleteModel(handleId_);
 		auto ids = duplicateModelIds_;
-		for (auto id : ids)
-		{
+		for (auto id : ids){
 			MV1DeleteModel(id);
 		}
 	}
 		break;
 
 	case Resource::TYPE::EFFEKSEER:
-
 		DeleteEffekseerEffect(handleId_);
 		break;
-
 	}
-
 }
 
 void Resource::CopyHandle(int* imgs)
 {
-
-	if (handleIds_ == nullptr)
-	{
+	if (handleIds_ == nullptr){
 		return;
 	}
 
 	int num = numX_ * numY_;
-	for (int i = 0; i < num; i++)
-	{
-		imgs[i] = handleIds_[i];
+	for (int i = 0; i < num; i++){
+		imgs[i] = handleIds_[i];	//ハンドルIDを別配列にコピー
 	}
-
 }

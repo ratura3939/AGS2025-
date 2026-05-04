@@ -18,6 +18,11 @@ const std::string Application::PATH_BGM = "Data/Sound/BGM/";
 const std::string Application::PATH_SE = "Data/Sound/SE/";
 const std::string Application::PATH_SHADER = "Data/Shader/";
 
+namespace {
+	const int EFFEKSEER_PARTICLE_MAX = 8000;	//エフェクシアのパーティクル最大数
+	const int COLOR_BIT_DEPTH = 32;				//色深度
+}
+
 void Application::CreateInstance(void)
 {
 	if (instance_ == nullptr)
@@ -34,14 +39,13 @@ Application& Application::GetInstance(void)
 
 void Application::Init(void)
 {
-
 	// アプリケーションの初期設定
 	SetWindowText("Wildea");
-
 
 	// 実行中ウィンドウがあるモニターを取得
 	HMONITOR hMonitor = MonitorFromWindow(GetMainWindowHandle(), MONITOR_DEFAULTTONEAREST);
 
+	//モニター情報取得
 	MONITORINFO mi;
 	mi.cbSize = sizeof(mi);
 	GetMonitorInfo(hMonitor, &mi);
@@ -51,21 +55,20 @@ void Application::Init(void)
 	height_ = mi.rcMonitor.bottom - mi.rcMonitor.top;
 
 	// ウィンドウサイズ
-	SetGraphMode(width_, height_, 32);
+	SetGraphMode(width_, height_, COLOR_BIT_DEPTH);
 	ChangeWindowMode(true);
 
 	// DxLibの初期化
 	SetUseDirect3DVersion(DX_DIRECT3D_11);
-	isInitFail_ = false;
-	if (DxLib_Init() == -1)
-	{
-		isInitFail_ = true;
+	if (DxLib_Init() == -1){
+		isInitFail_ = true;	//初期化失敗
 		return;
 	}
 	//エフェクシア初期化
-	if (Effekseer_Init(8000) == -1)
-	{
-		DxLib_End();
+	if (Effekseer_Init(EFFEKSEER_PARTICLE_MAX) == -1){
+		isInitFail_ = true;	//初期化失敗
+		DxLib_End();		//失敗時はDxLibも終了する
+		return;
 	}
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
@@ -82,45 +85,35 @@ void Application::Init(void)
 
 	// シーン管理初期化
 	SceneManager::CreateInstance();
-
-	//FPS用初期化
-	currentFrame_ = 0;
-	lastFrame_ = 0;
-
 }
 
 void Application::Run(void)
 {
-
 	auto& inputManager = InputManager::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 
 	// ゲームループ
-	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
-	{
-
+	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0){
 		Sleep(1);	//システムに処理を返す
 		currentFrame_ = GetNowCount();	//現在のフレーム数を獲得
 
 		//現在のフレームと最後の実行フレームの差分が一定値を超えたら更新処理を行う。
-		if (currentFrame_ - lastFrame_ >= FRAME_RATE)
-		{
-			lastFrame_ = currentFrame_;	//フレームの更新
+		if (currentFrame_ - lastFrame_ >= FRAME_RATE){
+			//更新処理
+			lastFrame_ = currentFrame_;	
 			inputManager.Update();
-			sceneManager.Update();	//更新
+			sceneManager.Update();	
 		}
 
-		sceneManager.Draw();
+		sceneManager.Draw();	//描画処理
 
 		ScreenFlip();
-
 	}
-
 }
 
 void Application::Destroy(void)
 {
-
+	//各種解放処理
 	InputManager::GetInstance().Destroy();
 	ResourceManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
@@ -128,13 +121,11 @@ void Application::Destroy(void)
 	// Effekseerを終了する。
 	Effkseer_End();
 	// DxLib終了
-	if (DxLib_End() == -1)
-	{
-		isReleaseFail_ = true;
+	if (DxLib_End() == -1){
+		isReleaseFail_ = true;	//解放失敗
 	}
 
-	delete instance_;
-
+	delete instance_;	//インスタンスの破棄
 }
 
 bool Application::IsInitFail(void) const
@@ -148,7 +139,11 @@ bool Application::IsReleaseFail(void) const
 }
 
 Application::Application(void)
+	:isInitFail_(false)
+	,isReleaseFail_(false)
+	,width_(-1)
+	,height_(-1)
+	,currentFrame_(0)
+	,lastFrame_(0)
 {
-	isInitFail_ = false;
-	isReleaseFail_ = false;
 }

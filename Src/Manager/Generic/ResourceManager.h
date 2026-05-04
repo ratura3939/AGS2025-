@@ -6,9 +6,7 @@
 
 class ResourceManager
 {
-
 public:
-
 	// リソース名
 	enum class SRC
 	{
@@ -81,6 +79,8 @@ public:
 		,BLOCK_MDL
 		,LIBRA_PLATE_MDL
 		,MAGNET_LINE_MDL
+		,TEST_MDL
+		,TEST_MDL_2
 
 		//音
 		,TITLE_BGM
@@ -88,10 +88,8 @@ public:
 		,BATTLE_BGM
 		,BOSS_BGM
 		,WARNING_BGM
-
 		,GAMECLEAR_BGM
 		,GAMEOVER_BGM
-
 		,CANCEL_SE
 		,MOVE_CURSOR_SE
 		,ENTER_CNTL_SE
@@ -103,18 +101,14 @@ public:
 		,DAMAGE_SE
 		,BOSS_IMPACT_SE
 		,BOSS_SHOUT_SE
-
 		,ATK_ALERT_SE
 		,DODGE_SE
 		,JUST_DODGE_SE
-
 		,ABILITY_SE
 		,TIME_LOCK_SE
 		,BREAK_TIME_LOCK_SE
-
 		,CONNECT_MAGNET
 		,WAVE_MAGNET_SE
-
 		,FENCE_SE
 		,SWITCH_SE
 
@@ -122,9 +116,6 @@ public:
 		,SWORD_EFC
 		,DAMAGE_EFC
 		,CHARGE_ATK_EFC
-
-		,TEST_MDL
-		,TEST_MDL_2
 	};
 
 	// 明示的にインステンスを生成する
@@ -136,22 +127,6 @@ public:
 	// 初期化
 	void Init(SceneManager::SCENE_ID _scene= SceneManager::SCENE_ID::NONE);
 
-	
-private:
-	//シーンごとにデータを読み込むことにする
-	void InitTitle(void);
-	void InitGame(void);
-	void InitClear(void);
-	void InitGameOver(void);
-	void InitPouse(void);
-	void InitKeyConfig(void);
-	void InitSwitchCntl(void);
-
-	//大まかなリソースのまとまり
-	void ResourceDeviceIcon(void);
-	void ResourceStage(void);
-
-public:
 	// 解放(シーン切替時に一旦解放)
 	void Release(void);
 
@@ -163,27 +138,30 @@ public:
 
 	// リソースの複製ロード(モデル用)
 	int LoadModelDuplicate(SRC src);
-
+	
 private:
+	//シーンごとにデータを読み込むことにする
+	void InitTitle(void);		//タイトル
+	void InitGame(void);		//ゲーム
+	void InitClear(void);		//クリア
+	void InitGameOver(void);	//ゲームオーバー
+	void InitPouse(void);		//ポーズ
+	void InitKeyConfig(void);	//キーコンフィグ
+	void InitSwitchCntl(void);	//操作方法切り換え
 
-	// 静的インスタンス
-	static ResourceManager* instance_;
-
-	// リソース管理の対象
-	std::map<SRC, Resource> resourcesMap_;
-
-	// 読み込み済みリソース
-	std::map<SRC, Resource*> loadedMap_;
-
-	// デフォルトコンストラクタをprivateにして、
-	// 外部から生成できない様にする
-	ResourceManager(void);
-
-	// デストラクタも同様
-	~ResourceManager(void) = default;
+	//大まかなリソースのまとまり
+	void ResourceDeviceIcon(void);	//操作方法関連
+	void ResourceStage(void);		//ステージ関連
 
 	// 内部ロード
 	Resource* _Load(SRC src);
 
+	//コンストラクタ・デストラクタ
+	ResourceManager(void);
+	~ResourceManager(void) = default;
+
+	static ResourceManager* instance_;		// 静的インスタンス
+	std::map<SRC, Resource> resourcesMap_;	// リソース管理の対象
+	std::map<SRC, Resource*> loadedMap_;	// 読み込み済みリソース
 };
 

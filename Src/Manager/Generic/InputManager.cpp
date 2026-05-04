@@ -11,8 +11,7 @@ namespace {
 
 void InputManager::CreateInstance(void)
 {
-	if (instance_ == nullptr)
-	{
+	if (instance_ == nullptr){
 		instance_ = new InputManager();
 	}
 	instance_->Init();
@@ -20,8 +19,7 @@ void InputManager::CreateInstance(void)
 
 InputManager& InputManager::GetInstance(void)
 {
-	if (instance_ == nullptr)
-	{
+	if (instance_ == nullptr){
 		InputManager::CreateInstance();
 	}
 	return *instance_;
@@ -36,55 +34,48 @@ void InputManager::Init(void)
 
 void InputManager::Update(void)
 {
-	//PAD関係は１Pの事しか見ていない
-	//複数人を想定するのなら要改良
-	//キーボード関係とPad関係で分けるのがよさそう？
-
-	//lastInput_ = currentInput_;
+	//前のフレームの入力を保存
 	lastInptuPeri_ = currentInptuPeri_;
 	
-	//キーボード
+	//入力の取得
 	char keystate[KEY_ALL] = {};
-	GetHitKeyStateAll(keystate);
-	//マウス
-	mouseState_ = GetMouseInput();
-	//マウス位置
-	GetMousePoint(&mousePos_.x, &mousePos_.y);
-
-	//パッド
-	int padstate = GetJoypadInputState(DX_INPUT_KEY_PAD1);
-
-	//アナログ
+	GetHitKeyStateAll(keystate);							//キーボード
+	mouseState_ = GetMouseInput();							//マウス
+	GetMousePoint(&mousePos_.x, &mousePos_.y);				//マウス位置
+	int padstate = GetJoypadInputState(DX_INPUT_KEY_PAD1);	//パッド
 	XINPUT_STATE xinputState = {};
-	GetJoypadXInputState(DX_INPUT_PAD1, &xinputState);
+	GetJoypadXInputState(DX_INPUT_PAD1, &xinputState);		//アナログスティックj
 
 	//項目分回す
 	for (const auto& keyvalue : inputTable_) {
 		bool pressed = false;	//押されているかどうかのフラグ
 		std::vector<PERIPHERAL_TYPE> inputTypes = {};
+
 		//中身の動的配列をfor文で回す(キーボード→PADの順で見ている)
 		for (auto input : keyvalue.second) {
-			//キーボードのとき
+			//キーボード
 			if (input.type == PERIPHERAL_TYPE::KEYBOARD) {
 				if (keystate[input.code] != 0) {
 					pressed = keystate[input.code];
-					//入力が行われていたらこの危機から入力があったと記録する
-					if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::KEYBOARD);
+					if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::KEYBOARD);	//入力機器の記録
 				}
 			}
+			//パッド
 			else if (input.type == PERIPHERAL_TYPE::GAMEPAD) {
 				//パッドに何かしらの入力がありそれがコードだったとき
 				pressed = padstate & input.code;
-				if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::GAMEPAD);
+				if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::GAMEPAD);		//入力機器の記録
 			}
+			//マウス
 			else if (input.type == PERIPHERAL_TYPE::MOUSE) {
 				//マウスに何かしらの入力がありそれがコードだったとき
 				pressed = mouseInputTable_[static_cast<MOUSE_INPUT>(input.code)]();
-				if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::MOUSE);
+				if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::MOUSE);		//入力機器の記録
 			}
+			//アナログスティック
 			else if (input.type == PERIPHERAL_TYPE::X_ANALOG) {
 				pressed = analpgInputTable_[static_cast<ANALOG_INPUT_TYPE>(input.code)](xinputState);
-				if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::X_ANALOG);
+				if (pressed)inputTypes.push_back(PERIPHERAL_TYPE::X_ANALOG);	//入力機器の記録
 			}
 		}
 		currentInptuPeri_[keyvalue.first] = inputTypes;
@@ -107,8 +98,7 @@ void InputManager::Destroy(void)
 
 void InputManager::ResetInput(void)
 {
-	// ゲームで使用したいキーとその名前を、
-	// 事前にここで登録しておいてください
+	// ゲームで使用したいキーとその名前を事前にここで登録
 
 	//移動関係<WASD・左スティック>
 	inputTable_["up"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_W },{ PERIPHERAL_TYPE::X_ANALOG,static_cast<int>(ANALOG_INPUT_TYPE::LS_UP) } };
@@ -143,6 +133,7 @@ void InputManager::ResetInput(void)
 
 void InputManager::AnalogInputFuncInit(void)
 {
+	//Lスティック
 	analpgInputTable_[ANALOG_INPUT_TYPE::LS_UP] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbLY > ANALOG_STHICK_THRESHOLD;
 	};
@@ -155,6 +146,8 @@ void InputManager::AnalogInputFuncInit(void)
 	analpgInputTable_[ANALOG_INPUT_TYPE::LS_LEFT] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbLX < -ANALOG_STHICK_THRESHOLD;
 	};
+
+	//Rスティック
 	analpgInputTable_[ANALOG_INPUT_TYPE::RS_UP] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbRY > ANALOG_STHICK_THRESHOLD;
 	};
@@ -167,6 +160,8 @@ void InputManager::AnalogInputFuncInit(void)
 	analpgInputTable_[ANALOG_INPUT_TYPE::RS_LEFT] = [](const XINPUT_STATE& _state) {
 		return _state.ThumbRX < -ANALOG_STHICK_THRESHOLD;
 	};
+
+	//トリガー
 	analpgInputTable_[ANALOG_INPUT_TYPE::LT] = [](const XINPUT_STATE& _state) {
 		return _state.LeftTrigger > ANALOG_TRIGGER_THRESHOLD;
 	};
@@ -222,8 +217,6 @@ const bool InputManager::IsInputRecord(const std::string& _eventCode, const INPU
 
 	//指定のコードで入力があった機種の経歴分回す
 	for (auto& periType : inputRecord) {
-
-
 		//キーボード操作の時
 		if (cntl == SceneManager::CNTL::KEY) {
 			//キーボードとマウスを受け付ける
@@ -290,6 +283,7 @@ InputManager::MoveInput InputManager::GetKeyMoveInput(void)
 
 	const float movePow = 1.0f;
 
+	//入力受付
 	if (IsPressed("up")) {
 		result.y += movePow;
 	}
@@ -321,8 +315,8 @@ InputManager::MoveInput InputManager::GetKeyMoveInput(void)
 bool InputManager::IsTrigerrDown(const std::string& _eventCode, bool _isDistinguish)
 {
 	//先に要素がない場合の予防線をはる
-// 反応しないだけという状態を作りたいから
-//containd()=引数がキーとなる要素がないとき
+	// 反応しないだけという状態を作りたいから
+	//containd()=引数がキーとなる要素がないとき
 	if (!currentInptuPeri_.contains(_eventCode)) {
 		//参照できないので
 		return false;
@@ -361,22 +355,23 @@ InputManager::MoveInput InputManager::GetMoveInput(bool _isDistinguish)
 
 	//入力を両者受け付ける場合
 	if(!_isDistinguish || cntl == SceneManager::CNTL::NONE) {
-		//とりあえずPAD優先
-		result = GetPadMoveInput();
+		//PAD優先
+		result = GetPadMoveInput();	//PAD操作
+
+		//PADでの入力がないとき
 		if (result.magnitude == 0.0f) {
-			//キーボード操作
-			result = GetKeyMoveInput();
+			result = GetKeyMoveInput();	//キーボード操作
 		}
 	}
 	else {
 		//どちらか片方のみ
 		//PADのとき
 		if(cntl == SceneManager::CNTL::PAD) {
-			result = GetPadMoveInput();
+			result = GetPadMoveInput();	//PAD操作
 		}
 		//KEYのとき
 		else if (cntl == SceneManager::CNTL::KEY) {
-			result = GetKeyMoveInput();
+			result = GetKeyMoveInput();	//キーボード操作
 		}
 	}
 
