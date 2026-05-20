@@ -6,47 +6,43 @@
 #include "Camera.h"
 
 namespace {
-	const float LERP_SPEED = 0.1f;
-	const float LERP_MAX = 1.0f;
-	const float HALF_DISTANCE = 0.5f;
-	const float WALL_LERP_SPEED = 1.0f;
-	const VECTOR SHAKE_DIR = { 0.7f, 0.7f ,0.0f };
+	const float LERP_SPEED = 0.1f;		//補完スピード
+	const float LERP_MAX = 1.0f;		//補完上限値
+	const float HALF_DISTANCE = 0.5f;	//中間地点(ロックオン時の注視点に使用)
+	const float WALL_LERP_SPEED = 1.0f;	//壁補正の補完スピード
+	const VECTOR SHAKE_DIR = { 0.7f, 0.7f ,0.0f };	//揺れ方向
 }
 
 Camera::Camera(void)
-	:mode_(MODE::NONE)
-	,c2fRelative_(Utility::VECTOR_ZERO)
+	:followObject_({ Utility::VECTOR_ZERO, Quaternion::Identity() })
+	,resetStartPos_({ Utility::VECTOR_ZERO, Quaternion::Identity() })
+	,resetGoalPos_({ Utility::VECTOR_ZERO, Quaternion::Identity() })
+	,stepReset_(0.0f)
+	,isReset_(true)
+	,currentMode_(MODE::NONE)
+	,returnMode_(MODE::NONE)
+	,pos_(Utility::VECTOR_ZERO)
+	,lockPos_(Utility::VECTOR_ZERO)
+	,lockOnGoalPos_(Utility::VECTOR_ZERO)
+	,lockOnDistanceMin_(0.0f)
+	,prevGoalPos_(Utility::VECTOR_ZERO)
+	,focusPos_(Utility::VECTOR_ZERO)
+	,goalFocusPos_(Utility::VECTOR_ZERO)
+	,goalDirecPos_(Utility::VECTOR_ZERO)
 	,idealPos_(Utility::VECTOR_ZERO)
 	,adjustedPos_(Utility::VECTOR_ZERO)
+	,cameraUp_(Utility::VECTOR_ZERO)
+	,rot_(Quaternion::Identity())
+	,rotSpeed_(MAX_ROT_SPEED)
+	,angles_(Utility::VECTOR_ZERO)
+	,rotOutX_(Quaternion::Identity())
+	,stepShake_(0.0f)
+	,finishShake_(false)
+	,defaultPos_(Utility::VECTOR_ZERO)
+	,shakeDir_(SHAKE_DIR)
+	,lerpStep_(0.0f)
+	,c2fRelative_(Utility::VECTOR_ZERO)
 {
-	currentMode_ = MODE::NONE;
-	pos_ = Utility::VECTOR_ZERO;
-	focusPos_ = Utility::VECTOR_ZERO;
-	goalFocusPos_ = Utility::VECTOR_ZERO;
-	lockPos_ = Utility::VECTOR_ZERO;
-	rot_ = Quaternion::Identity();
-	rotSpeed_ = MAX_ROT_SPEED;
-
-	stepReset_ = 0.0f;
-	isReset_ = true;
-
-	followObject_.pos = Utility::VECTOR_ZERO;
-	followObject_.quaRot = Quaternion::Identity();
-	start_.pos = Utility::VECTOR_ZERO;
-	start_.quaRot = Quaternion::Identity();
-	goal_.pos = Utility::VECTOR_ZERO;
-	goal_.quaRot = Quaternion::Identity();
-
-	angles_.x = Utility::Deg2RadF(0.0f);
-	angles_.y = 0.0f;
-	angles_.z = 0.0f;
-
-	lerpStep_ = 0.0f;;
-	finishShake_ = false;
-
-	prevGoalPos_ = Utility::VECTOR_ZERO;
-	lockOnGoalPos_ = Utility::VECTOR_ZERO;
-	lockOnDistanceMin_ = 0.0f;
 }
 
 Camera::~Camera(void)
@@ -74,7 +70,7 @@ void Camera::SetBeforeDraw(void)
 	lerpStep_ += LERP_SPEED;
 	if (lerpStep_ > LERP_MAX)lerpStep_ = LERP_MAX;
 
-	switch (mode_)
+	switch (currentMode_)
 	{
 	case MODE::NONE:
 		SetBeforeDrawFollow();
@@ -112,7 +108,7 @@ void Camera::SetBeforeDraw(void)
 	}
 
 	// FOLLOW・LOCKON・NONE時にレイキャストによるカメラ位置補正を適用
-	if (mode_ == MODE::FOLLOW || mode_ == MODE::LOCKON || mode_ == MODE::NONE) {
+	if (currentMode_ == MODE::FOLLOW || currentMode_ == MODE::LOCKON || currentMode_ == MODE::NONE) {
 		collider_->UpdateRayCast();
 		pos_ = Utility::Lerp(pos_, adjustedPos_, WALL_LERP_SPEED);
 	}
@@ -176,7 +172,6 @@ void Camera::SetBeforeDrawFollow(void)
 
 	//カメラの上方向
 	cameraUp_ = rot_.GetUp();
-
 }
 
 void Camera::SetBeforeDrawLockOn(void)
@@ -208,8 +203,8 @@ void Camera::SetBeforeDrawLockOn(void)
 	//カメラの初期ゴールを計算結果で算出した場所にする
 	if (!isReset_) {
 		ChangeMode(MODE::RESET);
-		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(relative));
-		goal_.quaRot = followObject_.quaRot;
+		resetGoalPos_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(relative));
+		resetGoalPos_.quaRot = followObject_.quaRot;
 		return;
 	}
 
@@ -282,7 +277,7 @@ void Camera::SetBeforeDrawReset(void)
 	stepReset_ += RESET_STEP;
 	//終了条件
 	if (stepReset_ >= RESET_TIME) {
-		ChangeMode(currentMode_);
+		ChangeMode(returnMode_);
 		isReset_ = true;
 		angles_ = Utility::VECTOR_ZERO;
 
@@ -294,15 +289,10 @@ void Camera::SetBeforeDrawReset(void)
 	}
 
 	//球面補間
-	rot_ = Quaternion::Slerp(start_.quaRot, goal_.quaRot, stepReset_);
-	//pos_ = Utility::Lerp(start_.pos, goal_.pos, stepReset_);
+	rot_ = Quaternion::Slerp(resetStartPos_.quaRot, resetGoalPos_.quaRot, stepReset_);
 	pos_ = VAdd(followObject_.pos, rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW));
 
 	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.8f);
-
-	//VECTOR axY = { 0.0f,1.0f,0.0f };
-
-	//rot_.ToAngleAxis(&angles_.y, &axY);
 
 	VECTOR currentEuler = rot_.ToEuler();
 	angles_.x = currentEuler.x;
@@ -352,8 +342,8 @@ void Camera::SetBeforeDrawMirror(void)
 	//カメラの初期ゴールを計算結果で算出した場所にする
 	if (!isReset_) {
 		ChangeMode(MODE::RESET);
-		goal_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(relative));
-		goal_.quaRot = followObject_.quaRot;
+		resetGoalPos_.pos = VAdd(followObject_.pos, followObject_.quaRot.PosAxis(relative));
+		resetGoalPos_.quaRot = followObject_.quaRot;
 		return;
 	}
 
@@ -410,22 +400,17 @@ void Camera::SetRotSpeed(const float _speed)
 }
 
 void Camera::ChangeMode(MODE mode)
-{
-
-	//カメラの初期設定
-	//カメラを揺らす前の位置で揺れるようにしたいため外している
-	//SetDefault();
-	
-	if (mode == MODE::RESET)currentMode_ = mode_;
+{	
+	if (mode == MODE::RESET)returnMode_ = currentMode_;
 
 	//カメラモードの変更
-  	mode_ = mode;
+  	currentMode_ = mode;
 
 	isReset_ = false;
 	lerpStep_ = 0.0f;
 
 	//変更時の初期化処理
-	switch (mode_)
+	switch (currentMode_)
 	{
 	case MODE::FIXED_POINT:
 		break;
@@ -447,8 +432,8 @@ void Camera::ChangeMode(MODE mode)
 	case MODE::RESET:
 	{
 		stepReset_ = 0.0f;
-		start_.pos = pos_;
-		start_.quaRot = rot_;
+		resetStartPos_.pos = pos_;
+		resetStartPos_.quaRot = rot_;
 		goalFocusPos_ = followObject_.pos;
 
 		//現在のキャラクターの向きから Y軸回転（ヨー）のみを抽出
@@ -461,11 +446,11 @@ void Camera::ChangeMode(MODE mode)
 		Quaternion goalRotX = Quaternion::AngleAxis(angles_.x, Utility::AXIS_X);
 
 		//水平回転を先に適応し、その後に現在の高さを適応
-		goal_.quaRot = goalRotY.Mult(goalRotX);
+		resetGoalPos_.quaRot = goalRotY.Mult(goalRotX);
 
 		VECTOR goalRelative = RELATIVE_F2C_POS_FOLLOW;
 		goalRelative.y = pos_.y;
-		goal_.pos = VAdd(followObject_.pos, goal_.quaRot.PosAxis(goalRelative));
+		resetGoalPos_.pos = VAdd(followObject_.pos, resetGoalPos_.quaRot.PosAxis(goalRelative));
 
 		//回転の同期
 		VECTOR currentEuler = rot_.ToEuler();
@@ -518,7 +503,7 @@ void Camera::SetLockPos(const VECTOR& _lock)
 	lockPos_ = _lock;
 }
 
-void Camera::SetGoalPos(const VECTOR& _goal)
+void Camera::SetGoalDirecPos(const VECTOR& _goal)
 {
 	goalDirecPos_ = _goal;
 }
@@ -535,14 +520,7 @@ void Camera::ResetCollider(void)
 
 const Camera::MODE& Camera::GetMode(void) const
 {
-	return mode_;
-}
-
-void Camera::DrawDebug(void)
-{
-	//DrawFormatString(0, 0, 0xffffff, "cPOS={%.1f,%.1f,%.1f}\ncROT={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
-	//DrawFormatString(0, 100, 0xffffff, "FCPOS={%.1f,%.1f,%.1f}", focusPos_.x, focusPos_.y, focusPos_.z);
-	DrawSphere3D(focusPos_, 8, 10, 0x00ff00, 0x00ff00, false);
+	return currentMode_;
 }
 
 void Camera::SetDefault(void)

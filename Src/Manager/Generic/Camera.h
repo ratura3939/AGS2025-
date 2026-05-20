@@ -11,6 +11,28 @@ class Transform;
 class Camera
 {
 public:
+	//カメラモード
+	enum class MODE
+	{
+		NONE
+		,FIXED_POINT	//定点カメラ
+		,FREE			//フリーモード
+		,FOLLOW			//追従モード
+		,SHAKE			//カメラ揺らし
+		,LOCKON			//ロックオン
+		,RESET			//カメラ位置リセット用
+		,AUTO_MOVE		//目標位置まで自動的に移動
+		,MIRROR			//特定の相対座標に対して対照的な動きをとる(対象の軸はfollowObj)
+		,MAX
+	};
+
+	//追従対象の情報
+	struct ForFollowInfo
+	{
+		VECTOR pos;
+		Quaternion quaRot;
+	};
+
 	//カメラの描画域(Near,Far)関連の定数------------------------------------------------------
 	static constexpr float SPEED = 15.0f;			//カメラスピード
 
@@ -54,36 +76,16 @@ public:
 	static constexpr float RESET_STEP = 0.05f;
 
 	//距離最低制限
-	static constexpr float UNDER_LIMIT_Y = 280.0f;
-	static constexpr float HIGHT_LIMIT_Y = 1200.0f;
+	static constexpr float UNDER_LIMIT_Y = 280.0f;	//最低値
+	static constexpr float HIGHT_LIMIT_Y = 1200.0f;	//最高値
 
 	// カメラのX回転上限度角
-	static constexpr float LIMIT_X_UP_RAD = 45.0f * (DX_PI_F / 180.0f);
-	static constexpr float LIMIT_X_DW_RAD = -45.0f * (DX_PI_F / 180.0f);
+	static constexpr float LIMIT_X_UP_RAD = 45.0f * (DX_PI_F / 180.0f);		//上方向制限
+	static constexpr float LIMIT_X_DW_RAD = -45.0f * (DX_PI_F / 180.0f);	//下方向制限
 
 	//線形補完
 	static constexpr float NO_LERP = 1.0f;
 	static constexpr float LERP_SPEED = 0.05f;
-
-	//カメラモード
-	enum class MODE
-	{
-		NONE,
-		FIXED_POINT,	//定点カメラ
-		FREE,			//フリーモード
-		FOLLOW,			//追従モード
-		SHAKE,			//カメラ揺らし
-		LOCKON,			//ロックオン
-		RESET,			//カメラ位置リセット用
-		AUTO_MOVE,		//目標位置まで自動的に移動
-		MIRROR,			//特定の相対座標に対して対照的な動きをとる(対象の軸はfollowObj)
-	};
-
-	struct ForFollowInfo
-	{
-		VECTOR pos;
-		Quaternion quaRot;
-	};
 
 	//コンストラクタ
 	Camera(void);
@@ -110,28 +112,26 @@ public:
 	void SetBeforeDrawMirror(void);			//カメラ自動移動
 
 	//----------------------------------------
-	// 描画処理
-	void Draw(void);
 
-	//解放処理
-	void Release(void);
+	void Draw(void);	// 描画処理
+	void Release(void);	//解放処理
 
-	//座標取得
-	const VECTOR& GetPos(void) const;
-	const VECTOR& GetLockPos(void)const;
-	const VECTOR& GetGoalPos(void)const { return goalDirecPos_; }
-	const VECTOR& GetC2FRelativeVec(void)const { return c2fRelative_; }
-	const VECTOR& GetFocusPos(void)const { return focusPos_; }
-	const VECTOR& GetFollowPos(void)const { return followObject_.pos; }
-	const VECTOR& GetIdealPos(void)const { return idealPos_; }
-	void SetAdjustedPos(const VECTOR& _pos) { adjustedPos_ = _pos; }
+	//座標取得・設定
+	const VECTOR& GetPos(void) const;		//現在地
+	const VECTOR& GetLockPos(void)const;	//ロックオン対象
+	const VECTOR& GetGoalPos(void)const { return goalDirecPos_; }		//演出目標地点
+	const VECTOR& GetC2FRelativeVec(void)const { return c2fRelative_; }	//追従対象との距離
+	const VECTOR& GetFocusPos(void)const { return focusPos_; }			//注視点
+	const VECTOR& GetFollowPos(void)const { return followObject_.pos; }	//追従対象の位置
+	const VECTOR& GetIdealPos(void)const { return idealPos_; }			//理想位置
+	void SetAdjustedPos(const VECTOR& _pos) { adjustedPos_ = _pos; }	//位置調整の座標を受け取る
 
 	//回転取得
-	const Quaternion& GetRot(void)const;
-	const VECTOR& GetAngle(void)const;
+	const Quaternion& GetRot(void)const;	//現在の回転
+	const VECTOR& GetAngle(void)const;		//入力による回転量
 	//回転スピード
-	const float GetRotSpeed(void)const;
-	void SetRotSpeed(const float _speed);
+	const float GetRotSpeed(void)const;		//取得
+	void SetRotSpeed(const float _speed);	//設定
 
 	//カメラモードの変更
 	void ChangeMode(MODE mode);
@@ -143,12 +143,12 @@ public:
 	void SetLockOnDistanceMin(const float _distance) { lockOnDistanceMin_ = _distance; }
 
 	//座標設定
-	void SetPos(const VECTOR& pos,const VECTOR& focus);
-	void SetPos(const VECTOR& pos);
-	void SetFocusPos(const VECTOR& _focus);
-	void SetGoalFocusPos(const VECTOR& _focus);
-	void SetLockPos(const VECTOR& _lock);	//_isRote=ロックオン中回転を有効にするか(能力使用中は回転しないためそれ用)
-	void SetGoalPos(const VECTOR& _goal);
+	void SetPos(const VECTOR& pos, const VECTOR& focus);	//位置と注視点
+	void SetPos(const VECTOR& pos);							//位置のみ
+	void SetFocusPos(const VECTOR& _focus);					//注視点のみ
+	void SetGoalFocusPos(const VECTOR& _focus);				//目標注視点
+	void SetLockPos(const VECTOR& _lock);					//ロックオン対象の位置設定	
+	void SetGoalDirecPos(const VECTOR& _goal);				//演出用目標位置
 
 	//カメラを初期位置に戻す
 	void SetDefault(void);
@@ -156,78 +156,55 @@ public:
 	//再度カメラコライダーをセットする
 	void ResetCollider(void);
 
-	const MODE& GetMode(void)const;
+	const MODE& GetMode(void)const;	//状態の取得
 	const bool IsFinishShake(void) { return finishShake_; }	//画面揺れ終了判別
 
-	void DrawDebug(void);
 private:
-	//コライダー
-	std::unique_ptr<CameraCollider> collider_;
+	void Rotation(void);	//回転
 
-	//追従対象
-	ForFollowInfo followObject_;
+	std::unique_ptr<CameraCollider> collider_;	//コライダー
+	ForFollowInfo followObject_;	//追従対象
+
 	//開始・目標位置(リセット時などに使用)
-	ForFollowInfo start_;
-	ForFollowInfo goal_;
-	float stepReset_;
-	bool isReset_;
+	ForFollowInfo resetStartPos_;	//開始地点
+	ForFollowInfo resetGoalPos_;	//目標地点
+	float stepReset_;	//進行度(0.0f～1.0f)
+	bool isReset_;		//リセット中かどうか
 
-	//カメラモード
-	MODE mode_;			
-	MODE currentMode_;	//Shake・Resetに遷移する際に現在の物を保存する
+	
+	MODE currentMode_;			//カメラモード	
+	MODE returnMode_;	//Shake・Resetに遷移する際に現在の物を保存する
 
-	//カメラの位置
-	VECTOR pos_;
+	
+	VECTOR pos_;			//位置
+	VECTOR focusPos_;		//注視点
+	VECTOR goalFocusPos_;	//目標注視点
+	VECTOR goalDirecPos_;	//演出用目標位置
 
 	//ロックオン対象の位置
-	VECTOR lockPos_;		//ロックオン対象の位置
-	VECTOR prevGoalPos_;	//前回の目標位置
-	VECTOR lockOnGoalPos_;	//目標位置(ロックオン)
+	VECTOR lockPos_;			//ロックオン対象の位置
+	VECTOR prevGoalPos_;		//前回の目標位置
+	VECTOR lockOnGoalPos_;		//目標位置(ロックオン)
 	float lockOnDistanceMin_;	//ロックオン時の最低距離
 
-	//カメラの注視点
-	VECTOR focusPos_;
-	VECTOR goalFocusPos_;
 	
-	//移動目標位置
-	VECTOR goalDirecPos_;
-
-	// カメラの理想位置（追従計算で確定）
-	VECTOR idealPos_;
-	// CameraColliderから受け取った補正後の目標位置
-	VECTOR adjustedPos_;
-
-	//カメラの上方向
-	VECTOR cameraUp_;
-
-	//カメラの回転
-	Quaternion rot_;
+	VECTOR idealPos_;		//カメラの理想位置（追従計算で確定）
+	VECTOR adjustedPos_;	// CameraColliderから受け取った補正後の目標位置
 	
+	VECTOR cameraUp_;	//カメラの上方向
 
-	//回転スピード
-	float rotSpeed_;
+	Quaternion rot_;	//回転
+	Quaternion rotOutX_;// X軸回転が無い角度
+	float rotSpeed_;	//回転スピード
+	VECTOR angles_;		//カメラ角度(rad)
 
-	// カメラ角度(rad)
-	VECTOR angles_;
-	// X軸回転が無い角度
-	Quaternion rotOutX_;
+	VECTOR shakeDir_;	//揺れ方向
+	float stepShake_;	//画面揺れの進行度
+	bool finishShake_;	//画面揺れが終わったか
+	
+	VECTOR defaultPos_;	//演出開始前位置
+	float lerpStep_;	//補完進行度
 
-	//画面揺らし用
-	float stepShake_;
-
-	//画面揺れが終わったか
-	bool finishShake_;
-	//演出前位置
-	VECTOR defaultPos_;
-	//揺れ方向
-	VECTOR shakeDir_;
-	//補完スピード
-	float lerpStep_;
-
-	//追従対象との距離
-	VECTOR c2fRelative_;
-
-	//回転
-	void Rotation(void);
+	VECTOR c2fRelative_;//追従対象との距離
 };
 

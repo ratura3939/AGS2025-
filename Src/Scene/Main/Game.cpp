@@ -464,7 +464,7 @@ void Game::DirectionUpdate(void)
 			//場所の設定(ボスの横ぐらい)
 			auto bossPos = enemy_->GetPos(BOSS_IDX);
 			camera.SetPos(VAdd(bossPos,cameraMoveStartPos_), bossPos);
-			camera.SetGoalPos(VAdd(bossPos, cameraMoveGoalPos_[direcCnt_]));
+			camera.SetGoalDirecPos(VAdd(bossPos, cameraMoveGoalPos_[direcCnt_]));
 
 			//演出を「カメラ移動に変更
 			direcUpdate_ = &Game::DirectionCameraMove;
@@ -554,7 +554,7 @@ bool Game::DirectionCameraMove(void)
 		}
 		else {
 			//次の目標地点への設定
-			camera.SetGoalPos(VAdd(enemy_->GetPos(BOSS_IDX), cameraMoveGoalPos_[direcCnt_]));
+			camera.SetGoalDirecPos(VAdd(enemy_->GetPos(BOSS_IDX), cameraMoveGoalPos_[direcCnt_]));
 
 			//二回目の移動はボスの「叫び」も入れる
 			enemy_->BossShout();
