@@ -58,7 +58,6 @@ bool EnemyCount::Update(void)
 void EnemyCount::Draw(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
-	//uiM.Draw({ plateStr_, SkeltonConterStr_,numberStr_ });
 	uiM.Draw(plateStr_);
 	uiM.Draw(SkeltonConterStr_);
 	uiM.Draw(numberStr_);

@@ -230,9 +230,6 @@ void Camera::SetBeforeDrawLockOn(void)
 
 void Camera::SetBeforeDrawShake(void)
 {
-	// 一定時間カメラを揺らす
-	//stepShake_ -= SceneManager::GetInstance().GetDeltaTime();
-
 	stepShake_ -= 0.01f;
 
 	if (stepShake_ < 0.0f)
@@ -272,8 +269,6 @@ void Camera::SetBeforeDrawShake(void)
 
 void Camera::SetBeforeDrawReset(void)
 {
-	//angleを逆算させる方法を考える
-
 	stepReset_ += RESET_STEP;
 	//終了条件
 	if (stepReset_ >= RESET_TIME) {
@@ -400,7 +395,8 @@ void Camera::SetRotSpeed(const float _speed)
 }
 
 void Camera::ChangeMode(MODE mode)
-{	
+{
+	//リセット時は現在のモードを保存しておく
 	if (mode == MODE::RESET)returnMode_ = currentMode_;
 
 	//カメラモードの変更

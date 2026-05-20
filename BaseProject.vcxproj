@@ -87,7 +87,6 @@
     <ClCompile Include="Src\Manager\Generic\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\Main\Title.cpp" />
-    <ClCompile Include="Src\UI\CharacterUIController.cpp" />
     <ClCompile Include="Src\UI\EnemyUIController.cpp" />
     <ClCompile Include="Src\UI\Enemy\EnemyFind.cpp" />
     <ClCompile Include="Src\UI\Enemy\EnemyHp.cpp" />
@@ -175,7 +174,6 @@
     <ClInclude Include="Src\Manager\Generic\SceneManager.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\Main\Title.h" />
-    <ClInclude Include="Src\UI\CharacterUIController.h" />
     <ClInclude Include="Src\UI\EnemyUIController.h" />
     <ClInclude Include="Src\UI\Enemy\EnemyFind.h" />
     <ClInclude Include="Src\UI\Enemy\EnemyHp.h" />

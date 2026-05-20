@@ -7,19 +7,14 @@ class EnemyFind :
     public UIBase
 {
 public:
-	////画像の大きさ
-	////「？」
-	//static constexpr int SUSPECT_UI_SIZE_X = 117;
-	//static constexpr int SUSPECT_UI_SIZE_Y = 201;
-	////「！」
-	//static constexpr int FIND_UI_SIZE_X = 89;
-	//static constexpr int FIND_UI_SIZE_Y = 204;
 	//「？」拡大用
 	static constexpr float SUSPECT_EXT_MAX = 100.0f;//拡大率最大値
+	static constexpr float SUSPECT_EXT_MIN = 1.0f;	//拡大率最小値
 	static constexpr float SUSPECT_EXT_ACC = 2.0f;	//拡大スピード
 	//「！」描画用
 	static constexpr float FIND_UI_DRAW_TIME = 30.0f;	//描画時間
 	static constexpr float FIND_UI_DRAW_SIZE = 50.0f;	//描画サイズ
+	static constexpr float FIND_UI_DRAW_SIZE_MAX = 80.0f;	//描画サイズ最大値
 
 	EnemyFind(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state);
 	~EnemyFind(void)override;

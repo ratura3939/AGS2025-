@@ -38,8 +38,6 @@ private:
 	VECTOR lineStart_;
 	VECTOR lineEnd_;
 
-    int testCnt_;
-
     // 最近接衝突点（STAGEタグ）
     VECTOR closestHitPoint_;
     // 現在の最小距離（フレームごとにリセット）

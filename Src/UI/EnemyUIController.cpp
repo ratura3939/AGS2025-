@@ -1,7 +1,9 @@
 #include "EnemyUIController.h"
 
 
-EnemyUIController::EnemyUIController(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state) :CharacterUIController(_followPos),eState_(_state)
+EnemyUIController::EnemyUIController(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state) 
+	:followUIPos_(_followPos)
+	,eState_(_state)
 {
 }
 

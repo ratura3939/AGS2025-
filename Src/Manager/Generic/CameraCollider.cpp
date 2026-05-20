@@ -11,16 +11,15 @@ namespace {
 }
 
 CameraCollider::CameraCollider(Camera& _camera)
-	: camera_(_camera)
-    , hideColliders_()
-    , preHideColliders_()
-	, closestHitPoint_(Utility::VECTOR_ZERO)
-	, minHitDistance_(FLT_MAX)
-	, isHitWall_(false)
-	, lineStart_(Utility::VECTOR_ZERO)
-	, lineEnd_(Utility::VECTOR_ZERO)
+	:camera_(_camera)
+    ,hideColliders_()
+    ,preHideColliders_()
+	,closestHitPoint_(Utility::VECTOR_ZERO)
+	,minHitDistance_(FLT_MAX)
+	,isHitWall_(false)
+	,lineStart_(Utility::VECTOR_ZERO)
+	,lineEnd_(Utility::VECTOR_ZERO)
 {
-	testCnt_ = 0;
 }
 
 CameraCollider::~CameraCollider(void)
@@ -105,7 +104,6 @@ void CameraCollider::SetCollider(void)
 void CameraCollider::DoInit(void)
 {
 	lineStart_ = VAdd(camera_.GetFollowPos(),LINE_START_OFFSET);
-	//lineEnd_ = camera_.GetPos();
 	lineEnd_ = camera_.GetIdealPos();
 
 	using TAG = Collider::COL_TAG;

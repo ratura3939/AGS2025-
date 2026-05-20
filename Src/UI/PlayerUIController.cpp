@@ -2,12 +2,16 @@
 #include"Player/PlayerHp.h"
 #include"Player/NoticeDodge.h"
 
-PlayerUIController::PlayerUIController(VECTOR& _followPos, const int _hp):CharacterUIController(_followPos)
+namespace {
+	const VECTOR HP_DRAW_POS = { 100.0f,80.0f,0.0f };
+}
+
+PlayerUIController::PlayerUIController(VECTOR& _followPos, const int _hp)
+	:followUIPos_(_followPos)
+	,isAlert_(false)
+	,hp_(std::make_unique<PlayerHp>(HP_DRAW_POS, _hp))
+	,dodge_(std::make_unique<NoticeDodge>(_followPos))
 {
-	hpDrawPos_ = { 100.0f,80.0f,0.0f };
-	hp_ = std::make_unique<PlayerHp>(hpDrawPos_, _hp);
-	isAlert_ = false;
-	dodge_ = std::make_unique<NoticeDodge>(_followPos);
 }
 
 PlayerUIController::~PlayerUIController(void)

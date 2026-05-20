@@ -142,8 +142,8 @@ protected:
     Update_f update_;   //更新関数
     Move_f move_;       //移動関数
 
-    std::unique_ptr<EnemyUIController>uiCntl_;
-    float maxHp_;
+	std::unique_ptr<EnemyUIController>uiCntl_;  //UIコントローラー
+	float maxHp_;   //最大HP
 
     VECTOR preStayPos_; //前回停止位置
     float uiDeviationY_;//UI位置調整
