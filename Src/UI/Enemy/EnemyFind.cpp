@@ -3,7 +3,6 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include "EnemyFind.h"
 
-
 EnemyFind::EnemyFind(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state):UIBase(_followPos),eState_(_state)
 {
 	findUICnt_ = 0.0f;
@@ -24,10 +23,10 @@ bool EnemyFind::Init(const std::string& _master)
 
 	uiM.Add(suspectStr_, rsM.Load(ResourceManager::SRC::SUSPECT_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::ZOOM_IN, UI_DIMENSION::DIMENSION_3);
 	uiM.SetUIInfo(suspectStr_, drawFollowPos_);
-	uiM.SetUIDirectionParam(suspectStr_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, SUSPECT_EXT_ACC, SUSPECT_EXT_MAX, 1.0f);
+	uiM.SetUIDirectionParam(suspectStr_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, SUSPECT_EXT_ACC, SUSPECT_EXT_MAX, SUSPECT_EXT_MIN);
 
 	uiM.Add(findStr_, rsM.Load(ResourceManager::SRC::FIND_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UI_DIMENSION::DIMENSION_3);
-	uiM.SetUIInfo(findStr_, drawFollowPos_,80.0f);
+	uiM.SetUIInfo(findStr_, drawFollowPos_, FIND_UI_DRAW_SIZE_MAX);
 
 	return true;
 }
@@ -36,11 +35,14 @@ bool EnemyFind::Update(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
 	if (eState_==EnemyBase::ENEMY_STATE::SEARCH) {
-		//見つかっていないとき
+		//見つけていないとき
+		//「？」更新
 		uiM.SetPos(suspectStr_, drawFollowPos_);
 		uiM.Update(suspectStr_);
 	}
 	if(eState_ == EnemyBase::ENEMY_STATE::BATTLE&& findUICnt_<= FIND_UI_DRAW_TIME) {
+		//見つけているとき
+		//「！」更新
 		uiM.SetPos(findStr_, drawFollowPos_);
 		uiM.Update(findStr_);
 		findUICnt_++;
@@ -57,11 +59,12 @@ void EnemyFind::Draw(void)
 	UIManager2d& uiM = UIManager2d::GetInstance();
 
 	if (eState_ == EnemyBase::ENEMY_STATE::SEARCH) {
-		//見つかっていないとき
-		uiM.Draw(suspectStr_);
+		//見つけていないとき
+		uiM.Draw(suspectStr_);	//「？」描画
 	}
 	if (eState_ == EnemyBase::ENEMY_STATE::BATTLE && findUICnt_ <= FIND_UI_DRAW_TIME) {
-		uiM.Draw(findStr_);
+		//見つけているとき
+		uiM.Draw(findStr_);		//「！」描画
 	}
 }
 

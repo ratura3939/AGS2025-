@@ -19,15 +19,15 @@ bool NoticeDodge::Init(const std::string& _master)
 
 	noticeStr_ = _master + "AtkNotice";
 
-	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ATK_ALERT_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UI_DIMENSION::DIMENSION_3);
-	uiM.SetUIInfo(noticeStr_, drawFollowPos_);
+	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ATK_ALERT_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UI_DIMENSION::DIMENSION_3);	//追加
+	uiM.SetUIInfo(noticeStr_, drawFollowPos_);	//基礎情報設定
 	return false;
 }
 
 bool NoticeDodge::Update(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
-	uiM.SetPos(noticeStr_, drawFollowPos_);
+	uiM.SetPos(noticeStr_, drawFollowPos_);	//位置設定
 	return false;
 }
 

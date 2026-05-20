@@ -1,7 +1,7 @@
 //プレイヤーキャラクターに付随するもの
 #pragma once
-#include "CharacterUIController.h"
 #include<memory>
+#include<string>
 #include <DxLib.h>
 class PlayerHp;
 class NoticeDodge;
@@ -32,7 +32,6 @@ private:
 
     bool isAlert_;
 
-    VECTOR hpDrawPos_;
     VECTOR& followUIPos_;
 };
 

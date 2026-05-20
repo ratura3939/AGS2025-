@@ -7,21 +7,11 @@ class PlayerHp :
 	public UIBase
 {
 public:
-	static constexpr float SCALE_DOWN = 1.0f / 8.0f;
-
-	static constexpr float SIZE_X = 500.0f * SCALE_DOWN;
-	static constexpr float SIZE_Y = 428.0f * SCALE_DOWN;
-
-	static constexpr float ALPHA_DEG = 2.0f;
-	static constexpr float FALL_ACC = 0.5f;
-
-	static constexpr float HP_EX = 0.2f;
-
 	enum class STATE {
-		NOMAL,
-		BROKEN,
-		EMPTY,
-		MAX
+		NOMAL
+		,BROKEN
+		,EMPTY
+		,MAX
 	};
 
 	PlayerHp(VECTOR& _followPos,const int _hp);
@@ -31,20 +21,17 @@ public:
 	bool Update(void)override;
 	void Draw(void)override;
 
-	//状態変更
-	//void ChangeState(const STATE _state) { state_ = _state; }
+	void SetPos(const VECTOR& _pos)override;	//UIBaseのSetPosをオーバーライド
 
-	void SetPos(const VECTOR& _pos)override;
+	void Reset(void)override;	//変数リセット用
 
-	void Reset(void)override;
-
-	void Damage(void);
+	void Damage(void);	//ダメージ処理(ダメージ１に付き一回呼び出す)
 
 private:
-	//UI画像
-	std::string nomalStr_;
-	std::string emptyStr_;
-	std::string brokenStr_;
+	//UI登録名
+	std::string nomalStr_;	//ノーマルHP
+	std::string emptyStr_;	//空のHP
+	std::string brokenStr_;	//ひび割れHP
 
 	std::vector<STATE> states_;		//状態を表す
 

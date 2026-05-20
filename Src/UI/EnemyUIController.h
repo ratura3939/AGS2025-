@@ -1,6 +1,5 @@
 //敵キャラクターに付随するもの
 #pragma once
-#include "CharacterUIController.h"
 #include<memory>
 #include<DxLib.h>
 
