@@ -2,7 +2,8 @@
 #include"Player/PlayerHp.h"
 #include"Player/NoticeDodge.h"
 
-PlayerUIController::PlayerUIController(VECTOR& _followPos, const int _hp):CharacterUIController(_followPos)
+PlayerUIController::PlayerUIController(VECTOR& _followPos, const int _hp)
+	:followUIPos_(_followPos)
 {
 	hpDrawPos_ = { 100.0f,80.0f,0.0f };
 	hp_ = std::make_unique<PlayerHp>(hpDrawPos_, _hp);

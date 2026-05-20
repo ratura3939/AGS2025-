@@ -235,9 +235,6 @@ void Camera::SetBeforeDrawLockOn(void)
 
 void Camera::SetBeforeDrawShake(void)
 {
-	// 一定時間カメラを揺らす
-	//stepShake_ -= SceneManager::GetInstance().GetDeltaTime();
-
 	stepShake_ -= 0.01f;
 
 	if (stepShake_ < 0.0f)
@@ -277,8 +274,6 @@ void Camera::SetBeforeDrawShake(void)
 
 void Camera::SetBeforeDrawReset(void)
 {
-	//angleを逆算させる方法を考える
-
 	stepReset_ += RESET_STEP;
 	//終了条件
 	if (stepReset_ >= RESET_TIME) {
@@ -299,10 +294,6 @@ void Camera::SetBeforeDrawReset(void)
 	pos_ = VAdd(followObject_.pos, rot_.PosAxis(RELATIVE_F2C_POS_FOLLOW));
 
 	focusPos_ = Utility::Lerp(focusPos_, goalFocusPos_, 0.8f);
-
-	//VECTOR axY = { 0.0f,1.0f,0.0f };
-
-	//rot_.ToAngleAxis(&angles_.y, &axY);
 
 	VECTOR currentEuler = rot_.ToEuler();
 	angles_.x = currentEuler.x;
@@ -411,11 +402,7 @@ void Camera::SetRotSpeed(const float _speed)
 
 void Camera::ChangeMode(MODE mode)
 {
-
-	//カメラの初期設定
-	//カメラを揺らす前の位置で揺れるようにしたいため外している
-	//SetDefault();
-	
+	//リセット時は現在のモードを保存しておく
 	if (mode == MODE::RESET)currentMode_ = mode_;
 
 	//カメラモードの変更
@@ -536,13 +523,6 @@ void Camera::ResetCollider(void)
 const Camera::MODE& Camera::GetMode(void) const
 {
 	return mode_;
-}
-
-void Camera::DrawDebug(void)
-{
-	//DrawFormatString(0, 0, 0xffffff, "cPOS={%.1f,%.1f,%.1f}\ncROT={%.1f,%.1f,%.1f}", pos_.x, pos_.y, pos_.z, rot_.x, rot_.y, rot_.z);
-	//DrawFormatString(0, 100, 0xffffff, "FCPOS={%.1f,%.1f,%.1f}", focusPos_.x, focusPos_.y, focusPos_.z);
-	DrawSphere3D(focusPos_, 8, 10, 0x00ff00, 0x00ff00, false);
 }
 
 void Camera::SetDefault(void)

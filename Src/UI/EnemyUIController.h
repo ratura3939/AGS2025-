@@ -9,8 +9,7 @@
 #include"Enemy/EnemyHp.h"
 #include"Enemy/EnemyTargetting.h"
 
-class EnemyUIController :
-    public CharacterUIController
+class EnemyUIController
 {
 public:
     enum class ENEMY_UI {
@@ -20,15 +19,15 @@ public:
     };
 
     EnemyUIController(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state);
-    ~EnemyUIController(void)override;
+    ~EnemyUIController(void);
 
-    void Init(const std::string& _master)override;
+    void Init(const std::string& _master);
     void CreateUI(const std::string& _master,float& hp, float hpMax);
-    void Update(void)override;
+    void Update(void);
     void Draw(const ENEMY_UI _type);
-    void Release(void)override;
+    void Release(void);
 
-    void SetDrawPos(const VECTOR _pos)override;
+    void SetDrawPos(const VECTOR _pos);
 
     void FindReset(void);
 
@@ -45,5 +44,6 @@ private:
     std::unique_ptr<EnemyTargetting>targetUI_;
 
     EnemyBase::ENEMY_STATE& eState_;
+    VECTOR& followUIPos_;
 };
 

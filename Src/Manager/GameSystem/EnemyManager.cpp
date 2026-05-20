@@ -29,7 +29,7 @@ EnemyManager::~EnemyManager(void)
 void EnemyManager::Init(const VECTOR& _pPos)
 {
 	//デバッグ用
-	VECTOR initPos[4] = { INIT_1 ,INIT_2 ,INIT_3 ,INIT_4 };
+	VECTOR initPos[ENEMY_NUM] = { INIT_1 ,INIT_2 ,INIT_3 ,INIT_4 };
 
 	enemyCnt_ = ENEMY_NUM;
 	numImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::NUMBER_IMGS).handleIds_;

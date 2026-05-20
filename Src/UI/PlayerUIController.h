@@ -6,8 +6,7 @@
 class PlayerHp;
 class NoticeDodge;
 
-class PlayerUIController :
-    public CharacterUIController
+class PlayerUIController
 {
 public:
     enum class PlayerUI {
@@ -16,14 +15,14 @@ public:
     };
 
     PlayerUIController(VECTOR& _followPos,const int _hp);
-    ~PlayerUIController(void)override;
+    ~PlayerUIController(void);
 
-    void Init(const std::string& _master)override;
-    void Update(void)override;
+    void Init(const std::string& _master);
+    void Update(void);
     void Draw(void);
-    void Release(void)override;
+    void Release(void);
 
-    void SetDrawPos(const VECTOR _pos)override;
+    void SetDrawPos(const VECTOR _pos);
     void ChangeAlert(const bool _flag) { isAlert_ = _flag; }
 
     void Damage(void);
@@ -34,5 +33,6 @@ private:
     bool isAlert_;
 
     VECTOR hpDrawPos_;
+    VECTOR& followUIPos_;
 };
 

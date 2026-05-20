@@ -159,7 +159,6 @@ public:
 	const MODE& GetMode(void)const;
 	const bool IsFinishShake(void) { return finishShake_; }	//画面揺れ終了判別
 
-	void DrawDebug(void);
 private:
 	//コライダー
 	std::unique_ptr<CameraCollider> collider_;
