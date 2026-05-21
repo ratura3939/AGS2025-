@@ -235,7 +235,7 @@ void Boss::MoveBattle(const VECTOR& _pPos)
 		return;
 	}
 	//ˆÚ“®(‘O•û•ûŒü)
-	pos_ = VAdd(pos_, VScale(GetForward(), moveSped_ * SceneManager::GetInstance().GetUpdateSpeedRate()));
+	pos_ = VAdd(pos_, VScale(GetForward(), moveSpeed_ * SceneManager::GetInstance().GetUpdateSpeedRate()));
 	animController_->Play("walk", SPEED_ANIM);
 
 	//‰ñ“]

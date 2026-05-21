@@ -16,41 +16,41 @@
 #include "EnemyBase.h"
 
 namespace {
-	constexpr VECTOR forward={0.0f,0.0f,100.0f};
+	const VECTOR forward={0.0f,0.0f,100.0f};
+	const float HALF = 2.0f;
 }
 
 EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)
-	: atkManager_(_atk)
-	, pPos_(_pPos)
-	, atkChargeCnt_(0)
-	, atkChargeCntMax_(0)
+	:CharacterBase()
+	,atkManager_(_atk)
+	,pPos_(_pPos)
+	,update_(&EnemyBase::UpdateNomal)
+	,move_(&EnemyBase::MoveNomal)
+	,uiCntl_(nullptr)
+	,maxHp_(ENEMY_HP)
+	,preStayPos_(Utility::VECTOR_INIT)
+	,uiDeviationY_(-1.0f)
+	,moveOneTime_(-1.0f)
+	,moveSpeed_(MOVE_POW)
+	,isStay_(true)
+	,stayCnt_(STAY_TIME)
+	,stopTime_(-1.0f)
+	,intervalCnt_(INTERVAL_ATTACK_NOMAL)
+	,searchRestartCnt_(0.0f)
+	,searchCnt_(0.0f)
+	,atkChargeCnt_(0)
+	,atkChargeCntMax_(0)
+	,isAlive_(true)
+	,state_(ENEMY_STATE::END)
+	,isLockTarget_(false)
+	,atkRelative_(Utility::VECTOR_INIT)
+	,atkDistance_(-1.0f)
+	,colRadius_(-1.0f)
 {
 	speciesName_ = "Enemy" + std::to_string(_num);
-	update_ = &EnemyBase::UpdateNomal;
-	move_ = &EnemyBase::MoveNomal;
-
-	moveOneTime_ = -1.0f;
-
 	pos_ = _pos;
-	preStayPos_ = Utility::VECTOR_INIT;
 	uiPos_ = Utility::VECTOR_INIT;
-
-	//行先設定のため初期はステイ状態にする
-	isStay_ = true;
-	stayCnt_ = STAY_TIME;
-	stopTime_ = -1.0f; 
-	intervalCnt_ = INTERVAL_ATTACK_NOMAL;
-
-	searchRestartCnt_ = 0.0f;
-	searchCnt_ = 0.0f;
-
 	hp_ = ENEMY_HP;
-	moveSped_ = MOVE_POW;
-
-	isAlive_ = true;
-	state_ = ENEMY_STATE::END;
-
-	isLockTarget_ = false;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -59,11 +59,11 @@ EnemyBase::~EnemyBase(void)
 
 void EnemyBase::DoInit(void)
 {
-	SetParam();
+	SetParam();	//パラメータ設定
 
 	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
-	power_ = POW_ATTACK_NOMAL;
-	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);
+	power_ = POW_ATTACK_NOMAL;		//攻撃力
+	renderer_ = std::make_unique<ModelRenderer>(modelId_, *material_);	//レンダラー
 }
 
 
@@ -72,7 +72,7 @@ void EnemyBase::DoUpdate(void)
 	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
 	atkPos_ = VAdd(pos_, characterRotY_.PosAxis(atkRelative_));	//攻撃発生位置
 	centerPos_ = headPos_;	//モデル中央
-	centerPos_.y /= 2.0f;
+	centerPos_.y /= HALF;
 
 	//行動更新
 	(this->*update_)();
@@ -85,7 +85,7 @@ void EnemyBase::DoUpdate(void)
 	//頭位置
 	uiPos_.y = uiDeviationY_;
 
-	uiCntl_->Update();
+	uiCntl_->Update();	//UI更新
 }
 
 void EnemyBase::SetNextGoalPos(void)
@@ -147,8 +147,7 @@ void EnemyBase::UpdateNomal(void)
 		//索敵可能範囲内に入ったら
 		if (Utility::MagnitudeF(VSub(pPos_, pos_)) <= ALERT_DISTANCE &&
 			deg <= FIELD_VISION_DEG_HALF) {
-			//索敵状態に
-			ChangeState(ENEMY_STATE::SEARCH);
+			ChangeState(ENEMY_STATE::SEARCH);	//索敵状態に
 		}
 	}
 	
@@ -186,8 +185,6 @@ void EnemyBase::UpdateSearch(void)
 
 void EnemyBase::UpdateBattle(void)
 {
-	//この内容は初期キャラ用。攻撃時には止まって攻撃する
-	//強いキャラクターは移動攻撃も想定するのでここの処理とは少し違っていくる
 	//プレイヤーとの距離
 	float distance = Utility::MagnitudeF(VSub(pPos_, pos_));
 
@@ -218,18 +215,20 @@ void EnemyBase::UpdateBattle(void)
 		efcM.Play(GetSpeciesName(), "Charge", centerPos_, rot_, ChargeAtkEfcScale, ChargeAtkEfcSpeed);
 
 		//攻撃する
-		atkManager_.Attack(speciesName_,"SwingSword");
-		animController_->Play("attack", SPEED_ANIM);
-		stopTime_ = atkManager_.GetTotalTime(EnemyManager::ATTACK_NOMAL);
-		intervalCnt_ = 0.0f;
+		atkManager_.Attack(speciesName_,"SwingSword");	//攻撃の発生
+		animController_->Play("attack", SPEED_ANIM);	//アニメーション
+		stopTime_ = atkManager_.GetTotalTime(EnemyManager::ATTACK_NOMAL);	//攻撃のモーション時間を停止時間に
+		intervalCnt_ = 0.0f;	//攻撃間隔リセット
 	}
 }
 
 void EnemyBase::UpdateDeth(void)
 {
-	scl_ = VSub(scl_, SCALE_DOWN);
+	scl_ = VSub(scl_, SCALE_DOWN);	//スケールダウン
+
+	//消滅したら
 	if (Utility::LessThanVZero(scl_)) {
-		ChangeState(ENEMY_STATE::END);
+		ChangeState(ENEMY_STATE::END);	//ENDに
 	}
 }
 
@@ -254,7 +253,7 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 	}
 	
 	//移動(前方方向)
-	pos_ = VAdd(pos_, VScale(GetForward(), moveSped_* SceneManager::GetInstance().GetUpdateSpeedRate()));
+	pos_ = VAdd(pos_, VScale(GetForward(), moveSpeed_* SceneManager::GetInstance().GetUpdateSpeedRate()));
 	animController_->Play("walk", SPEED_ANIM);
 
 	//判定
@@ -285,7 +284,7 @@ void EnemyBase::MoveBattle(const VECTOR& _pPos)
 	}
 
 	//移動(前方方向)
-	pos_=VAdd(pos_, VScale(GetForward(), moveSped_* SceneManager::GetInstance().GetUpdateSpeedRate()));
+	pos_=VAdd(pos_, VScale(GetForward(), moveSpeed_* SceneManager::GetInstance().GetUpdateSpeedRate()));
 	animController_->Play("dush", SPEED_ANIM);
 
 	//目標の回転設定
@@ -309,53 +308,65 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 {
 	state_ = _state;
 
+	//状態ごとの初期化
 	switch (state_)
 	{
 	case ENEMY_STATE::NOMAL:
+		//処理設定
 		update_ = &EnemyBase::UpdateNomal;
 		move_ = &EnemyBase::MoveNomal;
-		moveSped_ = MOVE_POW;
-		uiCntl_->FindReset();
-		searchRestartCnt_ = 0.0f;
-		//目的地設定のため
-		isStay_ = true;
+
+		moveSpeed_ = MOVE_POW;		//移動速度の設定
+		uiCntl_->FindReset();		//発見UIのリセット
+		searchRestartCnt_ = 0.0f;	//索敵再開カウンタリセット
+		isStay_ = true;	//目的地設定のため
+
 		break;
 
 	case ENEMY_STATE::SEARCH:
+		//処理設定
 		update_ = &EnemyBase::UpdateSearch;
 		move_ = &EnemyBase::MoveSearch;
-		searchCnt_ = 0.0f;
-		moveSped_ = MOVE_POW;
-		//待機アニメーション
-		animController_->Play("idle", SPEED_ANIM);
+
+		searchCnt_ = 0.0f;		//索敵カウンタリセット
+		moveSpeed_ = MOVE_POW;	//移動速度の設定
+		
+		animController_->Play("idle", SPEED_ANIM);	//待機アニメーション再生
 
 		break;
 
 	case ENEMY_STATE::BATTLE:
+		//処理設定
 		update_ = &EnemyBase::UpdateBattle;
 		move_ = &EnemyBase::MoveBattle;
-		moveSped_ = MOVE_POW_FIND;
-		isStay_ = false;
+
+		moveSpeed_ = MOVE_POW_FIND;	//移動速度の設定
+		isStay_ = false;			//ステイ状態解除
+
 		break;
+
 	case ENEMY_STATE::DETH:
+		//処理設定
 		update_ = &EnemyBase::UpdateDeth;
+
 		//死亡アニメーション
 		animController_->UnAnimLock();	//アニメーションロック解除
-		animController_->Play("dethStart", SPEED_ANIM,{"dethSus"});
+		animController_->Play("dethStart", SPEED_ANIM, { "dethSus" });	//死亡開始→死亡待機の順でアニメーション再生
 
 		//コライダー登録解除
-		//CollisionManager& colM = CollisionManager::GetInstance();
-		CollisionManager::GetInstance().MarkForDelete(collider_);
-		CollisionManager::GetInstance().MarkForDelete(atkCollider_);
-		atkManager_.DeleteAttackCollider(speciesName_);
+		CollisionManager::GetInstance().MarkForDelete(collider_);		//本体
+		CollisionManager::GetInstance().MarkForDelete(atkCollider_);	//攻撃
+		atkManager_.DeleteAttackCollider(speciesName_);					//攻撃管理の登録解除
 
 		isActiveGravity_ = false;	//重力無効化
 
 		break;
+
 	case ENEMY_STATE::END:
-		//削除可能に
-		isAlive_ = false;
+		isAlive_ = false;	//削除可能に
+
 		break;
+
 	default:
 		break;
 	}
@@ -363,8 +374,8 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 
 void EnemyBase::Draw(void)
 {
-	renderer_->Draw();
-	DrawUI();
+	renderer_->Draw();	//モデル描画
+	DrawUI();			//UI描画
 }
 
 void EnemyBase::DrawUI(void)

@@ -55,20 +55,20 @@ public:
     /// 敵の状態
     /// </summary>
     enum class ENEMY_STATE {
-        NOMAL,
-        SEARCH,
-        BATTLE,
-        DETH,
-        END
+        NOMAL
+        ,SEARCH
+        ,BATTLE
+        ,DETH
+        ,END
     };
     /// <summary>
     /// 視界判定
     /// </summary>
     struct Vision {
-        VECTOR center;
-        VECTOR left;
-        VECTOR right;
-        bool isFind;
+        VECTOR center;  //中心
+		VECTOR left;    //左端
+		VECTOR right;   //右端
+        bool isFind;    //見つけたか
     };
 
     EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos);
@@ -85,8 +85,8 @@ public:
     /// <param name="_percent">パーセンテージ</param>
     const void SetAnimSpeedRate(const float _percent);
 
-    void SetIsLockTraget(const bool _flag) { isLockTarget_ = _flag; }
-    void SetIsLocked(const bool _flag);
+	void SetIsLockTraget(const bool _flag) { isLockTarget_ = _flag; }   //ロックオン対象の設定(マネージャでのみ変更が可能)
+    void SetIsLocked(const bool _flag);                                 //UIのロックオン切り替え
 
     //ダメージ
     void Damage(const float _pow)override;
@@ -143,14 +143,14 @@ protected:
     VECTOR preStayPos_; //前回停止位置
     float uiDeviationY_;//UI位置調整
     float moveOneTime_; //一回の移動量
-    float moveSped_;    //１フレームでの移動量
+    float moveSpeed_;    //１フレームでの移動量
     bool isStay_;       //ステイかどうか
     float stayCnt_;     //ステイ状態のカウンタ
     float stopTime_;    //攻撃時の停止時間
     float intervalCnt_; //攻撃間隔のカウンタ
 
     float searchRestartCnt_;    //疑い再開カウンタ
-    float searchCnt_;   //疑いカウンタ
+    float searchCnt_;           //疑いカウンタ
 
 	int atkChargeCnt_;      //攻撃チャージカウンタ
 	int atkChargeCntMax_;   //攻撃チャージカウンタ最大値
@@ -161,7 +161,6 @@ protected:
     bool isLockTarget_;   //ロックオン対象になっているか(マネージャでのみ変更が可能)
 
     VECTOR atkRelative_;   //攻撃の発生位置の相対座標
-    float atkScale_;    //攻撃の大きさ
     float atkDistance_; //攻撃可能距離
 
 	float colRadius_; //当たり判定の半径
