@@ -116,9 +116,8 @@ void EnemyBase::InitAnim(void)
 void EnemyBase::InitUI(void)
 {
 	//UIコントローラー初期化
-	uiCntl_ = std::make_unique<EnemyUIController>(uiPos_,state_);
+	uiCntl_ = std::make_unique<EnemyUIController>(uiPos_,state_, hp_, maxHp_);
 	uiCntl_->Init(speciesName_);
-	uiCntl_->CreateUI(speciesName_, hp_, maxHp_);
 }
 
 void EnemyBase::DamageReaction(void)
@@ -385,33 +384,6 @@ void EnemyBase::DrawUI(void)
 	if (isLockTarget_) {
 		uiCntl_->Draw(EnemyUIController::ENEMY_UI::TARGETTING);
 	}
-}
-
-void EnemyBase::SetPos(VECTOR _pos)
-{
-	pos_ = _pos;
-}
-
-void EnemyBase::DrawDebug(void)
-{
-	//VECTOR forwardDif = { 0,0,100 };
-	////前方向明示
-	//VECTOR fowardPos = VAdd(pos_, characterRotY_.PosAxis(forwardDif));
-	//DrawSphere3D(fowardPos, 8, 8, 0xff5500, 0xff0000, false);
-	////視野角
-	//auto conePos = VAdd(pos_, VECTOR{ 0.0f,-1.0f,0.0f });
-
-	//DrawCone3D(conePos, pos_, ALERT_DISTANCE, 30, alertCol_, 0x000000, true);
-
-	//DrawCone3D(conePos, pos_, FIELD_VISION_DISTANCE, 30, serchCol_, 0x000000, true);
-
-	/*VECTOR fowardDir = VAdd(pos_, characterRotY_.PosAxis(forward));
-	DrawFormatString(0, 0, 0xffffff, "EPOS={%.1f,%.1f,%.1f}\nDEG={%.1f}\nForward={%.1f,%.1f,%.1f}",
-		pos_.x, pos_.y, pos_.z,
-		static_cast<float>(debugRot_),
-		fowardDir.x, fowardDir.y, fowardDir.z);*/
-
-	DrawCupcel();
 }
 
 const bool EnemyBase::IsAlive(void) const

@@ -7,25 +7,22 @@
 #include "CharacterBase.h"
 
 CharacterBase::CharacterBase(void)
+	:ActorBase()
+	,material_(nullptr)
+	,renderer_(nullptr)
+	,atkCollider_(nullptr)
+	,atkPos_(Utility::VECTOR_ZERO)
+	,animController_(nullptr)
+	,headPos_(Utility::VECTOR_ZERO)
+	,centerPos_(Utility::VECTOR_ZERO)
+	,footPos_(Utility::VECTOR_ZERO)
+	,uiPos_(Utility::VECTOR_ZERO)
+	,characterRotY_(Quaternion())
+	,goalQua_(Quaternion())
+	,stepRotation_(0.0f)
+	,hp_(-1.0f)
+
 {
-	modelId_ = -1;
-	pos_ = Utility::VECTOR_ZERO;
-	scl_ = Utility::VECTOR_ZERO;
-	rot_ = Utility::VECTOR_ZERO;
-	hp_ = -1.0f;
-
-	characterRotY_ = Quaternion();
-
-	matScl_ = MGetIdent();
-	matRot_ = MGetIdent();
-	matPos_ = MGetIdent();
-	quaRot_ = Quaternion();
-	quaRotOrigin_ = Quaternion();
-	quaRotLocal_ = Quaternion();
-	goalQua_ = Quaternion();
-	stepRotation_ = 0.0f;
-
-	centerPos_ = Utility::VECTOR_ZERO;
 }
 
 CharacterBase::~CharacterBase(void)
@@ -40,9 +37,8 @@ void CharacterBase::UpdateAnimOnly(void)
 void CharacterBase::Draw(void)
 {
 	//描画処理
-	//DrawSphere3D(pos_, 30, 10, 0xff0000, 0xff0000, false);
-	MV1DrawModel(modelId_);
-	DrawUI();
+	MV1DrawModel(modelId_);	//モデル描画
+	DrawUI();				//UI描画
 }
 
 void CharacterBase::Release(void)
@@ -145,15 +141,6 @@ void CharacterBase::HitCollider(std::weak_ptr<Collider> _col)
 
 		if (colNormal.x > 0.0f)pos_.x = prevPos_.x;
 		if (colNormal.y > 0.0f) {
-			//// 振動対策1: 許容誤差（Tolerance）の導入
-			//const float JITTER_TOLERANCE = 6.0f; // 非常に小さい値（例: 0.01f）を設定
-
-			//if (backPow.y > JITTER_TOLERANCE) {
-			//	// 振動対策2: 減衰処理
-			//	const float DAMPING_FACTOR = 0.8f;
-			//	pos_.y += backPow.y * DAMPING_FACTOR;
-			//}
-			//pos_.y = hitPoint.y;
 			pos_.y += backPow.y;
 
 			gravity_ = { 0.0f,0.0f,0.0f };
@@ -164,50 +151,4 @@ void CharacterBase::HitCollider(std::weak_ptr<Collider> _col)
 
 	//派生クラス側の処理
 	DoHitCollider(_col);
-}
-
-void CharacterBase::DrawDebug(void)
-{
-}
-
-void CharacterBase::DrawCupcel(void)
-{
-	// 上の球体
-	VECTOR pos1 = GetHeight();
-	DrawSphere3D(pos1, CHARACTER_RADIUS, 5, COLOR, COLOR, false);
-
-	// 下の球体
-	VECTOR pos2 = GetPos();
-	DrawSphere3D(pos2, CHARACTER_RADIUS, 5, COLOR, COLOR, false);
-
-	VECTOR dir;
-	VECTOR s;
-	VECTOR e;
-
-	// 球体を繋ぐ線(X+)
-	dir = GetRight();
-	s = VAdd(pos1, VScale(dir, CHARACTER_RADIUS));
-	e = VAdd(pos2, VScale(dir, CHARACTER_RADIUS));
-	DrawLine3D(s, e, COLOR);
-
-	// 球体を繋ぐ線(X-)
-	dir = GetLeft();
-	s = VAdd(pos1, VScale(dir, CHARACTER_RADIUS));
-	e = VAdd(pos2, VScale(dir, CHARACTER_RADIUS));
-	DrawLine3D(s, e, COLOR);
-
-	// 球体を繋ぐ線(Z+)
-	dir = GetForward();
-	s = VAdd(pos1, VScale(dir, CHARACTER_RADIUS));
-	e = VAdd(pos2, VScale(dir, CHARACTER_RADIUS));
-	DrawLine3D(s, e, COLOR);
-
-	// 球体を繋ぐ線(Z-)
-	dir = GetBack();
-	s = VAdd(pos1, VScale(dir, CHARACTER_RADIUS));
-	e = VAdd(pos2, VScale(dir, CHARACTER_RADIUS));
-	DrawLine3D(s, e, COLOR);
-
-	// カプセルの中心
-	DrawSphere3D(VAdd(GetPos(),VScale(CHARACTER_HEIGHT,2.0f)), 5.0f, 10, COLOR, COLOR, true);
 }

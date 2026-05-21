@@ -11,24 +11,25 @@
 class EnemyUIController
 {
 public:
+	//描画するUIの種類
     enum class ENEMY_UI {
-        HP,
-        TARGETTING,
-        FIND,
+        HP          //HP
+        ,TARGETTING //ロックオン
+        ,FIND       //発見
+        ,MAX
     };
 
-    EnemyUIController(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state);
+    EnemyUIController(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state, float& _hp, const float& _hpMax);
     ~EnemyUIController(void);
 
     void Init(const std::string& _master);
-    void CreateUI(const std::string& _master,float& hp, float hpMax);
     void Update(void);
     void Draw(const ENEMY_UI _type);
     void Release(void);
 
-    void SetDrawPos(const VECTOR _pos);
+	void SetDrawPos(const VECTOR _pos); //描画位置の設定
 
-    void FindReset(void);
+    void FindReset(void);   //発見状態の初期化
 
     /// <summary>
     /// ロックオンUI切り換え
@@ -37,12 +38,13 @@ public:
     void ChangeTargetUI(const bool _flag);
 
 private:
+    //各種UI
+    std::unique_ptr<EnemyFind>findUI_;          //発見UI
+	std::unique_ptr<EnemyHp>hpUI_;              //HpUI
+	std::unique_ptr<EnemyTargetting>targetUI_;  //ロックオンUI
 
-    std::unique_ptr<EnemyFind>findUI_;
-    std::unique_ptr<EnemyHp>hpUI_;
-    std::unique_ptr<EnemyTargetting>targetUI_;
-
-    EnemyBase::ENEMY_STATE& eState_;
-    VECTOR& followUIPos_;
+	//追従対象の状態
+	EnemyBase::ENEMY_STATE& eState_;    //敵の状態
+	VECTOR& followUIPos_;               //UIの追従位置
 };
 

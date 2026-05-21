@@ -22,13 +22,13 @@ bool EnemyTargetting::Init(const std::string& _master)
 	lockStr_ = _master + "Locked";
 
 	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ANNOUNCE_LOCKON_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UI_DIMENSION::DIMENSION_3);
-	uiM.SetUIInfo(noticeStr_, drawFollowPos_, 100.0f);
-	uiM.SetUIDirectionParam(noticeStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, 10.0f, 255.0f, 0.0f);
+	uiM.SetUIInfo(noticeStr_, drawFollowPos_, TARGET_UI_DRAW_SIZE);
+	uiM.SetUIDirectionParam(noticeStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, NOTICE_ALPHA_ACC, NOTICE_ALPHA_MAX, NOTICE_ALPHA_MIN);
 
 
 	uiM.Add(lockStr_, rsM.Load(ResourceManager::SRC::LOCKON_IMG ).handleId_, UIManager2d::UI_DIRECTION_2D::UP_DOWN, UI_DIMENSION::DIMENSION_3);
-	uiM.SetUIInfo(lockStr_, drawFollowPos_,100.0f);
-	uiM.SetUIDirectionParam(lockStr_, UIManager2d::UI_DIRECTION_GROUP::MOVE, 3.0f, 40.0f, 0.0f);
+	uiM.SetUIInfo(lockStr_, drawFollowPos_, TARGET_UI_DRAW_SIZE);
+	uiM.SetUIDirectionParam(lockStr_, UIManager2d::UI_DIRECTION_GROUP::MOVE, LOCK_MOVE_SPEED, LOCK_MOVE_MAX, LOCK_MOVE_MIN);
 
 
 	return true;
@@ -37,28 +37,33 @@ bool EnemyTargetting::Init(const std::string& _master)
 bool EnemyTargetting::Update(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
+
+	std::string useStr = noticeStr_;	//使用するUIの登録名
+
 	//ロックオンされていたら
 	if (isLocked_) {
-		uiM.SetPos(lockStr_, drawFollowPos_);
-		uiM.Update(lockStr_);
+		useStr = lockStr_;	//ロックオンに切り替え
 	}
-	else {
-		uiM.SetPos(noticeStr_, drawFollowPos_);
-		uiM.Update(noticeStr_);
-	}
+
+	//更新処理
+	uiM.SetPos(useStr, drawFollowPos_);	//位置設定
+	uiM.Update(useStr);	//更新
+
 	return true;
 }
 
 void EnemyTargetting::Draw(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
+
+	std::string useStr = noticeStr_;	//使用するUIの登録名
+
 	//ロックオンされていたら
 	if (isLocked_) {
-		uiM.Draw(lockStr_);
+		useStr = lockStr_;	//ロックオンに切り替え
 	}
-	else {
-		uiM.Draw(noticeStr_);
-	}
+
+	uiM.Draw(useStr);	//描画
 }
 
 void EnemyTargetting::Reset(void)

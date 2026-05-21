@@ -254,14 +254,6 @@ void PlayerChara::Jump(void)
   	jumpPow_ = JUMP_POW;
 }
 
-void PlayerChara::DrawDebug(void)
-{
-	const VECTOR movedPow = VSub(pos_, prevPos_);
-	DrawFormatString(0, 120, 0xff0000, "pPos={%.1f,%.1f,%.1f}\nMovedPow = {%.1f,%.1f,%.1f}\npRot={%.1f,%.1f,%.1f}\nMag={%.1f}\nGtavity = {%.3f", pos_.x, pos_.y, pos_.z, movedPow.x, movedPow.y, movedPow.z, rot_.x, rot_.y, rot_.z, Utility::MagnitudeF(pos_),gravity_.y);
-
-	collider_->DrawDebugCollider();
-}
-
 void PlayerChara::InputMoveVec(const VECTOR& _inputVec)
 {
 	if (abs(_inputVec.x) < 0.01f && abs(_inputVec.y) < 0.01f) {

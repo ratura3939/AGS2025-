@@ -27,20 +27,17 @@ public:
 	static constexpr float DEG_LEFT = 270.0f;	//左方
 	static constexpr float DEG_RIGHT = 90.0f;	//右方
 
-	static constexpr VECTOR CHARACTER_HEIGHT = { 0.0f,150.0f,0.0f };	//キャラクターの身長
+	static constexpr VECTOR CHARACTER_HEIGHT = { 0.0f,150.0f,0.0f };				//キャラクターの身長
 	static constexpr VECTOR CHARACTER_FOOT_COLLIDER_RELATIVE = { 0.0f,45.0f,0.0f };	//キャラクターの足元コライダー相対座標
-	static constexpr float CHARACTER_RADIUS = 50.0f;					//キャラクターの判定の大きさ
+	static constexpr float CHARACTER_RADIUS = 50.0f;								//キャラクターの判定の大きさ
 
-	//移動制限(大まか)
+	//行動範囲制限
 	static constexpr float MOVE_MAX = 5000.0f;
-
-	//デバッグ用
-	static constexpr int COLOR = 0xffffff;
 
 	CharacterBase(void);
 	virtual ~CharacterBase(void);
 
-	void UpdateAnimOnly(void);
+	void UpdateAnimOnly(void);			//アニメーションのみ更新
 	virtual void Draw(void)override;
 	void Release(void)override;
 
@@ -69,10 +66,6 @@ public:
 	//当たり判定後処理
 	void HitCollider(std::weak_ptr<Collider> _col)override;
 
-	//デバッグ
-	virtual void DrawDebug(void);
-	void DrawCupcel(void);
-
 protected:
 	virtual void DoInit(void)override = 0;
 	virtual void DoUpdate(void)override = 0;
@@ -92,11 +85,11 @@ protected:
 	void Rotation(void);
 
 #pragma region モデル基礎制御
-	VECTOR headPos_; //頭辺りの座標
-	VECTOR centerPos_; //モデル中央辺りの座標
-	VECTOR footPos_; //足元辺りのコライダー用座標
+	VECTOR headPos_;	//頭辺りの座標
+	VECTOR centerPos_;	//モデル中央辺りの座標
+	VECTOR footPos_;	//足元辺りのコライダー用座標
 
-	VECTOR uiPos_; //UI表示位置
+	VECTOR uiPos_;				//UI表示位置
 	Quaternion characterRotY_;	//Y軸回転用
 
 	Quaternion goalQua_;	//目標の回転量
@@ -108,13 +101,11 @@ protected:
 	std::unique_ptr<ModelRenderer>renderer_;
 #pragma endregion
 
-	//アニメーション
-	std::unique_ptr<AnimationController> animController_;
+	std::unique_ptr<AnimationController> animController_;		//アニメーション
 
 	std::shared_ptr<Collider> atkCollider_;	//攻撃用コライダー
 	VECTOR atkPos_;	//攻撃位置
 
-	//ステータスなど
-	float hp_;
+	float hp_;		//体力
 };
 

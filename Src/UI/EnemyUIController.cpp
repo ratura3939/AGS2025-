@@ -1,9 +1,12 @@
 #include "EnemyUIController.h"
 
 
-EnemyUIController::EnemyUIController(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state) 
+EnemyUIController::EnemyUIController(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state, float& _hp, const float& _hpMax)
 	:followUIPos_(_followPos)
 	,eState_(_state)
+	,findUI_(std::make_unique<EnemyFind>(followUIPos_, eState_))
+	,hpUI_(std::make_unique<EnemyHp>(followUIPos_, _hp, _hpMax))
+	,targetUI_(std::make_unique<EnemyTargetting>(followUIPos_))
 {
 }
 
@@ -13,23 +16,15 @@ EnemyUIController::~EnemyUIController(void)
 
 void EnemyUIController::Init(const std::string& _master)
 {
-	
-}
-
-void EnemyUIController::CreateUI(const std::string& _master,float& _hp, float _hpMax)
-{
-	findUI_ = std::make_unique<EnemyFind>(followUIPos_,eState_);
+	//各種初期化
 	findUI_->Init(_master);
-
-	hpUI_ = std::make_unique<EnemyHp>(followUIPos_,_hp,_hpMax);
 	hpUI_->Init(_master);
-
-	targetUI_ = std::make_unique<EnemyTargetting>(followUIPos_);
 	targetUI_->Init(_master);
 }
 
 void EnemyUIController::Update(void)
 {
+	//各種更新
 	findUI_->Update();
 	hpUI_->Update();
 	targetUI_->Update();
@@ -37,13 +32,14 @@ void EnemyUIController::Update(void)
 
 void EnemyUIController::Draw(const ENEMY_UI _type)
 {
+	//状態に応じて描画UIを選定
 	if (_type == ENEMY_UI::FIND) {
 		findUI_->Draw();
 	}
-	if (_type == ENEMY_UI::HP) {
+	else if (_type == ENEMY_UI::HP) {
 		hpUI_->Draw();
 	}
-	if (_type == ENEMY_UI::TARGETTING) {
+	else if (_type == ENEMY_UI::TARGETTING) {
 		targetUI_->Draw();
 	}
 }
@@ -54,6 +50,7 @@ void EnemyUIController::Release(void)
 
 void EnemyUIController::SetDrawPos(const VECTOR _pos)
 {
+	//各種描画位置の設定
 	findUI_->SetPos(_pos);
 	hpUI_->SetPos(_pos);
 	targetUI_->SetPos(_pos);

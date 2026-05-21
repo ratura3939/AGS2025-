@@ -21,12 +21,14 @@ bool EnemyFind::Init(const std::string& _master)
 	suspectStr_ = _master + "Suspect";
 	findStr_ = _master + "Find";
 
-	uiM.Add(suspectStr_, rsM.Load(ResourceManager::SRC::SUSPECT_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::ZOOM_IN, UI_DIMENSION::DIMENSION_3);
-	uiM.SetUIInfo(suspectStr_, drawFollowPos_);
-	uiM.SetUIDirectionParam(suspectStr_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, SUSPECT_EXT_ACC, SUSPECT_EXT_MAX, SUSPECT_EXT_MIN);
+	//「？」のUI登録
+	uiM.Add(suspectStr_, rsM.Load(ResourceManager::SRC::SUSPECT_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::ZOOM_IN, UI_DIMENSION::DIMENSION_3);	//追加(拡大演出)
+	uiM.SetUIInfo(suspectStr_, drawFollowPos_);		//基礎情報の設定
+	uiM.SetUIDirectionParam(suspectStr_, UIManager2d::UI_DIRECTION_GROUP::ZOOM, SUSPECT_EXT_ACC, SUSPECT_EXT_MAX, SUSPECT_EXT_MIN);	//拡大演出のパラメータ設定
 
-	uiM.Add(findStr_, rsM.Load(ResourceManager::SRC::FIND_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UI_DIMENSION::DIMENSION_3);
-	uiM.SetUIInfo(findStr_, drawFollowPos_, FIND_UI_DRAW_SIZE_MAX);
+	//「！」のUI登録
+	uiM.Add(findStr_, rsM.Load(ResourceManager::SRC::FIND_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UI_DIMENSION::DIMENSION_3);	//追加
+	uiM.SetUIInfo(findStr_, drawFollowPos_, FIND_UI_DRAW_SIZE_MAX);	//基礎情報の設定
 
 	return true;
 }
@@ -34,22 +36,27 @@ bool EnemyFind::Init(const std::string& _master)
 bool EnemyFind::Update(void)
 {
 	UIManager2d& uiM = UIManager2d::GetInstance();
+
+	std::string useStr = "";	//更新に使用する文字列
+
 	if (eState_==EnemyBase::ENEMY_STATE::SEARCH) {
 		//見つけていないとき
-		//「？」更新
-		uiM.SetPos(suspectStr_, drawFollowPos_);
-		uiM.Update(suspectStr_);
+		//「？」を設定
+		useStr = suspectStr_;
 	}
 	if(eState_ == EnemyBase::ENEMY_STATE::BATTLE&& findUICnt_<= FIND_UI_DRAW_TIME) {
 		//見つけているとき
-		//「！」更新
-		uiM.SetPos(findStr_, drawFollowPos_);
-		uiM.Update(findStr_);
-		findUICnt_++;
+		//「！」を設定
+		useStr = findStr_;
+		findUICnt_++;	//カウンター更新
+	}
+
+	//更新処理
+	if (useStr != "") {
+		uiM.SetPos(useStr, drawFollowPos_);
+		uiM.Update(useStr);
 	}
 	
-
-
 	return true;
 }
 

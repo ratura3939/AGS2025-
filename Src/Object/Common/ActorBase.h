@@ -87,14 +87,14 @@ protected:
 	std::shared_ptr<Collider> collider_;	//コライダー
 	float power_;			//攻撃力
 
-	float weight_;		//重さ
+	float weight_;			//重さ
 
 	VECTOR gravity_;		//重力ベクトル
 	bool isActiveGravity_;	//重力が有効か
 
 	VECTOR externalVec_;	//外部の影響による移動量
 
-	bool isDraw_;		//描画するか
+	bool isDraw_;			//描画するか
 
 private:
 	void UpdateRotQuat(void);	//基礎情報の更新

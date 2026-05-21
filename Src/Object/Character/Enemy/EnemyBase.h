@@ -17,22 +17,22 @@ public:
     static constexpr float MOVE_POW = 3.0f;     //移動量
     static constexpr float MOVE_POW_FIND = 5.0f;//移動量(発見時)
     static constexpr float CHARA_SCALE = 1.0f;  //サイズ
-    static constexpr float ENEMY_HP = 70.0f;
+    static constexpr float ENEMY_HP = 70.0f;    //HP
 
 #pragma endregion
 
 #pragma region 状態ごと関連
 
       //状態遷移に関わるもの
-    static constexpr float FIELD_VISION_DEG_HALF = 40.0f;	//視界の角度(両方向に展開するので全体の半分の角度を明記)
-    static constexpr float FIELD_VISION_DISTANCE = 1000.0f;	//視界の距離
-    static constexpr float ALERT_DISTANCE = 3000.0f;     	//警戒の距離
-    static constexpr float ATTACK_DISTANCE = 200.0f;     	//攻撃開始の距離
-    static constexpr float BATTLE_FINISH_DISTANCE = 1500.0f; //攻撃状態解除の距離
+    static constexpr float FIELD_VISION_DEG_HALF = 40.0f;       //視界の角度(両方向に展開するので全体の半分の角度を明記)
+    static constexpr float FIELD_VISION_DISTANCE = 1000.0f;	    //視界の距離
+    static constexpr float ALERT_DISTANCE = 3000.0f;     	    //警戒の距離
+    static constexpr float ATTACK_DISTANCE = 200.0f;     	    //攻撃開始の距離
+    static constexpr float BATTLE_FINISH_DISTANCE = 1500.0f;    //攻撃状態解除の距離
 
 
-    static constexpr float SEARCH_RESTART_TIME = 100.0f;  //警戒再開時間
-    static constexpr float SEARCH_CNT_MAX = 60.0f;  //サーチ完了時間
+    static constexpr float SEARCH_RESTART_TIME = 100.0f;    //警戒再開時間
+    static constexpr float SEARCH_CNT_MAX = 60.0f;          //サーチ完了時間
 
     //乱数移動量
     static constexpr float MOVE_RANDOM_MIN = 200.0f;                   //最低値
@@ -46,10 +46,10 @@ public:
     static constexpr float SPEED_ANIM = 1.0f;  //アニメーションスピード
 
     //攻撃関連
-    static constexpr VECTOR RELATIVE_ATTACK_POS = { 0.0f, 75.0f, 100.0f };
-    static constexpr float SCALE_ATTACK_NOMAL = 70.0f;
-    static constexpr float POW_ATTACK_NOMAL = 1.0f;
-    static constexpr float INTERVAL_ATTACK_NOMAL = 150.0f;
+	static constexpr VECTOR RELATIVE_ATTACK_POS = { 0.0f, 75.0f, 100.0f };  //攻撃の発生位置の相対座標
+    static constexpr float SCALE_ATTACK_NOMAL = 70.0f;                      //大きさ
+	static constexpr float POW_ATTACK_NOMAL = 1.0f;                         //攻撃力
+	static constexpr float INTERVAL_ATTACK_NOMAL = 150.0f;                  //攻撃間隔
 
     /// <summary>
     /// 敵の状態
@@ -99,11 +99,6 @@ public:
 
     //当たり判定後処理
 	void DoHitCollider(const std::weak_ptr<Collider>& _col)override;
-
-     //デバッグ用
-    void SetColor(int _color);
-    void SetPos(VECTOR _pos);
-    void DrawDebug(void)override;
   
 protected:
     virtual void SetParam(void) = 0;    //各敵の固有情報

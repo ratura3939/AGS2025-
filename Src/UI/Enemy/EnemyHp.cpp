@@ -4,7 +4,10 @@
 #include"../../Common/Quaternion.h"
 #include"../../Utility/Utility.h"
 
-EnemyHp::EnemyHp(VECTOR& _followPos,float& _now, float _max) :UIBase(_followPos),nowHp_(_now), hpMax_(_max)
+EnemyHp::EnemyHp(VECTOR& _followPos,float& _now, float _max) 
+	:UIBase(_followPos)
+	,nowHp_(_now)
+	,hpMax_(_max)
 {
 }
 
@@ -25,11 +28,12 @@ bool EnemyHp::Update(void)
 void EnemyHp::Draw(void)
 {
 	//残量HPの割合
-	float hpPercent = nowHp_ / hpMax_;
+	float nowHpPercent = nowHp_ / hpMax_;
 
 	//Hpカプセルの始点と終点の相対座標
-	VECTOR startPos = { -50.0f,0.0f,0.0f };
-	VECTOR endPos = { -50.0f + (100.0f * hpPercent),0.0f,0.0f };
+	VECTOR startPos = HP_UI_START_POS;
+	VECTOR endPos = HP_UI_START_POS;
+	endPos.x += (HP_MAX_PERCENT * nowHpPercent);	//終点には現在のHPの割合を反映する
 
 	//カメラ情報取得
 	auto& camera = SceneManager::GetInstance().GetCamera();

@@ -2,24 +2,24 @@
 #include "ActorBase.h"
 
 ActorBase::ActorBase(void)
-	: modelId_(-1)
-	, pos_(Utility::VECTOR_ZERO)
-	, scl_(Utility::VECTOR_ONE)
-	, rot_(Utility::VECTOR_ZERO)
-	, matScl_(MGetIdent())
-	, matRot_(MGetIdent())
-	, matPos_(MGetIdent())
-	, quaRot_(Quaternion::Euler(Utility::VECTOR_ZERO))
-	, quaRotOrigin_(Quaternion::Euler(Utility::VECTOR_ZERO))
-	, quaRotLocal_(Quaternion::Euler(Utility::VECTOR_ZERO))
-	, speciesName_("")
-	, power_(0.0f)
-	, weight_(0.0f)
-	, gravity_(Utility::VECTOR_ZERO)
-	, isActiveGravity_(true)
-	, prevPos_(Utility::VECTOR_ZERO)
-	, externalVec_(Utility::VECTOR_ZERO)
-	, isDraw_(true)
+	:modelId_(-1)
+	,pos_(Utility::VECTOR_ZERO)
+	,scl_(Utility::VECTOR_ONE)
+	,rot_(Utility::VECTOR_ZERO)
+	,matScl_(MGetIdent())
+	,matRot_(MGetIdent())
+	,matPos_(MGetIdent())
+	,quaRot_(Quaternion::Euler(Utility::VECTOR_ZERO))
+	,quaRotOrigin_(Quaternion::Euler(Utility::VECTOR_ZERO))
+	,quaRotLocal_(Quaternion::Euler(Utility::VECTOR_ZERO))
+	,speciesName_("")
+	,power_(0.0f)
+	,weight_(0.0f)
+	,gravity_(Utility::VECTOR_ZERO)
+	,isActiveGravity_(true)
+	,prevPos_(Utility::VECTOR_ZERO)
+	,externalVec_(Utility::VECTOR_ZERO)
+	,isDraw_(true)
 {
 }
 
@@ -29,19 +29,19 @@ ActorBase::~ActorBase(void)
 
 void ActorBase::Init(void)
 {
-	DoInit();
-	UpdateRotQuat();
+	DoInit();			//派生クラスのの初期化処理
+	UpdateRotQuat();	//基礎情報の更新
 }
 
 void ActorBase::Update(void)
 {
-	prevPos_ = pos_;
+	prevPos_ = pos_;		//前フレームの座標を保存
 	//派生クラスの更新処理
 	DoUpdate();
 	//共通処理
-	pos_ = VAdd(pos_, externalVec_);
-	UpdateGravity();
-	UpdateRotQuat();
+	pos_ = VAdd(pos_, externalVec_);	//外部影響の反映
+	UpdateGravity();					//重力処理
+	UpdateRotQuat();					//基礎情報の更新
 
 	//外部影響のリセット
 	externalVec_ = Utility::VECTOR_ZERO;

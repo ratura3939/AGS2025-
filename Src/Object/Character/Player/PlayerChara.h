@@ -77,8 +77,6 @@ public:
 
 	void Jump(void); //ƒWƒƒƒ“ƒv
 
-    void DrawDebug(void)override;
-
     //“ü—ÍŽó•t
     void InputDash(const bool _flag) { isDush_ = _flag; }
     void InputMoveDir(const MOVE_DIR _dir) { moveDir_ = _dir; }
