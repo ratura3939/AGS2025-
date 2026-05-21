@@ -50,6 +50,7 @@ void GimmickObjBase::DecMoveSpeed(void)
 void GimmickObjBase::Draw(void)
 {
 	render_->Draw();
+	screenPos_ = ConvWorldPosToScreenPos(pos_);
 }
 
 void GimmickObjBase::Release(void)
