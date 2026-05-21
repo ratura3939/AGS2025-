@@ -34,6 +34,8 @@ public:
 	//s“®”ÍˆÍ§ŒÀ
 	static constexpr float MOVE_MAX = 5000.0f;
 
+	static constexpr float HALF = 2.0f;
+
 	CharacterBase(void);
 	virtual ~CharacterBase(void);
 

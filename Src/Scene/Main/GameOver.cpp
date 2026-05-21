@@ -13,8 +13,19 @@
 
 //ローカル定数
 namespace {
-	std::string GAME_OVER_LOGO = "OverLogo";
-	std::string BACK_TITLE_LOGO = "BackTitle";
+	const std::string GAME_OVER_LOGO = "OverLogo";
+	const std::string BACK_TITLE_LOGO = "BackTitle";
+
+	//ゲームオーバーロゴ位置
+	const VECTOR GAME_OVER_LOGO_POS = { Application::SCREEN_SIZE_X / 2.0f,Application::SCREEN_SIZE_Y / 2.0f - 300.0f,0.0f };
+	const float GAME_OVER_LOGO_SCALE = 0.6f;	//拡大率
+
+	//タイトルに戻るボタン位置
+	const VECTOR BACK_TITLE_LOGO_POS = { Application::SCREEN_SIZE_X / 2.0f,Application::SCREEN_SIZE_Y / 2.0f + 50.0f,0.0f };
+	const float BACK_TITLE_LOGO_SCALE = 0.6f;	//拡大率
+	const float BACK_TITLE_LOGO_ACC = 0.01f;	//拡大縮小のスピード
+	const float BACK_TITLE_LOGO_MAX = 0.7f;	//拡大縮小の上限
+	const float BACK_TITLE_LOGO_MIN = 0.55f;	//拡大縮小の下限
 }
 
 GameOver::GameOver(void)
@@ -38,12 +49,12 @@ void GameOver::Init(void)
 
 	//戻るアイコン
 	uiM.Add(GAME_OVER_LOGO, rsM.Load(ResourceManager::SRC::GAMEOVER_LOGO).handleId_, UI_DIREC::NORMAL, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(GAME_OVER_LOGO, VECTOR{ Application::SCREEN_SIZE_X / 2.0f,Application::SCREEN_SIZE_Y / 2.0f - 300.0f,0.0f }, 0.6f);
+	uiM.SetUIInfo(GAME_OVER_LOGO, GAME_OVER_LOGO_POS, GAME_OVER_LOGO_SCALE);
 
 	//タイトル戻る
 	uiM.Add(BACK_TITLE_LOGO, rsM.Load(ResourceManager::SRC::STOP_GAME_BTN).handleId_, UI_DIREC::ZOOM_INOUT, UI_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(BACK_TITLE_LOGO, VECTOR(Application::SCREEN_SIZE_X / 2.0f, Application::SCREEN_SIZE_Y / 2.0f + 50.0f, 0.0f), 0.6f);											//基礎設定
-	uiM.SetUIDirectionParam(BACK_TITLE_LOGO, UI_GROUP::ZOOM, 0.01f, 0.7f, 0.55f);//詳細設定
+	uiM.SetUIInfo(BACK_TITLE_LOGO, BACK_TITLE_LOGO_POS, BACK_TITLE_LOGO_SCALE);											//基礎設定
+	uiM.SetUIDirectionParam(BACK_TITLE_LOGO, UI_GROUP::ZOOM, BACK_TITLE_LOGO_ACC, BACK_TITLE_LOGO_MAX, BACK_TITLE_LOGO_MIN);//詳細設定
 
 
 	stage_ = std::make_unique<StageManager>();

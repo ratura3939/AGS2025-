@@ -80,7 +80,7 @@ void LockOnManager::LockOff(void)
 	targets_.NoTargetEnemy();
 	camera.ChangeMode(Camera::MODE::FOLLOW);
 	//ƒ][ƒ“‚ğ‘±‚©‚¹‚È‚¢‚½‚ß‚É
-	scene_.ChangeActionDirec(Game::ACTION_DIRECTION::NOMAL);
+	scene_.ChangeActionDirec(Game::ACTION_DIRECTION::NORMAL);
 	scene_.EndSlow();
 	//‘ÎÛ‚ğƒLƒƒƒ“ƒZƒ‹‚µ‚½‚Æ‚İ‚È‚µ‰Šú‰»‚·‚é
 	nearTargetNum_ = -1;

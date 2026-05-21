@@ -9,9 +9,6 @@
 //ローカル定数1
 namespace {
 	const float UV_SCALING_NOISE = 10.0f;
-
-	int BLACK = 0x000000;
-
 	//シェーダーバッファ数
 	const int NUM_CONST_BUF_VS = 0;
 	const int NUM_CONST_BUF_PS = 3;
@@ -59,8 +56,4 @@ void NoneAfectAbilityObjBase::SetParam(void)
 	material_->AddConstBufPS({ UV_SCALING_NOISE,0.0f,0.0f,0.0f });
 
 	isActiveGravity_ = false;
-
-	//デバッグ
-	isDrawScreenPosCircle_ = false;
-	screenPosColor_ = BLACK;
 }

@@ -14,7 +14,7 @@ public:
 	/// Ä¶Ží—Þ
 	/// </summary>
 	enum class PLAY_TYPE {
-		NOMAL,	//’ÊíÄ¶
+		NORMAL,	//’ÊíÄ¶
 		LOOP,	//ƒ‹[ƒvÄ¶
 		RETURN,	//‹tÄ¶
 		MAX

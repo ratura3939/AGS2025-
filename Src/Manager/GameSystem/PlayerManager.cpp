@@ -16,14 +16,14 @@ const std::string PlayerManager::ATTACK_NOMAL = "PlayerAttack";
 PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, AttackManager& _atk, StageManager& _stage)
 	:scene_(_gameScene)
 	,atkMng_(_atk)
+	,character_(std::make_shared<PlayerChara>(_atk))
+	,lockOn_(std::make_unique<LockOnManager>(_gameScene, *this, _enemy))
+	,ability_(std::make_unique<AbilityManager>(_stage, *character_))
+	,stateCnt_(0)
+	,stateLimit_(0)
+	,abilityBtnCnt_(0)
 {
-	character_ = std::make_shared<PlayerChara>(_atk);
 	character_->Init();
-	lockOn_ = std::make_unique<LockOnManager>(_gameScene, *this, _enemy);
-	ability_ = std::make_unique<AbilityManager>(_stage, *character_);
-	stateCnt_ = 0;
-	stateLimit_ = 0;
-	abilityBtnCnt_ = 0;
 }
 
 PlayerManager::~PlayerManager(void)
@@ -40,11 +40,11 @@ void PlayerManager::Update(AttackManager& _atk)
 {
 	//状態管理
 	//通常じゃないとき
-	if (character_->GetState() != PlayerChara::STATE::NOMAL) {
+	if (character_->GetState() != PlayerChara::STATE::NORMAL) {
 		//カウンタが状態の上限時間を上回っていたら
 		if (stateCnt_ > stateLimit_) {
 			//通常に戻す
-			character_->SetState(PlayerChara::STATE::NOMAL);
+			character_->SetState(PlayerChara::STATE::NORMAL);
 		}
 		stateCnt_++;
 	}
@@ -131,24 +131,6 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	else {
 		character_->InputMoveDir(PlayerChara::MOVE_DIR::NONE);
 	}
-
-	////入力があったら対応した移動方向をセット
-	//if (ins.IsPressed("up")) {
-	//	character_->InputMoveDir(PlayerChara::MOVE_DIR::FORWARD);
-	//}
-	//else if (ins.IsPressed("left")) {
-	//	character_->InputMoveDir(PlayerChara::MOVE_DIR::LEFT);
-	//}
-	//else if (ins.IsPressed("down")) {
-	//	character_->InputMoveDir(PlayerChara::MOVE_DIR::BACK);
-	//}
-	//else if (ins.IsPressed("right")) {
-	//	character_->InputMoveDir(PlayerChara::MOVE_DIR::RIGHT);
-	//}
-	////移動していないとき
-	//else {
-	//	character_->InputMoveDir(PlayerChara::MOVE_DIR::NONE);
-	//}
 	
 	//ダッシュ
 	character_->InputDash(ins.IsPressed("dash"));
@@ -244,51 +226,6 @@ void PlayerManager::DoDudge(void)
 	//回避音出す
 	SoundManager::GetInstance().Play("Dodge");
 
-	////カメラとキャラクターの前方同士の内積
-	//auto cFor = SceneManager::GetInstance().GetCamera().GetRot().GetForward();
-	//auto pFor = character_->GetForward();
-	//bool isReverse = false;
-
-	//float CtoP = Utility::DotF(cFor, pFor);
-	//if (CtoP < 0.0f) {
-	//	//キャラクターの向きが反転している。
-	//	isReverse = true;
-	//}
-
-	////プレイヤーからの入力総まとめ
-	//InputManager& ins = InputManager::GetInstance();
-
-
-	//if (!isReverse) {
-	//	//反転していない場合
-	//	if (ins.IsPressed("left")) {
-	//		//対応するアニメーション
-	//		character_->PlayAnim("dodL");
-	//	}
-	//	else if (ins.IsPressed("right")) {
-	//		//対応するアニメーション
-	//		character_->PlayAnim("dodR");
-	//	}
-	//	else if (ins.IsPressed("down")) {
-	//		//対応するアニメーション
-	//		character_->PlayAnim("dodB");
-	//	}
-	//}
-	//else {
-	//	if (ins.IsPressed("left")) {
-	//		//対応するアニメーション
-	//		character_->PlayAnim("dodR");
-	//	}
-	//	else if (ins.IsPressed("right")) {
-	//		//対応するアニメーション
-	//		character_->PlayAnim("dodL");
-	//	}
-	//	else if (ins.IsPressed("up")) {
-	//		//対応するアニメーション
-	//		character_->PlayAnim("dodB");
-	//	}
-	//}
-
 	auto moveVec = character_->GetInputMoveDir();
 	using CHARA_DIR = PlayerChara::MOVE_DIR;
 
@@ -326,12 +263,4 @@ const bool PlayerManager::IsUseAbility(void) const
 const bool PlayerManager::IsUseMagnet(void) const
 {
 	return ability_->IsUseMagnet();
-}
-
-
-
-
-void PlayerManager::DrawDebug(void)
-{
-	character_->DrawDebug();
 }

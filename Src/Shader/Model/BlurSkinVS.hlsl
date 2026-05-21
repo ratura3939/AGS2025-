@@ -21,28 +21,6 @@ cbuffer BoneMat:register(b7) {
 VS_OUTPUT main(VS_INPUT VSInput)
 {
 	VS_OUTPUT ret;
-	// // --- 現在のフレームのスキンメッシュ変換行列を構築 ---
-	////// BONE4
-	//float4x4 current_CombinedBoneMatrix = (float4x4)0;
-	//int4 lBoneIdx = VSInput.blendIndices0;
-	//float4 lWeight = VSInput.blendWeight0;
-	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.x] * lWeight.xxxx;
-	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.y] * lWeight.yyyy;
-	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.z] * lWeight.zzzz;
-	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.w] * lWeight.wwww;
-
-	////// BONE8
-	//lBoneIdx = VSInput.blendIndices1;
-	//lWeight = VSInput.blendWeight1;
-	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.x] * lWeight.xxxx;
-	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.y] * lWeight.yyyy;
-	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.z] * lWeight.zzzz;
-	//current_CombinedBoneMatrix += g_currentLocalWorldMatrix[lBoneIdx.w] * lWeight.wwww;
-
-	//// 現在のワールド座標
-	//float4 lCurrentWorldPosition = mul(lLocalPosition, current_CombinedBoneMatrix);
-	//ret.worldPos = lCurrentWorldPosition.xyz;
-	//ret.svPos = mul(lCurrentWorldPosition, g_currentViewProjectionMatrix); 
 
 	// スキンメッシュ用のローカル⇒ワールド変換行列を作成+++( 開始 )
 	int4 lBoneIdx;

@@ -65,6 +65,8 @@ namespace {
 
 void StageManager::Init(void)
 {
+	//オブジェクトたちの格納
+	//地形
 	gmkObjs_.push_back(std::make_shared<Stage>());
 	gmkObjs_.push_back(std::make_shared<StageWall>());
 	gmkObjs_.push_back(std::make_shared<InsideWall>());
@@ -94,7 +96,7 @@ void StageManager::Init(void)
 	gmkObjs_.push_back(std::make_shared<WallSingle>(WALL_POS,Quaternion()));
 	gmkObjs_.push_back(std::make_shared<TestObj>());
 	
-
+	//初期化
 	for (auto& obj : gmkObjs_) {
 		obj->Init();
 	}
@@ -103,7 +105,7 @@ void StageManager::Init(void)
 void StageManager::Update(void)
 {
 	for (auto& obj : gmkObjs_) {
-		obj->Update();
+		obj->Update();	//更新
 	}
 }
 
@@ -111,22 +113,15 @@ void StageManager::Draw(void)
 {
 	for (auto& obj : gmkObjs_) {
 		if (obj->GetIsDraw()) {
-			obj->Draw();
+			obj->Draw();	//描画
 		}
-	}
-}
-
-void StageManager::DrawDebug(void)
-{
-	for (auto& obj : gmkObjs_) {
-		obj->DrawDebug();
 	}
 }
 
 void StageManager::SetAbilityColor(const FLOAT4& _color)
 {
 	for (auto& obj : gmkObjs_) {
-		obj->SetObjectRenderColor(_color);
+		obj->SetObjectRenderColor(_color);	//PSカラー設定
 	}
 }
 
@@ -134,8 +129,9 @@ std::vector<std::weak_ptr<GimmickObjBase>> StageManager::GetAffectAbilityObjecte
 {
 	std::vector<std::weak_ptr<GimmickObjBase>> ret;
 	for (auto& obj : gmkObjs_) {
+		//影響を受けるオブジェクトならば
 		if (obj->IsAffectAbility()) {
-			ret.push_back(obj);
+			ret.push_back(obj);	//格納
 		}
 	}
 	return ret;

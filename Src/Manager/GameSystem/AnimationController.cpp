@@ -102,7 +102,7 @@ void AnimationController::Play(const std::string& _name, const float _speed, con
 	//I—¹ˆ—‚Ìİ’è
 	switch (activeAnim_.type)
 	{
-	case PLAY_TYPE::NOMAL:
+	case PLAY_TYPE::NORMAL:
 		finishAnim_ = &AnimationController::FinishAnimNomal;
 		updateAnim_ = &AnimationController::UpdateNomalAnim;
 		break;

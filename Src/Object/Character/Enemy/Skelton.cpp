@@ -46,20 +46,20 @@ Skelton::~Skelton(void)
 
 void Skelton::InitAnim(void)
 {
+	//アニメーションの追加
     animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);
-    animController_->Add("attack", ANIM_ATTACK_NOMAL, AnimationController::PLAY_TYPE::NOMAL,true);
+    animController_->Add("attack", ANIM_ATTACK_NOMAL, AnimationController::PLAY_TYPE::NORMAL,true);
     animController_->Add("charge", CHARGE_ATTACK, AnimationController::PLAY_TYPE::LOOP);
-    animController_->Add("hitDamage", HIT_DAMAGE, AnimationController::PLAY_TYPE::NOMAL,true);
+    animController_->Add("hitDamage", HIT_DAMAGE, AnimationController::PLAY_TYPE::NORMAL,true);
     animController_->Add("walk", ANIM_WALK, AnimationController::PLAY_TYPE::LOOP);
     animController_->Add("dush", ANIM_DUSH_FORWARD, AnimationController::PLAY_TYPE::LOOP);
-    animController_->Add("dethStart", ANIM_DETH_START, AnimationController::PLAY_TYPE::NOMAL);
+    animController_->Add("dethStart", ANIM_DETH_START, AnimationController::PLAY_TYPE::NORMAL);
     animController_->Add("dethSus", ANIM_DETH_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
 }
 
 void Skelton::SetParam(void)
 {
 	//各敵たち
-	//後々Jsonやったら楽になるかも？
 	modelId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MDL);
 
 	if (modelId_ == -1) {
@@ -68,7 +68,7 @@ void Skelton::SetParam(void)
 	//パラメータ関係
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	preStayPos_ = pos_;
-	rot_ = { 0.0f,0.0f,-1.0f };
+	rot_ = ROT_INITI;
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
 
 	//当たり判定大きさ
@@ -120,16 +120,16 @@ void Skelton::SetParam(void)
 
 	//PS
 	//各色の強さ(拡散光)
-	material_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
+	material_->AddConstBufPS(DEFUSE_COL_POW);
 	//ブラーの強さ(最初の項目のみ関係する)
-	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+	material_->AddConstBufPS(BLUR_POW);
 	//サンプル数(最初の項目のみ関係する)
-	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+	material_->AddConstBufPS(SAMPLE_POW);
 
 	intervalCnt_ = 0.0f;
 
 	//状態を通常に
-	ChangeState(ENEMY_STATE::NOMAL);
+	ChangeState(ENEMY_STATE::NORMAL);
 }
 
 void Skelton::UpdateBattle(void)
@@ -168,7 +168,7 @@ void Skelton::UpdateBattle(void)
 	//プレイヤーが戦闘状態範囲度外にでたら
 	if (distance > BATTLE_FINISH_DISTANCE) {
 		//通常に戻る
-		ChangeState(ENEMY_STATE::NOMAL);
+		ChangeState(ENEMY_STATE::NORMAL);
 	}
 
 	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら

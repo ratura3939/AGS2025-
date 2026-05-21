@@ -17,7 +17,6 @@
 
 namespace {
 	const VECTOR forward={0.0f,0.0f,100.0f};
-	const float HALF = 2.0f;
 }
 
 EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)
@@ -172,14 +171,12 @@ void EnemyBase::UpdateSearch(void)
 			ChangeState(ENEMY_STATE::BATTLE);
 		}
 		else {
-			//カウンタ増加
-			searchCnt_++;
+			searchCnt_++;	//カウンタ増加
 		}
 	}
 	//プレイヤーが索敵範囲外に出たら
 	if (distance > ALERT_DISTANCE) {
-		//通常に戻る
-		ChangeState(ENEMY_STATE::NOMAL);
+		ChangeState(ENEMY_STATE::NORMAL);	//通常に戻る
 	}
 }
 
@@ -203,7 +200,7 @@ void EnemyBase::UpdateBattle(void)
 	//プレイヤーが戦闘状態範囲度外にでたら
 	if (distance > BATTLE_FINISH_DISTANCE) {
 		//通常に戻る
-		ChangeState(ENEMY_STATE::NOMAL);
+		ChangeState(ENEMY_STATE::NORMAL);
 	}
 
 	//プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
@@ -212,7 +209,7 @@ void EnemyBase::UpdateBattle(void)
 		const float ChargeAtkEfcSpeed = 0.3f;
 
 		auto& efcM = EffectManager::GetInstance();
-		efcM.Play(GetSpeciesName(), "Charge", centerPos_, rot_, ChargeAtkEfcScale, ChargeAtkEfcSpeed);
+		efcM.Play(GetSpeciesName(), "Charge", centerPos_, rot_, ChargeAtkEfcScale, ChargeAtkEfcSpeed);	//攻撃前のチャージエフェクト
 
 		//攻撃する
 		atkManager_.Attack(speciesName_,"SwingSword");	//攻撃の発生
@@ -262,9 +259,8 @@ void EnemyBase::MoveNomal(const VECTOR& _pPos)
 
 	//既定の移動量以上の値の時
 	if (diffNow2Pre >=moveOneTime_) {
-		//ステイ状態に
-		isStay_ = true;
-		stayCnt_ = 0;
+		isStay_ = true;	//ステイ状態に
+		stayCnt_ = 0;	//カウンタリセット
 	}
 
 	
@@ -278,8 +274,7 @@ void EnemyBase::MoveBattle(const VECTOR& _pPos)
 {
 	//停止時間がまだある場合
 	if (stopTime_ > 0) {
-
-		stopTime_--;
+		stopTime_--;	//カウンタ減少
 		return;
 	}
 
@@ -311,7 +306,7 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 	//状態ごとの初期化
 	switch (state_)
 	{
-	case ENEMY_STATE::NOMAL:
+	case ENEMY_STATE::NORMAL:
 		//処理設定
 		update_ = &EnemyBase::UpdateNomal;
 		move_ = &EnemyBase::MoveNomal;
@@ -455,16 +450,16 @@ void EnemyBase::DoHitCollider(const std::weak_ptr<Collider>& _col)
 		//ダメージ処理
 		Damage(_col.lock()->GetPower());
 		auto& efcM = EffectManager::GetInstance();
-		efcM.Play(GetSpeciesName(), "Damage", centerPos_, rot_, DmgEfcScl, DmgEfcSpeed, "Damage");
-		efcM.Play(GetSpeciesName(), "Sword", centerPos_, rot_, SwordEfcScl, SwordEfcSpeed);
+		efcM.Play(GetSpeciesName(), "Damage", centerPos_, rot_, DmgEfcScl, DmgEfcSpeed, "Damage");	//ダメージエフェクト
+		efcM.Play(GetSpeciesName(), "Sword", centerPos_, rot_, SwordEfcScl, SwordEfcSpeed);			//斬撃エフェクト
 
 		//攻撃なのでフラグをオフに
 		_col.lock()->SetUseThis(false);
 	}
 
 	//通常移動時、壁とぶつかったら
-	if (state_ == ENEMY_STATE::NOMAL && _col.lock()->IsContainsTag(TAG::WALL)) {
+	if (state_ == ENEMY_STATE::NORMAL && _col.lock()->IsContainsTag(TAG::WALL)) {
 		pos_ = prevPos_;	//前回位置に戻す
-		SetNextGoalPos();
+		SetNextGoalPos();	//行先の再設定
 	}
 }

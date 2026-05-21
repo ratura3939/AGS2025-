@@ -34,7 +34,6 @@ void Board::SetModel(void)
 {
 	ResourceManager& resM = ResourceManager::GetInstance();
 	modelId_ = resM.LoadModelDuplicate(ResourceManager::SRC::WOOD_BOARD_MDL);
-	//scl_ = INIT_SCL;
 
 	speciesName_ = OBJ_NAME;
 

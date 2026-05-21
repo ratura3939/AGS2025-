@@ -11,15 +11,14 @@ class GimmickObjBase
 	: public ActorBase
 {
 public:
-	static constexpr float UNITY_MODEL_ADJUST_Y = 1500.0f;
-	static constexpr FLOAT4 NOMAL_COLOR = { 0.0f,0.0f,0.0f,1.0f };
-	static constexpr float MOVE_SPEED_DEC = -1.0f;
+	static constexpr float UNITY_MODEL_ADJUST_Y = 1500.0f;			//Unity元のモデルの位置調整
+	static constexpr FLOAT4 NOMAL_COLOR = { 0.0f,0.0f,0.0f,1.0f };	//通常の描画色
+	static constexpr float MOVE_SPEED_DEC = -1.0f;					//移動速度減衰量
 
 	GimmickObjBase(void);
 	virtual ~GimmickObjBase(void);
 
 	virtual void Draw(void)override;
-	virtual void DrawDebug(void);
 	void Release(void)override;
 
 	/// <summary>
@@ -78,10 +77,6 @@ protected:
 	bool isGravityActivePreAbility_; //能力影響前の重力有効状態保存用
 
 	VECTOR screenPos_;		//スクリーン上での位置
-
-	//デバッグ
-	bool isDrawScreenPosCircle_;
-	int screenPosColor_;
 
 private:
 	void DoUpdate(void)override;

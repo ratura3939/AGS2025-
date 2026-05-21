@@ -8,6 +8,11 @@
 namespace {
 	const float SPHERE_RADIUS = 20.0f;	//コライダー半径
 	const std::string OBJ_NAME = "Axe";
+	const VECTOR INIT_SCALE = { 15.0f,15.0f ,15.0f };	//初期スケール
+	const VECTOR INIT_POS = { -200.0f,100.0f,500.0f };	//初期スケール
+
+	const int VS_CONST_BUF_NUM = 0;	//頂点シェーダー定数バッファの数
+	const int PS_CONST_BUF_NUM = 1;	//定数バッファの数
 }
 
 TestObj2::TestObj2(void)
@@ -27,8 +32,8 @@ void TestObj2::SetParam(void)
 {
 	isAffectAbilyty_ = true;
 	modelId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TEST_MDL_2).handleId_;
-	pos_ = { -200.0f,100.0f,500.0f };
-	scl_ = { 15.0f,15.0f ,15.0f };
+	pos_ = INIT_POS;
+	scl_ = INIT_SCALE;
 
 	//コライダー設定
 	using COL_TYPE = Collider::COL_TAG;
@@ -37,12 +42,8 @@ void TestObj2::SetParam(void)
 	CollisionManager::GetInstance().AddCollider(collider_);	//当たり判定登録
 
 	//shader設定
-	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", 0, "StdModelPS.cso", 1);
+	material_ = std::make_unique<ModelMaterial>("StdModelVS.cso", VS_CONST_BUF_NUM, "StdModelPS.cso", PS_CONST_BUF_NUM);
 	material_->AddConstBufPS(NOMAL_COLOR);
-
-	//デバッグ
-	isDrawScreenPosCircle_ = true;
-	screenPosColor_ = 0xff00ff;
 
 	isActiveGravity_ = false;
 }

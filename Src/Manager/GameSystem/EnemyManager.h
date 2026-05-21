@@ -83,10 +83,9 @@ public:
 	void CreateBoss(const VECTOR& _pPos);
 	void BossShout(void);
 
-	void DrawDebug(void);
-
 private:
-	AttackManager& atkMng_;
+	Game& gameScene_;	//シーンの参照
+	AttackManager& atkMng_;		//攻撃管理クラスの参照
 
 	std::vector<std::shared_ptr<EnemyBase>> characters_;
 	bool preBattle_;	//位置フレーム前が戦闘状態であるかどうか
@@ -99,6 +98,5 @@ private:
 
 	std::unique_ptr<EnemyCount>counterUI_;	//敵残数カウンター
 
-	Game& gameScene_;
 };
 

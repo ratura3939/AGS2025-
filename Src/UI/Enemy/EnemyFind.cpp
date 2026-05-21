@@ -3,7 +3,9 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include "EnemyFind.h"
 
-EnemyFind::EnemyFind(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state):UIBase(_followPos),eState_(_state)
+EnemyFind::EnemyFind(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state)
+	:UIBase(_followPos)
+	,eState_(_state)
 {
 	findUICnt_ = 0.0f;
 }

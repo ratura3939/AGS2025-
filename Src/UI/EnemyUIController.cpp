@@ -4,9 +4,9 @@
 EnemyUIController::EnemyUIController(VECTOR& _followPos, EnemyBase::ENEMY_STATE& _state, float& _hp, const float& _hpMax)
 	:followUIPos_(_followPos)
 	,eState_(_state)
-	,findUI_(std::make_unique<EnemyFind>(followUIPos_, eState_))
-	,hpUI_(std::make_unique<EnemyHp>(followUIPos_, _hp, _hpMax))
-	,targetUI_(std::make_unique<EnemyTargetting>(followUIPos_))
+	,findUI_(std::make_unique<EnemyFind>(_followPos, _state))
+	,hpUI_(std::make_unique<EnemyHp>(_followPos, _hp, _hpMax))
+	,targetUI_(std::make_unique<EnemyTargetting>(_followPos))
 {
 }
 

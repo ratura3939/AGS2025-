@@ -18,7 +18,7 @@ namespace {
 PlayerHp::PlayerHp(VECTOR& _followPos, const int _hp):UIBase(_followPos)
 {
 	for (int num = 0; num < _hp; num++) {
-		states_.push_back(STATE::NOMAL);
+		states_.push_back(STATE::NORMAL);
 	}
 }
 
@@ -98,7 +98,7 @@ void PlayerHp::Draw(void)
 
 	for (auto& state : states_) {
 		
-		if (state == STATE::NOMAL) {
+		if (state == STATE::NORMAL) {
 			uiM.Draw(nomalStr_.c_str() + cnt);	//HPï`âÊ
 		}
 		else {
@@ -125,7 +125,7 @@ void PlayerHp::Reset(void)
 void PlayerHp::Damage(void)
 {
 	for (int cnt = static_cast<int>(states_.size()) - 1; cnt >= 0; cnt--) {
-		if (states_[cnt] == STATE::NOMAL) {
+		if (states_[cnt] == STATE::NORMAL) {
 			states_[cnt] = STATE::BROKEN;
 			//HPUIÇ…ïœçXÇâ¡Ç¶ÇΩÇÃÇ≈èIóπ
 			break;

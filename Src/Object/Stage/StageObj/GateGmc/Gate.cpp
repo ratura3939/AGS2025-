@@ -37,15 +37,6 @@ void Gate::Draw(void)
 	render_->Draw();
 }
 
-void Gate::DrawDebug(void)
-{
-	collider_->DrawDebugCollider();
-	fence_->DrawDebug();
-
-	const VECTOR fPos = fence_->GetPos();
-	DrawFormatString(0, 300, 0xff0000, "Gate Pos={%.1f, %.1f, %.1f}\nFence Pos={%.1f, %.1f, %.1f}", pos_.x,pos_.y,pos_.z, fPos.x, fPos.y, fPos.z);
-}
-
 void Gate::HitCollider(std::weak_ptr<Collider> _col)
 {
 }
@@ -89,7 +80,7 @@ void Gate::UpdateNomal(void)
 
 	const float fenveMovePow = fence_->GetMovedFenceDiff();
 	if (fenveMovePow<0.0f || fenveMovePow>FENCE_MOVE_MAX) {
-		SetState(GATE_STATE::NOMAL);
+		SetState(GATE_STATE::NORMAL);
 	}
 
 	fence_->Update();

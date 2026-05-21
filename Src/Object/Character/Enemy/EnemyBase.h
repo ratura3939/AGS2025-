@@ -51,11 +51,18 @@ public:
 	static constexpr float POW_ATTACK_NOMAL = 1.0f;                         //攻撃力
 	static constexpr float INTERVAL_ATTACK_NOMAL = 150.0f;                  //攻撃間隔
 
+	static constexpr VECTOR ROT_INITI = { 0.0f,0.0f,-1.0f };    //初期回転
+
+    //PS関連
+	static constexpr FLOAT4 DEFUSE_COL_POW = { 1.0f,1.0f,1.0f,1.0f };    //通常の色
+    static constexpr FLOAT4 BLUR_POW = { 1.0f,0.0f,0.0f,0.0f };;   //ブラーの色
+	static constexpr FLOAT4 SAMPLE_POW = { 1.0f,0.0f,0.0f,0.0f };   //PSのサンプル数
+
     /// <summary>
     /// 敵の状態
     /// </summary>
     enum class ENEMY_STATE {
-        NOMAL
+        NORMAL
         ,SEARCH
         ,BATTLE
         ,DETH

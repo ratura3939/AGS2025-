@@ -48,8 +48,6 @@ public:
 	void RedyLockOn(void);
 	void RedyLockOff(void);
 
-	void DrawDebug(void);
-
 private:
 	/// <summary>
 	/// プレイヤーからの入力受付関係

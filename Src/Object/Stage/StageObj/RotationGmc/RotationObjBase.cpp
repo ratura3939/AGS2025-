@@ -89,10 +89,6 @@ void RotationObjBase::SetParam(void)
 	material_->AddConstBufPS(NOMAL_COLOR);
 
 	isActiveGravity_ = false;
-
-	//デバッグ
-	isDrawScreenPosCircle_ = true;
-	screenPosColor_ = 0xff0000;
 }
 
 void RotationObjBase::UpdateNomal(void)

@@ -8,18 +8,16 @@
 class StageManager
 {
 public:
-
-	static constexpr float INIT_MASTER_SCALE = 1.0f;
+	static constexpr float INIT_MASTER_SCALE = 1.0f;	//初期マスタースケール
 
 	void Init(void);
 	void Update(void);
 	void Draw(void);
-	void DrawDebug(void);
 
 	void SetAbilityColor(const FLOAT4& _color);
 	std::vector<std::weak_ptr<GimmickObjBase>> GetAffectAbilityObjectes(void)const;
 
 private:
-	std::vector<std::shared_ptr<GimmickObjBase>>gmkObjs_;
+	std::vector<std::shared_ptr<GimmickObjBase>>gmkObjs_;	//オブジェクトたち
 };
 

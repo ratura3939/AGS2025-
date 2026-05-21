@@ -7,8 +7,6 @@
 //プレイヤーはスローの影響を受けない
 //よって更新に関わるカウンターは通常のインクリメント
 
-//β提出につき重力をごり押しで実装。見直し必須
-
 class Game;
 class AttackManager;
 
@@ -20,7 +18,7 @@ public:
     /// ロックオン時状態にあるかどうか
     /// </summary>
     enum class LOCK_STATE {
-        NOMAL   //通常
+        NORMAL   //通常
         ,LOCKON //ロックオン
         ,MAX
     };
@@ -29,22 +27,22 @@ public:
     /// プレイヤー行動状態
     /// </summary>
     enum class STATE {
-        NOMAL
-        ,GUARD
-        ,DODGE
-        ,JUST_DODGE
-        ,ATTACK
+		NORMAL       //通常
+		,GUARD      //ガード
+        ,DODGE      //回避
+        ,JUST_DODGE //ジャスト回避
+        ,ATTACK     //攻撃
     };
 
     /// <summary>
     /// 移動方向
     /// </summary>
     enum class MOVE_DIR {
-        NONE
-        ,FORWARD
-        ,LEFT
-        ,RIGHT
-        ,BACK
+		NONE        //移動なし
+		,FORWARD    //前
+		,LEFT       //左
+		,RIGHT      //右
+		,BACK       //後
     };
 
     PlayerChara(AttackManager& _atk);
@@ -98,7 +96,6 @@ private:
     void DrawUI(void)override;
     void Move(void);    //移動処理
     const std::string DecideAnim(const MOVE_DIR _dir)const;
-	void DrawShadow(void); //影描画
     const MOVE_DIR CalcMoveDirFromInput(const float _x, const float _y); //入力から移動方向を算出
     const MOVE_DIR CalcMoveDirAtLockon(const float _x, const float _y); //ロックオン状態のときの移動方向を算出
 
@@ -120,16 +117,12 @@ private:
 
     std::unique_ptr<PlayerUIController>uiCntl_; //UI
 
-    //UI関連
-    int allertTime_;
+    int allertTime_;    //警告用カウンター
+    
+    bool isSlow_;   //スロー状態にするか
 
-    //スロー状態にするか
-    bool isSlow_;   
+	float jumpPow_; //ジャンプ力
 
-    //重力関係
-	float jumpPow_;
-
-    //新しい目標回転を設定するか
-	bool SetNewGoalRot_;
+	bool setNewGoalRot_;    //新しい目標回転を設定するか
 };
 

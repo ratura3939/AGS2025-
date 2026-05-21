@@ -13,7 +13,6 @@ public:
 
 protected:
     virtual void SetModel(void) = 0;
-    void DrawDebug(void)override;
 
 private:
     void SetParam(void)override;

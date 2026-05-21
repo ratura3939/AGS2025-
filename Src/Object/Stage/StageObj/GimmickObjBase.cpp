@@ -50,21 +50,7 @@ void GimmickObjBase::DecMoveSpeed(void)
 void GimmickObjBase::Draw(void)
 {
 	render_->Draw();
-
-	////スクリーン座標位置(デバッグ用)
-	if (isDrawScreenPosCircle_) {
-		screenPos_ = ConvWorldPosToScreenPos(pos_);
-		//DrawCircle(screenPos_.x, screenPos_.y, 10, screenPosColor_);
-	}
-
-	//DrawDebug();
 }
-
-void GimmickObjBase::DrawDebug(void) 
-{
-	collider_->DrawDebugCollider();
-}
-
 
 void GimmickObjBase::Release(void)
 {

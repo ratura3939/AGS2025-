@@ -70,27 +70,31 @@ namespace {
 	const float JUMP_POW = 30.0f; //ジャンプ力
 
 	const VECTOR INIT_POSITION = { 4271.0f,0.0f,-6142.0f };
-	//const VECTOR INIT_POSITION = { -7600.0f,0.0f,7600.0f };
 
 	const float UI_DIFF_Y = 200.0f; //UI表示位置のY軸の差
+
+	const float INPUT_DEAD_ZONE = 0.01f; //入力のデッドゾーン
 }
 
 
 PlayerChara::PlayerChara(AttackManager& _atk)
-	: atkMng_(_atk)
-	, isSlow_(false)
-	, moveDir_(MOVE_DIR::NONE)
-	, allertTime_(0)
-	, isForceFacingCamera(false)
+	:CharacterBase()
+	,atkMng_(_atk)
+	,lockState_(LOCK_STATE::MAX)
+	,state_(STATE::NORMAL)
+	,focusPoint_(Utility::VECTOR_ZERO)
+	,isForceFacingCamera(false)
+	,inputDir_(Utility::VECTOR_ZERO)
+	,moveDir_(MOVE_DIR::NONE)
+	,isDush_(false)
+	,afterMoveRad_(0.0f)
+	,uiCntl_(nullptr)
+	,allertTime_(0)
+	,isSlow_(false)
+	,jumpPow_(0.0f)
+	,setNewGoalRot_(false)
 {
-	focusPoint_ = Utility::VECTOR_ZERO;
-	lockState_ = LOCK_STATE::MAX;
-	state_ = STATE::NOMAL;
-	isDush_ = false;
-	afterMoveRad_ = 0.0f;
 	speciesName_ = CHARACTER_NAME;
-	jumpPow_ = 0.0f;
-	SetNewGoalRot_ = false;
 }
 
 PlayerChara::~PlayerChara(void)
@@ -106,7 +110,7 @@ void PlayerChara::DoInit(void)
 	scl_ = { CHARA_SCALE,CHARA_SCALE ,CHARA_SCALE };
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT),0.0f);
 
-	lockState_ = LOCK_STATE::NOMAL;
+	lockState_ = LOCK_STATE::NORMAL;
 
 	//当たり判定
 	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
@@ -154,10 +158,10 @@ void PlayerChara::DoUpdate(void)
 	uiPos_.y += UI_DIFF_Y;
 	allertTime_++;
 	centerPos_ = headPos_;	//モデル中央
-	centerPos_.y /= 2.0f;
+	centerPos_.y /= HALF;
 
 	//ほかにアクション行動していないときのみ
-	if (state_ == STATE::NOMAL || lockState_ == LOCK_STATE::LOCKON) {
+	if (state_ == STATE::NORMAL || lockState_ == LOCK_STATE::LOCKON) {
 		Move();
 
 		//ロックオンのとき
@@ -166,7 +170,7 @@ void PlayerChara::DoUpdate(void)
 			afterMoveRad_ = GetToLockDeg();
 		}
 		//モデルの目標角度設定
-		if (SetNewGoalRot_|| isForceFacingCamera) {
+		if (setNewGoalRot_|| isForceFacingCamera) {
 			//目標角度設定
 			SetGoalRot(afterMoveRad_);
 		}
@@ -178,14 +182,14 @@ void PlayerChara::DoUpdate(void)
 	}
 
 	//ジャンプ
-	jumpPow_ += GRAVITY_POW;
+	jumpPow_ += GRAVITY_POW;	//重力の影響を受ける
 	if (jumpPow_ <= 0.0f) {
-		jumpPow_ = 0.0f;
+		jumpPow_ = 0.0f;		//ジャンプ力下限設定
 	}
-	pos_.y += jumpPow_;
+	pos_.y += jumpPow_;			//ジャンプ力を座標に反映
 
-	animController_->Update();
-	uiCntl_->Update();
+	animController_->Update();	//アニメーション更新
+	uiCntl_->Update();			//UI更新
 
 	headPos_ = VAdd(pos_, CHARACTER_HEIGHT);	//頭位置
 	footPos_ = VAdd(pos_, CHARACTER_FOOT_COLLIDER_RELATIVE);	//足元コライダー位置
@@ -205,7 +209,7 @@ void PlayerChara::ChangeLockState(const bool _state)
 		SetGoalRot(deg);
 		characterRotY_ = goalQua_;
 	}
-	else lockState_ = LOCK_STATE::NOMAL;
+	else lockState_ = LOCK_STATE::NORMAL;
 }
 
 const PlayerChara::STATE PlayerChara::GetState(void) const
@@ -249,21 +253,17 @@ void PlayerChara::Damage(const float _pow)
 
 void PlayerChara::Jump(void)
 {
-	//if (jumpPow_ > 0.0f)return;
 	if (gravity_.y != 0.0f)return;
-  	jumpPow_ = JUMP_POW;
+	jumpPow_ = JUMP_POW;	//ジャンプ力をセット
 }
 
 void PlayerChara::InputMoveVec(const VECTOR& _inputVec)
 {
-	if (abs(_inputVec.x) < 0.01f && abs(_inputVec.y) < 0.01f) {
+	if (abs(_inputVec.x) < INPUT_DEAD_ZONE && abs(_inputVec.y) < INPUT_DEAD_ZONE) {
 		// 入力がほぼゼロの場合
-		//isMoving_ = false;
 		inputDir_ = Utility::VECTOR_ZERO;
 		return;
 	}
-
-	//isMoving_ = true;
 
 	// カメラの向きを考慮した移動方向の計算
 	auto& camera = SceneManager::GetInstance().GetCamera();
@@ -375,13 +375,13 @@ void PlayerChara::InitAnim(void)
 {
 	animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);
 	//攻撃
-	animController_->Add("atkFirst", ANIM_ATTACK_FIRST, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("atkSecond", ANIM_ATTACK_SECOND, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("atkSpin", ANIM_ATTACK_SPIN, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("atkFirst", ANIM_ATTACK_FIRST, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("atkSecond", ANIM_ATTACK_SECOND, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("atkSpin", ANIM_ATTACK_SPIN, AnimationController::PLAY_TYPE::NORMAL);
 	//防御
-	animController_->Add("defStart", ANIM_GUARD_START, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("defAtk", ANIM_GUARD_ATTACK, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("defHit", ANIM_GUARD_HIT, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("defStart", ANIM_GUARD_START, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("defAtk", ANIM_GUARD_ATTACK, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("defHit", ANIM_GUARD_HIT, AnimationController::PLAY_TYPE::NORMAL);
 	animController_->Add("defSus", ANIM_GUARD_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
 	//その他アクション
 	animController_->Add("walk", ANIM_WALK, AnimationController::PLAY_TYPE::LOOP);
@@ -389,14 +389,14 @@ void PlayerChara::InitAnim(void)
 	animController_->Add("dushF", ANIM_DUSH_FORWARD, AnimationController::PLAY_TYPE::LOOP);
 	animController_->Add("dushL", ANIM_DUSH_LEFT, AnimationController::PLAY_TYPE::LOOP);
 	animController_->Add("dushR", ANIM_DUSH_RIGHT, AnimationController::PLAY_TYPE::LOOP);
-	animController_->Add("jump", ANIM_JUMP, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("dodL", ANIM_DODGE_LEFT, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("dodR", ANIM_DODGE_RIGHT, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("dodB", ANIM_DODGE_BACK, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("pick", ANIM_PICK_UP, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("jump", ANIM_JUMP, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("dodL", ANIM_DODGE_LEFT, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("dodR", ANIM_DODGE_RIGHT, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("dodB", ANIM_DODGE_BACK, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("pick", ANIM_PICK_UP, AnimationController::PLAY_TYPE::NORMAL);
 	//演出
-	animController_->Add("damage", ANIM_DAMAGE, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("dethStart", ANIM_DETH_START, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("damage", ANIM_DAMAGE, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("dethStart", ANIM_DETH_START, AnimationController::PLAY_TYPE::NORMAL);
 	animController_->Add("dethSus", ANIM_DETH_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
 }
 
@@ -416,12 +416,12 @@ void PlayerChara::DrawUI(void)
 
 void PlayerChara::Move(void)
 {
-	SetNewGoalRot_ = false;
+	setNewGoalRot_ = false;
 
 	//移動を行わないとき
 	if (moveDir_ == MOVE_DIR::NONE || state_ == STATE::ATTACK) {
 		//通常なら
-		if (state_ == STATE::NOMAL) {
+		if (state_ == STATE::NORMAL) {
 			//待機アニメーション
 			animController_->Play("idle", SPEED_ANIM);
 		}
@@ -433,7 +433,7 @@ void PlayerChara::Move(void)
 	std::string seName = "Walk";
 
 	if (moveDir_ != MOVE_DIR::NONE) {
-		SetNewGoalRot_ = true;
+		setNewGoalRot_ = true;
 	}
 
 	//速度設定
@@ -480,93 +480,6 @@ const std::string PlayerChara::DecideAnim(const MOVE_DIR _dir) const
 	}
 	
 	return retAnim;
-}
-
-void PlayerChara::DrawShadow(void)
-{
-	//float PLAYER_SHADOW_HEIGHT = 300.0f;
-	//float PLAYER_SHADOW_SIZE = 30.0f;
-
-	//int i;
-	//MV1_COLL_RESULT_POLY_DIM HitResDim;
-	//MV1_COLL_RESULT_POLY* HitRes;
-	//VERTEX3D Vertex[3] = { VERTEX3D(), VERTEX3D(), VERTEX3D() };
-	//VECTOR SlideVec;
-	//int ModelHandle;
-
-	//// ライティングを無効にする
-	//SetUseLighting(FALSE);
-
-	//// Ｚバッファを有効にする
-	//SetUseZBuffer3D(TRUE);
-
-	//// テクスチャアドレスモードを CLAMP にする( テクスチャの端より先は端のドットが延々続く )
-	//SetTextureAddressMode(DX_TEXADDRESS_CLAMP);
-
-	//// チェックするモデルは、jが0の時はステージモデル、1以上の場合はコリジョンモデル
-	//ModelHandle = modelId_;
-
-	//// プレイヤーの直下に存在する地面のポリゴンを取得
-	//HitResDim = MV1CollCheck_Capsule(
-	//	ModelHandle, -1,
-	//	pos_, VAdd(pos_, { 0.0f, -PLAYER_SHADOW_HEIGHT, 0.0f }), PLAYER_SHADOW_SIZE);
-
-	//// 頂点データで変化が無い部分をセット
-	//Vertex[0].dif = GetColorU8(255, 255, 255, 255);
-	//Vertex[0].spc = GetColorU8(0, 0, 0, 0);
-	//Vertex[0].su = 0.0f;
-	//Vertex[0].sv = 0.0f;
-	//Vertex[1] = Vertex[0];
-	//Vertex[2] = Vertex[0];
-
-	//// 球の直下に存在するポリゴンの数だけ繰り返し
-	//HitRes = HitResDim.Dim;
-	//for (i = 0; i < HitResDim.HitNum; i++, HitRes++)
-	//{
-	//	// ポリゴンの座標は地面ポリゴンの座標
-	//	Vertex[0].pos = HitRes->Position[0];
-	//	Vertex[1].pos = HitRes->Position[1];
-	//	Vertex[2].pos = HitRes->Position[2];
-
-	//	// ちょっと持ち上げて重ならないようにする
-	//	SlideVec = VScale(HitRes->Normal, 0.5f);
-	//	Vertex[0].pos = VAdd(Vertex[0].pos, SlideVec);
-	//	Vertex[1].pos = VAdd(Vertex[1].pos, SlideVec);
-	//	Vertex[2].pos = VAdd(Vertex[2].pos, SlideVec);
-
-	//	// ポリゴンの不透明度を設定する
-	//	Vertex[0].dif.a = 0;
-	//	Vertex[1].dif.a = 0;
-	//	Vertex[2].dif.a = 0;
-	//	if (HitRes->Position[0].y > pos_.y - PLAYER_SHADOW_HEIGHT)
-	//		Vertex[0].dif.a = static_cast<int>(roundf(128.0f * (1.0f - fabs(HitRes->Position[0].y - pos_.y) / PLAYER_SHADOW_HEIGHT)));
-
-	//	if (HitRes->Position[1].y > pos_.y - PLAYER_SHADOW_HEIGHT)
-	//		Vertex[1].dif.a = static_cast<int>(roundf(128.0f * (1.0f - fabs(HitRes->Position[1].y - pos_.y) / PLAYER_SHADOW_HEIGHT)));
-
-	//	if (HitRes->Position[2].y > pos_.y - PLAYER_SHADOW_HEIGHT)
-	//		Vertex[2].dif.a = static_cast<int>(roundf(128.0f * (1.0f - fabs(HitRes->Position[2].y - pos_.y) / PLAYER_SHADOW_HEIGHT)));
-
-	//	// ＵＶ値は地面ポリゴンとプレイヤーの相対座標から割り出す
-	//	Vertex[0].u = (HitRes->Position[0].x - pos_.x) / (PLAYER_SHADOW_SIZE * 2.0f) + 0.5f;
-	//	Vertex[0].v = (HitRes->Position[0].z - pos_.z) / (PLAYER_SHADOW_SIZE * 2.0f) + 0.5f;
-	//	Vertex[1].u = (HitRes->Position[1].x - pos_.x) / (PLAYER_SHADOW_SIZE * 2.0f) + 0.5f;
-	//	Vertex[1].v = (HitRes->Position[1].z - pos_.z) / (PLAYER_SHADOW_SIZE * 2.0f) + 0.5f;
-	//	Vertex[2].u = (HitRes->Position[2].x - pos_.x) / (PLAYER_SHADOW_SIZE * 2.0f) + 0.5f;
-	//	Vertex[2].v = (HitRes->Position[2].z - pos_.z) / (PLAYER_SHADOW_SIZE * 2.0f) + 0.5f;
-
-	//	// 影ポリゴンを描画
-	//	DrawPolygon3D(Vertex, 1, imgShadow_, TRUE);
-	//}
-
-	//// 検出した地面ポリゴン情報の後始末
-	//MV1CollResultPolyDimTerminate(HitResDim);
-
-	//// ライティングを有効にする
-	//SetUseLighting(TRUE);
-
-	//// Ｚバッファを無効にする
-	//SetUseZBuffer3D(FALSE);
 }
 
 const PlayerChara::MOVE_DIR PlayerChara::CalcMoveDirFromInput(const float _x, const float _y)

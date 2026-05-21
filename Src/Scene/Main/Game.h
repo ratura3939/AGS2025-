@@ -22,22 +22,22 @@ public:
 	/// ボスの演出
 	/// </summary>
 	enum class BOSS_DIRECTION {
-		NONE,
-		POST_EFFECT,	//ポストエフェクト
-		SHAKE_SCREEN,	//画面揺れ
-		CAMERA_MOVE,	//カメラ移動
-		END
+		NONE
+		,POST_EFFECT	//ポストエフェクト
+		,SHAKE_SCREEN	//画面揺れ
+		,CAMERA_MOVE	//カメラ移動
+		,END
 	};
 
 	/// <summary>
 	/// ポストエフェクトの種類
 	/// </summary>
 	enum class ACTION_DIRECTION {
-		NOMAL,
-		BLUR,
-		JUST_DODGE,
-		SCAN_LINE,
-		END
+		NORMAL		//通常
+		,BLUR		//ブラー
+		,JUST_DODGE	//ジャスト回避
+		,SCAN_LINE	//走査線
+		,END
 	};
 
 	Game(void);
@@ -93,10 +93,6 @@ private:
 
 	//切り換え終了時の処理
 	void FinishSwitchBgm(void);
-	
-	//デバッグ描画
-	void DrawDebug(void);
-
 
 	//変数
 #pragma region インスタンス
@@ -133,9 +129,6 @@ private:
 	std::unique_ptr<PixelRenderer>dodgeRender_;
 	int dodgeScreen_;
 
-
-
-
 	bool isDrawPostEffect_;	//ポストエフェクトをかけるか
 #pragma endregion
 
@@ -160,9 +153,6 @@ private:
 	int cameraShakeCollTimeCnt_;	//画面揺れクールタイム
 	bool stayCameraShake_;			//画面揺れ待機フラグ true=待機
 #pragma endregion
-
-	bool prevInputP_;			//デバッグ用トリガ
-	bool isEnemyUpdate_;
 
 	//ジャスト回避
 	std::unique_ptr<PixelMaterial>skipMaterial_;

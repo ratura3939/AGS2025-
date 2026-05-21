@@ -79,9 +79,6 @@ Game::Game(void)
 	nextBgmVol_ = 0;
 	switchBgm_ = false;
 
-	prevInputP_ = false;
-	isEnemyUpdate_ = true;
-
 	cameraMoveStartPos_ = CAMERA_START_1;
 	cameraMoveGoalPos_[0] = CAMERA_GOAL_1;
 	cameraMoveGoalPos_[1] = CAMERA_GOAL_2;
@@ -100,6 +97,7 @@ Game::~Game(void)
 {
 	DeleteGraph(scanLineScreen_);
 	DeleteGraph(blurScreen_);
+	DeleteGraph(dodgeScreen_);
 }
 
 void Game::Init(void)
@@ -296,17 +294,6 @@ void Game::Update(void)
 	Camera& camera = scM.GetCamera();
 	InputManager& inpM = InputManager::GetInstance();
 
-	//デバッグ用
-	bool nowInputP = CheckHitKey(KEY_INPUT_P);
-	if (!prevInputP_ && nowInputP) {
-		if (isEnemyUpdate_)
-			isEnemyUpdate_ = false;
-		else
-			isEnemyUpdate_ = true;
-	}
-	prevInputP_ = nowInputP;
-
-
 #pragma region シーン遷移(ルール)
 	//プレイヤーが死んでいたら
 	if (!player_->IsAlive()) {
@@ -356,9 +343,7 @@ void Game::GameUpdate(void)
 	}
 
 	//敵
-	if (isEnemyUpdate_) {
-		enemy_->Update(player_->GetPos(), *atkMng_);
-	}
+	enemy_->Update(player_->GetPos(), *atkMng_);
 
 	//攻撃
 	atkMng_->Update();
@@ -433,7 +418,7 @@ void Game::DirectionUpdate(void)
 			camera.SetGoalFocusPos(player_->GetFocusPoint());				//注視点
 
 			//ブラーをなくす
-			ChangeActionDirec(ACTION_DIRECTION::NOMAL);
+			ChangeActionDirec(ACTION_DIRECTION::NORMAL);
 
 			//BGM流す
 			SoundManager::GetInstance().Play("BossBgm");
@@ -486,7 +471,7 @@ bool Game::DirectionPostEffect(void)
 	if (direcCnt_ > WARNING_DIRECTION_TIME) {
 		//演出終了
 		SoundManager::GetInstance().Stop("WarningBgm");	//警告音止める
-		ChangeActionDirec(ACTION_DIRECTION::NOMAL);		//ポストエフェクト終了
+		ChangeActionDirec(ACTION_DIRECTION::NORMAL);		//ポストエフェクト終了
 		return true;
 	}
 	//演出が続く
@@ -740,21 +725,8 @@ void Game::EndSlow(void)
 {
 	auto& scM = SceneManager::GetInstance();
 	isSlowEffect_ = false;
-	ChangeActionDirec(ACTION_DIRECTION::NOMAL);
+	ChangeActionDirec(ACTION_DIRECTION::NORMAL);
 	//更新処理を100％にもどす
 	scM.SetUpdateSpeedRate(NOMAL_SPEED_PERCENT);
 	enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent());
-}
-
-
-void Game::DrawDebug(void)
-{
-	//SceneManager::GetInstance().GetCamera().DrawDebug();
-	//if (isSlowEffect_) {
-	//	DrawString(0, 140, "NOW_SLOW", 0xffffff);
-	//}
-	//enemy_->DrawDebug();
-	//atkMng_->DrawDebug();
-	//stage_->DrawDebug();
-	//player_->DrawDebug();
 }

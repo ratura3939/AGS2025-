@@ -8,7 +8,7 @@ class PlayerHp :
 {
 public:
 	enum class STATE {
-		NOMAL
+		NORMAL
 		,BROKEN
 		,EMPTY
 		,MAX

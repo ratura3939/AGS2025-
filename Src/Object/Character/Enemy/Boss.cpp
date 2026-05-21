@@ -40,6 +40,8 @@ namespace {
 	//シェーダーバッファ数
 	const int NUM_CONST_BUF_VS = 2;
 	const int NUM_CONST_BUF_PS = 3;
+
+	const float UI_DEVIATION_Y = 600.0f;	//UIの位置のY軸のずれ
 }
 
 Boss::Boss(VECTOR& _pos, const int _num, AttackManager& _atk, const VECTOR& _pPos)
@@ -60,15 +62,15 @@ void Boss::Shout(void)
 void Boss::InitAnim(void)
 {
 	animController_->Add("idle", BOSS_IDLE, AnimationController::PLAY_TYPE::LOOP);
-	animController_->Add("preAttack", BOSS_PRE_PUNCH, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("attack", BOSS_PUNCH, AnimationController::PLAY_TYPE::NOMAL,true);
-	animController_->Add("preShout", BOSS_PRE_SHOUT, AnimationController::PLAY_TYPE::NOMAL);
-	animController_->Add("shout", BOSS_SHOUT, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("preAttack", BOSS_PRE_PUNCH, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("attack", BOSS_PUNCH, AnimationController::PLAY_TYPE::NORMAL,true);
+	animController_->Add("preShout", BOSS_PRE_SHOUT, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("shout", BOSS_SHOUT, AnimationController::PLAY_TYPE::NORMAL);
 	animController_->Add("walk", BOSS_WALK, AnimationController::PLAY_TYPE::LOOP);
-	animController_->Add("dethStart", BOSS_DETH, AnimationController::PLAY_TYPE::NOMAL);
+	animController_->Add("dethStart", BOSS_DETH, AnimationController::PLAY_TYPE::NORMAL);
 	
 
-	//その場しのぎでここに鳴き声入れる
+	//登場は叫びから
 	SoundManager::GetInstance().Add(SoundManager::TYPE::SE, "shout", ResourceManager::GetInstance().Load(ResourceManager::SRC::BOSS_SHOUT_SE).handleId_);
 }
 
@@ -85,7 +87,7 @@ void Boss::SetParam(void)
 	const float SCALE = 0.02f;
 	scl_ = { SCALE,SCALE ,SCALE };
 	preStayPos_ = pos_;
-	rot_ = { 0.0f,0.0f,-1.0f };
+	rot_ = ROT_INITI;
 	quaRotLocal_ = Quaternion::Euler(0.0f, Utility::Deg2RadF(INIT_MODEL_ROT), 0.0f);
 
 	//ボスはもしかしたらモデルで判定するかも
@@ -124,7 +126,7 @@ void Boss::SetParam(void)
 	hp_ = BOSS_HP;
 	maxHp_ = BOSS_HP;
 
-	uiDeviationY_ = 600.0f;
+	uiDeviationY_ = UI_DEVIATION_Y;
 
 	//位置設定
 	uiPos_ = pos_;
@@ -141,11 +143,11 @@ void Boss::SetParam(void)
 	intervalCnt_ = 0.0f;
 	//PS
 	//各色の強さ(拡散光)
-	material_->AddConstBufPS({ 1.0f,1.0f,1.0f,1.0f });
+	material_->AddConstBufPS(DEFUSE_COL_POW);
 	//ブラーの強さ(最初の項目のみ関係する)
-	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+	material_->AddConstBufPS(BLUR_POW);
 	//サンプル数(最初の項目のみ関係する)
-	material_->AddConstBufPS({ 1.0f,0.0f,0.0f,0.0f });
+	material_->AddConstBufPS(SAMPLE_POW);
 
 	//状態を通常に
 	ChangeState(ENEMY_STATE::BATTLE);

@@ -3,7 +3,7 @@
 #include"Player/NoticeDodge.h"
 
 namespace {
-	const VECTOR HP_DRAW_POS = { 100.0f,80.0f,0.0f };
+	VECTOR HP_DRAW_POS = { 100.0f,80.0f,0.0f };
 }
 
 PlayerUIController::PlayerUIController(VECTOR& _followPos, const int _hp)

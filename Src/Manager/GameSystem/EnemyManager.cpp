@@ -14,12 +14,14 @@ const std::string EnemyManager::ATTACK_NOMAL = "EnemyAttack";
 EnemyManager::EnemyManager(Game& _scene, AttackManager& _atk)
 	:gameScene_(_scene)
 	,atkMng_(_atk)
+	,characters_()
+	,preBattle_(false)
+	,enemyCnt_(-1)
+	,numImg_(nullptr)
+	,platePos_(Utility::VECTOR_INIT)
+	,createBoss_(false)
+	,counterUI_(nullptr)
 {
-	enemyCnt_ = -1;
-	numImg_ = nullptr;
-	platePos_ = Utility::VECTOR_INIT;
-	preBattle_ = false;
-	createBoss_ = false;
 }
 
 EnemyManager::~EnemyManager(void)
@@ -28,7 +30,6 @@ EnemyManager::~EnemyManager(void)
 
 void EnemyManager::Init(const VECTOR& _pPos)
 {
-	//デバッグ用
 	VECTOR initPos[ENEMY_NUM] = { INIT_1 ,INIT_2 ,INIT_3 ,INIT_4 };
 
 	enemyCnt_ = ENEMY_NUM;
@@ -160,7 +161,7 @@ int EnemyManager::GetNearEnemyNum(const VECTOR _pPos)
 
 		float disMag = Utility::MagnitudeF(distance);
 
-		if (/*!InsideScreen(myPos)||*/ disMag > TARGETTING_PERMISSION_DISTANCE || !characters_[i]->IsAlive())continue;
+		if ( disMag > TARGETTING_PERMISSION_DISTANCE || !characters_[i]->IsAlive())continue;
 
 		//距離比較
 		
@@ -209,7 +210,7 @@ bool EnemyManager::IsBattleStateChanged(void)
 void EnemyManager::SetAnimSpeedRate(const float _percent)
 {
 	for (auto chara : characters_) {
-		chara->SetAnimSpeedRate(_percent);
+		chara->SetAnimSpeedRate(_percent);	//アニメーションスピードの設定
 	}
 }
 
@@ -257,30 +258,18 @@ void EnemyManager::CreateBoss(const VECTOR& _pPos)
 	boss->Init();
 	//攻撃の紐づけ
 	atkMng_.AddAttackCollider(boss->GetSpeciesName(), boss->GetAttackCollider(), false, ATTACK_TIME, ATTACK_TIME_START, ATTACK_TIME_END);
-	characters_.push_back(boss);
-	createBoss_ = true;
+	characters_.push_back(boss);	//ボス追加
+	createBoss_ = true;				//生成完了
 
-	enemyCnt_++;
+	enemyCnt_++;	//敵カウント増加
 
-	counterUI_->SetNumImg(numImg_[enemyCnt_]);
-	counterUI_->SetIconImg();
+	counterUI_->SetNumImg(numImg_[enemyCnt_]);	//残りカウントのの設定
+	counterUI_->SetIconImg();					//アイコンの設定
 }
 
 void EnemyManager::BossShout(void)
 {
 	for (auto& chara : characters_) {
-		chara->Shout();
-	}
-}
-
-void EnemyManager::DrawDebug(void)
-{
-	//いなかったら処理しない
-	if (characters_.empty())return;
-
-	VECTOR pos = ConvWorldPosToScreenPos(characters_[0]->GetPos());
-	DrawFormatString(0, 80, 0xffffff, "SCPOS={%.1f,%.1f}", pos.x, pos.y);
-	for (auto& chara : characters_) {
-		chara->DrawDebug();
+		chara->Shout();	//叫び
 	}
 }
