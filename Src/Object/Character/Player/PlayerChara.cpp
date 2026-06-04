@@ -17,7 +17,7 @@
 namespace {
 #pragma region ステータス定数
 	const int PALYER_HP = 5;		//HP
-	const float MOVE_POW = 5.0f;	//移動量
+	const float MOVE_POW = 10.0f;	//移動量
 	const float DUSH_POW = 20.0f;	//移動量(ダッシュ)
 	const float CHARA_SCALE = 0.7f;	//サイズ
 	const VECTOR FOCUS_NOMAL = { 0.0f,0.0f,50.0f };      //注視点(通常)
