@@ -3,13 +3,13 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include"../../Manager/Decoration/SoundManager.h"
 #include"../../Utility/Utility.h"
-#include "AppearBossScene.h"
+#include "AppearBoss.h"
 
-void AppearBossScene::Init(void)
+void AppearBoss::Init(void)
 {
 }
 
-void AppearBossScene::Update(void)
+void AppearBoss::Update(void)
 {
 	//危険のポストエフェクト→画面揺れ→カメラ
 	if ((this->*direcUpdate_)()) {
@@ -65,15 +65,15 @@ void AppearBossScene::Update(void)
 	}
 }
 
-void AppearBossScene::Draw(void)
+void AppearBoss::Draw(void)
 {
 }
 
-void AppearBossScene::Release(void)
+void AppearBoss::Release(void)
 {
 }
 
-bool AppearBossScene::UpdatePostEffect(void)
+bool AppearBoss::UpdatePostEffect(void)
 {
 	//WARNING更新
 	UIManager2d::GetInstance().Update(WARNING_STR_IMG);
@@ -94,7 +94,7 @@ bool AppearBossScene::UpdatePostEffect(void)
 	return false;
 }
 
-bool AppearBossScene::UpdateShakeScreen(void)
+bool AppearBoss::UpdateShakeScreen(void)
 {
 	//カメラノーシェイク時
 	if (stayCameraShake_) {
@@ -128,13 +128,13 @@ bool AppearBossScene::UpdateShakeScreen(void)
 	return false;
 }
 
-void AppearBossScene::DoShake(void)
+void AppearBoss::DoShake(void)
 {
 	SoundManager::GetInstance().Play("Impact");	//効果音再生
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);	//揺らす
 }
 
-bool AppearBossScene::UpdateCameraMove(void)
+bool AppearBoss::UpdateCameraMove(void)
 {
 	//アニメーションのみ更新
 	enemy_->UpdateAnim();
@@ -167,7 +167,7 @@ bool AppearBossScene::UpdateCameraMove(void)
 	return false;
 }
 
-void AppearBossScene::DrawScanLine(void)
+void AppearBoss::DrawScanLine(void)
 {
 	int mainScreen = SceneManager::GetInstance().GetMainScreen();
 
@@ -186,7 +186,7 @@ void AppearBossScene::DrawScanLine(void)
 	UIManager2d::GetInstance().Draw(WARNING_STR_IMG);
 }
 
-void AppearBossScene::DrawBlur(void)
+void AppearBoss::DrawBlur(void)
 {
 	int mainScreen = SceneManager::GetInstance().GetMainScreen();
 	blurMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });

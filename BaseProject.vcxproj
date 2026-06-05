@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Scene\Direction\DethBossScene.cpp" />
-    <ClCompile Include="Src\Scene\Direction\DethPlayerScene.cpp" />
-    <ClCompile Include="Src\Scene\Direction\AppearBossScene.cpp" />
+    <ClCompile Include="Src\Scene\Direction\DethBoss.cpp" />
+    <ClCompile Include="Src\Scene\Direction\DethPlayer.cpp" />
+    <ClCompile Include="Src\Scene\Direction\AppearBoss.cpp" />
     <ClCompile Include="Src\Object\Common\Geometry\Line.cpp" />
     <ClCompile Include="Src\PlayerSystem\Ability\MagnetFallLine.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObj\LibraGmc\LibraPlate.cpp" />
@@ -109,9 +109,9 @@
     <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\WallSingle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Scene\Direction\DethBossScene.h" />
-    <ClInclude Include="Src\Scene\Direction\DethPlayerScene.h" />
-    <ClInclude Include="Src\Scene\Direction\AppearBossScene.h" />
+    <ClInclude Include="Src\Scene\Direction\DethBoss.h" />
+    <ClInclude Include="Src\Scene\Direction\DethPlayer.h" />
+    <ClInclude Include="Src\Scene\Direction\AppearBoss.h" />
     <ClInclude Include="Src\Object\Common\Geometry\Line.h" />
     <ClInclude Include="Src\PlayerSystem\Ability\MagnetFallLine.h" />
     <ClInclude Include="Src\Object\Stage\StageObj\LibraGmc\LibraPlate.h" />

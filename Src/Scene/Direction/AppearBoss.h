@@ -3,7 +3,7 @@
 class PixelMaterial;
 class PixelRenderer;
 
-class AppearBossScene
+class AppearBoss
 {
 public:
 	/// <summary>
@@ -19,8 +19,8 @@ public:
 
 	static constexpr int CAMERA_DIRECTION_NUM = 2;			//カメラ演出における移動回数
 
-	AppearBossScene(void);
-	~AppearBossScene(void);
+	AppearBoss(void);
+	~AppearBoss(void);
 
 	void Init(void);
 	void Update(void);
