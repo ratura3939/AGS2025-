@@ -69,15 +69,8 @@ private:
 
 	//各種更新
 	void GameUpdate(void);			//ゲーム通常
-	void DirectionUpdate(void);		//演出アップデート
-	bool DirectionPostEffect(void);	//ポストエフェクト
-	bool DirectionShakeScreen(void);//画面揺れ演出
-	void DoShake(void);				//揺らす
-	bool DirectionCameraMove(void);	//カメラ移動
 
 	//各種描画処理(ポストエフェクト)
-	void DrawScanLine(void);	//走査線
-	void DrawBlur(void);		//ブラー
 	void DrawDodgeEffect(void);	//ジャスト回避時
 
 	/// <summary>
@@ -115,15 +108,6 @@ private:
 #pragma endregion
 
 #pragma region shader関連
-	//走査線
-	std::unique_ptr<PixelMaterial>scanLineMaterial_;
-	std::unique_ptr<PixelRenderer>scanLineRender_;
-	int scanLineScreen_;
-
-	//ブラー関連
-	std::unique_ptr<PixelMaterial>blurMaterial_;
-	std::unique_ptr<PixelRenderer>blurRender_;
-	int blurScreen_;
 	//ジャスト回避
 	std::unique_ptr<PixelMaterial>dodgeMaterial_;
 	std::unique_ptr<PixelRenderer>dodgeRender_;
@@ -143,15 +127,6 @@ private:
 	std::string switchBgmStr_;	//切り替え後のBGM
 	int nextBgmVol_;			//音量調整用(BGM切り替え時に使用)
 	bool switchBgm_;			//切り換え開始フラグ
-
-	BOSS_DIRECTION direcState_;		//ボス演出管理
-	int direcCnt_;					//演出に関わるカウンタ
-
-	//カメラの演出用
-	VECTOR cameraMoveStartPos_;							//初期位置
-	VECTOR cameraMoveGoalPos_[CAMERA_DIRECTION_NUM];	//目標位置
-	int cameraShakeCollTimeCnt_;	//画面揺れクールタイム
-	bool stayCameraShake_;			//画面揺れ待機フラグ true=待機
 #pragma endregion
 
 	//ジャスト回避
