@@ -1,4 +1,6 @@
 #pragma once
+#include<DxLib.h>
+#include<memory>
 
 class PixelMaterial;
 class PixelRenderer;

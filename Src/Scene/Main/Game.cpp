@@ -41,7 +41,6 @@ namespace {
 	
 
 	const std::string MENU_BTN = "menuBtn";
-	const std::string WARNING_STR_IMG = "WarningImg";
 	const float BTN_EX = 0.6f;
 	const int BTN_DIFF_X = 300;
 	const int BTN_DIFF_Y = 100;

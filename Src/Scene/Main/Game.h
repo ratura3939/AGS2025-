@@ -19,17 +19,6 @@ public:
 	static constexpr int CAMERA_DIRECTION_NUM = 2;			//カメラ演出における移動回数
 
 	/// <summary>
-	/// ボスの演出
-	/// </summary>
-	enum class BOSS_DIRECTION {
-		NONE
-		,POST_EFFECT	//ポストエフェクト
-		,SHAKE_SCREEN	//画面揺れ
-		,CAMERA_MOVE	//カメラ移動
-		,END
-	};
-
-	/// <summary>
 	/// ポストエフェクトの種類
 	/// </summary>
 	enum class ACTION_DIRECTION {

@@ -1,9 +1,13 @@
-#include"../../Manager/Generic/SceneManager.h"
-#include"../../Manager/Generic/Camera.h"
-#include"../../Manager/Decoration/UIManager2d.h"
-#include"../../Manager/Decoration/SoundManager.h"
-#include"../../Utility/Utility.h"
+#include"../../../Manager/Generic/SceneManager.h"
+#include"../../../Manager/Generic/Camera.h"
+#include"../../../Manager/Decoration/UIManager2d.h"
+#include"../../../Manager/Decoration/SoundManager.h"
+#include"../../../Utility/Utility.h"
 #include "AppearBoss.h"
+
+namespace {
+	const std::string WARNING_STR_IMG = "WarningImg";
+}
 
 void AppearBoss::Init(void)
 {
