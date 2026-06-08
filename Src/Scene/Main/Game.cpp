@@ -129,8 +129,8 @@ void Game::Init(void)
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
 	camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
-	camera.SetGoalFocusPos(player_->GetFocusPoint());				//注視点
-	camera.SetLockOnDistanceMin(LOCK_DISTANCE_MIN_NOMAL);			//ロックオン最低距離
+	camera.SetGoalFocusPos(player_->GetFocusPoint());			//注視点
+	camera.SetLockOnDistanceMin(LOCK_DISTANCE_MIN_NOMAL);		//ロックオン最低距離
 
 	//音関係初期設定
 	InitSound();
