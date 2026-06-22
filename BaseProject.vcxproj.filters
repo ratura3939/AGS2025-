@@ -300,13 +300,16 @@
     <ClCompile Include="Src\Object\Common\Geometry\Line.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Scene\Direction\AppearBossScene.cpp">
+    <ClCompile Include="Src\Scene\Main\GameDirection\DethBoss.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Scene\Direction\DethPlayerScene.cpp">
+    <ClCompile Include="Src\Scene\Main\GameDirection\DethPlayer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Scene\Direction\DethBossScene.cpp">
+    <ClCompile Include="Src\Scene\Main\GameDirection\AppearBoss.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Scene\Main\GameDirection\CutSceneBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -566,13 +569,16 @@
     <ClInclude Include="Src\Object\Common\Geometry\Line.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Scene\Direction\AppearBossScene.h">
+    <ClInclude Include="Src\Scene\Main\GameDirection\DethBoss.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Scene\Direction\DethPlayerScene.h">
+    <ClInclude Include="Src\Scene\Main\GameDirection\DethPlayer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Scene\Direction\DethBossScene.h">
+    <ClInclude Include="Src\Scene\Main\GameDirection\AppearBoss.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Scene\Main\GameDirection\CutSceneBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

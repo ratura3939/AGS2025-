@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Scene\Main\GameDirection\CutSceneBase.cpp" />
     <ClCompile Include="Src\Scene\Main\GameDirection\DethBoss.cpp" />
     <ClCompile Include="Src\Scene\Main\GameDirection\DethPlayer.cpp" />
     <ClCompile Include="Src\Scene\Main\GameDirection\AppearBoss.cpp" />
@@ -109,6 +110,7 @@
     <ClCompile Include="Src\Object\Stage\StageObj\StaticParts\WallSingle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Scene\Main\GameDirection\CutSceneBase.h" />
     <ClInclude Include="Src\Scene\Main\GameDirection\DethBoss.h" />
     <ClInclude Include="Src\Scene\Main\GameDirection\DethPlayer.h" />
     <ClInclude Include="Src\Scene\Main\GameDirection\AppearBoss.h" />

@@ -25,7 +25,7 @@ namespace {
 	constexpr VECTOR CAMERA_START_1 = { 600.0f,200.0f,0.0f };	//カメラ演出開始位置
 	constexpr VECTOR CAMERA_GOAL_1 = { 600.0f,1000.0f,0.0f };	//カメラ演出目標位置その①
 	constexpr VECTOR CAMERA_GOAL_2 = { 0.0f,800.0f,600.0f };	//カメラ演出目標位置その②
-	constexpr float ALLOWABLE_DISTANCE = 10.0f;		//カメラの移動完了判定をがば目にするために
+	//constexpr float ALLOWABLE_DISTANCE = 10.0f;		//カメラの移動完了判定をがば目にするために
 	constexpr int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
 
 
@@ -35,9 +35,9 @@ namespace {
 	const float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
 	const float SLOW_SPEED_PERCENT = 25.0f;		//スローの割合(通常時から半分の速度にする)
 		  
-	const int WARNING_DIRECTION_TIME = 150;		//WARNING警告時間
-	const int CAMERA_SHAKE_NUM = 3;				//カメラ演出における振動回数
-	const int CAMERA_SHAKE_COOL_TIME = 40;		//振動のクールタイム
+	//const int WARNING_DIRECTION_TIME = 150;		//WARNING警告時間
+	//const int CAMERA_SHAKE_NUM = 3;				//カメラ演出における振動回数
+	//const int CAMERA_SHAKE_COOL_TIME = 40;		//振動のクールタイム
 	
 
 	const std::string MENU_BTN = "menuBtn";
@@ -55,9 +55,9 @@ namespace {
 	const int DODGE_SE_VOL = 45;	//回避SEの音量
 	const int JUST_DODGE_SE_VOL = 80;	//ジャスト回避SEの音量
 
-	const float WARNING_UI_ACC = 10.0f;	//WARNINGのUIの加速量
-	const float WARNING_UI_MAX_ALPHA = 255.0f;	//WARNINGのUIの最大アルファ値
-	const float WARNING_UI_MIN_ALPHA = 0.0f;	//WARNINGのUIの最小アルファ値
+	//const float WARNING_UI_ACC = 10.0f;	//WARNINGのUIの加速量
+	//const float WARNING_UI_MAX_ALPHA = 255.0f;	//WARNINGのUIの最大アルファ値
+	//const float WARNING_UI_MIN_ALPHA = 0.0f;	//WARNINGのUIの最小アルファ値
 
 	//ポストエフェクトバッファ数
 	const int SCAN_LINE_NUM_BUFF_PS = 2;
@@ -141,10 +141,10 @@ void Game::Init(void)
 
 	auto& uiM = UIManager2d::GetInstance();
 
-	//「WARNING」画像
-	uiM.Add(WARNING_STR_IMG, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(WARNING_STR_IMG, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
-	uiM.SetUIDirectionParam(WARNING_STR_IMG, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, WARNING_UI_ACC, WARNING_UI_MAX_ALPHA, WARNING_UI_MIN_ALPHA);
+	////「WARNING」画像
+	//uiM.Add(WARNING_STR_IMG, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
+	//uiM.SetUIInfo(WARNING_STR_IMG, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
+	//uiM.SetUIDirectionParam(WARNING_STR_IMG, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, WARNING_UI_ACC, WARNING_UI_MAX_ALPHA, WARNING_UI_MIN_ALPHA);
 
 	//メニューボタン
 	uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
