@@ -1,11 +1,13 @@
 #pragma once
 #include<DxLib.h>
 #include<memory>
-
 #include"CutSceneBase.h"
 
 class PixelMaterial;
 class PixelRenderer;
+class Game;
+class PlayerManager;
+class EnemyManager;
 
 class AppearBoss	:
 	public CutSceneBase
@@ -23,7 +25,7 @@ public:
 
 	static constexpr int CAMERA_DIRECTION_NUM = 2;			//カメラ演出における移動回数
 
-	AppearBoss(void);
+	AppearBoss(Game& _scene, PlayerManager& _player, EnemyManager& _enemy);
 	~AppearBoss(void)override;
 
 	void Init(void)override;
@@ -45,6 +47,12 @@ private:
 	void DrawScanLine(void);	//走査線
 	void DrawBlur(void);		//ブラー
 
+	//演出に必要な情報
+	Game& gameScene_;	//ゲームシーン
+	PlayerManager& player_;	//プレイヤー
+	EnemyManager& enemy_;	//敵
+
+	//各種更新・描画
 	using Update_f = bool(AppearBoss::*)(void);
 	using Draw_f = void(AppearBoss::*)(void);
 	Update_f useDirectionUpdate_;	//演出のポストエフェクト・画面揺れ・カメラ移動の三つを管理

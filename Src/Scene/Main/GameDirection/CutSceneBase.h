@@ -1,4 +1,7 @@
 #pragma once
+
+class Game;
+
 class CutSceneBase
 {
 public:

@@ -4,9 +4,12 @@
 #include"../../../Manager/Generic/ResourceManager.h"
 #include"../../../Manager/Decoration/UIManager2d.h"
 #include"../../../Manager/Decoration/SoundManager.h"
+#include"../../../Manager/GameSystem/PlayerManager.h"
+#include"../../../Manager/GameSystem/EnemyManager.h"
 #include"../../../Utility/Utility.h"
 #include"../../../Renderer/PixelMaterial.h"
 #include"../../../Renderer/PixelRenderer.h"
+#include"../../../Scene/Main/Game.h"
 #include "AppearBoss.h"
 
 namespace {
@@ -20,6 +23,20 @@ namespace {
 	const float WARNING_UI_ACC = 10.0f;	//WARNINGのUIの加速量
 	const float WARNING_UI_MAX_ALPHA = 255.0f;	//WARNINGのUIの最大アルファ値
 	const float WARNING_UI_MIN_ALPHA = 0.0f;	//WARNINGのUIの最小アルファ値
+
+	const float LOCK_DISTANCE_MIN_BOSS = 1000.0f;		//ロックオン時に最低限離れておく距離
+	constexpr int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
+}
+
+AppearBoss::AppearBoss(Game& _scene, PlayerManager& _player, EnemyManager& _enemy) :
+	player_(_player)
+	,enemy_(_enemy)
+	,gameScene_(_scene)
+{
+}
+
+AppearBoss::~AppearBoss(void)
+{
 }
 
 void AppearBoss::Init(void)
@@ -127,7 +144,7 @@ void AppearBoss::DoShake(void)
 bool AppearBoss::UpdateCameraMove(void)
 {
 	//アニメーションのみ更新
-	enemy_->UpdateAnim();
+	enemy_.UpdateAnim();
 
 	//カメラ演出用
 	auto& camera = SceneManager::GetInstance().GetCamera();
@@ -145,10 +162,10 @@ bool AppearBoss::UpdateCameraMove(void)
 		}
 		else {
 			//次の目標地点への設定
-			camera.SetGoalDirecPos(VAdd(enemy_->GetPos(BOSS_IDX), cameraMoveGoalPos_[direcCnt_]));
+			camera.SetGoalDirecPos(VAdd(enemy_.GetPos(BOSS_IDX), cameraMoveGoalPos_[direcCnt_]));
 
 			//二回目の移動はボスの「叫び」も入れる
-			enemy_->BossShout();
+			enemy_.BossShout();
 			//「叫び」演出用のブラーへ
 			//ChangeActionDirec(ACTION_DIRECTION::BLUR);
 			usePostEffectDraw_ = &AppearBoss::DrawBlur;
@@ -166,17 +183,15 @@ bool AppearBoss::EndDirectionUpdate(void)
 		//カメラの追従対象を戻す
 		Camera& camera = SceneManager::GetInstance().GetCamera();
 		camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
-		camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
-		camera.SetGoalFocusPos(player_->GetFocusPoint());				//注視点
+		camera.SetFollow(player_.GetPos(), player_.GetQua());		//追従対象
+		camera.SetGoalFocusPos(player_.GetFocusPoint());				//注視点
 
 		//ブラーをなくす
 		//ChangeActionDirec(ACTION_DIRECTION::NORMAL);
 		isDrawPostEffect_ = false;
 
 		//BGM流す
-		SoundManager::GetInstance().Play("BossBgm");
-		nowBgmStr_ = "BossBgm";
-		switchBgm_ = false;
+		gameScene_.StartBgm("BossBgm");
 
 		//更新を通常に
 		//update_ = &AppearBoss::GameUpdate;
@@ -211,14 +226,14 @@ void AppearBoss::EndCameraMove(void)
 {
 	auto& camera = SceneManager::GetInstance().GetCamera();
 	//ボスの生成
-	enemy_->CreateBoss(player_->GetPos());
+	enemy_.CreateBoss(player_.GetPos());
 	camera.SetLockOnDistanceMin(LOCK_DISTANCE_MIN_BOSS);			//ロックオン最低距離
 
 	//カメラを自動移動に設定
 	camera.ChangeMode(Camera::MODE::AUTO_MOVE);
 
 	//場所の設定(ボスの横ぐらい)
-	auto bossPos = enemy_->GetPos(BOSS_IDX);
+	auto bossPos = enemy_.GetPos(BOSS_IDX);
 	camera.SetPos(VAdd(bossPos, cameraMoveStartPos_), bossPos);
 	camera.SetGoalDirecPos(VAdd(bossPos, cameraMoveGoalPos_[direcCnt_]));
 

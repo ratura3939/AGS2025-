@@ -26,7 +26,7 @@ namespace {
 	constexpr VECTOR CAMERA_GOAL_1 = { 600.0f,1000.0f,0.0f };	//カメラ演出目標位置その①
 	constexpr VECTOR CAMERA_GOAL_2 = { 0.0f,800.0f,600.0f };	//カメラ演出目標位置その②
 	//constexpr float ALLOWABLE_DISTANCE = 10.0f;		//カメラの移動完了判定をがば目にするために
-	constexpr int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
+	//constexpr int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
 
 
 	const int LIMIT_SLOW = 200;					//スロー演出時間
@@ -48,7 +48,7 @@ namespace {
 	const float CAMERA_FOLLOW_DIFF_Y_ABILITY = 200.0f;	//能力使用時の注視点差分
 
 	const float LOCK_DISTANCE_MIN_NOMAL = 500.0f;		//ロックオン時に最低限離れておく距離
-	const float LOCK_DISTANCE_MIN_BOSS = 1000.0f;		//ロックオン時に最低限離れておく距離
+	//const float LOCK_DISTANCE_MIN_BOSS = 1000.0f;		//ロックオン時に最低限離れておく距離
 
 	const int BGM_VOL = 80;	//BGMの音量
 	const int WALK_SE_VOL = 60;	//歩くSEの音量
@@ -728,4 +728,11 @@ void Game::EndSlow(void)
 	//更新処理を100％にもどす
 	scM.SetUpdateSpeedRate(NOMAL_SPEED_PERCENT);
 	enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent());
+}
+
+void Game::StartBgm(std::string _bgmName)
+{
+	SoundManager::GetInstance().Play(_bgmName);
+	nowBgmStr_ = _bgmName;
+	switchBgm_ = false;
 }

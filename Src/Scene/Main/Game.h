@@ -50,6 +50,9 @@ public:
 	//スロー終了
 	void EndSlow(void);		
 
+	//特定のBGM再生開始
+	void StartBgm(std::string _bgmName);
+
 private:
 	//各初期化
 	void InitSound(void)override;
