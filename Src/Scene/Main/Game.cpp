@@ -652,6 +652,9 @@ void Game::StartBossFaze(void)
 	sndM.Play("WarningBgm");//警告音流す
 
 	//演出初期設定
+
+	//ボス演出を設定およびスタート
+
 	/*direcState_ = BOSS_DIRECTION::POST_EFFECT;
 	update_ = &Game::DirectionUpdate;
 	direcUpdate_ = &Game::DirectionPostEffect;*/
@@ -660,6 +663,8 @@ void Game::StartBossFaze(void)
 
 void Game::ChangeActionDirec(const ACTION_DIRECTION _direc)
 {
+	//回避行動だけ別分けすること
+
 	//とりあえずポストエフェクトを描画するように
 	isDrawPostEffect_ = true;
 
