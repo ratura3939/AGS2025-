@@ -300,10 +300,10 @@
     <ClCompile Include="Src\Object\Common\Geometry\Line.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Scene\Main\GameDirection\DethBoss.cpp">
+    <ClCompile Include="Src\Scene\Main\GameDirection\DeathBoss.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Scene\Main\GameDirection\DethPlayer.cpp">
+    <ClCompile Include="Src\Scene\Main\GameDirection\DeathPlayer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Scene\Main\GameDirection\AppearBoss.cpp">
@@ -569,10 +569,10 @@
     <ClInclude Include="Src\Object\Common\Geometry\Line.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Scene\Main\GameDirection\DethBoss.h">
+    <ClInclude Include="Src\Scene\Main\GameDirection\DeathBoss.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Scene\Main\GameDirection\DethPlayer.h">
+    <ClInclude Include="Src\Scene\Main\GameDirection\DeathPlayer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Scene\Main\GameDirection\AppearBoss.h">

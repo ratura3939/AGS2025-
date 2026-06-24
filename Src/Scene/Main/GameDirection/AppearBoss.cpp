@@ -26,6 +26,10 @@ namespace {
 
 	const float LOCK_DISTANCE_MIN_BOSS = 1000.0f;		//ロックオン時に最低限離れておく距離
 	constexpr int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
+
+	//ポストエフェクトバッファ数
+	const int SCAN_LINE_NUM_BUFF_PS = 2;
+	const int BLUR_NUM_BUFF_PS = 3;
 }
 
 AppearBoss::AppearBoss(Game& _scene, PlayerManager& _player, EnemyManager& _enemy) :
@@ -37,9 +41,11 @@ AppearBoss::AppearBoss(Game& _scene, PlayerManager& _player, EnemyManager& _enem
 
 AppearBoss::~AppearBoss(void)
 {
+	DeleteGraph(scanLineScreen_);
+	DeleteGraph(blurScreen_);
 }
 
-void AppearBoss::Init(void)
+void AppearBoss::DoInit(void)
 {
 	//リソース準備
 	ResourceManager& resM = ResourceManager::GetInstance();
@@ -49,9 +55,40 @@ void AppearBoss::Init(void)
 	uiM.Add(WARNING_STR_IMG, resM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(WARNING_STR_IMG, VECTOR{ static_cast<float>(Application::SCREEN_SIZE_X) / 2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
 	uiM.SetUIDirectionParam(WARNING_STR_IMG, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, WARNING_UI_ACC, WARNING_UI_MAX_ALPHA, WARNING_UI_MIN_ALPHA);
+
+
+	//走査線
+	//PS
+	scanLineMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", SCAN_LINE_NUM_BUFF_PS);
+	//拡散光
+	scanLineMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
+	//時間
+	scanLineMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
+
+	scanLineRender_ = std::make_unique<PixelRenderer>(*scanLineMaterial_);
+	scanLineRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
+	// ポストエフェクト用スクリーン
+	scanLineScreen_ = MakeScreen(
+		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+
+	//ブラー
+	//PS
+	blurMaterial_ = std::make_unique<PixelMaterial>("Blur.cso", BLUR_NUM_BUFF_PS);
+	//拡散光
+	blurMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
+	//時間
+	blurMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
+	//画面大きさ
+	blurMaterial_->AddConstBuf({ Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y,0.0f,0.0f });
+
+	blurRender_ = std::make_unique<PixelRenderer>(*blurMaterial_);
+	blurRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
+	// ポストエフェクト用スクリーン
+	blurScreen_ = MakeScreen(
+		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 }
 
-bool AppearBoss::Update(void)
+bool AppearBoss::DoUpdate(void)
 {
 	//危険のポストエフェクト→画面揺れ→カメラ
 	if ((this->*useDirectionUpdate_)()) {
@@ -68,15 +105,31 @@ bool AppearBoss::Update(void)
 	return false;	//演出続行
 }
 
-void AppearBoss::Draw(void)
+void AppearBoss::DoDraw(void)
 {
 	if (isDrawPostEffect_) {
 		(this->*usePostEffectDraw_)();	//ポストエフェクトの描画
 	}
 }
 
-void AppearBoss::Release(void)
+void AppearBoss::DoRelease(void)
 {
+}
+
+void AppearBoss::FinishDirection(void)
+{
+	//カメラの追従対象を戻す
+	Camera& camera = SceneManager::GetInstance().GetCamera();
+	camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
+	camera.SetFollow(player_.GetPos(), player_.GetQua());		//追従対象
+	camera.SetGoalFocusPos(player_.GetFocusPoint());				//注視点
+
+	//ブラーをなくす
+	//ChangeActionDirec(ACTION_DIRECTION::NORMAL);
+	isDrawPostEffect_ = false;
+
+	//BGM流す
+	gameScene_.StartBgm("BossBgm");
 }
 
 bool AppearBoss::UpdatePostEffect(void)
@@ -180,22 +233,6 @@ bool AppearBoss::EndDirectionUpdate(void)
 {
 	//もし終了したら
 	if (direcState_ == BOSS_DIRECTION::END) {
-		//カメラの追従対象を戻す
-		Camera& camera = SceneManager::GetInstance().GetCamera();
-		camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
-		camera.SetFollow(player_.GetPos(), player_.GetQua());		//追従対象
-		camera.SetGoalFocusPos(player_.GetFocusPoint());				//注視点
-
-		//ブラーをなくす
-		//ChangeActionDirec(ACTION_DIRECTION::NORMAL);
-		isDrawPostEffect_ = false;
-
-		//BGM流す
-		gameScene_.StartBgm("BossBgm");
-
-		//更新を通常に
-		//update_ = &AppearBoss::GameUpdate;
-
 		//すべての演出が終了
 		return true;
 	}

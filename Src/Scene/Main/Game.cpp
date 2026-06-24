@@ -13,6 +13,9 @@
 #include "../../Scene/Main/GameOver.h"
 #include "../../Scene/Main/GameClear.h"
 #include "../../Scene/Sub/PauseScene.h"
+#include "../../Scene/Main/GameDirection/AppearBoss.h"
+#include "../../Scene/Main/GameDirection/DeathPlayer.h"
+#include "../../Scene/Main/GameDirection/DeathBoss.h"
 #include"../../Object/Stage/StageManager.h"
 #include"../../Utility/Utility.h"
 #include"../../Renderer/PixelMaterial.h"
@@ -25,21 +28,13 @@ namespace {
 	constexpr VECTOR CAMERA_START_1 = { 600.0f,200.0f,0.0f };	//カメラ演出開始位置
 	constexpr VECTOR CAMERA_GOAL_1 = { 600.0f,1000.0f,0.0f };	//カメラ演出目標位置その①
 	constexpr VECTOR CAMERA_GOAL_2 = { 0.0f,800.0f,600.0f };	//カメラ演出目標位置その②
-	//constexpr float ALLOWABLE_DISTANCE = 10.0f;		//カメラの移動完了判定をがば目にするために
-	//constexpr int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
-
 
 	const int LIMIT_SLOW = 200;					//スロー演出時間
 	const int BGM_VOL_MAX = 100;				//BGM音量最大値
 	const int BGM_VOL_ACC = 1;					//BGM切り換えスピード
 	const float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
 	const float SLOW_SPEED_PERCENT = 25.0f;		//スローの割合(通常時から半分の速度にする)
-		  
-	//const int WARNING_DIRECTION_TIME = 150;		//WARNING警告時間
-	//const int CAMERA_SHAKE_NUM = 3;				//カメラ演出における振動回数
-	//const int CAMERA_SHAKE_COOL_TIME = 40;		//振動のクールタイム
 	
-
 	const std::string MENU_BTN = "menuBtn";
 	const float BTN_EX = 0.6f;
 	const int BTN_DIFF_X = 300;
@@ -48,20 +43,13 @@ namespace {
 	const float CAMERA_FOLLOW_DIFF_Y_ABILITY = 200.0f;	//能力使用時の注視点差分
 
 	const float LOCK_DISTANCE_MIN_NOMAL = 500.0f;		//ロックオン時に最低限離れておく距離
-	//const float LOCK_DISTANCE_MIN_BOSS = 1000.0f;		//ロックオン時に最低限離れておく距離
 
 	const int BGM_VOL = 80;	//BGMの音量
 	const int WALK_SE_VOL = 60;	//歩くSEの音量
 	const int DODGE_SE_VOL = 45;	//回避SEの音量
 	const int JUST_DODGE_SE_VOL = 80;	//ジャスト回避SEの音量
 
-	//const float WARNING_UI_ACC = 10.0f;	//WARNINGのUIの加速量
-	//const float WARNING_UI_MAX_ALPHA = 255.0f;	//WARNINGのUIの最大アルファ値
-	//const float WARNING_UI_MIN_ALPHA = 0.0f;	//WARNINGのUIの最小アルファ値
-
 	//ポストエフェクトバッファ数
-	const int SCAN_LINE_NUM_BUFF_PS = 2;
-	const int BLUR_NUM_BUFF_PS = 3;
 	const int DODGE_NUM_BUFF_PS = 3;
 
 	const float DODGE_EFFECT_RADIUS = 0.4f;
@@ -71,31 +59,27 @@ namespace {
 	const int RUN_SE_INTERVAL = 10;		//走るSEの再生間隔
 }
 
-Game::Game(void)
+Game::Game(void):
+	player_(nullptr)
+	,enemy_(nullptr)
+	,atkMng_(nullptr)
+	,stage_(nullptr)
+	,direction_(nullptr)
+	,dodgeMaterial_(nullptr)
+	,dodgeRender_(nullptr)
+	,isDrawPostEffect_(false)
+	,isSlowEffect_(false)
+	,slowCnt_(-1)
+	,nowBgmStr_("")
+	,switchBgmStr_("")
+	,nextBgmVol_(0)
+	,switchBgm_(false)
+
 {
-	isSlowEffect_ = false;
-	slowCnt_ = -1;
-	nextBgmVol_ = 0;
-	switchBgm_ = false;
-
-	/*cameraMoveStartPos_ = CAMERA_START_1;
-	cameraMoveGoalPos_[0] = CAMERA_GOAL_1;
-	cameraMoveGoalPos_[1] = CAMERA_GOAL_2;
-	direcState_ = BOSS_DIRECTION::NONE;
-	cameraShakeCollTimeCnt_ = 0;
-	stayCameraShake_ = false;*/
-
-	isDrawPostEffect_ = false;
-	//direcCnt_ = 0;
-
-	update_ = &Game::GameUpdate;
-	//drawPostEffect_ = &Game::DrawScanLine;
 }
 
 Game::~Game(void)
 {
-	/*DeleteGraph(scanLineScreen_);
-	DeleteGraph(blurScreen_);*/
 	DeleteGraph(dodgeScreen_);
 }
 
@@ -104,8 +88,6 @@ void Game::Init(void)
 	//リソース準備
 	ResourceManager& rsM = ResourceManager::GetInstance();
 	rsM.GetInstance().Init(SceneManager::SCENE_ID::GAME);
-
-	update_ = &Game::GameUpdate;
 
 	//生成
 	//ステージ
@@ -140,11 +122,6 @@ void Game::Init(void)
 	InitShader();
 
 	auto& uiM = UIManager2d::GetInstance();
-
-	////「WARNING」画像
-	//uiM.Add(WARNING_STR_IMG, rsM.Load(ResourceManager::SRC::WARNING_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
-	//uiM.SetUIInfo(WARNING_STR_IMG, VECTOR{static_cast<float>(Application::SCREEN_SIZE_X)/2.0f,static_cast<float>(Application::SCREEN_SIZE_Y) / 2.0f,0.0f });
-	//uiM.SetUIDirectionParam(WARNING_STR_IMG, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, WARNING_UI_ACC, WARNING_UI_MAX_ALPHA, WARNING_UI_MIN_ALPHA);
 
 	//メニューボタン
 	uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
@@ -236,22 +213,6 @@ void Game::InitEffect(void)
 
 void Game::InitShader(void)
 {
-	////ブラー
-	////PS
-	//blurMaterial_ = std::make_unique<PixelMaterial>("Blur.cso", BLUR_NUM_BUFF_PS);
-	////拡散光
-	//blurMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
-	////時間
-	//blurMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
-	////画面大きさ
-	//blurMaterial_->AddConstBuf({ Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y,0.0f,0.0f });
-
-	//blurRender_ = std::make_unique<PixelRenderer>(*blurMaterial_);
-	//blurRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	//// ポストエフェクト用スクリーン
-	//blurScreen_ = MakeScreen(
-	//	Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
-
 	//ブラー(回避用)
 	//PS
 	dodgeMaterial_ = std::make_unique<PixelMaterial>("JustDodgePS.cso", DODGE_NUM_BUFF_PS);
@@ -270,20 +231,6 @@ void Game::InitShader(void)
 	// ポストエフェクト用スクリーン
 	dodgeScreen_ = MakeScreen(
 		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
-
-	//走査線
-	//PS
-	//scanLineMaterial_ = std::make_unique<PixelMaterial>("ScanLine.cso", SCAN_LINE_NUM_BUFF_PS);
-	////拡散光
-	//scanLineMaterial_->AddConstBuf({ 1.0f,0.0f,0.0f,0.0f });
-	////時間
-	//scanLineMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
-
-	//scanLineRender_ = std::make_unique<PixelRenderer>(*scanLineMaterial_);
-	//scanLineRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	//// ポストエフェクト用スクリーン
-	//scanLineScreen_ = MakeScreen(
-	//	Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 }
 
 void Game::Update(void)
@@ -305,7 +252,20 @@ void Game::Update(void)
 #pragma endregion
 
 	//更新
-	(this->*update_)();
+	//演出内容があるならば
+	if (direction_ != nullptr) {
+		bool isCutSceneEnd = false;
+		isCutSceneEnd = direction_->Update();	//演出更新
+
+		//演出終了時処理
+		if (isCutSceneEnd) {
+			direction_->Release();
+			direction_ = nullptr;	//解放
+		}
+	}
+	else {
+		GameUpdate();	//通常ゲーム更新
+	}
 }
 
 void Game::GameUpdate(void)
@@ -400,156 +360,6 @@ void Game::GameUpdate(void)
 #pragma endregion
 }
 
-//void Game::DirectionUpdate(void)
-//{
-//	//危険のポストエフェクト→画面揺れ→カメラ
-//	if ((this->*direcUpdate_)()) {
-//		//次の演出に
-//		direcState_ = static_cast<BOSS_DIRECTION>(static_cast<int>(direcState_) + 1);
-//		direcCnt_ = 0;
-//
-//		//もし終了したら
-//		if (direcState_ == BOSS_DIRECTION::END) {
-//			//カメラの追従対象を戻す
-//			Camera& camera = SceneManager::GetInstance().GetCamera();
-//			camera.ChangeMode(Camera::MODE::FOLLOW);					//モード選択
-//			camera.SetFollow(player_->GetPos(), player_->GetQua());		//追従対象
-//			camera.SetGoalFocusPos(player_->GetFocusPoint());				//注視点
-//
-//			//ブラーをなくす
-//			ChangeActionDirec(ACTION_DIRECTION::NORMAL);
-//
-//			//BGM流す
-//			SoundManager::GetInstance().Play("BossBgm");
-//			nowBgmStr_ = "BossBgm";
-//			switchBgm_ = false;
-//
-//			//更新を通常に
-//			update_ = &Game::GameUpdate;
-//		}
-//		//画面揺れ
-//		else if (direcState_ == BOSS_DIRECTION::SHAKE_SCREEN) {
-//			//実行
-//			DoShake();
-//			//演出の更新を「画面揺れ」に
-//			direcUpdate_ = &Game::DirectionShakeScreen;
-//		}
-//		//カメラ移動
-//		else if (direcState_ == BOSS_DIRECTION::CAMERA_MOVE) {
-//
-//			auto& camera = SceneManager::GetInstance().GetCamera();
-//			//ボスの生成
-//			enemy_->CreateBoss(player_->GetPos());
-//			camera.SetLockOnDistanceMin(LOCK_DISTANCE_MIN_BOSS);			//ロックオン最低距離
-//
-//			//カメラを自動移動に設定
-//			camera.ChangeMode(Camera::MODE::AUTO_MOVE);
-//
-//			//場所の設定(ボスの横ぐらい)
-//			auto bossPos = enemy_->GetPos(BOSS_IDX);
-//			camera.SetPos(VAdd(bossPos,cameraMoveStartPos_), bossPos);
-//			camera.SetGoalDirecPos(VAdd(bossPos, cameraMoveGoalPos_[direcCnt_]));
-//
-//			//演出を「カメラ移動に変更
-//			direcUpdate_ = &Game::DirectionCameraMove;
-//		}
-//	}
-//}
-//
-//bool Game::DirectionPostEffect(void)
-//{
-//	//WARNING更新
-//	UIManager2d::GetInstance().Update(WARNING_STR_IMG);
-//
-//	//ポストエフェクト更新
-//	scanLineMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });	//横ライン移動用
-//
-//	//演出カウンタ更新
-//	direcCnt_++;
-//	//一定時間過ぎたら
-//	if (direcCnt_ > WARNING_DIRECTION_TIME) {
-//		//演出終了
-//		SoundManager::GetInstance().Stop("WarningBgm");	//警告音止める
-//		ChangeActionDirec(ACTION_DIRECTION::NORMAL);		//ポストエフェクト終了
-//		return true;
-//	}
-//	//演出が続く
-//	return false;
-//}
-//
-//bool Game::DirectionShakeScreen(void)
-//{
-//	//カメラノーシェイク時
-//	if (stayCameraShake_) {
-//		//クールタイム増加
-//		cameraShakeCollTimeCnt_++;
-//
-//		//一定時間経過後
-//		if (cameraShakeCollTimeCnt_ >= CAMERA_SHAKE_COOL_TIME) {
-//			//再度揺らす
-//			DoShake();
-//			stayCameraShake_ = false;
-//		}
-//		return false;
-//	}
-//
-//	//カメラシェイク終了時
-//	if (SceneManager::GetInstance().GetCamera().IsFinishShake()) {
-//		//演出カウンタ増加
-//		direcCnt_++;
-//
-//		//一定数行ったら
-//		if (direcCnt_ >= CAMERA_SHAKE_NUM) {
-//			//演出終了
-//			return true;
-//		}
-//		//クールタイム関係リセット
-//		cameraShakeCollTimeCnt_ = 0;
-//		stayCameraShake_ = true;
-//	}
-//	//演出が続く
-//	return false;
-//}
-//
-//void Game::DoShake(void)
-//{
-//	SoundManager::GetInstance().Play("Impact");	//効果音再生
-//	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::SHAKE);	//揺らす
-//}
-//
-//bool Game::DirectionCameraMove(void)
-//{
-//	//アニメーションのみ更新
-//	enemy_->UpdateAnim();
-//
-//	//カメラ演出用
-//	auto& camera = SceneManager::GetInstance().GetCamera();
-//
-//	//ゴール位置についたら次のスタート位置へ
-//	auto cameraPos = camera.GetPos();
-//	if (Utility::MagnitudeF(VSub(camera.GetGoalPos(), cameraPos)) <= ALLOWABLE_DISTANCE) {
-//		//演出カウンタ増加
-//		direcCnt_++;
-//
-//		//移動演出回数の上限に到達していたら
-//		if (direcCnt_ >= CAMERA_DIRECTION_NUM) {
-//			//演出終了
-//			return true;
-//		}
-//		else {
-//			//次の目標地点への設定
-//			camera.SetGoalDirecPos(VAdd(enemy_->GetPos(BOSS_IDX), cameraMoveGoalPos_[direcCnt_]));
-//
-//			//二回目の移動はボスの「叫び」も入れる
-//			enemy_->BossShout();
-//			//「叫び」演出用のブラーへ
-//			ChangeActionDirec(ACTION_DIRECTION::BLUR);
-//		}
-//	}
-//	//演出が続く
-//	return false;
-//}
-
 void Game::Draw(void)
 {
 	stage_->Draw();
@@ -567,43 +377,6 @@ void Game::Draw(void)
 		(this->*drawPostEffect_)();
 	}
 }
-
-//void Game::DrawScanLine(void)
-//{
-//	int mainScreen = SceneManager::GetInstance().GetMainScreen();
-//
-//	SetDrawScreen(scanLineScreen_);
-//
-//	// 画面を初期化
-//	//ClearDrawScreen();
-//
-//	DrawGraph(0, 0, mainScreen, false);
-//	scanLineRender_->Draw();
-//
-//	// メインに戻す
-//	SetDrawScreen(mainScreen);
-//	DrawGraph(0, 0, scanLineScreen_, false);
-//	//ポストエフェクトの上から鮮明な文字を出す
-//	UIManager2d::GetInstance().Draw(WARNING_STR_IMG);
-//}
-//
-//void Game::DrawBlur(void)
-//{
-//	int mainScreen = SceneManager::GetInstance().GetMainScreen();
-//	blurMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
-//
-//	SetDrawScreen(blurScreen_);
-//
-//	// 画面を初期化
-//	//ClearDrawScreen();
-//
-//	DrawGraph(0, 0, mainScreen, false);
-//	blurRender_->Draw();
-//
-//	// メインに戻す
-//	SetDrawScreen(mainScreen);
-//	DrawGraph(0, 0, blurScreen_, false);
-//}
 
 void Game::DrawDodgeEffect(void)
 {
@@ -682,6 +455,25 @@ void Game::ChangeActionDirec(const ACTION_DIRECTION _direc)
 	//	//上記三つ以外の場合はポストエフェクトをかけない
 	//	isDrawPostEffect_ = false;
 	//}
+}
+
+void Game::PlayCutScene(const CUT_SCENE_TYPE& _type)
+{
+	switch (_type) {
+	case CUT_SCENE_TYPE::APPEAR_BOSS:
+		direction_ = std::make_unique<AppearBoss>(*this, &player_, &enemy_);
+		break;
+
+	case CUT_SCENE_TYPE::DEATH_PLAYER:
+		direction_ = std::make_unique<DeathPlayer>();
+		break;
+
+	case CUT_SCENE_TYPE::DEATH_BOSS:
+		direction_ = std::make_unique<DeathBoss>();
+		break;
+	}
+
+	direction_->Init();
 }
 
 void Game::AttackDataInit(void)

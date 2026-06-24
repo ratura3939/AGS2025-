@@ -28,12 +28,15 @@ public:
 	AppearBoss(Game& _scene, PlayerManager& _player, EnemyManager& _enemy);
 	~AppearBoss(void)override;
 
-	void Init(void)override;
-	bool Update(void)override;
-	void Draw(void)override;
-	void Release(void)override;
 
 private:
+	void DoInit(void)override;
+	bool DoUpdate(void)override;
+	void DoDraw(void)override;
+	void DoRelease(void)override;
+
+	void FinishDirection(void)override;
+
 	bool UpdatePostEffect(void);	//ポストエフェクト
 	bool UpdateShakeScreen(void);	//画面揺れ演出
 	void DoShake(void);				//揺らす

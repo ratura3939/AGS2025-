@@ -9,6 +9,8 @@ class AttackManager;
 class CollisionManager;
 class StageManager;
 
+class CutSceneBase;
+
 class PixelMaterial;
 class PixelRenderer;
 
@@ -29,6 +31,14 @@ public:
 		,END
 	};
 
+	//カットシーン種類
+	enum class CUT_SCENE_TYPE {
+		APPEAR_BOSS
+		,DEATH_PLAYER
+		,DEATH_BOSS
+		,MAX
+	};
+
 	Game(void);
 	~Game(void);
 
@@ -44,6 +54,9 @@ public:
 
 	//ブラー入れるか入れないか
 	void ChangeActionDirec(const ACTION_DIRECTION _direc);	
+
+	//カットシーンの再生
+	void PlayCutScene(const CUT_SCENE_TYPE& _type);
 
 	//スロー演出開始
 	void StartSlow(void);
@@ -85,15 +98,10 @@ private:
 	std::unique_ptr<EnemyManager>enemy_;			//敵
 	std::shared_ptr<AttackManager>atkMng_;			//攻撃関連
 	std::unique_ptr<StageManager>stage_;			//ステージ
+	std::unique_ptr<CutSceneBase>direction_;		//演出用
 #pragma endregion
 
 #pragma region 関数ポインタ
-	//更新関数
-	using Update_f = void(Game::*)(void);
-	using DirecUpdate_f = bool(Game::*)(void);
-	Update_f update_;			//通常・演出の二つを管理
-	DirecUpdate_f direcUpdate_;	//演出のポストエフェクト・画面揺れ・カメラ移動の三つを管理
-
 	//描画関数
 	using DrawPostEffect_f = void(Game::*)(void);
 	DrawPostEffect_f drawPostEffect_;	//ポストエフェクト管理
@@ -120,12 +128,5 @@ private:
 	int nextBgmVol_;			//音量調整用(BGM切り替え時に使用)
 	bool switchBgm_;			//切り換え開始フラグ
 #pragma endregion
-
-	//ジャスト回避
-	std::unique_ptr<PixelMaterial>skipMaterial_;
-	std::unique_ptr<PixelRenderer>skipRender_;
-	int skipScreen_;
-	int skipCounter_;
-	bool isSkipEnd_;
 };
 
