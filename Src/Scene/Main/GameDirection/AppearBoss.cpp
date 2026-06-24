@@ -30,14 +30,22 @@ namespace {
 	//ポストエフェクトバッファ数
 	const int SCAN_LINE_NUM_BUFF_PS = 2;
 	const int BLUR_NUM_BUFF_PS = 3;
+
+	constexpr VECTOR CAMERA_START_1 = { 600.0f,200.0f,0.0f };	//カメラ演出開始位置
+	constexpr VECTOR CAMERA_GOAL_1 = { 600.0f,1000.0f,0.0f };	//カメラ演出目標位置その①
+	constexpr VECTOR CAMERA_GOAL_2 = { 0.0f,800.0f,600.0f };	//カメラ演出目標位置その②
+
 }
 
 AppearBoss::AppearBoss(Game& _scene, PlayerManager& _player, EnemyManager& _enemy) :
 	player_(_player)
 	,enemy_(_enemy)
 	,gameScene_(_scene)
+	,isDrawPostEffect_(true)
 	,useDirectionUpdate_(&AppearBoss::UpdatePostEffect)
 	,usePostEffectDraw_(&AppearBoss::DrawScanLine)
+	,cameraMoveStartPos_(CAMERA_START_1)
+	,cameraMoveGoalPos_(CAMERA_GOAL_1 ,CAMERA_GOAL_2)
 {
 }
 

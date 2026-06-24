@@ -118,5 +118,8 @@ private:
 	int nextBgmVol_;			//音量調整用(BGM切り替え時に使用)
 	bool switchBgm_;			//切り換え開始フラグ
 #pragma endregion
+
+
+	bool isDebug_;
 };
 

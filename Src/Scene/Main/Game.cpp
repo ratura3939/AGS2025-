@@ -75,6 +75,7 @@ Game::Game(void):
 	,switchBgm_(false)
 
 {
+	isDebug_ = false;
 }
 
 Game::~Game(void)
@@ -244,6 +245,13 @@ void Game::Update(void)
 		//シーン遷移
 		scM.ChangeScene(std::make_shared<GameOver>());
 	}
+
+
+	if (CheckHitKey(KEY_INPUT_P)==1&& !isDebug_) {
+		StartBossFaze();
+		isDebug_ = true;
+	}
+
 #pragma endregion
 
 	//更新
