@@ -51,7 +51,7 @@ void PlayerManager::Update(AttackManager& _atk)
 
 	//スロー状態管理
 	if (character_->IsSlow()) {
-		scene_.StartSlow();
+		scene_.StartSlow();		//回避状態開始
 		character_->SetIsSlow(false);
 	}
 

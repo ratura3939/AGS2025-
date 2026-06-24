@@ -86,6 +86,13 @@ void AppearBoss::DoInit(void)
 	// ポストエフェクト用スクリーン
 	blurScreen_ = MakeScreen(
 		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+
+	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FIXED_POINT);	//演出中はカメラ操作を受け付けない
+
+	SoundManager::GetInstance().Play("WarningBgm");//警告音流す
+	//警告音
+	SoundManager::GetInstance().Add(SoundManager::TYPE::BGM, "WarningBgm",
+		resM.Load(ResourceManager::SRC::WARNING_BGM).handleId_);
 }
 
 bool AppearBoss::DoUpdate(void)

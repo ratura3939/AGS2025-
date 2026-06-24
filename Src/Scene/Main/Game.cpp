@@ -67,7 +67,6 @@ Game::Game(void):
 	,direction_(nullptr)
 	,dodgeMaterial_(nullptr)
 	,dodgeRender_(nullptr)
-	,isDrawPostEffect_(false)
 	,isSlowEffect_(false)
 	,slowCnt_(-1)
 	,nowBgmStr_("")
@@ -143,10 +142,6 @@ void Game::InitSound(void)
 	//バトルBGM
 	sndM.Add(SoundManager::TYPE::BGM, "BossBgm",
 		rsM.Load(ResourceManager::SRC::BOSS_BGM).handleId_);
-
-	//警告音
-	sndM.Add(SoundManager::TYPE::BGM, "WarningBgm",
-		rsM.Load(ResourceManager::SRC::WARNING_BGM).handleId_);
 
 	//初手は普通のBGM
 	sndM.Play("NomalBgm");
@@ -369,12 +364,15 @@ void Game::Draw(void)
 	//メニューボタンの表示
 	UIManager2d::GetInstance().Draw(MENU_BTN);
 
-	//DrawDebug();
-
-	//ポストエフェクトをかけるとき
-	if (isDrawPostEffect_) {
+	//スロー時(回避成功時)
+	if (isSlowEffect_) {
 		//描画
-		(this->*drawPostEffect_)();
+		DrawDodgeEffect();	//回避用のポストエフェクト
+	}
+
+	//演出がある場合
+	if (direction_ != nullptr) {
+		direction_->Draw();
 	}
 }
 
@@ -418,43 +416,12 @@ void Game::Reset(void)
 void Game::StartBossFaze(void)
 {
 	SoundManager& sndM = SoundManager::GetInstance();
-	ChangeActionDirec(ACTION_DIRECTION::SCAN_LINE);
 
 	sndM.Stop("NomalBgm");	//今まで流していたものを停止
 	sndM.Stop("BattleBgm");	//今まで流していたものを停止
-	sndM.Play("WarningBgm");//警告音流す
 
 	//演出初期設定
-
-	//ボス演出を設定およびスタート
-
-	/*direcState_ = BOSS_DIRECTION::POST_EFFECT;
-	update_ = &Game::DirectionUpdate;
-	direcUpdate_ = &Game::DirectionPostEffect;*/
-	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FIXED_POINT);	//演出中はカメラ操作を受け付けない
-}
-
-void Game::ChangeActionDirec(const ACTION_DIRECTION _direc)
-{
-	//回避行動だけ別分けすること
-
-	//とりあえずポストエフェクトを描画するように
-	isDrawPostEffect_ = true;
-
-	//各ポストエフェクトの描画設定
-	//if (_direc == ACTION_DIRECTION::SCAN_LINE) {
-	//	drawPostEffect_ = &Game::DrawScanLine;
-	//}
-	//else if (_direc == ACTION_DIRECTION::BLUR) {
-	//	drawPostEffect_ = &Game::DrawBlur;
-	//}
-	//else if (_direc == ACTION_DIRECTION::JUST_DODGE) {
-	//	drawPostEffect_ = &Game::DrawDodgeEffect;
-	//}
-	//else {
-	//	//上記三つ以外の場合はポストエフェクトをかけない
-	//	isDrawPostEffect_ = false;
-	//}
+	PlayCutScene(CUT_SCENE_TYPE::APPEAR_BOSS);
 }
 
 void Game::PlayCutScene(const CUT_SCENE_TYPE& _type)
@@ -474,13 +441,6 @@ void Game::PlayCutScene(const CUT_SCENE_TYPE& _type)
 	}
 
 	direction_->Init();
-}
-
-void Game::AttackDataInit(void)
-{
-	////攻撃の情報入れ
-	//atkMng_->AddAttack(PlayerManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD,false, false, PlayerManager::ATTACK_TIME);
-	//atkMng_->AddAttack(EnemyManager::ATTACK_NOMAL, AttackManager::ATTACK_TYPE::SWORD, true,false, EnemyManager::ATTACK_TIME, EnemyManager::ATTACK_TIME_START, EnemyManager::ATTACK_TIME_END);
 }
 
 const int Game::DecideRockEnemy(void)
@@ -504,12 +464,12 @@ void Game::FinishSwitchBgm(void)
 	nextBgmVol_ = 0;
 }
 
+
 void Game::StartSlow(void)
 {
 	auto& scM = SceneManager::GetInstance();
 	//スロー演出準備
 	slowCnt_ = 0;
-	ChangeActionDirec(ACTION_DIRECTION::JUST_DODGE);	//演出
 	isSlowEffect_ = true;
 	//更新スピードを50％に設定
 	scM.SetUpdateSpeedRate(SLOW_SPEED_PERCENT);
@@ -521,7 +481,6 @@ void Game::EndSlow(void)
 {
 	auto& scM = SceneManager::GetInstance();
 	isSlowEffect_ = false;
-	ChangeActionDirec(ACTION_DIRECTION::NORMAL);
 	//更新処理を100％にもどす
 	scM.SetUpdateSpeedRate(NOMAL_SPEED_PERCENT);
 	enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent());

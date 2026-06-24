@@ -52,9 +52,6 @@ public:
 	//ボス出現最初の処理用
 	void StartBossFaze(void);
 
-	//ブラー入れるか入れないか
-	void ChangeActionDirec(const ACTION_DIRECTION _direc);	
-
 	//カットシーンの再生
 	void PlayCutScene(const CUT_SCENE_TYPE& _type);
 
@@ -77,11 +74,6 @@ private:
 
 	//各種描画処理(ポストエフェクト)
 	void DrawDodgeEffect(void);	//ジャスト回避時
-
-	/// <summary>
-	/// 攻撃の基礎情報登録(ゆくゆくは外部データにしたい)
-	/// </summary>
-	void AttackDataInit(void);
 
 	/// <summary>
 	/// ロックオンの対象決め
@@ -112,8 +104,6 @@ private:
 	std::unique_ptr<PixelMaterial>dodgeMaterial_;
 	std::unique_ptr<PixelRenderer>dodgeRender_;
 	int dodgeScreen_;
-
-	bool isDrawPostEffect_;	//ポストエフェクトをかけるか
 #pragma endregion
 
 
