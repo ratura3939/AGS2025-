@@ -36,6 +36,8 @@ AppearBoss::AppearBoss(Game& _scene, PlayerManager& _player, EnemyManager& _enem
 	player_(_player)
 	,enemy_(_enemy)
 	,gameScene_(_scene)
+	,useDirectionUpdate_(&AppearBoss::UpdatePostEffect)
+	,usePostEffectDraw_(&AppearBoss::DrawScanLine)
 {
 }
 
@@ -89,10 +91,11 @@ void AppearBoss::DoInit(void)
 
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FIXED_POINT);	//演出中はカメラ操作を受け付けない
 
-	SoundManager::GetInstance().Play("WarningBgm");//警告音流す
 	//警告音
 	SoundManager::GetInstance().Add(SoundManager::TYPE::BGM, "WarningBgm",
 		resM.Load(ResourceManager::SRC::WARNING_BGM).handleId_);
+
+	SoundManager::GetInstance().Play("WarningBgm");//警告音流す
 }
 
 bool AppearBoss::DoUpdate(void)
@@ -153,7 +156,6 @@ bool AppearBoss::UpdatePostEffect(void)
 	if (direcCnt_ > WARNING_DIRECTION_TIME) {
 		//演出終了
 		SoundManager::GetInstance().Stop("WarningBgm");	//警告音止める
-		//ChangeActionDirec(ACTION_DIRECTION::NORMAL);		//ポストエフェクト終了
 		isDrawPostEffect_ = false;
 		return true;
 	}

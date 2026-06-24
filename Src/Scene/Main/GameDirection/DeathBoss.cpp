@@ -1,5 +1,13 @@
 #include "DeathBoss.h"
 
+DeathBoss::DeathBoss(void)
+{
+}
+
+DeathBoss::~DeathBoss(void)
+{
+}
+
 void DeathBoss::DoInit(void)
 {
 }

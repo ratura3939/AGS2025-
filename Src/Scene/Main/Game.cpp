@@ -428,7 +428,7 @@ void Game::PlayCutScene(const CUT_SCENE_TYPE& _type)
 {
 	switch (_type) {
 	case CUT_SCENE_TYPE::APPEAR_BOSS:
-		direction_ = std::make_unique<AppearBoss>(*this, &player_, &enemy_);
+		direction_ = std::make_unique<AppearBoss>(*this, *player_, *enemy_);
 		break;
 
 	case CUT_SCENE_TYPE::DEATH_PLAYER:
