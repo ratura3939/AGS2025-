@@ -111,6 +111,7 @@ public:
 		,WAVE_MAGNET_SE
 		,FENCE_SE
 		,SWITCH_SE
+		,BOSS_DEATH_SE
 
 		//エフェクト
 		,SWORD_EFC

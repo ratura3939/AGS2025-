@@ -23,7 +23,9 @@ namespace {
 	const int BOSS_PUNCH = 6;		//攻撃
 	const int BOSS_PRE_SHOUT = 9;
 	const int BOSS_SHOUT = 10;
-	const int BOSS_DETH = 12;
+	const int BOSS_DEATH = 12;
+
+	const float DEATH_ANIM_SPEED = 0.5f;
 #pragma endregion
 
 	const float BOSS_HP = 300.0f;		//HP
@@ -67,7 +69,7 @@ void Boss::InitAnim(void)
 	animController_->Add("preShout", BOSS_PRE_SHOUT, AnimationController::PLAY_TYPE::NORMAL);
 	animController_->Add("shout", BOSS_SHOUT, AnimationController::PLAY_TYPE::NORMAL);
 	animController_->Add("walk", BOSS_WALK, AnimationController::PLAY_TYPE::LOOP);
-	animController_->Add("dethStart", BOSS_DETH, AnimationController::PLAY_TYPE::NORMAL);
+	animController_->Add("deathStart", BOSS_DEATH, AnimationController::PLAY_TYPE::NORMAL);
 	
 
 	//登場は叫びから
@@ -197,36 +199,6 @@ void Boss::UpdateBattle(void)
 		isStay_ = true;
 		atkChargeCnt_ = 0;
 	}
-
-	////この内容は初期キャラ用。攻撃時には止まって攻撃する
-	////強いキャラクターは移動攻撃も想定するのでここの処理とは少し違っていくる
-	////プレイヤーとの距離
-	//float distance = Utility::MagnitudeF(VSub(pPos_, pos_));
-
-	////移動処理
-	////移動処理
-	//if (distance >= atkDistance_) {
-	//	(this->*move_)(pPos_);
-	//}
-	//else {
-	//	OderGoalRot(pPos_);	//回転の設定だけは行う
-	//}
-
-
-	////カウンタ増加(ゲーム更新スピード)
-	//intervalCnt_ += SceneManager::GetInstance().GetUpdateSpeedRate_();
-
-	////判定
-	////プレイヤーが攻撃範囲内かつ攻撃可能な間隔を開けているのなら
-	//if (distance <= atkDistance_ && intervalCnt_ > INTERVAL_ATTACK_NOMAL) {
-	//	//攻撃の準備時間
-
-	//	//準備時間が終わったら攻撃する
-	//	atkManager_.Attack(speciesName_,"SwingSword");
-	//	animController_->Play("attack", SPEED_ANIM);
-	//	stopTime_ = atkManager_.GetTotalTime(EnemyManager::ATTACK_NOMAL);
-	//	intervalCnt_ = 0.0f;
-	//}
 }
 
 void Boss::MoveBattle(const VECTOR& _pPos)
@@ -251,6 +223,10 @@ void Boss::MoveBattle(const VECTOR& _pPos)
 	SetGoalRot(static_cast<float>(rad) - cameraRot.y);
 }
 
+void Boss::UpdateDeth(void)
+{
+}
+
 void Boss::DrawUI(void)
 {
 	//HPボックス表示
@@ -265,3 +241,12 @@ void Boss::DrawUI(void)
 	}
 }
 
+void Boss::DeathReaction(void)
+{
+	//可能性のあるエフェクトの停止
+	EffectManager::GetInstance().Stop(speciesName_, "Charge");
+
+	//死亡アニメーション
+	animController_->UnAnimLock();	//アニメーションロック解除
+	animController_->Play("deathStart", DEATH_ANIM_SPEED);	//死亡開始→死亡待機の順でアニメーション再生
+}

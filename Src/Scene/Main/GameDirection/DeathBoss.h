@@ -1,11 +1,15 @@
 #pragma once
 #include"CutSceneBase.h"
 
+class PixelMaterial;
+class PixelRenderer;
+class EnemyManager;
+
 class DeathBoss :
 	public CutSceneBase
 {
 public:
-	DeathBoss(void);
+	DeathBoss(EnemyManager& _enemy);
 	~DeathBoss(void)override;
 
 private:
@@ -15,5 +19,14 @@ private:
 	void DoRelease(void)override;
 
 	void FinishDirection(void)override;
+
+	EnemyManager& enemy_;	//敵
+	int directionCounter_;	//カウンター
+
+	//走査線
+	std::unique_ptr<PixelMaterial>flashMaterial_;
+	std::unique_ptr<PixelRenderer>flashRender_;
+	int flashScreen_;
+	float flashPower_;
 };
 

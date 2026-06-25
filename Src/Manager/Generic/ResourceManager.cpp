@@ -214,6 +214,9 @@ void ResourceManager::InitGame(void)
 	//É{ÉXã©Ç—
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "BossShout.mp3");
 	resourcesMap_.emplace(SRC::BOSS_SHOUT_SE, res);
+	//É{ÉXéÄñSéû
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_SE + "BossDeath_3.mp3");
+	resourcesMap_.emplace(SRC::BOSS_DEATH_SE, res);
 	
 
 	//çUåÇåxçêâπ

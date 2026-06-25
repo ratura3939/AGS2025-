@@ -107,7 +107,7 @@ const bool CharacterBase::IsAlive(void) const
 	return hp_ > 0;
 }
 
-void CharacterBase::Deth(void)
+void CharacterBase::Death(void)
 {
 	hp_ = 0;
 }

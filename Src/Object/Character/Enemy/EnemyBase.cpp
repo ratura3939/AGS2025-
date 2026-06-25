@@ -124,6 +124,11 @@ void EnemyBase::DamageReaction(void)
 	//ノーリアクション
 }
 
+void EnemyBase::DeathReaction(void)
+{
+	//ノーリアクション
+}
+
 void EnemyBase::UpdateNomal(void)
 {
 	//移動処理
@@ -344,9 +349,8 @@ void EnemyBase::ChangeState(const ENEMY_STATE _state)
 		//処理設定
 		update_ = &EnemyBase::UpdateDeth;
 
-		//死亡アニメーション
-		animController_->UnAnimLock();	//アニメーションロック解除
-		animController_->Play("dethStart", SPEED_ANIM, { "dethSus" });	//死亡開始→死亡待機の順でアニメーション再生
+		//死亡時演出
+		DeathReaction();
 
 		//コライダー登録解除
 		CollisionManager::GetInstance().MarkForDelete(collider_);		//本体
@@ -428,11 +432,11 @@ void EnemyBase::Damage(const float _pow)
 	//0以下のとき
 	if (hp_ <= 0) {
 		//死亡処理
-		Deth();
+		Death();
 	}
 }
 
-void EnemyBase::Deth(void)
+void EnemyBase::Death(void)
 {
 	ChangeState(ENEMY_STATE::DETH);
 }
@@ -440,6 +444,11 @@ void EnemyBase::Deth(void)
 void EnemyBase::Shout(void)
 {
 	//ボス専用
+}
+
+void EnemyBase::Delete(void)
+{
+	ChangeState(ENEMY_STATE::END);
 }
 
 void EnemyBase::DoHitCollider(const std::weak_ptr<Collider>& _col)

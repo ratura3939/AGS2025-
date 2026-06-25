@@ -21,6 +21,7 @@ EnemyManager::EnemyManager(Game& _scene, AttackManager& _atk)
 	,platePos_(Utility::VECTOR_INIT)
 	,createBoss_(false)
 	,counterUI_(nullptr)
+	,isPlayBossDeathDirection_(false)
 {
 }
 
@@ -68,8 +69,15 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 		//更新をかける
 		chara->Update();
 
+		//ボスの死亡判定
+		if (createBoss_ && !chara->IsAlive() && !isPlayBossDeathDirection_) {
+			gameScene_.PlayCutScene(Game::CUT_SCENE_TYPE::DEATH_BOSS);
+			isPlayBossDeathDirection_ = true;
+		}
+
 		//死亡演出も終了していたら
 		if (chara->IsEnd()) {
+			
 			//削除リストに追加
 			dethEnemy.push_back(counter);
 		}
@@ -271,5 +279,14 @@ void EnemyManager::BossShout(void)
 {
 	for (auto& chara : characters_) {
 		chara->Shout();	//叫び
+	}
+}
+
+void EnemyManager::DeleteBoss(void)
+{
+	if (createBoss_) {
+		for (auto& chara : characters_) {
+			chara->Delete();	//削除
+		}
 	}
 }

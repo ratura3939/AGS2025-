@@ -100,11 +100,11 @@ public:
     //ダメージ
     void Damage(const float _pow)override;
     //死亡させる
-    void Deth(void)override;
+    void Death(void)override;
 
     virtual void Shout(void);//ボス専用
 
-   
+    void Delete(void);  //強制削除
 
     //当たり判定後処理
 	void DoHitCollider(const std::weak_ptr<Collider>& _col)override;
@@ -114,6 +114,7 @@ protected:
     virtual void InitAnim(void)override;
     void InitUI(void)override;
 	virtual void DamageReaction(void); //ダメージリアクション
+	virtual void DeathReaction(void); //死亡時リアクション
 
 #pragma region 各種状態更新
 
@@ -122,7 +123,7 @@ protected:
     virtual void UpdateNomal(void);  //通常
     virtual void UpdateSearch(void); //索敵
     virtual void UpdateBattle(void); //戦闘
-    void UpdateDeth(void); //死亡
+    virtual void UpdateDeth(void); //死亡
 
     //各種移動処理
     void MoveNomal(const VECTOR& _pPos);

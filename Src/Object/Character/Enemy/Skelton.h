@@ -13,5 +13,6 @@ private:
 
 	void UpdateBattle(void)override;
 	void DamageReaction(void)override;
+	void DeathReaction(void)override;
 };
 

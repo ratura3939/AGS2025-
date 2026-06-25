@@ -83,6 +83,8 @@ public:
 	void CreateBoss(const VECTOR& _pPos);
 	void BossShout(void);
 
+	void DeleteBoss(void);	//ボスの削除
+
 private:
 	Game& gameScene_;	//シーンの参照
 	AttackManager& atkMng_;		//攻撃管理クラスの参照
@@ -98,5 +100,6 @@ private:
 
 	std::unique_ptr<EnemyCount>counterUI_;	//敵残数カウンター
 
+	bool isPlayBossDeathDirection_;	//ボスの死亡演出を再生したか
 };
 

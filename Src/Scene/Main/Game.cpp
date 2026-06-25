@@ -245,13 +245,6 @@ void Game::Update(void)
 		//シーン遷移
 		scM.ChangeScene(std::make_shared<GameOver>());
 	}
-
-	//デバッグ用
-	if (CheckHitKey(KEY_INPUT_P)==1&& !isDebug_) {
-		StartBossFaze();
-		isDebug_ = true;
-	}
-
 #pragma endregion
 
 	//更新
@@ -444,7 +437,7 @@ void Game::PlayCutScene(const CUT_SCENE_TYPE& _type)
 		break;
 
 	case CUT_SCENE_TYPE::DEATH_BOSS:
-		direction_ = std::make_unique<DeathBoss>();
+		direction_ = std::make_unique<DeathBoss>(*enemy_);
 		break;
 	}
 

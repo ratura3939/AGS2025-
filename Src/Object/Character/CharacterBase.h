@@ -63,7 +63,7 @@ public:
 	virtual void Damage(const float _pow) = 0;
 
 	//€–S‚³‚¹‚é
-	virtual void Deth(void);
+	virtual void Death(void);
 
 	//“–‚½‚è”»’èŒãˆ—
 	void HitCollider(std::weak_ptr<Collider> _col)override;

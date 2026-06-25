@@ -62,7 +62,7 @@ namespace {
 
 	//UŒ‚ŠÖ˜A
 	float ATK_SCALE = 80.0f;
-	float ATK_POWER = 30.0f;
+	float ATK_POWER = 300.0f;
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//UŒ‚‘Š‘ÎÀ•W
 
 	const float CHARACTER_WEIGHT = 1.0f; //d‚³
@@ -248,7 +248,7 @@ void PlayerChara::Damage(const float _pow)
 	//0ˆÈ‰º‚Ì‚Æ‚«
 	if (hp_ <= 0) {
 		//€–Sˆ—
-		Deth();
+		Death();
 	}
 }
 

@@ -17,7 +17,9 @@ private:
 
     void UpdateBattle(void)override; //í“¬
     void MoveBattle(const VECTOR& _pPos)override;
+    void UpdateDeth(void)override; //€–S
 
     void DrawUI(void)override;
+    void DeathReaction(void)override;   //€–SƒŠƒAƒNƒVƒ‡ƒ“
 };
 

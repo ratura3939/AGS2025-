@@ -17,7 +17,7 @@ namespace {
 	const int CAMERA_SHAKE_NUM = 3;				//カメラ演出における振動回数
 	const int CAMERA_SHAKE_COOL_TIME = 40;		//振動のクールタイム
 
-	constexpr float ALLOWABLE_DISTANCE = 10.0f;		//カメラの移動完了判定をがば目にするために
+	const float ALLOWABLE_DISTANCE = 10.0f;		//カメラの移動完了判定をがば目にするために
 
 	const std::string WARNING_STR_IMG = "WarningImg";	//UI登録名
 	const float WARNING_UI_ACC = 10.0f;	//WARNINGのUIの加速量
@@ -25,15 +25,15 @@ namespace {
 	const float WARNING_UI_MIN_ALPHA = 0.0f;	//WARNINGのUIの最小アルファ値
 
 	const float LOCK_DISTANCE_MIN_BOSS = 1000.0f;		//ロックオン時に最低限離れておく距離
-	constexpr int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
+	const int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
 
 	//ポストエフェクトバッファ数
 	const int SCAN_LINE_NUM_BUFF_PS = 2;
 	const int BLUR_NUM_BUFF_PS = 3;
 
-	constexpr VECTOR CAMERA_START_1 = { 600.0f,200.0f,0.0f };	//カメラ演出開始位置
-	constexpr VECTOR CAMERA_GOAL_1 = { 600.0f,1000.0f,0.0f };	//カメラ演出目標位置その①
-	constexpr VECTOR CAMERA_GOAL_2 = { 0.0f,800.0f,600.0f };	//カメラ演出目標位置その②
+	const VECTOR CAMERA_START_1 = { 600.0f,200.0f,0.0f };	//カメラ演出開始位置
+	const VECTOR CAMERA_GOAL_1 = { 600.0f,1000.0f,0.0f };	//カメラ演出目標位置その①
+	const VECTOR CAMERA_GOAL_2 = { 0.0f,800.0f,600.0f };	//カメラ演出目標位置その②
 
 }
 

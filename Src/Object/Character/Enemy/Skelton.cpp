@@ -53,8 +53,8 @@ void Skelton::InitAnim(void)
     animController_->Add("hitDamage", HIT_DAMAGE, AnimationController::PLAY_TYPE::NORMAL,true);
     animController_->Add("walk", ANIM_WALK, AnimationController::PLAY_TYPE::LOOP);
     animController_->Add("dush", ANIM_DUSH_FORWARD, AnimationController::PLAY_TYPE::LOOP);
-    animController_->Add("dethStart", ANIM_DETH_START, AnimationController::PLAY_TYPE::NORMAL);
-    animController_->Add("dethSus", ANIM_DETH_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
+    animController_->Add("deathStart", ANIM_DETH_START, AnimationController::PLAY_TYPE::NORMAL);
+    animController_->Add("deathSus", ANIM_DETH_SUSTANABLE, AnimationController::PLAY_TYPE::LOOP);
 }
 
 void Skelton::SetParam(void)
@@ -199,4 +199,11 @@ void Skelton::DamageReaction(void)
 		//可能性のあるエフェクトの停止
 		EffectManager::GetInstance().Stop(speciesName_, "Charge");
 	}
+}
+
+void Skelton::DeathReaction(void)
+{
+	//死亡アニメーション
+	animController_->UnAnimLock();	//アニメーションロック解除
+	animController_->Play("deathStart", SPEED_ANIM, { "deathSus" });	//死亡開始→死亡待機の順でアニメーション再生
 }
