@@ -246,7 +246,7 @@ void Game::Update(void)
 		scM.ChangeScene(std::make_shared<GameOver>());
 	}
 
-
+	//デバッグ用
 	if (CheckHitKey(KEY_INPUT_P)==1&& !isDebug_) {
 		StartBossFaze();
 		isDebug_ = true;

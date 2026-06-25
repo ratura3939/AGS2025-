@@ -45,8 +45,9 @@ AppearBoss::AppearBoss(Game& _scene, PlayerManager& _player, EnemyManager& _enem
 	,useDirectionUpdate_(&AppearBoss::UpdatePostEffect)
 	,usePostEffectDraw_(&AppearBoss::DrawScanLine)
 	,cameraMoveStartPos_(CAMERA_START_1)
-	,cameraMoveGoalPos_(CAMERA_GOAL_1 ,CAMERA_GOAL_2)
 {
+	cameraMoveGoalPos_[0] = CAMERA_GOAL_1;
+	cameraMoveGoalPos_[1] = CAMERA_GOAL_2;
 }
 
 AppearBoss::~AppearBoss(void)
