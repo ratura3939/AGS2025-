@@ -40,7 +40,7 @@ EnemyBase::EnemyBase(VECTOR& _pos, const int _num, AttackManager& _atk, const VE
 	,atkChargeCnt_(0)
 	,atkChargeCntMax_(0)
 	,isAlive_(true)
-	,state_(ENEMY_STATE::END)
+	,state_(ENEMY_STATE::MAX)
 	,isLockTarget_(false)
 	,atkRelative_(Utility::VECTOR_INIT)
 	,atkDistance_(-1.0f)
@@ -395,6 +395,11 @@ void EnemyBase::DrawUI(void)
 const bool EnemyBase::IsAlive(void) const
 {
 	return state_ != ENEMY_STATE::DETH && state_ != ENEMY_STATE::END;
+}
+
+const bool EnemyBase::IsEnd(void) const
+{
+	return state_ == ENEMY_STATE::END;
 }
 
 const void EnemyBase::SetAnimSpeedRate(const float _percent)

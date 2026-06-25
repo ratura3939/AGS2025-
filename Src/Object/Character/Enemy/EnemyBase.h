@@ -67,6 +67,7 @@ public:
         ,BATTLE
         ,DETH
         ,END
+        ,MAX
     };
     /// <summary>
     /// 視界判定
@@ -85,6 +86,7 @@ public:
 
     //生存判定
     const bool IsAlive(void)const override;
+    const bool IsEnd(void)const;
     const ENEMY_STATE GetNowState(void)const { return state_; }
     /// <summary>
     /// アニメーションのスピード変更

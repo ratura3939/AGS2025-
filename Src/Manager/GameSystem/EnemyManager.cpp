@@ -68,16 +68,16 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 		//更新をかける
 		chara->Update();
 
-		//死亡していたら
-		if (!chara->IsAlive()) {
-			//死亡リストに追加
+		//死亡演出も終了していたら
+		if (chara->IsEnd()) {
+			//削除リストに追加
 			dethEnemy.push_back(counter);
 		}
 		//個体カウンター増加
 		counter++;
 	}
 
-	//死亡リスト分回す
+	//削除リスト分回す
 	int dethCnt = 0;
 	for (auto& idx : dethEnemy) {
 		//該当の敵を消去
