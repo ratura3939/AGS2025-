@@ -64,15 +64,12 @@ private:
 	//走査線
 	std::unique_ptr<PixelMaterial>scanLineMaterial_;
 	std::unique_ptr<PixelRenderer>scanLineRender_;
-	int scanLineScreen_;
 
 	//ブラー関連
 	std::unique_ptr<PixelMaterial>blurMaterial_;
 	std::unique_ptr<PixelRenderer>blurRender_;
-	int blurScreen_;
 
 	BOSS_DIRECTION direcState_;		//ボス演出管理
-	int direcCnt_;					//演出に関わるカウンタ
 
 	//カメラの演出用
 	VECTOR cameraMoveStartPos_;							//初期位置

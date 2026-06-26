@@ -2,6 +2,10 @@
 #include "../Application.h"
 #include "Fader.h"
 
+namespace {
+	const float ALPHA_MAX = 255.0f;	//不透明度最大値
+}
+
 Fader::STATE Fader::GetState(void) const
 {
 	return state_;
@@ -42,9 +46,9 @@ void Fader::Update(void)
 
 	case STATE::FADE_OUT:
 		alpha_ += SPEED_ALPHA;
-		if (alpha_ > 255){
+		if (alpha_ > ALPHA_MAX){
 			// フェード終了
-			alpha_ = 255;
+			alpha_ = ALPHA_MAX;
 			if (isPreEnd_){
 				// 1フレーム後(Draw後)に終了とする
 				isEnd_ = true;
@@ -90,4 +94,9 @@ void Fader::Draw(void)
 		break;
 	}
 
+}
+
+void Fader::FadeAlphaMax(void)
+{
+	alpha_ = ALPHA_MAX;
 }

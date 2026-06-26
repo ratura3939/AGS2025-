@@ -52,8 +52,6 @@ AppearBoss::AppearBoss(Game& _scene, PlayerManager& _player, EnemyManager& _enem
 
 AppearBoss::~AppearBoss(void)
 {
-	DeleteGraph(scanLineScreen_);
-	DeleteGraph(blurScreen_);
 }
 
 void AppearBoss::DoInit(void)
@@ -78,9 +76,6 @@ void AppearBoss::DoInit(void)
 
 	scanLineRender_ = std::make_unique<PixelRenderer>(*scanLineMaterial_);
 	scanLineRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	// ポストエフェクト用スクリーン
-	scanLineScreen_ = MakeScreen(
-		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 
 	//ブラー
 	//PS
@@ -94,9 +89,6 @@ void AppearBoss::DoInit(void)
 
 	blurRender_ = std::make_unique<PixelRenderer>(*blurMaterial_);
 	blurRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	// ポストエフェクト用スクリーン
-	blurScreen_ = MakeScreen(
-		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FIXED_POINT);	//演出中はカメラ操作を受け付けない
 
@@ -113,7 +105,7 @@ bool AppearBoss::DoUpdate(void)
 	if ((this->*useDirectionUpdate_)()) {
 		//次の演出に
 		direcState_ = static_cast<BOSS_DIRECTION>(static_cast<int>(direcState_) + 1);
-		direcCnt_ = 0;
+		directionCounter_ = 0;
 
 		//演出終了
 		if (EndDirectionUpdate()) {
@@ -160,9 +152,9 @@ bool AppearBoss::UpdatePostEffect(void)
 	scanLineMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });	//横ライン移動用
 
 	//演出カウンタ更新
-	direcCnt_++;
+	directionCounter_++;
 	//一定時間過ぎたら
-	if (direcCnt_ > WARNING_DIRECTION_TIME) {
+	if (directionCounter_ > WARNING_DIRECTION_TIME) {
 		//演出終了
 		SoundManager::GetInstance().Stop("WarningBgm");	//警告音止める
 		isDrawPostEffect_ = false;
@@ -191,10 +183,10 @@ bool AppearBoss::UpdateShakeScreen(void)
 	//カメラシェイク終了時
 	if (SceneManager::GetInstance().GetCamera().IsFinishShake()) {
 		//演出カウンタ増加
-		direcCnt_++;
+		directionCounter_++;
 
 		//一定数行ったら
-		if (direcCnt_ >= CAMERA_SHAKE_NUM) {
+		if (directionCounter_ >= CAMERA_SHAKE_NUM) {
 			//演出終了
 			return true;
 		}
@@ -224,21 +216,20 @@ bool AppearBoss::UpdateCameraMove(void)
 	auto cameraPos = camera.GetPos();
 	if (Utility::MagnitudeF(VSub(camera.GetGoalPos(), cameraPos)) <= ALLOWABLE_DISTANCE) {
 		//演出カウンタ増加
-		direcCnt_++;
+		directionCounter_++;
 
 		//移動演出回数の上限に到達していたら
-		if (direcCnt_ >= CAMERA_DIRECTION_NUM) {
+		if (directionCounter_ >= CAMERA_DIRECTION_NUM) {
 			//演出終了
 			return true;
 		}
 		else {
 			//次の目標地点への設定
-			camera.SetGoalDirecPos(VAdd(enemy_.GetPos(BOSS_IDX), cameraMoveGoalPos_[direcCnt_]));
+			camera.SetGoalDirecPos(VAdd(enemy_.GetPos(BOSS_IDX), cameraMoveGoalPos_[directionCounter_]));
 
 			//二回目の移動はボスの「叫び」も入れる
 			enemy_.BossShout();
 			//「叫び」演出用のブラーへ
-			//ChangeActionDirec(ACTION_DIRECTION::BLUR);
 			usePostEffectDraw_ = &AppearBoss::DrawBlur;
 			isDrawPostEffect_ = true;
 		}
@@ -274,7 +265,7 @@ void AppearBoss::EndShakeScreen(void)
 	//実行
 	DoShake();
 	//演出の更新を「画面揺れ」に
-	useDirectionUpdate_ = &AppearBoss::UpdateShakeScreen;
+	useDirectionUpdate_ = &AppearBoss::UpdateShakeScreen;	
 }
 
 void AppearBoss::EndCameraMove(void)
@@ -290,7 +281,7 @@ void AppearBoss::EndCameraMove(void)
 	//場所の設定(ボスの横ぐらい)
 	auto bossPos = enemy_.GetPos(BOSS_IDX);
 	camera.SetPos(VAdd(bossPos, cameraMoveStartPos_), bossPos);
-	camera.SetGoalDirecPos(VAdd(bossPos, cameraMoveGoalPos_[direcCnt_]));
+	camera.SetGoalDirecPos(VAdd(bossPos, cameraMoveGoalPos_[directionCounter_]));
 
 	//演出を「カメラ移動に変更
 	useDirectionUpdate_ = &AppearBoss::UpdateCameraMove;
@@ -298,31 +289,14 @@ void AppearBoss::EndCameraMove(void)
 
 void AppearBoss::DrawScanLine(void)
 {
-	int mainScreen = SceneManager::GetInstance().GetMainScreen();
+	DrawPostEffect(*scanLineRender_);	//ポストエフェクトの描画
 
-	SetDrawScreen(scanLineScreen_);
-
-	DrawGraph(0, 0, mainScreen, false);
-	scanLineRender_->Draw();
-
-	// メインに戻す
-	SetDrawScreen(mainScreen);
-	DrawGraph(0, 0, scanLineScreen_, false);
-	//ポストエフェクトの上から鮮明な文字を出す
-	UIManager2d::GetInstance().Draw(WARNING_STR_IMG);
+	UIManager2d::GetInstance().Draw(WARNING_STR_IMG);	//「WARNING」の描画
 }
 
 void AppearBoss::DrawBlur(void)
 {
-	int mainScreen = SceneManager::GetInstance().GetMainScreen();
-	blurMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
+	blurMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });	//描画ごとに走査線のマテりアルを更新
 
-	SetDrawScreen(blurScreen_);
-
-	DrawGraph(0, 0, mainScreen, false);
-	blurRender_->Draw();
-
-	// メインに戻す
-	SetDrawScreen(mainScreen);
-	DrawGraph(0, 0, blurScreen_, false);
+	DrawPostEffect(*blurRender_);	//ポストエフェクトの描画
 }

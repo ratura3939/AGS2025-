@@ -76,7 +76,8 @@ public:
 	/// シーンの変更
 	/// </summary>
 	/// <param name="_scene">メインシーン(Scene/Main/)</param>
-	void ChangeScene(std::shared_ptr<SceneBase>_scene);
+	/// <param name="_isStartFadeIn">フェードイン(初期真っ暗→明転)から始まるか(Scene/Main/)</param>
+	void ChangeScene(std::shared_ptr<SceneBase>_scene, const bool _isStartFadeIn = false);
 
 	/// <summary>
 	/// 追加シーンの生成

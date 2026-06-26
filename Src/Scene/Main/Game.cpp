@@ -73,9 +73,10 @@ Game::Game(void):
 	,switchBgmStr_("")
 	,nextBgmVol_(0)
 	,switchBgm_(false)
+	,isGameOver_(false)
+	,isStartPlayerDeathScene_(false)
 
 {
-	isDebug_ = false;
 }
 
 Game::~Game(void)
@@ -236,17 +237,6 @@ void Game::Update(void)
 	Camera& camera = scM.GetCamera();
 	InputManager& inpM = InputManager::GetInstance();
 
-#pragma region シーン遷移(ルール)
-	//プレイヤーが死んでいたら
-	if (!player_->IsAlive()) {
-		//BGM念のため両方停止
-		sndM.Stop(nowBgmStr_);
-		sndM.Stop(switchBgmStr_);
-		//シーン遷移
-		scM.ChangeScene(std::make_shared<GameOver>());
-	}
-#pragma endregion
-
 	//更新
 	//演出内容があるならば
 	if (direction_ != nullptr) {
@@ -262,6 +252,24 @@ void Game::Update(void)
 	else {
 		GameUpdate();	//通常ゲーム更新
 	}
+
+#pragma region シーン遷移(ルール)
+	//ゲームオーバー条件
+	if (isGameOver_) {
+		//BGM念のため両方停止
+		sndM.Stop(nowBgmStr_);
+		sndM.Stop(switchBgmStr_);
+		//シーン遷移
+		scM.ChangeScene(std::make_shared<GameOver>(), true);
+	}
+
+	//プレイヤーが死んでいたら
+	if (!player_->IsAlive() && !isStartPlayerDeathScene_) {
+		PlayCutScene(CUT_SCENE_TYPE::DEATH_PLAYER);
+		isStartPlayerDeathScene_ = true;
+	}
+
+#pragma endregion
 }
 
 void Game::GameUpdate(void)
@@ -433,7 +441,7 @@ void Game::PlayCutScene(const CUT_SCENE_TYPE& _type)
 		break;
 
 	case CUT_SCENE_TYPE::DEATH_PLAYER:
-		direction_ = std::make_unique<DeathPlayer>();
+		direction_ = std::make_unique<DeathPlayer>(*this, *player_);
 		break;
 
 	case CUT_SCENE_TYPE::DEATH_BOSS:
@@ -492,4 +500,9 @@ void Game::StartBgm(std::string _bgmName)
 	SoundManager::GetInstance().Play(_bgmName);
 	nowBgmStr_ = _bgmName;
 	switchBgm_ = false;
+}
+
+void Game::StartGameOver(void)
+{
+	isGameOver_ = true;
 }

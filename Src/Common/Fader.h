@@ -29,6 +29,8 @@ public:
 	void Update(void);
 	void Draw(void);
 
+	void FadeAlphaMax(void);	//不透明度をマックスに
+
 private:
 
 	// 状態

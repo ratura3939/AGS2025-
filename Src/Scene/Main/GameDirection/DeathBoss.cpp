@@ -9,7 +9,7 @@
 #include "DeathBoss.h"
 
 namespace {
-	const int DIRECTION_TIME = 240;
+	const int DIRECTION_TIME = 210;
 	const int BOSS_IDX = 0;		//ボスの配列番号(ボス単体のため必ず0)
 	const VECTOR CAMERA_RELATIVE = { 0.0f,400.0f,600.0f };
 	const VECTOR CAMERA_FOCUS_RELATIVE = { 0.0f,300.0f,0.0f };
@@ -17,14 +17,15 @@ namespace {
 	const int FLASH_BUFF_NUM_PS = 2;				//バッファ総数
 	const FLOAT4 WHITE = { 0.6f,0.6f,0.6f,1.0f };	//白
 	const int FLASH_POWER_BUFF_NUM = 1;				//フラッシュの強さを伝えるバッファ番号
-	const int FLASH_NUM = 6;		//フラッシュ回数
+	const int FLASH_NUM = 7;			//フラッシュ回数
 	const float FLASH_MAX_RATE = 1.0f;	//フラッシュ最高値
+	const int FLASH_SE_PITCH = 600;		//ピッチ調整
 }
 
 DeathBoss::DeathBoss(EnemyManager& _enemy):
 	enemy_(_enemy)
-	,directionCounter_(0)
-	,flashPower_(0.0f)
+	,flashMaterial_(nullptr)
+	,flashRender_(nullptr)
 {
 }
 
@@ -50,16 +51,15 @@ void DeathBoss::DoInit(void)
 	//拡散光
 	flashMaterial_->AddConstBuf(WHITE);
 	//時間
-	flashMaterial_->AddConstBuf({ flashPower_,0.0f,0.0f,0.0f });
+	flashMaterial_->AddConstBuf({ 0.0f,0.0f,0.0f,0.0f });
 
 	flashRender_ = std::make_unique<PixelRenderer>(*flashMaterial_);
 	flashRender_->MakeSquereVertex({ 0,0 }, { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y });
-	// ポストエフェクト用スクリーン
-	flashScreen_ = MakeScreen(
-		Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 
 	SoundManager& sndM = SoundManager::GetInstance();
+	sndM.AdjustPitchRate(FLASH_SE_PITCH);
 	sndM.Add(SoundManager::TYPE::SE, "Flash", ResourceManager::GetInstance().Load(ResourceManager::SRC::BOSS_DEATH_SE).handleId_);
+	sndM.AdjustPitchRate();
 }
 
 bool DeathBoss::DoUpdate(void)
@@ -72,14 +72,14 @@ bool DeathBoss::DoUpdate(void)
 	//ポストエフェクト更新
 	int flashInterval = DIRECTION_TIME / FLASH_NUM;
 	int flashRateForInterval = (directionCounter_ % flashInterval);
-	flashPower_ = static_cast<float>(flashRateForInterval) / static_cast<float>(flashInterval);
-	flashPower_ = sin(flashPower_ * DX_PI_F);
+	float flashPower = static_cast<float>(flashRateForInterval) / static_cast<float>(flashInterval);
+	flashPower = sin(flashPower * DX_PI_F);
 
-	if (flashPower_ == FLASH_MAX_RATE) {
+	if (flashPower == FLASH_MAX_RATE) {
 		SoundManager::GetInstance().Play("Flash");
 	}
 
-	flashMaterial_->SetConstBuf(FLASH_POWER_BUFF_NUM, { flashPower_,0.0f,0.0f,0.0f});	//フラッシュ強さ設定
+	flashMaterial_->SetConstBuf(FLASH_POWER_BUFF_NUM, { flashPower,0.0f,0.0f,0.0f});	//フラッシュ強さ設定
 
 	//アニメーションのみ更新
 	enemy_.UpdateAnim();
@@ -89,16 +89,7 @@ bool DeathBoss::DoUpdate(void)
 
 void DeathBoss::DoDraw(void)
 {
-	int mainScreen = SceneManager::GetInstance().GetMainScreen();
-
-	SetDrawScreen(flashScreen_);
-
-	DrawGraph(0, 0, mainScreen, false);
-	flashRender_->Draw();
-
-	// メインに戻す
-	SetDrawScreen(mainScreen);
-	DrawGraph(0, 0, flashScreen_, false);
+	DrawPostEffect(*flashRender_);
 }
 
 void DeathBoss::DoRelease(void)

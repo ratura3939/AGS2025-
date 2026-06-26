@@ -63,6 +63,9 @@ public:
 	//特定のBGM再生開始
 	void StartBgm(std::string _bgmName);
 
+	//ゲームオーバー
+	void StartGameOver(void);
+
 private:
 	//各初期化
 	void InitSound(void)override;
@@ -108,6 +111,9 @@ private:
 
 
 #pragma region その他変数
+	bool isGameOver_;	//ゲームオーバー条件
+	bool isStartPlayerDeathScene_;	//プレイヤー死亡演出を開始したか
+
 	//スロー演出
 	bool isSlowEffect_;	//ON/OFFフラグ
 	int slowCnt_;		//カウンタ
@@ -118,8 +124,5 @@ private:
 	int nextBgmVol_;			//音量調整用(BGM切り替え時に使用)
 	bool switchBgm_;			//切り換え開始フラグ
 #pragma endregion
-
-
-	bool isDebug_;
 };
 

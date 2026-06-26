@@ -21,12 +21,9 @@ private:
 	void FinishDirection(void)override;
 
 	EnemyManager& enemy_;	//敵
-	int directionCounter_;	//カウンター
 
 	//走査線
 	std::unique_ptr<PixelMaterial>flashMaterial_;
 	std::unique_ptr<PixelRenderer>flashRender_;
-	int flashScreen_;
-	float flashPower_;
 };
 

@@ -148,9 +148,13 @@ void SceneManager::SetInitScene(std::shared_ptr<SceneBase> _scene)
 	DoChangeScene();		//シーン遷移
 }
 
-void SceneManager::ChangeScene(std::shared_ptr<SceneBase> _scene)
+void SceneManager::ChangeScene(std::shared_ptr<SceneBase>_scene, const bool _isStartFadeIn)
 {
 	nextScene_ = _scene;	//次のシーンをセット
+	if (_isStartFadeIn) {
+		fader_->FadeAlphaMax();	//初期から真っ暗に
+	}
+	//通常
 	fader_->SetFade(Fader::STATE::FADE_OUT);	//フェードアウト(暗転)を開始する
 	isSceneChanging_ = true;
 }
