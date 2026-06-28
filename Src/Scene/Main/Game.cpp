@@ -25,38 +25,36 @@
 
 //ローカル定数
 namespace {
-	constexpr VECTOR CAMERA_START_1 = { 600.0f,200.0f,0.0f };	//カメラ演出開始位置
-	constexpr VECTOR CAMERA_GOAL_1 = { 600.0f,1000.0f,0.0f };	//カメラ演出目標位置その①
-	constexpr VECTOR CAMERA_GOAL_2 = { 0.0f,800.0f,600.0f };	//カメラ演出目標位置その②
-
+	//スロー演出関連
 	const int LIMIT_SLOW = 200;					//スロー演出時間
-	const int BGM_VOL_MAX = 100;				//BGM音量最大値
-	const int BGM_VOL_ACC = 1;					//BGM切り換えスピード
 	const float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
 	const float SLOW_SPEED_PERCENT = 25.0f;		//スローの割合(通常時から半分の速度にする)
 	
-	const std::string MENU_BTN = "menuBtn";
-	const float BTN_EX = 0.6f;
-	const int BTN_DIFF_X = 300;
-	const int BTN_DIFF_Y = 100;
+	//ボタン関連
+	const std::string MENU_BTN = "menuBtn";		//登録名
+	const float BTN_EX = 0.6f;					//拡大率
+	const int BTN_DIFF_X = 300;					//位置調整X
+	const int BTN_DIFF_Y = 100;					//位置調整Y
 
-	const float CAMERA_FOLLOW_DIFF_Y_ABILITY = 200.0f;	//能力使用時の注視点差分
-
-	const float LOCK_DISTANCE_MIN_NOMAL = 500.0f;		//ロックオン時に最低限離れておく距離
-
-	const int BGM_VOL = 80;	//BGMの音量
-	const int WALK_SE_VOL = 60;	//歩くSEの音量
-	const int DODGE_SE_VOL = 45;	//回避SEの音量
+	//BGM・SE関連
+	const int BGM_VOL_MAX = 100;		//BGM音量最大値
+	const int BGM_VOL_ACC = 1;			//BGM切り換えスピード
+	const int BGM_VOL = 80;				//BGMの音量
+	const int WALK_SE_VOL = 60;			//歩くSEの音量
+	const int DODGE_SE_VOL = 45;		//回避SEの音量
 	const int JUST_DODGE_SE_VOL = 80;	//ジャスト回避SEの音量
-
-	//ポストエフェクトバッファ数
-	const int DODGE_NUM_BUFF_PS = 3;
-
-	const float DODGE_EFFECT_RADIUS = 0.4f;
-	const float DODGE_EFFECT_RATE = 0.02f;
-
 	const int WALK_SE_INTERVAL = 20;	//歩くSEの再生間隔
 	const int RUN_SE_INTERVAL = 10;		//走るSEの再生間隔
+
+	//回避演出関連
+	const int DODGE_NUM_BUFF_PS = 3;		//ポストエフェクトバッファ数
+	const int DODGE_TEX_BUFF_NUM = 11;		//テクスチャ保存番号
+	const float DODGE_EFFECT_RADIUS = 0.4f;	//ブラー半径
+	const float DODGE_EFFECT_RATE = 0.02f;	//ブラー強さ
+
+	//カメラ関連
+	const float CAMERA_FOLLOW_DIFF_Y_ABILITY = 200.0f;	//能力使用時の注視点差分
+	const float LOCK_DISTANCE_MIN_NOMAL = 500.0f;		//ロックオン時に最低限離れておく距離
 }
 
 Game::Game(void):
@@ -219,8 +217,8 @@ void Game::InitShader(void)
 	dodgeMaterial_->AddConstBuf({ 0.0f,0.0f ,0.0f,0.0f });
 	//画面X・Y・強さ・半径
 	dodgeMaterial_->AddConstBuf({ Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y ,DODGE_EFFECT_RATE,DODGE_EFFECT_RADIUS });
-
-	dodgeMaterial_->SetTextureBuf(11, ResourceManager::GetInstance().Load(ResourceManager::SRC::FOCUS_IMG).handleId_);
+	//テクスチャ設定
+	dodgeMaterial_->SetTextureBuf(DODGE_TEX_BUFF_NUM, ResourceManager::GetInstance().Load(ResourceManager::SRC::FOCUS_IMG).handleId_);
 
 	dodgeRender_ = std::make_unique<PixelRenderer>(*dodgeMaterial_);
 
@@ -300,8 +298,9 @@ void Game::GameUpdate(void)
 	if (isSlowEffect_) {
 		//スロー時の更新(このカウンタはスローの影響を受けない)
 		slowCnt_++;
+		//一定時間の経過で
 		if (slowCnt_ >= LIMIT_SLOW) {
-			EndSlow();
+			EndSlow();	//スロー終了
 		}
 	}
 
@@ -323,8 +322,7 @@ void Game::GameUpdate(void)
 	if (enemy_->IsBattleStateChanged()) {
 		//もともと切り換え中だったら
 		if (switchBgm_) {
-			//強制終了処理
-			FinishSwitchBgm();
+			FinishSwitchBgm();	//強制終了処理
 		}
 
 		//切り換え開始
@@ -375,13 +373,12 @@ void Game::Draw(void)
 
 	//スロー時(回避成功時)
 	if (isSlowEffect_) {
-		//描画
 		DrawDodgeEffect();	//回避用のポストエフェクト
 	}
 
 	//演出がある場合
 	if (direction_ != nullptr) {
-		direction_->Draw();
+		direction_->Draw();	//描画
 	}
 }
 
@@ -391,9 +388,6 @@ void Game::DrawDodgeEffect(void)
 	dodgeMaterial_->SetConstBuf(1, { SceneManager::GetInstance().GetTotalTime(),0.0f,0.0f,0.0f });
 
 	SetDrawScreen(dodgeScreen_);
-
-	// 画面を初期化
-	//ClearDrawScreen();
 
 	DrawGraph(0, 0, mainScreen, false);
 	dodgeRender_->Draw();
@@ -410,16 +404,14 @@ void Game::Release(void)
 	SoundManager& sndM = SoundManager::GetInstance();
 	sndM.Stop("NomalBgm");	//今まで流していたものを停止
 	sndM.Stop("BattleBgm");	//今まで流していたものを停止
-	CollisionManager::GetInstance().DeleteAllCollider();
+	CollisionManager::GetInstance().DeleteAllCollider();	//登録していたコライダー全削除
 }
 
 void Game::Reset(void)
 {
 	SoundManager& sndM = SoundManager::GetInstance();
 	sndM.AdjustVolume(SoundManager::TYPE::BGM, BGM_VOL);	//前シーンに戻るのでBGMの音量を復活
-	//とりあえずメニューからの復帰時は追従に
-	//メニュー開く直前に変える可能性大
-	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
+	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);	//カメラを追従に変更
 }
 
 void Game::StartBossFaze(void)
@@ -435,6 +427,7 @@ void Game::StartBossFaze(void)
 
 void Game::PlayCutScene(const CUT_SCENE_TYPE& _type)
 {
+	//該当の演出インスタンスを生成
 	switch (_type) {
 	case CUT_SCENE_TYPE::APPEAR_BOSS:
 		direction_ = std::make_unique<AppearBoss>(*this, *player_, *enemy_);
@@ -449,7 +442,7 @@ void Game::PlayCutScene(const CUT_SCENE_TYPE& _type)
 		break;
 	}
 
-	direction_->Init();
+	direction_->Init();	//演出初期化
 }
 
 const int Game::DecideRockEnemy(void)
@@ -489,7 +482,7 @@ void Game::StartSlow(void)
 void Game::EndSlow(void)
 {
 	auto& scM = SceneManager::GetInstance();
-	isSlowEffect_ = false;
+	isSlowEffect_ = false;	//スロー終了
 	//更新処理を100％にもどす
 	scM.SetUpdateSpeedRate(NOMAL_SPEED_PERCENT);
 	enemy_->SetAnimSpeedRate(scM.GetUpdateSpeedRatePercent());
@@ -497,8 +490,8 @@ void Game::EndSlow(void)
 
 void Game::StartBgm(std::string _bgmName)
 {
-	SoundManager::GetInstance().Play(_bgmName);
-	nowBgmStr_ = _bgmName;
+	SoundManager::GetInstance().Play(_bgmName);	//再生
+	nowBgmStr_ = _bgmName;	//再生名の保存
 	switchBgm_ = false;
 }
 
