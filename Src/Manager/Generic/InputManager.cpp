@@ -126,7 +126,6 @@ void InputManager::ResetInput(void)
 
 	inputTable_["skip"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_J },{ PERIPHERAL_TYPE::GAMEPAD,RB_NUM  } };	//RT
 
-
 	//É|Å[ÉY
 	inputTable_["pause"] = { { PERIPHERAL_TYPE::KEYBOARD,KEY_INPUT_TAB },{ PERIPHERAL_TYPE::GAMEPAD,PAD_INPUT_R } };
 }

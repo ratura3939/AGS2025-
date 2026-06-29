@@ -312,6 +312,9 @@
     <ClCompile Include="Src\Scene\Main\GameDirection\CutSceneBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\UI\Player\Operation.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">
@@ -581,6 +584,9 @@
     <ClInclude Include="Src\Scene\Main\GameDirection\CutSceneBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\UI\Player\Operation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\Model\StdModelPS.hlsl" />
@@ -595,6 +601,8 @@
     <FxCompile Include="Src\Shader\Model\NoiseWavePS.hlsl" />
     <FxCompile Include="Src\Shader\Model\MagnetLinePS.hlsl" />
     <FxCompile Include="Src\Shader\Model\MagnetLineVS.hlsl" />
+    <FxCompile Include="Src\Shader\PostEffect\Flash.hlsl" />
+    <FxCompile Include="Src\Shader\PostEffect\IrisOut.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\PixelShader2DHeader.hlsli" />

@@ -115,6 +115,7 @@ void PauseScene::InputUser(void)
 	if (inpM.IsTrigerrDown("pause")) {
 		//シーン移動(1つ前のシーン＝ゲームシーンに戻る)
 		scM.PopScene();
+		return;
 	}
 
 	//決定入力
@@ -125,6 +126,7 @@ void PauseScene::InputUser(void)
 		case MENU_ITEM::BACK_GAME:
 			//シーンをポップ
 			scM.PopScene();
+			return;
 			break;
 
 		case MENU_ITEM::CONFIG:
