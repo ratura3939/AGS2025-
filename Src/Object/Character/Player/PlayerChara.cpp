@@ -62,15 +62,14 @@ namespace {
 
 	//攻撃関連
 	float ATK_SCALE = 80.0f;
-	float ATK_POWER = 300.0f;
+	float ATK_POWER = 30.0f;
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 
 	const float CHARACTER_WEIGHT = 1.0f; //重さ
 	const float GRAVITY_POW = 1.0f; //重力
 	const float JUMP_POW = 30.0f; //ジャンプ力
 
-	//const VECTOR INIT_POSITION = { 4271.0f,0.0f,-6142.0f };
-	const VECTOR INIT_POSITION = { 0.0f,0.0f,0.0f };
+	const VECTOR INIT_POSITION = { 4271.0f,0.0f,-6142.0f };
 
 	const float UI_DIFF_Y = 200.0f; //UI表示位置のY軸の差
 

@@ -35,6 +35,8 @@ public:
 		,FOCUS_IMG
 		,NOISE_STAGE
 
+		,RETICLE_IMG
+
 		//UI
 		,ARROW_DOWN_IMG
 		,HEART_IMG

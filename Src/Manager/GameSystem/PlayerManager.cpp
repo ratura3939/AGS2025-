@@ -99,9 +99,9 @@ const VECTOR& PlayerManager::GetFocusPoint(void)
 	return character_->GetFocusPoint();
 }
 
-const VECTOR& PlayerManager::GetFollowPos4UseMagnet(void)
+const VECTOR& PlayerManager::GetFollowPosForUseMagnet(void)
 {
-	return ability_->GetFollowPos4UseMagnet(character_->GetPos());
+	return ability_->GetFollowPosForUseMagnet(character_->GetPos());
 }
 
 

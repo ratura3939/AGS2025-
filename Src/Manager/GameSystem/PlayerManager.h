@@ -38,7 +38,7 @@ public:
 	const VECTOR& GetPos(void)const;	//ç¿ïW
 	const Quaternion& GetQua(void);		//âÒì]
 	const VECTOR& GetFocusPoint(void);	//íçéãì_
-	const VECTOR& GetFollowPos4UseMagnet(void);
+	const VECTOR& GetFollowPosForUseMagnet(void);
 
 	const bool IsAlive(void)const;
 	const bool IsUseAbility(void)const;

@@ -175,6 +175,10 @@ void ResourceManager::InitGame(void)
 	//タイムロック
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Icon_LockTime.png");
 	resourcesMap_.emplace(SRC::ABILITY_LOCK_TIME_IMG, res);
+
+	//レティクル
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Reticle.png");
+	resourcesMap_.emplace(SRC::RETICLE_IMG, res);
 ;
 	//音
 	//BGM
