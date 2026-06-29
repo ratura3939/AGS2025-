@@ -73,6 +73,7 @@ Game::Game(void):
 	,switchBgm_(false)
 	,isGameOver_(false)
 	,isStartPlayerDeathScene_(false)
+	,isGoPauseScene_(false)
 
 {
 }
@@ -287,13 +288,22 @@ void Game::GameUpdate(void)
 
 	//ポーズシーン遷移
 	if (inpM.IsTrigerrDown("pause")) {
+		isGoPauseScene_ = true;
 		//シーン追加(一つ次へ)
 		scM.PushScene(std::make_shared<PauseScene>());
 	}
 
+	//ポーズシーンから戻ってきて初期更新のみ
+	if (isGoPauseScene_) {
+		//操作UIの設定
+		player_->SetOperationUI(SceneManager::GetInstance().GetController());
+		//ポーズシーンからの遷移終了
+		isGoPauseScene_ = false;
+	}
+
 #pragma region 基礎アプデ
 	//プレイヤー
-	player_->Update(*atkMng_);
+	player_->Update();
 	//敵はスローの効果を受ける
 	if (isSlowEffect_) {
 		//スロー時の更新(このカウンタはスローの影響を受けない)
@@ -305,7 +315,7 @@ void Game::GameUpdate(void)
 	}
 
 	//敵
-	enemy_->Update(player_->GetPos(), *atkMng_);
+	enemy_->Update();
 
 	//攻撃
 	atkMng_->Update();

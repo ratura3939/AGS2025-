@@ -12,7 +12,7 @@ public:
 	};
 
 	enum class CUBE_DIR {
-		NONE
+		MAX
 		,X
 		,Y
 		,Z

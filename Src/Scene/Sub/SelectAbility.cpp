@@ -230,6 +230,6 @@ void SelectAbility::ResetUiInfo(void)
 	UIManager2d& uiM = UIManager2d::GetInstance();
 
 	for (int i = 0; i < static_cast<int>(AbilityManager::ABILITY_TYPE::MAX); i++) {
-		uiM.SetUIInfo(iconNames_[i], AbilityManager::ABILITY_ICON_POS,AbilityManager::UI_EX);
+		uiM.SetUIInfo(iconNames_[i], AbilityManager::ABILITY_ICON_POS,AbilityManager::ABILITY_UI_EX);
 	}
 }

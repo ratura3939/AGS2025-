@@ -25,38 +25,45 @@ namespace {
 
 	const int RETICLE_COLOR = 0x55ff00;			//レティクル通常色
 	const float HIT_RETICLE_DIFF = 80.0f;		//レティクル当たり判定大きさ
-	const float RETHICLE_SIZE = 10.0f;			//レティクル大きさ
+	const float RETICLE_SIZE = 10.0f;			//レティクル大きさ
+
+	const std::string UI_RETICLE = "ReticleIcon";	//レティクルUI名
+	const float RETICLE_UI_EX = 1.5f;				//レティクルUI拡大率
 }
 
 AbilityManager::AbilityManager(StageManager& _stage, PlayerChara& _master)
 	: master_(_master)
 	, stage_(_stage)
+	, useAbility_(ABILITY_TYPE::MAGNET)
+	, state_(STATE::END)
 	, isPlayerAnyInput_(true)
+	,update_(&AbilityManager::UpdateEnd)
 {
-	useAbility_ = ABILITY_TYPE::MAGNET;
-	state_ = STATE::END;
-	update_ = &AbilityManager::UpdateEnd;
+	iconNames_[static_cast<int>(ABILITY_TYPE::MAGNET)] = UI_ABILITY_MGNET;
+	iconNames_[static_cast<int>(ABILITY_TYPE::LOCK_TIME)] = UI_ABILITY_LOCK_TIME;
 
 	abilities_[static_cast<int>(ABILITY_TYPE::MAGNET)] = std::make_unique<MagnetCatch>(*this, master_);
 	abilities_[static_cast<int>(ABILITY_TYPE::LOCK_TIME)] = std::make_unique<LockTime>(*this);
+
+	selectColores_[static_cast<int>(ABILITY_TYPE::MAGNET)] = SELECT_COLOR_MAGNET;
+	selectColores_[static_cast<int>(ABILITY_TYPE::LOCK_TIME)] = SELECT_COLOR_LOCK_TIME;
 
 	auto& resM = ResourceManager::GetInstance();
 	auto& uiM = UIManager2d::GetInstance();
 	//マグネットアイコン
 	uiM.Add(UI_ABILITY_MGNET, resM.Load(ResourceManager::SRC::ABILITY_MAGNET_IMG).handleId_,
 		UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(UI_ABILITY_MGNET, ABILITY_ICON_POS, UI_EX);
+	uiM.SetUIInfo(UI_ABILITY_MGNET, ABILITY_ICON_POS, ABILITY_UI_EX);
 
 	//タイムロックアイコン
 	uiM.Add(UI_ABILITY_LOCK_TIME, resM.Load(ResourceManager::SRC::ABILITY_LOCK_TIME_IMG).handleId_,
 		UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(UI_ABILITY_LOCK_TIME, ABILITY_ICON_POS, UI_EX);
+	uiM.SetUIInfo(UI_ABILITY_LOCK_TIME, ABILITY_ICON_POS, ABILITY_UI_EX);
 
-	iconNames_[static_cast<int>(ABILITY_TYPE::MAGNET)] = UI_ABILITY_MGNET;
-	iconNames_[static_cast<int>(ABILITY_TYPE::LOCK_TIME)] = UI_ABILITY_LOCK_TIME;
-
-	selectColores_[static_cast<int>(ABILITY_TYPE::MAGNET)] = SELECT_COLOR_MAGNET;
-	selectColores_[static_cast<int>(ABILITY_TYPE::LOCK_TIME)] = SELECT_COLOR_LOCK_TIME;
+	//レティクル
+	uiM.Add(UI_RETICLE, resM.Load(ResourceManager::SRC::RETICLE_IMG).handleId_,
+		UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(UI_RETICLE, RETICLE_POS, RETICLE_UI_EX);
 }
 
 AbilityManager::~AbilityManager(void)
@@ -65,22 +72,22 @@ AbilityManager::~AbilityManager(void)
 
 void AbilityManager::Update(void)
 {
-	test_ = master_.GetPos();
 	(this->*update_)();
 }
 
 void AbilityManager::Draw(void)
 {
 	//アイコンの描画
-	if (useAbility_ != ABILITY_TYPE::NONE && useAbility_ != ABILITY_TYPE::MAX) {
+	if (useAbility_ != ABILITY_TYPE::MAX && useAbility_ != ABILITY_TYPE::MAX) {
 		UIManager2d::GetInstance().Draw(iconNames_[static_cast<int>(useAbility_)]);
 	}
 
 	//能力使用時のレティクル
 	if (state_ == STATE::REDY || state_ == STATE::DIRECTION) {
-		DrawCircle(RETICLE_POS.x, RETICLE_POS.y, RETHICLE_SIZE, RETICLE_COLOR);
+		UIManager2d::GetInstance().Draw(UI_RETICLE);
 	}
 
+	//アビリティごとの固有描画
 	abilities_[static_cast<int>(useAbility_)]->Draw();
 }
 
@@ -177,32 +184,44 @@ void AbilityManager::UpdateEnd(void)
 	//何もしない
 }
 
-const VECTOR AbilityManager::GetFollowPos4UseMagnet(const VECTOR _playerPos)
+const VECTOR AbilityManager::GetFollowPosForUseMagnet(const VECTOR _playerPos)
 {
 	VECTOR retPos=_playerPos;
-	VECTOR distance = VSub(selectObj_.lock()->GetPos(), _playerPos);
-	distance = VScale(distance, 0.5f);
+	const float halfRate = 0.5f;	//半分の定義
 
-	retPos = VAdd(retPos, distance);
+	//プレイヤーと能力対象の距離
+	VECTOR distance = VSub(selectObj_.lock()->GetPos(), _playerPos);	
+	//距離の中央を取得
+	distance = VScale(distance, halfRate);	
+
+	//プレイヤーからの差分として合成
+	retPos = VAdd(retPos, distance);	
 
 	return retPos;
 }
 
 void AbilityManager::ChangeState(const STATE _next)
 {
+	//状態の変更
 	state_ = _next;
+
+	//状態開始に応じた処理
 	switch (state_)
 	{
 	case AbilityManager::STATE::REDY:
+		//アビリティ準備
 		RedyAbility();
 		break;
 	case AbilityManager::STATE::DIRECTION:
+		//演出
 		DirectionAbility();
 		break;
 	case AbilityManager::STATE::USE:
+		//使用開始
 		UseAbility();
 		break;
 	case AbilityManager::STATE::END:
+		//終了
 		EndUsingAbility();
 		break;
 	default:
@@ -215,7 +234,7 @@ void AbilityManager::RedyAbility(void)
 {
 	//色の設定
 	stage_.SetAbilityColor(GetAbilityColor(useAbility_));
-
+	//更新処理の設定
 	update_ = &AbilityManager::UpdateRedy;
 }
 
@@ -223,18 +242,12 @@ void AbilityManager::DirectionAbility(void)
 {
 	//能力の状況リセット
 	abilities_[static_cast<int>(useAbility_)]->ResetAbility();
-
+	//更新処理の設定
 	update_ = &AbilityManager::UpdateDirection;
 }
 
 void AbilityManager::UseAbility(void)
 {
-	/*if (selectObj_.expired()) {
-		失敗サウンド
-
-		return;
-	}*/
-
 	//全体の付与色をなくす
 	stage_.SetAbilityColor(NONE_COLOR);
 	//対象のオブジェクトは能力色を付与
@@ -248,6 +261,7 @@ void AbilityManager::UseAbility(void)
 		selectObj_.lock()->GetCollider().lock()->AddNoHitTag(Collider::COL_TAG::FALL_LINE);
 	}
 
+	//更新処理の設定
 	update_ = &AbilityManager::UpdateUse;
 
 	//マグネットの時はプレイヤーの入力を無効化
@@ -258,7 +272,6 @@ void AbilityManager::UseAbility(void)
 
 void AbilityManager::EndUsingAbility(void)
 {
-
 	//使用終了
 	if (!selectObj_.expired()) {
 		//マグネット時はプレイヤーとの当たり判定を戻す
@@ -266,18 +279,22 @@ void AbilityManager::EndUsingAbility(void)
 			selectObj_.lock()->GetCollider().lock()->DeleteNoHitTag(Collider::COL_TAG::PLAYER);
 			selectObj_.lock()->GetCollider().lock()->DeleteNoHitTag(Collider::COL_TAG::FALL_LINE);
 		}
+		//終了処理および監視からの解放
 		selectObj_.lock()->FinishAffect();
 		selectObj_.lock()->SetIsAffecting(false);
 		selectObj_.reset();
 	}
 	
+	//アビリティ固有の終了処理
 	abilities_[static_cast<int>(useAbility_)]->EndAbility();
 
 	//付与色をなくす
 	stage_.SetAbilityColor(NONE_COLOR);
 
+	//更新処理の設定
 	update_ = &AbilityManager::UpdateEnd;
 
+	//カメラを通常の追従に戻す
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
 	//プレイヤーの入力を有効化
 	isPlayerAnyInput_ = true;

@@ -112,6 +112,7 @@ void PauseScene::InputUser(void)
 	InputManager& inpM = InputManager::GetInstance();
 
 	//ポーズボタンを押されたら
+	//なんかここに入ってるぞ！！
 	if (inpM.IsTrigerrDown("pause")) {
 		//シーン移動(1つ前のシーン＝ゲームシーンに戻る)
 		scM.PopScene();
@@ -180,6 +181,8 @@ void PauseScene::Draw(void)
 
 	//→矢印の描画
 	uiM.Draw(RIGHT_ARROW);
+
+	DrawFormatString(0, 0, 0xff0000, "%d", selectIdx_);
 }
 
 void PauseScene::Release(void)

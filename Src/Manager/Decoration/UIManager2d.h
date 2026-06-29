@@ -31,7 +31,7 @@ public:
 	/// €–Ú•ª—Þ(‚P€–Ú‚É‚Â‚«ˆê‚Â‚Ü‚Å‚ð‹–‰Â)
 	/// </summary>
 	enum class UI_DIRECTION_GROUP {
-		NONE,
+		MAX,
 		MOVE,		//ˆÚ“®
 		ZOOM,		//Šg‘åk¬
 		ROTATION,	//‰ñ“]

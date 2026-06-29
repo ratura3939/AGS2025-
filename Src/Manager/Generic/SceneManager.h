@@ -24,7 +24,7 @@ public:
 	/// </summary>
 	enum class SCENE_ID
 	{
-		NONE
+		MAX
 		,TITLE
 		,GAME
 		,GAMEOVER
@@ -40,9 +40,9 @@ public:
 	/// </summary>
 	enum class CNTL
 	{
-		NONE
-		,KEY
+		KEY
 		,PAD
+		,MAX
 	};
 	
 	// インスタンスの生成

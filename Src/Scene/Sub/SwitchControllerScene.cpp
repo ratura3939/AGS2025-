@@ -120,7 +120,9 @@ void SwitchControllerScene::Draw(void)
 	UIManager2d& uiM = UIManager2d::GetInstance();
 
 	//追加シーンなのでうっすらと背景であるゲームシーンを映るようにする。
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 / 2);
+	const int BACK_ALPHA = 255 / 2;
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, BACK_ALPHA);
 	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 

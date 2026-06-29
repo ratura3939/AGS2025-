@@ -24,8 +24,6 @@ KeyConfigScene::~KeyConfigScene(void)
 
 void KeyConfigScene::Init(void)
 {
-	//頻出するシーンでもないので演出用マネージャは使用しない
-
 	auto cntl = SceneManager::GetInstance().GetController();
 	UIManager2d& uiM = UIManager2d::GetInstance();
 	ResourceManager& rsM = ResourceManager::GetInstance();

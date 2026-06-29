@@ -3,9 +3,10 @@
 #include "EnemyTargetting.h"
 
 
-EnemyTargetting::EnemyTargetting(VECTOR& _followPos):UIBase(_followPos)
+EnemyTargetting::EnemyTargetting(VECTOR& _followPos):
+	UIBase(_followPos)
+	,isLocked_(false)
 {
-	isLocked_ = false;
 }
 
 EnemyTargetting::~EnemyTargetting(void)
@@ -21,15 +22,15 @@ bool EnemyTargetting::Init(const std::string& _master)
 	noticeStr_ = _master + "LockNotice";
 	lockStr_ = _master + "Locked";
 
+	//ロックオン可能通知UI
 	uiM.Add(noticeStr_, rsM.Load(ResourceManager::SRC::ANNOUNCE_LOCKON_IMG).handleId_, UIManager2d::UI_DIRECTION_2D::FLASHING, UI_DIMENSION::DIMENSION_3);
 	uiM.SetUIInfo(noticeStr_, drawFollowPos_, TARGET_UI_DRAW_SIZE);
 	uiM.SetUIDirectionParam(noticeStr_, UIManager2d::UI_DIRECTION_GROUP::GRADUALLY, NOTICE_ALPHA_ACC, NOTICE_ALPHA_MAX, NOTICE_ALPHA_MIN);
 
-
+	//ロックオンUI
 	uiM.Add(lockStr_, rsM.Load(ResourceManager::SRC::LOCKON_IMG ).handleId_, UIManager2d::UI_DIRECTION_2D::UP_DOWN, UI_DIMENSION::DIMENSION_3);
 	uiM.SetUIInfo(lockStr_, drawFollowPos_, TARGET_UI_DRAW_SIZE);
 	uiM.SetUIDirectionParam(lockStr_, UIManager2d::UI_DIRECTION_GROUP::MOVE, LOCK_MOVE_SPEED, LOCK_MOVE_MAX, LOCK_MOVE_MIN);
-
 
 	return true;
 }

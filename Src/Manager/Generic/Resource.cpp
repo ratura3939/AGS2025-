@@ -10,7 +10,7 @@
 
 Resource::Resource(void)
 {
-	resType_ = TYPE::NONE;
+	resType_ = TYPE::MAX;
 	path_ = "";
 
 	numX_ = -1;

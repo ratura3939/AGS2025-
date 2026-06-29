@@ -1,7 +1,8 @@
 #include"../../Object/Character/Player/PlayerChara.h"
 #include"../Generic/InputManager.h"
-#include"../Generic/SceneManager.h"
 #include"../Generic/Camera.h"
+#include"../Generic/ResourceManager.h"
+#include"../Decoration/UIManager2d.h"
 #include"../Decoration/SoundManager.h"
 #include"../GameSystem/AttackManager.h"
 #include"../../PlayerSystem/LockOnManager.h"
@@ -12,6 +13,13 @@
 #include "PlayerManager.h"
 
 const std::string PlayerManager::ATTACK_NOMAL = "PlayerAttack";
+
+//ローカル定数
+namespace {
+	const std::string UI_OPERATION = "Operation";
+	const VECTOR UI_OPERATION_POS = { 150.0f,500.0f,0.0f };
+	const float UI_OPERATION_EX = 1.3f;
+}
 
 PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, AttackManager& _atk, StageManager& _stage)
 	:scene_(_gameScene)
@@ -24,6 +32,8 @@ PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, AttackManag
 	,abilityBtnCnt_(0)
 {
 	character_->Init();
+	operationImgs_[static_cast<int>(SceneManager::CNTL::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEY_OPERATION_IMG).handleId_;
+	operationImgs_[static_cast<int>(SceneManager::CNTL::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_OPERATION_IMG).handleId_;
 }
 
 PlayerManager::~PlayerManager(void)
@@ -34,9 +44,16 @@ void PlayerManager::Init(void)
 {
 	//攻撃とコライダーの紐づけ
 	atkMng_.AddAttackCollider(character_->GetSpeciesName(), character_->GetAttackCollider(), false, ATTACK_TIME);
+
+	//操作UIの設定
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	uiM.Add(UI_OPERATION, operationImgs_[static_cast<int>(SceneManager::CNTL::KEY)], UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(UI_OPERATION, UI_OPERATION_POS, UI_OPERATION_EX);
+	//操作UIの画像設定
+	SetOperationUI(SceneManager::GetInstance().GetController());
 }
 
-void PlayerManager::Update(AttackManager& _atk)
+void PlayerManager::Update(void)
 {
 	//状態管理
 	//通常じゃないとき
@@ -56,7 +73,7 @@ void PlayerManager::Update(AttackManager& _atk)
 	}
 
 	//プレイヤーからの入力
-	UserInput(_atk);
+	UserInput();
 	//カメラ前方に強制的に向かせるか
 	bool isForceFacingCamera = !ability_->IsPlayerAnyInput() || character_->GetLockState() == PlayerChara::LOCK_STATE::LOCKON;
 	character_->SetIsForceFacingCamera(isForceFacingCamera);
@@ -70,8 +87,11 @@ void PlayerManager::Update(AttackManager& _atk)
 
 void PlayerManager::Draw(void)
 {
-	character_->Draw();
-	ability_->Draw();
+	character_->Draw();	//キャラクター
+	ability_->Draw();	//アビリティ
+
+	//操作UIの描画
+	UIManager2d::GetInstance().Draw(UI_OPERATION);
 }
 
 void PlayerManager::Release(void)
@@ -99,9 +119,9 @@ const VECTOR& PlayerManager::GetFocusPoint(void)
 	return character_->GetFocusPoint();
 }
 
-const VECTOR& PlayerManager::GetFollowPos4UseMagnet(void)
+const VECTOR& PlayerManager::GetFollowPosForUseMagnet(void)
 {
-	return ability_->GetFollowPos4UseMagnet(character_->GetPos());
+	return ability_->GetFollowPosForUseMagnet(character_->GetPos());
 }
 
 
@@ -115,7 +135,12 @@ void PlayerManager::RedyLockOff(void)
 	character_->ChangeLockState(false);
 }
 
-void PlayerManager::UserInput(AttackManager& _atk)
+void PlayerManager::SetOperationUI(const SceneManager::CNTL& _operation)
+{
+	UIManager2d::GetInstance().SetImage(UI_OPERATION, operationImgs_[static_cast<int>(_operation)]);
+}
+
+void PlayerManager::UserInput(void)
 {
 	//プレイヤーからの入力総まとめ
 	InputManager& ins = InputManager::GetInstance();
@@ -124,19 +149,24 @@ void PlayerManager::UserInput(AttackManager& _atk)
 	//移動
 	//入力
 	auto moveVec = ins.GetMoveInput();
+	//移動がある時
 	if (moveVec.x != 0.0f || moveVec.y != 0.0f) {
+		//キャラクターに移動方向を渡す
 		character_->InputMoveVec(VECTOR(moveVec.x, moveVec.y, 0.0f));
 	}
 	//移動していないとき
 	else {
-		character_->InputMoveDir(PlayerChara::MOVE_DIR::NONE);
+		//移動なしの設定
+		character_->InputMoveDir(PlayerChara::MOVE_DIR::MAX);
 	}
 	
 	//ダッシュ
 	character_->InputDash(ins.IsPressed("dash"));
 
+	//ジャンプ入力(ロックオンではないとき)
 	if(character_->GetLockState() != PlayerChara::LOCK_STATE::LOCKON&& ins.IsTrigerrDown("jump"))
 	{
+		//ジャンプ処理
 		character_->Jump();
 	}
 #pragma endregion
@@ -152,12 +182,12 @@ void PlayerManager::UserInput(AttackManager& _atk)
 		//攻撃
 		if (ins.IsTrigerrDown("attack")) {
 			//攻撃の生成および状態の設定
-			_atk.Attack(character_->GetSpeciesName(), "SwingSword");
+			atkMng_.Attack(character_->GetSpeciesName(), "SwingSword");
 			character_->SetState(PlayerChara::STATE::ATTACK);
 			//対応するアニメーション
 			character_->PlayAnim("atkFirst");
 			//時間の設定
-			RedyStateCount(static_cast<int>(_atk.GetTotalTime(character_->GetSpeciesName())));
+			RedyStateCount(static_cast<int>(atkMng_.GetTotalTime(character_->GetSpeciesName())));
 		}
 
 		//回避入力があったとき(ロックオン状態でしか作動しない)
@@ -169,7 +199,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 		if (ins.IsPressed("rock") && lockOn_->CanLockOn()) {
 			lockOn_->LockOn();
 		}
-
+		//ロックオンの解除
 		if (ins.IsTrigerrUp("rock")) {
 			lockOn_->LockOff();
 		}
@@ -177,6 +207,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 #pragma endregion
 
 #pragma region 能力
+	//アビリティ使用ボタン押下している間
 	if (ins.IsPressed("ability")) {
 		abilityBtnCnt_++;
 		//ボタンが一定時間押されていたら
@@ -186,6 +217,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 			abilityBtnCnt_ = 0;
 		}
 	}
+	//アビリティ使用ボタン離し時
 	else if (ins.IsTrigerrUp("ability")) {
 		AbilityManager::STATE nextState = AbilityManager::STATE::END;
 		//能力がまだ使用されていないとき
@@ -199,6 +231,7 @@ void PlayerManager::UserInput(AttackManager& _atk)
 
 	//能力の使用
 	if (ins.IsTrigerrDown("action") && abilityState == AbilityManager::STATE::REDY) {
+		//使用演出へ
 		ability_->ChangeState(AbilityManager::STATE::DIRECTION);
 	}
 #pragma endregion
@@ -229,6 +262,7 @@ void PlayerManager::DoDudge(void)
 	auto moveVec = character_->GetInputMoveDir();
 	using CHARA_DIR = PlayerChara::MOVE_DIR;
 
+	//各方向に応じた回避アニメーションを再生
 	if(moveVec == CHARA_DIR::LEFT) {
 		character_->PlayAnim("dodL");
 	}
@@ -242,7 +276,6 @@ void PlayerManager::DoDudge(void)
 		//念のために前に回避入力があったときのアニメーションを出す
 		character_->PlayAnim("dodB");
 	}
-
 
 	//時間の設定
 	RedyStateCount(LIMIT_AVOID_STATE);

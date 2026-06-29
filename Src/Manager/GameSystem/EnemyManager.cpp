@@ -11,6 +11,11 @@
 
 const std::string EnemyManager::ATTACK_NOMAL = "EnemyAttack";
 
+//ローカル定数
+namespace {
+	const VECTOR PLATE_POS = { Application::SCREEN_SIZE_X - 300.0f,150.0f,0.0f };	//敵の数表示用プレートの位置
+}
+
 EnemyManager::EnemyManager(Game& _scene, AttackManager& _atk)
 	:gameScene_(_scene)
 	,atkMng_(_atk)
@@ -18,10 +23,10 @@ EnemyManager::EnemyManager(Game& _scene, AttackManager& _atk)
 	,preBattle_(false)
 	,enemyCnt_(-1)
 	,numImg_(nullptr)
-	,platePos_(Utility::VECTOR_INIT)
 	,createBoss_(false)
 	,counterUI_(nullptr)
 	,isPlayBossDeathDirection_(false)
+	,platePos_(PLATE_POS)
 {
 }
 
@@ -33,32 +38,38 @@ void EnemyManager::Init(const VECTOR& _pPos)
 {
 	VECTOR initPos[ENEMY_NUM] = { INIT_1 ,INIT_2 ,INIT_3 ,INIT_4 };
 
+	//敵総数の登録
 	enemyCnt_ = ENEMY_NUM;
+	//カウンタUIの取得
 	numImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::NUMBER_IMGS).handleIds_;
 
+	//敵の生成
 	for (int i = 0; i < ENEMY_NUM; i++) {
+		//生成および初期化
 		std::shared_ptr enemy = std::make_shared<Skelton>(initPos[i],i,atkMng_,_pPos);
 		enemy->Init();
+		//攻撃の登録
 		atkMng_.AddAttackCollider(enemy->GetSpeciesName(), enemy->GetAttackCollider(), false, ATTACK_TIME, ATTACK_TIME_START, ATTACK_TIME_END);
+		//追加
 		characters_.push_back(std::move(enemy));
 	}
 
-	platePos_ = VECTOR{ Application::SCREEN_SIZE_X - 300.0f,150.0f,0.0f };
+	//敵総数UIの生成
 	counterUI_ = std::make_unique<EnemyCount>(platePos_);
 	counterUI_->Init("Manager");
 	//残りカウントのの設定
 	counterUI_->SetNumImg(numImg_[enemyCnt_]);
-
-	preBattle_ = false;
 }
 
-void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
+void EnemyManager::Update(void)
 {
+	//戦闘中かの記録
 	preBattle_ = IsBattleEnemy();
 
 	//いなかったら処理しない
 	if (characters_.empty())return;
 
+	//カウンターUI更新
 	counterUI_->Update();
 
 	//死亡したキャラクターの配列番号保存とそのカウンター
@@ -77,7 +88,6 @@ void EnemyManager::Update(const VECTOR& _playerPos, AttackManager& _atkMng)
 
 		//死亡演出も終了していたら
 		if (chara->IsEnd()) {
-			
 			//削除リストに追加
 			dethEnemy.push_back(counter);
 		}
@@ -117,9 +127,11 @@ void EnemyManager::Draw(void)
 	//いなかったら処理しない
 	if (characters_.empty())return;
 
+	//キャラクターの描画
 	for (auto& chara : characters_) {
 		chara->Draw();
 	}
+	//カウンターUIの描画
 	counterUI_->Draw();
 }
 
@@ -272,7 +284,7 @@ void EnemyManager::CreateBoss(const VECTOR& _pPos)
 	enemyCnt_++;	//敵カウント増加
 
 	counterUI_->SetNumImg(numImg_[enemyCnt_]);	//残りカウントのの設定
-	counterUI_->SetIconImg();					//アイコンの設定
+	counterUI_->SetBossIconImg();					//アイコンの設定
 }
 
 void EnemyManager::BossShout(void)

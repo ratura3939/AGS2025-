@@ -62,15 +62,14 @@ namespace {
 
 	//攻撃関連
 	float ATK_SCALE = 80.0f;
-	float ATK_POWER = 300.0f;
+	float ATK_POWER = 30.0f;
 	VECTOR ATK_LOCAL_POS = { 0.0f, 75.0f, 100.0f };	//攻撃相対座標
 
 	const float CHARACTER_WEIGHT = 1.0f; //重さ
 	const float GRAVITY_POW = 1.0f; //重力
 	const float JUMP_POW = 30.0f; //ジャンプ力
 
-	//const VECTOR INIT_POSITION = { 4271.0f,0.0f,-6142.0f };
-	const VECTOR INIT_POSITION = { 0.0f,0.0f,0.0f };
+	const VECTOR INIT_POSITION = { 4271.0f,0.0f,-6142.0f };
 
 	const float UI_DIFF_Y = 200.0f; //UI表示位置のY軸の差
 
@@ -86,7 +85,7 @@ PlayerChara::PlayerChara(AttackManager& _atk)
 	,focusPoint_(Utility::VECTOR_ZERO)
 	,isForceFacingCamera(false)
 	,inputDir_(Utility::VECTOR_ZERO)
-	,moveDir_(MOVE_DIR::NONE)
+	,moveDir_(MOVE_DIR::MAX)
 	,isDush_(false)
 	,afterMoveRad_(0.0f)
 	,uiCntl_(nullptr)
@@ -293,7 +292,7 @@ void PlayerChara::InputMoveVec(const VECTOR& _inputVec)
 	afterMoveRad_ = atan2f(_inputVec.x, _inputVec.y);
 
 	// moveDir_ の算出
-	MOVE_DIR newMoveDir = MOVE_DIR::NONE;
+	MOVE_DIR newMoveDir = MOVE_DIR::MAX;
 
 	if (lockState_ == LOCK_STATE::LOCKON) {
 		// ロックオン時はキャラクター基準で判定
@@ -420,7 +419,7 @@ void PlayerChara::Move(void)
 	setNewGoalRot_ = false;
 
 	//移動を行わないとき
-	if (moveDir_ == MOVE_DIR::NONE || state_ == STATE::ATTACK) {
+	if (moveDir_ == MOVE_DIR::MAX || state_ == STATE::ATTACK) {
 		//通常なら
 		if (state_ == STATE::NORMAL) {
 			//待機アニメーション
@@ -433,7 +432,7 @@ void PlayerChara::Move(void)
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera().GetRot();
 	std::string seName = "Walk";
 
-	if (moveDir_ != MOVE_DIR::NONE) {
+	if (moveDir_ != MOVE_DIR::MAX) {
 		setNewGoalRot_ = true;
 	}
 

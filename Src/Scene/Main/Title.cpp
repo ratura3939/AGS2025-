@@ -93,7 +93,7 @@ void Title::Init(void)
 	rsM.GetInstance().Init(SceneManager::SCENE_ID::TITLE);
 
 	//コントローラー両対応
-	SceneManager::GetInstance().SetController(SceneManager::CNTL::NONE);
+	SceneManager::GetInstance().SetController(SceneManager::CNTL::MAX);
 
 	// タイトルロゴ
 	deviceImgs_[static_cast<int>(DEVICE::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEYBOARD_IMG).handleId_;

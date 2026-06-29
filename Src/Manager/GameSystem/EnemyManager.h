@@ -19,11 +19,11 @@ public:
 
 	static constexpr float TARGETTING_PERMISSION_DISTANCE = 1000.0f;	//ターゲティングを許可する範囲
 
-	//デバッグ用
 	static constexpr int ATTACK_TIME = 100;
 	static constexpr int ATTACK_TIME_START = 20;
 	static constexpr int ATTACK_TIME_END = 90;
 
+	//敵それぞれの初期位置
 	static constexpr VECTOR INIT_1 = { 0.0f,0.0f,1000.0f };
 	static constexpr VECTOR INIT_2 = { 500.0f,0.0f,1000.0f };
 	static constexpr VECTOR INIT_3 = { 0.0f,0.0f,-1000.0f };
@@ -32,11 +32,11 @@ public:
 	EnemyManager(Game& _scene, AttackManager& _atk);
 	~EnemyManager(void);
 
-	void Init(const VECTOR& _pPos);
-	void Update(const VECTOR& _playerPos, AttackManager& _atkMng);
-	void UpdateAnim(void);
-	void Draw(void);
-	void Release(void);
+	void Init(const VECTOR& _pPos);	//初期化
+	void Update(void);				//更新
+	void UpdateAnim(void);			//アニメーションのみの更新
+	void Draw(void);				//描画
+	void Release(void);				//解放
 
 	//敵たちの取得
 	std::vector<std::weak_ptr<EnemyBase>> GetEnemys(void);
@@ -80,25 +80,27 @@ public:
 	//ロックオンされた処理
 	void LokedOn(const int _num);
 
+	//ボスの生成
 	void CreateBoss(const VECTOR& _pPos);
+	//ボスの咆哮
 	void BossShout(void);
-
-	void DeleteBoss(void);	//ボスの削除
+	//ボスの削除
+	void DeleteBoss(void);	
 
 private:
 	Game& gameScene_;	//シーンの参照
 	AttackManager& atkMng_;		//攻撃管理クラスの参照
 
-	std::vector<std::shared_ptr<EnemyBase>> characters_;
+	std::vector<std::shared_ptr<EnemyBase>> characters_;	//生存敵の保存
 	bool preBattle_;	//位置フレーム前が戦闘状態であるかどうか
 
 	int enemyCnt_;		//敵カウント
 	int* numImg_;		//番号
-	VECTOR platePos_;	//敵数表示　プレート
 
 	bool createBoss_;	//ボスを生成した形跡
 
 	std::unique_ptr<EnemyCount>counterUI_;	//敵残数カウンター
+	VECTOR platePos_;
 
 	bool isPlayBossDeathDirection_;	//ボスの死亡演出を再生したか
 };

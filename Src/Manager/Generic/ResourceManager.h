@@ -35,6 +35,8 @@ public:
 		,FOCUS_IMG
 		,NOISE_STAGE
 
+		,RETICLE_IMG
+
 		//UI
 		,ARROW_DOWN_IMG
 		,HEART_IMG
@@ -56,6 +58,8 @@ public:
 		,SWITCH_OPERATOR_IMG
 		,ABILITY_MAGNET_IMG
 		,ABILITY_LOCK_TIME_IMG
+		,PAD_OPERATION_IMG
+		,KEY_OPERATION_IMG
 		
 		//ƒ‚ƒfƒ‹
 		,STAGE_MDL
@@ -126,7 +130,7 @@ public:
 	static ResourceManager& GetInstance(void);
 
 	// ‰Šú‰»
-	void Init(SceneManager::SCENE_ID _scene= SceneManager::SCENE_ID::NONE);
+	void Init(SceneManager::SCENE_ID _scene= SceneManager::SCENE_ID::MAX);
 
 	// ‰ğ•ú(ƒV[ƒ“Ø‘Ö‚Éˆê’U‰ğ•ú)
 	void Release(void);

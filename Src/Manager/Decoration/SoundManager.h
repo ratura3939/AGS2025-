@@ -13,7 +13,7 @@ class SoundManager
 public:
 	//Ä¶‚Ìí—Ş•ª‚¯‚·‚é‚Æ‚«‚Ég‚¤
 	enum class TYPE {
-		NONE,
+		MAX,
 		BGM,
 		SE
 	};
