@@ -21,7 +21,7 @@ public:
 private:
 	std::string plateStr_;
 	std::string numberStr_;
-	std::string skeltonConterStr_;
+	std::string skeltonConterStr_;	
 
 	int golemIcon_;
 };

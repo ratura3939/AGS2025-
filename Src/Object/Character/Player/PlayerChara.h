@@ -38,7 +38,7 @@ public:
     /// ˆÚ“®•ûŒü
     /// </summary>
     enum class MOVE_DIR {
-		NONE        //ˆÚ“®‚È‚µ
+		MAX        //ˆÚ“®‚È‚µ
 		,FORWARD    //‘O
 		,LEFT       //¶
 		,RIGHT      //‰E

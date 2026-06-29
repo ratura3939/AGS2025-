@@ -179,7 +179,15 @@ void ResourceManager::InitGame(void)
 	//レティクル
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "Reticle.png");
 	resourcesMap_.emplace(SRC::RETICLE_IMG, res);
-;
+
+	//基本アクションまとめ(PAD)
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "PadButton.png");
+	resourcesMap_.emplace(SRC::PAD_OPERATION_IMG, res);
+
+	//基本アクションまとめ(KEY)
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "KeyIconTotal.png");
+	resourcesMap_.emplace(SRC::KEY_OPERATION_IMG, res);
+
 	//音
 	//BGM
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game.mp3");

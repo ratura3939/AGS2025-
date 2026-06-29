@@ -66,6 +66,7 @@ void UIManager2d::DeleteUI(const std::vector<std::string> _names)
 		if (direcInfoes_.contains(name)) {
 			direcInfoes_.erase(name);
 		}
+		updates_.erase(name);
 	}
 }
 
@@ -212,7 +213,10 @@ void UIManager2d::SetImage(const std::string& _name, const int _imageHndl)
 void UIManager2d::Update(const std::string _name)
 {
 	int cnt = 0;
+	int size = updates_[_name].size();
+
 	for (auto& update : updates_[_name]) {
+		
 		(this->*update)(_name, direcInfoes_[_name][cnt]);
 		cnt++;
 	}
@@ -338,7 +342,7 @@ const UIManager2d::UI_DIRECTION_GROUP UIManager2d::GetDirectionGroup(const std::
 
 const UIManager2d::UI_DIRECTION_GROUP UIManager2d::GetDirectionGroup(const UI_DIRECTION_2D _type)
 {
-	UI_DIRECTION_GROUP ret = UI_DIRECTION_GROUP::NONE;
+	UI_DIRECTION_GROUP ret = UI_DIRECTION_GROUP::MAX;
 
 	//ˆÚ“®
 	if (_type == UI_DIRECTION_2D::MOVE_UP	||

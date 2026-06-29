@@ -11,7 +11,7 @@ public:
 	// ó‘Ô
 	enum class STATE
 	{
-		NONE, 
+		MAX, 
 		FADE_OUT,	// ™X‚ÉˆÃ“]
 		FADE_IN		// ™X‚É–¾“]
 	};

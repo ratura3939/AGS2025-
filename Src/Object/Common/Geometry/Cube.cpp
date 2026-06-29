@@ -39,7 +39,7 @@ const bool Cube::IsHit(Line& _line)
 	//スラブ法で判定
 	float tmin = 0.0f;
 	float tmax = 1.0f;
-	CUBE_DIR hitDir = CUBE_DIR::NONE;	//XYZのうちどの軸で当たったか
+	CUBE_DIR hitDir = CUBE_DIR::MAX;	//XYZのうちどの軸で当たったか
 	float hitSide = 0.0f;	//当たった面の位置(1.0=正の面、-1.0=負の面)
 
 	//スラブ法計算

@@ -21,8 +21,8 @@ Camera::Camera(void)
 	,resetGoalPos_({ Utility::VECTOR_ZERO, Quaternion::Identity() })
 	,stepReset_(0.0f)
 	,isReset_(true)
-	,currentMode_(MODE::NONE)
-	,returnMode_(MODE::NONE)
+	,currentMode_(MODE::MAX)
+	,returnMode_(MODE::MAX)
 	,pos_(Utility::VECTOR_ZERO)
 	,lockPos_(Utility::VECTOR_ZERO)
 	,lockOnGoalPos_(Utility::VECTOR_ZERO)
@@ -74,7 +74,7 @@ void Camera::SetBeforeDraw(void)
 
 	switch (currentMode_)
 	{
-	case MODE::NONE:
+	case MODE::MAX:
 		SetBeforeDrawFollow();
 		break;
 
@@ -110,7 +110,7 @@ void Camera::SetBeforeDraw(void)
 	}
 
 	// FOLLOW・LOCKON・NONE時にレイキャストによるカメラ位置補正を適用
-	if (currentMode_ == MODE::FOLLOW || currentMode_ == MODE::LOCKON || currentMode_ == MODE::NONE) {
+	if (currentMode_ == MODE::FOLLOW || currentMode_ == MODE::LOCKON || currentMode_ == MODE::MAX) {
 		collider_->UpdateRayCast();
 		pos_ = Utility::Lerp(pos_, adjustedPos_, WALL_LERP_SPEED);
 	}

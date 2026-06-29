@@ -3,6 +3,7 @@
 #include<memory>
 #include<DxLib.h>
 #include"../../Common/Quaternion.h"
+#include"../../Manager/Generic/SceneManager.h"
 
 class Game;
 class StageManager;
@@ -48,6 +49,9 @@ public:
 	void RedyLockOn(void);	//ロックオン開始処理
 	void RedyLockOff(void);	//ロックオフ開始処理
 
+	//操作UIの設定
+	void SetOperationUI(const SceneManager::CNTL& _operation);
+
 private:
 	/// <summary>
 	/// プレイヤーからの入力受付関係
@@ -75,5 +79,6 @@ private:
 	int stateCnt_;		//キャラクター状態管理用カウンター
 	int stateLimit_;	//状態をの時間上限
 	int abilityBtnCnt_;	//能力使用ボタンの押下時間
+	int operationImgs_[static_cast<int>(SceneManager::CNTL::MAX)];	//操作UIの画像
 };
 

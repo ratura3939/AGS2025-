@@ -354,7 +354,7 @@ InputManager::MoveInput InputManager::GetMoveInput(bool _isDistinguish)
 	auto& cntl = SceneManager::GetInstance().GetController();
 
 	//“ü—Í‚ğ—¼Òó‚¯•t‚¯‚éê‡
-	if(!_isDistinguish || cntl == SceneManager::CNTL::NONE) {
+	if(!_isDistinguish || cntl == SceneManager::CNTL::MAX) {
 		//PAD—Dæ
 		result = GetPadMoveInput();	//PAD‘€ì
 

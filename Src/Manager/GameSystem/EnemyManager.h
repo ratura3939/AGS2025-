@@ -100,6 +100,7 @@ private:
 	bool createBoss_;	//ボスを生成した形跡
 
 	std::unique_ptr<EnemyCount>counterUI_;	//敵残数カウンター
+	VECTOR platePos_;
 
 	bool isPlayBossDeathDirection_;	//ボスの死亡演出を再生したか
 };

@@ -26,6 +26,7 @@ EnemyManager::EnemyManager(Game& _scene, AttackManager& _atk)
 	,createBoss_(false)
 	,counterUI_(nullptr)
 	,isPlayBossDeathDirection_(false)
+	,platePos_(PLATE_POS)
 {
 }
 
@@ -54,7 +55,7 @@ void EnemyManager::Init(const VECTOR& _pPos)
 	}
 
 	//敵総数UIの生成
-	counterUI_ = std::make_unique<EnemyCount>(PLATE_POS);
+	counterUI_ = std::make_unique<EnemyCount>(platePos_);
 	counterUI_->Init("Manager");
 	//残りカウントのの設定
 	counterUI_->SetNumImg(numImg_[enemyCnt_]);

@@ -1,7 +1,8 @@
 #include"../../Object/Character/Player/PlayerChara.h"
 #include"../Generic/InputManager.h"
-#include"../Generic/SceneManager.h"
 #include"../Generic/Camera.h"
+#include"../Generic/ResourceManager.h"
+#include"../Decoration/UIManager2d.h"
 #include"../Decoration/SoundManager.h"
 #include"../GameSystem/AttackManager.h"
 #include"../../PlayerSystem/LockOnManager.h"
@@ -12,6 +13,13 @@
 #include "PlayerManager.h"
 
 const std::string PlayerManager::ATTACK_NOMAL = "PlayerAttack";
+
+//ローカル定数
+namespace {
+	const std::string UI_OPERATION = "Operation";
+	const VECTOR UI_OPERATION_POS = { 150.0f,500.0f,0.0f };
+	const float UI_OPERATION_EX = 1.3f;
+}
 
 PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, AttackManager& _atk, StageManager& _stage)
 	:scene_(_gameScene)
@@ -24,6 +32,8 @@ PlayerManager::PlayerManager(Game& _gameScene, EnemyManager& _enemy, AttackManag
 	,abilityBtnCnt_(0)
 {
 	character_->Init();
+	operationImgs_[static_cast<int>(SceneManager::CNTL::KEY)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::KEY_OPERATION_IMG).handleId_;
+	operationImgs_[static_cast<int>(SceneManager::CNTL::PAD)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::PAD_OPERATION_IMG).handleId_;
 }
 
 PlayerManager::~PlayerManager(void)
@@ -34,6 +44,13 @@ void PlayerManager::Init(void)
 {
 	//攻撃とコライダーの紐づけ
 	atkMng_.AddAttackCollider(character_->GetSpeciesName(), character_->GetAttackCollider(), false, ATTACK_TIME);
+
+	//操作UIの設定
+	UIManager2d& uiM = UIManager2d::GetInstance();
+	uiM.Add(UI_OPERATION, operationImgs_[static_cast<int>(SceneManager::CNTL::KEY)], UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
+	uiM.SetUIInfo(UI_OPERATION, UI_OPERATION_POS, UI_OPERATION_EX);
+	//操作UIの画像設定
+	SetOperationUI(SceneManager::GetInstance().GetController());
 }
 
 void PlayerManager::Update(void)
@@ -72,6 +89,9 @@ void PlayerManager::Draw(void)
 {
 	character_->Draw();	//キャラクター
 	ability_->Draw();	//アビリティ
+
+	//操作UIの描画
+	UIManager2d::GetInstance().Draw(UI_OPERATION);
 }
 
 void PlayerManager::Release(void)
@@ -115,6 +135,11 @@ void PlayerManager::RedyLockOff(void)
 	character_->ChangeLockState(false);
 }
 
+void PlayerManager::SetOperationUI(const SceneManager::CNTL& _operation)
+{
+	UIManager2d::GetInstance().SetImage(UI_OPERATION, operationImgs_[static_cast<int>(_operation)]);
+}
+
 void PlayerManager::UserInput(void)
 {
 	//プレイヤーからの入力総まとめ
@@ -132,7 +157,7 @@ void PlayerManager::UserInput(void)
 	//移動していないとき
 	else {
 		//移動なしの設定
-		character_->InputMoveDir(PlayerChara::MOVE_DIR::NONE);
+		character_->InputMoveDir(PlayerChara::MOVE_DIR::MAX);
 	}
 	
 	//ダッシュ

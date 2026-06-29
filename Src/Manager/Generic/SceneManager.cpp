@@ -223,7 +223,7 @@ const float SceneManager::GetScaleUpdateSpeedRate(const float _target) const
 }
 
 SceneManager::SceneManager(void)
-	:cntl_(CNTL::NONE)
+	:cntl_(CNTL::MAX)
 	,mainScreen_(-1)
 	,fader_(nullptr)
 	,isSceneChanging_(false)
@@ -286,7 +286,7 @@ void SceneManager::Fade(void)
 		// –¾“]’†
 		if (fader_->IsEnd()){
 			//–¾“]Š®—¹
-			fader_->SetFade(Fader::STATE::NONE);	//–¾“]‚©‚çI—¹‚Ö
+			fader_->SetFade(Fader::STATE::MAX);	//–¾“]‚©‚çI—¹‚Ö
 			isSceneChanging_ = false;				//ƒV[ƒ“‘JˆÚŠ®—¹
 		}
 		break;

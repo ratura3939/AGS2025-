@@ -19,7 +19,7 @@ bool Fader::IsEnd(void) const
 void Fader::SetFade(STATE state)
 {
 	state_ = state;
-	if (state_ != STATE::NONE)
+	if (state_ != STATE::MAX)
 	{
 		isPreEnd_ = false;
 		isEnd_ = false;
@@ -28,7 +28,7 @@ void Fader::SetFade(STATE state)
 
 void Fader::Init(void)
 {
-	state_ = STATE::NONE;
+	state_ = STATE::MAX;
 	alpha_ = 0;
 	isPreEnd_ = true;
 	isEnd_ = true;
@@ -41,7 +41,7 @@ void Fader::Update(void)
 	}
 
 	switch (state_){
-	case STATE::NONE:
+	case STATE::MAX:
 		return;
 
 	case STATE::FADE_OUT:
@@ -80,7 +80,7 @@ void Fader::Draw(void)
 
 	switch (state_)
 	{
-	case STATE::NONE:
+	case STATE::MAX:
 		return;
 	case STATE::FADE_OUT:
 	case STATE::FADE_IN:

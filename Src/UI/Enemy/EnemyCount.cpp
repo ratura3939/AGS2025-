@@ -14,7 +14,7 @@ EnemyCount::EnemyCount(VECTOR& _followPos):
 	UIBase(_followPos)
 	,plateStr_()
 	,numberStr_()
-	,skeltonConterStr_()
+	,skeltonConterStr_("")
 	,golemIcon_(-1)
 {
 }

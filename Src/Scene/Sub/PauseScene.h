@@ -12,7 +12,7 @@ public:
 	/// メニュー時の項目
 	/// </summary>
 	enum class MENU_ITEM {
-		NONE,
+		MAX,
 		BACK_GAME,	//ゲームに戻る
 		CONFIG,		//操作方法
 		SWITCH_CNTL,//操作切り換え

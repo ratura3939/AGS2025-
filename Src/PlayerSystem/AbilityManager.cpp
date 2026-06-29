@@ -78,7 +78,7 @@ void AbilityManager::Update(void)
 void AbilityManager::Draw(void)
 {
 	//ƒAƒCƒRƒ“‚Ì•`‰æ
-	if (useAbility_ != ABILITY_TYPE::NONE && useAbility_ != ABILITY_TYPE::MAX) {
+	if (useAbility_ != ABILITY_TYPE::MAX && useAbility_ != ABILITY_TYPE::MAX) {
 		UIManager2d::GetInstance().Draw(iconNames_[static_cast<int>(useAbility_)]);
 	}
 

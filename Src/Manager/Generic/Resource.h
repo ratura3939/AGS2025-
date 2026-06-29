@@ -10,7 +10,7 @@ public:
 	// リソースタイプ
 	enum class TYPE
 	{
-		NONE,
+		MAX,
 		IMG,		//画像(単体)
 		IMGS,		//画像(複数)
 		CSV,		//CSV
