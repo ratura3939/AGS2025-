@@ -293,7 +293,7 @@ void Game::GameUpdate(void)
 
 #pragma region 基礎アプデ
 	//プレイヤー
-	player_->Update(*atkMng_);
+	player_->Update();
 	//敵はスローの効果を受ける
 	if (isSlowEffect_) {
 		//スロー時の更新(このカウンタはスローの影響を受けない)
@@ -305,7 +305,7 @@ void Game::GameUpdate(void)
 	}
 
 	//敵
-	enemy_->Update(player_->GetPos(), *atkMng_);
+	enemy_->Update();
 
 	//攻撃
 	atkMng_->Update();

@@ -26,10 +26,10 @@ public:
 	PlayerManager(Game& _gameScene, EnemyManager& _enemy, AttackManager& _atk, StageManager& _stage);;
 	~PlayerManager(void);
 
-	void Init(void);
-	void Update(AttackManager& _atk);
-	void Draw(void);
-	void Release(void);
+	void Init(void);	//初期化
+	void Update(void);	//更新
+	void Draw(void);	//描画
+	void Release(void);	//解放
 
 	//キャラクター取得
 	std::weak_ptr<PlayerChara> GetPlayer(void);
@@ -38,28 +38,31 @@ public:
 	const VECTOR& GetPos(void)const;	//座標
 	const Quaternion& GetQua(void);		//回転
 	const VECTOR& GetFocusPoint(void);	//注視点
-	const VECTOR& GetFollowPosForUseMagnet(void);
+	const VECTOR& GetFollowPosForUseMagnet(void);	//マグネット使用時の注視点
 
-	const bool IsAlive(void)const;
-	const bool IsUseAbility(void)const;
+	const bool IsAlive(void)const;		//生存しているか
+	const bool IsUseAbility(void)const;	//アビリティを使用中か
 	const bool IsUseMagnet(void)const;	//マグネットを使用しているか
 
 	//ロックオン・オフ時に必要な処理
-	void RedyLockOn(void);
-	void RedyLockOff(void);
+	void RedyLockOn(void);	//ロックオン開始処理
+	void RedyLockOff(void);	//ロックオフ開始処理
 
 private:
 	/// <summary>
 	/// プレイヤーからの入力受付関係
 	/// </summary>
-	void UserInput(AttackManager& _atk);
+	void UserInput(void);
 
 	/// <summary>
 	/// 回避可能方向に移動入力があるか
 	/// </summary>
 	const bool IsDudgeMove(void)const;
+
+	//回避処理
 	void DoDudge(void);
 
+	//カウンタの設定
 	void RedyStateCount(const int _limit);
 
 	Game& scene_;	//ゲームクラス参照
