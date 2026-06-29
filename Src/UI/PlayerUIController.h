@@ -27,6 +27,7 @@ public:
 
     void SetDrawPos(const VECTOR _pos);
     void ChangeAlert(const bool _flag) { isAlert_ = _flag; }
+    void UpdateControllerUI(void);
 
     void Damage(void);
 private:

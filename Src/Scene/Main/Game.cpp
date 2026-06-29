@@ -29,12 +29,6 @@ namespace {
 	const int LIMIT_SLOW = 200;					//スロー演出時間
 	const float NOMAL_SPEED_PERCENT = 100.0f;	//通常の割合
 	const float SLOW_SPEED_PERCENT = 25.0f;		//スローの割合(通常時から半分の速度にする)
-	
-	//ボタン関連
-	const std::string MENU_BTN = "menuBtn";		//登録名
-	const float BTN_EX = 0.6f;					//拡大率
-	const int BTN_DIFF_X = 300;					//位置調整X
-	const int BTN_DIFF_Y = 100;					//位置調整Y
 
 	//BGM・SE関連
 	const int BGM_VOL_MAX = 100;		//BGM音量最大値
@@ -120,12 +114,6 @@ void Game::Init(void)
 	InitEffect();
 	//シェーダー初期化
 	InitShader();
-
-	auto& uiM = UIManager2d::GetInstance();
-
-	//メニューボタン
-	uiM.Add(MENU_BTN, rsM.Load(ResourceManager::SRC::MENU_BTN).handleId_, UIManager2d::UI_DIRECTION_2D::NORMAL, UIManager2d::UI_DRAW_DIMENSION::DIMENSION_2);
-	uiM.SetUIInfo(MENU_BTN, VECTOR{ static_cast<float>(Application::SCREEN_SIZE_X - BTN_DIFF_X),static_cast<float>(Application::SCREEN_SIZE_Y - BTN_DIFF_Y),0.0f }, BTN_EX);
 }
 
 void Game::InitSound(void)
@@ -284,6 +272,7 @@ void Game::GameUpdate(void)
 		sndM.Stop(switchBgmStr_);
 		//シーン遷移
 		scM.ChangeScene(std::make_shared<GameClear>());
+		return;
 	}
 
 	//ポーズシーン遷移
@@ -291,12 +280,13 @@ void Game::GameUpdate(void)
 		isGoPauseScene_ = true;
 		//シーン追加(一つ次へ)
 		scM.PushScene(std::make_shared<PauseScene>());
+		return;
 	}
 
 	//ポーズシーンから戻ってきて初期更新のみ
 	if (isGoPauseScene_) {
 		//操作UIの設定
-		player_->SetOperationUI(SceneManager::GetInstance().GetController());
+		player_->UpdateOperationUIForController();
 		//ポーズシーンからの遷移終了
 		isGoPauseScene_ = false;
 	}
@@ -377,9 +367,6 @@ void Game::Draw(void)
 	stage_->Draw();
 	enemy_->Draw();
 	player_->Draw();
-
-	//メニューボタンの表示
-	UIManager2d::GetInstance().Draw(MENU_BTN);
 
 	//スロー時(回避成功時)
 	if (isSlowEffect_) {

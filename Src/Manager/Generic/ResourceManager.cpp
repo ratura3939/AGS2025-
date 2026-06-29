@@ -188,6 +188,22 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "KeyIconTotal.png");
 	resourcesMap_.emplace(SRC::KEY_OPERATION_IMG, res);
 
+	//メニュー遷移(PAD)
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "PAD_Start.png");
+	resourcesMap_.emplace(SRC::PAD_TO_MENU_OPERATION_IMG, res);
+
+	//メニュー遷移(KEY)
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "TABKey.png");
+	resourcesMap_.emplace(SRC::KEY_TO_MENU_OPERATION_IMG, res);
+
+	//アビリティ使用(PAD)
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "PAD_LB.png");
+	resourcesMap_.emplace(SRC::PAD_ABILITY_OPERATION_IMG, res);
+
+	//アビリティ使用(KEY)
+	res = Resource(Resource::TYPE::IMG, Application::PATH_UI + "QKey.png");
+	resourcesMap_.emplace(SRC::KEY_ABILITY_OPERATION_IMG, res);
+
 	//音
 	//BGM
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game.mp3");

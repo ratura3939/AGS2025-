@@ -3,7 +3,8 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include "NoticeDodge.h"
 
-NoticeDodge::NoticeDodge(VECTOR& _followPos) :UIBase(_followPos)
+NoticeDodge::NoticeDodge(VECTOR& _followPos) :
+	UIBase(_followPos)
 {
 }
 

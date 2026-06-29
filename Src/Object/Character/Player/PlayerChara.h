@@ -88,6 +88,9 @@ public:
 	//“–‚½‚è”»’èŒãˆ—
 	void DoHitCollider(const std::weak_ptr<Collider>& _col)override;
 
+    //‘€ìUI‚ÌXV
+    void UpdateControllerUI(void);
+
 private:
     void DoInit(void)override;
     void DoUpdate(void)override;

@@ -371,6 +371,11 @@ void PlayerChara::DoHitCollider(const std::weak_ptr<Collider>& _col)
 	}
 }
 
+void PlayerChara::UpdateControllerUI(void)
+{
+	uiCntl_->UpdateControllerUI();
+}
+
 void PlayerChara::InitAnim(void)
 {
 	animController_->Add("idle", ANIM_IDLE, AnimationController::PLAY_TYPE::LOOP);

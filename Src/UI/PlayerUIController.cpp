@@ -51,6 +51,11 @@ void PlayerUIController::SetDrawPos(const VECTOR _pos)
 {
 }
 
+void PlayerUIController::UpdateControllerUI(void)
+{
+	operation_->SetController(SceneManager::GetInstance().GetController());
+}
+
 void PlayerUIController::Damage(void)
 {
 	hp_->Damage();
