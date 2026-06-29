@@ -38,6 +38,7 @@ bool PlayerHp::Init(const std::string& _master)
 	emptyStr_ = _master + "EmptyHp";
 	brokenStr_ = _master + "BrokenHp";
 
+	//UIê›íË
 	for (int i = 0; i < states_.size(); i++) {
 		std::string nomal = nomalStr_.c_str() + i;
 		std::string empty = emptyStr_.c_str() + i;

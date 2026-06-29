@@ -6,11 +6,14 @@
 #include"../Scene/Main/Game.h"
 #include "LockOnManager.h"
 
-LockOnManager::LockOnManager(Game& _gameScene, PlayerManager& _player, EnemyManager& _enemyInfo) :scene_(_gameScene), master_(_player), targets_(_enemyInfo)
+LockOnManager::LockOnManager(Game& _gameScene, PlayerManager& _player, EnemyManager& _enemyInfo) :
+	scene_(_gameScene)
+	,master_(_player)
+	,targets_(_enemyInfo)
+	,nearTargetNum_(-1)
+	,preNearTargetNum_(-1)
+	,isLockOn_(false)
 {
-	nearTargetNum_ = -1;
-	preNearTargetNum_ = -1;
-	isLockOn_ = false;
 }
 
 LockOnManager::~LockOnManager(void)
@@ -44,9 +47,6 @@ void LockOnManager::Update(void)
 		Camera& camera = SceneManager::GetInstance().GetCamera();
 		camera.SetLockPos(targets_.GetPos(nearTargetNum_));	//ロックオン対象の設定
 	}
-
-	//カメラの注視点設定
-	SetTaergetPos4Camera();
 }
 
 const bool LockOnManager::CanLockOn(void)
@@ -62,12 +62,12 @@ void LockOnManager::LockOn(void)
 
 	Camera& camera = SceneManager::GetInstance().GetCamera();
 	camera.SetLockPos(targets_.GetPos(nearTargetNum_));	//ロックオン対象の設定
-	master_.RedyLockOn();
-	targets_.LokedOn(nearTargetNum_);
-	camera.ChangeMode(Camera::MODE::LOCKON);
-	SoundManager::GetInstance().Play("RockOn");
+	master_.RedyLockOn();						//ロックオン開始を通知
+	targets_.LokedOn(nearTargetNum_);			//ターゲットにロックオンを通知
+	camera.ChangeMode(Camera::MODE::LOCKON);	//カメラをロックオン状態に
+	SoundManager::GetInstance().Play("RockOn");	//SEの再生
 
-	isLockOn_ = true;
+	isLockOn_ = true;	//状態を保存
 }
 
 void LockOnManager::LockOff(void)
@@ -76,31 +76,15 @@ void LockOnManager::LockOff(void)
 	if (!isLockOn_)return;
 
 	Camera& camera = SceneManager::GetInstance().GetCamera();
-	master_.RedyLockOff();
-	targets_.NoTargetEnemy();
-	camera.ChangeMode(Camera::MODE::FOLLOW);
+	master_.RedyLockOff();		//ロックオン解除の通知
+	targets_.NoTargetEnemy();	//ターゲットに解除を通知
+	camera.ChangeMode(Camera::MODE::FOLLOW);	//追従に戻す
 	//ゾーンを続かせないために
 	scene_.EndSlow();
 	//対象をキャンセルしたとみなし初期化する
 	nearTargetNum_ = -1;
 
-	isLockOn_ = false;
-}
-
-void LockOnManager::SetTaergetPos4Camera(void)
-{
-	Camera& camera = SceneManager::GetInstance().GetCamera();
-
-	////ロックオンをしていたら
-	//if (isLockOn_) {
-	//	//ロックオン対象に敵を設定
-	//	camera.SetFocusPos(master_.GetFocusPoint());//注視点の更新
-	//	camera.SetFocusPos(master_.GetPos());//注視点の更新
-	//}
-	//else {
-	//	//追従対象にプレイヤーを設定
-	//	camera.SetRockPos(targets_.GetPos(nearTargetNum_));	//ロックオン対象の設定
-	//}
+	isLockOn_ = false;	//状態の保存
 }
 
 const int LockOnManager::DecideRockEnemy(void)

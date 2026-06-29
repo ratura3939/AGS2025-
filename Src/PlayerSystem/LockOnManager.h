@@ -19,8 +19,6 @@ public:
 	void LockOff(void);
 	
 private:
-	void SetTaergetPos4Camera(void);
-
 	/// <summary>
 	/// ƒƒbƒNƒIƒ“‚Ì‘ÎÛŒˆ‚ß
 	/// </summary>

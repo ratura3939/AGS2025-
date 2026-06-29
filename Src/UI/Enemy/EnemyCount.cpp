@@ -3,6 +3,13 @@
 #include"../../Manager/Decoration/UIManager2d.h"
 #include "EnemyCount.h"
 
+//ローカル定数
+namespace {
+	const float UI_NUMBER_MOVE_ACC = 2.0f;
+	const float UI_NUMBER_MOVE_MAX = 20.0f;
+	const float UI_NUMBER_MOVE_MIN = -20.0f;
+}
+
 EnemyCount::EnemyCount(VECTOR& _followPos):
 	UIBase(_followPos)
 	,plateStr_()
@@ -39,7 +46,7 @@ bool EnemyCount::Init(const std::string& _master)
 	numPos.x += POS_AJUST;
 	uiM.Add(numberStr_, -1, UIManager2d::UI_DIRECTION_2D::UP_DOWN, UI_DIMENSION::DIMENSION_2);
 	uiM.SetUIInfo(numberStr_, numPos, SCALE_PALTE_NUM);
-	uiM.SetUIDirectionParam(numberStr_, UIManager2d::UI_DIRECTION_GROUP::MOVE, 2.0f, 20.0f, -20.0f);			//詳細設定
+	uiM.SetUIDirectionParam(numberStr_, UIManager2d::UI_DIRECTION_GROUP::MOVE, UI_NUMBER_MOVE_ACC, UI_NUMBER_MOVE_MAX, -UI_NUMBER_MOVE_MIN);			//詳細設定
 
 	//アイコン×
 	auto iconPos = drawFollowPos_;
